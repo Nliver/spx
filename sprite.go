@@ -23,10 +23,10 @@ import (
 	"math"
 	"reflect"
 
+	"github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/engine"
 	"github.com/goplus/spx/v2/internal/time"
 	"github.com/goplus/spx/v2/internal/tools"
-	"github.com/realdream-ai/mathf"
 )
 
 type Direction = float64

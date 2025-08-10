@@ -23,9 +23,9 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/tools"
 	"github.com/goplus/spx/v2/internal/ui"
-	"github.com/realdream-ai/mathf"
 )
 
 // -------------------------------------------------------------------------------------

@@ -25,7 +25,7 @@ import (
 	"github.com/goplus/spx/v2/internal/engine"
 	"github.com/goplus/spx/v2/internal/enginewrap"
 
-	"github.com/realdream-ai/mathf"
+	"github.com/goplus/spbase/mathf"
 )
 
 // copy these variable to any namespace you want
