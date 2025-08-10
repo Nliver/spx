@@ -19,8 +19,8 @@ package spx
 import (
 	"time"
 
+	"github.com/goplus/spbase/mathf"
 	gdx "github.com/goplus/spx/v2/pkg/gdspx/pkg/engine"
-	"github.com/realdream-ai/mathf"
 )
 
 type Key = gdx.KeyCode

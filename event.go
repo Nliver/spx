@@ -20,10 +20,10 @@ import (
 	"log"
 	"sync"
 
+	"github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/coroutine"
 	"github.com/goplus/spx/v2/internal/engine"
 	"github.com/goplus/spx/v2/internal/timer"
-	"github.com/realdream-ai/mathf"
 )
 
 // -------------------------------------------------------------------------------------

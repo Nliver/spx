@@ -1,9 +1,9 @@
 package engine
 
 import (
+	. "github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/enginewrap"
 	gdx "github.com/goplus/spx/v2/pkg/gdspx/pkg/engine"
-	. "github.com/realdream-ai/mathf"
 )
 
 // !!!Warning all method belong to this class can only be called in main thread

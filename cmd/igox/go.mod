@@ -15,10 +15,10 @@ require (
 require (
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/goplus/gogen v1.19.0 // indirect
+	github.com/goplus/spbase v0.1.0 // indirect
 	github.com/goplus/xgo v1.5.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/qiniu/x v1.15.1 // indirect
-	github.com/realdream-ai/mathf v0.0.0-20250513071532-e55e1277a8c5 // indirect
 	github.com/timandy/routine v1.1.5 // indirect
 	github.com/visualfc/funcval v0.1.4 // indirect
 	github.com/visualfc/gid v0.3.0 // indirect
