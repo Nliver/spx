@@ -21,9 +21,9 @@ import (
 	"io"
 	"syscall"
 
+	"github.com/goplus/spbase/mathf"
 	spxfs "github.com/goplus/spx/v2/fs"
 	"github.com/goplus/spx/v2/internal/engine"
-	"github.com/realdream-ai/mathf"
 )
 
 func resourceDir(resource any) (fs spxfs.Dir, err error) {

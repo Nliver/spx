@@ -29,6 +29,7 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/audiorecord"
 	"github.com/goplus/spx/v2/internal/coroutine"
 	"github.com/goplus/spx/v2/internal/debug"
@@ -37,7 +38,6 @@ import (
 	gtime "github.com/goplus/spx/v2/internal/time"
 	"github.com/goplus/spx/v2/internal/timer"
 	"github.com/goplus/spx/v2/internal/ui"
-	"github.com/realdream-ai/mathf"
 
 	spxfs "github.com/goplus/spx/v2/fs"
 	_ "github.com/goplus/spx/v2/fs/asset"

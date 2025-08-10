@@ -13,7 +13,7 @@
 package engine
 
 import (
-	. "github.com/realdream-ai/mathf"
+	. "github.com/goplus/spbase/mathf"
 )
 
 func (pself *Sprite) AddForce(force Vec2) {

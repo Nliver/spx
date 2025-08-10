@@ -3,7 +3,7 @@ package tools
 import (
 	"strconv"
 
-	"github.com/realdream-ai/mathf"
+	"github.com/goplus/spbase/mathf"
 )
 
 func GetVec2(unk any) (mathf.Vec2, bool) {

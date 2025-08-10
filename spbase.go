@@ -24,7 +24,7 @@ import (
 	_ "image/jpeg" // for image decode
 	_ "image/png"  // for image decode
 
-	"github.com/realdream-ai/mathf"
+	"github.com/goplus/spbase/mathf"
 
 	"github.com/goplus/spx/v2/internal/engine"
 )

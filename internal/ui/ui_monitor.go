@@ -1,8 +1,8 @@
 package ui
 
 import (
-	"github.com/realdream-ai/mathf"
-	. "github.com/realdream-ai/mathf"
+	"github.com/goplus/spbase/mathf"
+	. "github.com/goplus/spbase/mathf"
 
 	"github.com/goplus/spx/v2/internal/engine"
 )
