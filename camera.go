@@ -19,7 +19,7 @@ package spx
 import (
 	"log"
 
-	"github.com/realdream-ai/mathf"
+	"github.com/goplus/spbase/mathf"
 )
 
 type Camera struct {
