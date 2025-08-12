@@ -208,6 +208,8 @@ download_editor() {
     cp -f $filename "$template_dir/web_dlink_release.zip"
     cp -f $filename "$template_dir/web_debug.zip"
     cp -f $filename "$template_dir/web_release.zip"
+    cp -f $filename "$template_dir/web_nothreads_debug.zip"
+    cp -f $filename "$template_dir/web_nothreads_release.zip"
     
     platform_name=$platform
     local binary_postfix=""
