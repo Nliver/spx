@@ -308,6 +308,8 @@ build_editor(){
         build_template "$PLATFORM"
         return 0
     fi
+    
+    echo target=editor dev_build=yes $COMMON_ARGS
     if [ "$OS" = "Windows_NT" ]; then
         scons target=editor dev_build=yes $COMMON_ARGS vsproj=yes 
     else
