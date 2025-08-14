@@ -20,6 +20,9 @@ var (
 	//go:embed template/.gitignore.txt
 	gitignoreTxt string
 
+	//go:embed template/go.mod.template
+	gomodtemplate string
+
 	//go:embed appname.txt
 	appName string
 
@@ -42,6 +45,7 @@ func main() {
 	cmd.GitignoreTxt = gitignoreTxt
 	cmd.RunSh = runSh
 	cmd.MainSh = mainSh
+	cmd.GoModTemplate = gomodtemplate
 
 	// Initialize the Args field if not already initialized
 	cmd.RunCmd(appName, appName, cmd.Version, projectFS, "template/project", "project")

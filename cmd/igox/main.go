@@ -18,7 +18,7 @@ import (
 	"github.com/goplus/ixgo"
 	"github.com/goplus/ixgo/xgobuild"
 	"github.com/goplus/mod/modfile"
-	_ "github.com/goplus/reflectx/icall/icall8192"
+	_ "github.com/goplus/reflectx/icall/icall10240"
 	_ "github.com/goplus/spx/v2"
 	"github.com/goplus/spx/v2/cmd/igox/zipfs"
 	goxfs "github.com/goplus/spx/v2/fs"
@@ -237,16 +237,6 @@ func Gopt_Player_Gopx_OnCmd[T any](p *Player, handler func(cmd T) error) {
 	ai.SetDefaultKnowledgeBase(map[string]any{
 		"AI-generated descriptive summary of the game world": aiDescription,
 	})
-	ai.SetDefaultTaskRunner(func(task func()) {
-		var done bool
-		go func() {
-			task()
-			done = true
-		}()
-		for !done {
-			spxEngineWaitNextFrame()
-		}
-	})
 
 	ctx.RegisterExternal("fmt.Print", func(frame *ixgo.Frame, a ...any) (n int, err error) {
 		msg := fmt.Sprint(a...)
@@ -276,9 +266,6 @@ func Gopt_Player_Gopx_OnCmd[T any](p *Player, handler func(cmd T) error) {
 		return
 	}
 }
-
-//go:linkname spxEngineWaitNextFrame github.com/goplus/spx/v2/internal/engine.WaitNextFrame
-func spxEngineWaitNextFrame() float64
 
 //go:linkname spxEngineRegisterFFI github.com/goplus/spx/v2/pkg/gdspx/internal/engine.RegisterFFI
 func spxEngineRegisterFFI()
