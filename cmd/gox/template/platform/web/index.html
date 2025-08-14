@@ -65,6 +65,8 @@
 	<button id="startGameBtn">Start</button>
 	<button id="stopGameBtn">Stop</button>
 	<button id="startNewGameBtn">StartNew</button>
+	<button id="startRecordingBtn">StartRecording</button>
+	<button id="stopRecordingBtn">StopRecording</button>
 	<progress id="progress-bar" value="0" max="1" style="display: none;"></progress>
 	<div id="tabs">
 		<div id="tab-loader">
@@ -105,6 +107,8 @@
 		document.getElementById('startNewGameBtn').addEventListener('click', startNewGame);
 		document.getElementById('startGameBtn').addEventListener('click', startGame);
 		document.getElementById('stopGameBtn').addEventListener('click', stopGame);
+		document.getElementById('startRecordingBtn').addEventListener('click', startRecording);
+		document.getElementById('stopRecordingBtn').addEventListener('click', stopRecording);
 		runnerWindow = document.getElementById('runnerFrame').contentWindow;
 		function onProgress(value) {
 			document.getElementById('progress-bar').value = value;
@@ -126,6 +130,15 @@
 		async function stopGame() {
 			runnerWindow.stopGame()
 		}
+
+		function startRecording() {
+			runnerWindow.startRecording()
+		}
+
+		async function stopRecording() {
+			await runnerWindow.stopRecording()
+			runnerWindow.downloadRecordedVideo()
+		}
 		const LOG_LEVEL_VERBOSE = 0
 		async function startProject(zipUrl) {
 			runnerWindow.addEventListener('onProgress', (event) => {
@@ -142,8 +155,6 @@
 			await runnerWindow.startGame(buffer, null, function () {
 				runnerWindow.setAIInteractionAPIEndpoint("http://127.0.0.1:8000")
 			},{ 
-				"recordingOnGameStart": true,
-				"autoDownloadRecordedVideo":true,
 				"logLevel":LOG_LEVEL_VERBOSE,
 			});
 		}
