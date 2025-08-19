@@ -39,12 +39,12 @@ type PlayOptions struct {
 
 type soundMgr struct {
 	g        *Game
-	audios   map[string]Sound
+	audios   map[string]sound
 	path2ids map[string][]int64
 }
 
 func (p *soundMgr) init(g *Game) {
-	p.audios = make(map[string]Sound)
+	p.audios = make(map[string]sound)
 	p.path2ids = make(map[string][]int64)
 	p.g = g
 }
@@ -60,7 +60,7 @@ func (p *soundMgr) releaseAudio(audioId engine.Object) {
 	audioMgr.DestroyAudio(audioId)
 }
 
-func (p *soundMgr) play(audioId engine.Object, media Sound, opts *PlayOptions) (err error) {
+func (p *soundMgr) play(audioId engine.Object, media sound, opts *PlayOptions) (err error) {
 	action := opts.Action
 	var curId int64 = 0
 	switch action {
