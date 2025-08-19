@@ -11,9 +11,6 @@ var (
 	hasReceivedMsgA bool
 	hasReceivedMsgB bool 
 
-
-	SpControl SpControl
-	Red     Red
 	cloneNum int
 )
 

@@ -1,5 +1,3 @@
 var (
 	Bananas []*Banana
-	Monkey  *Monkey
-	Red     *Red
 )

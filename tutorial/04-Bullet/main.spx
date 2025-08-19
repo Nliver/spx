@@ -1,4 +1,0 @@
-var (
-	MyAircraft MyAircraft
-	Bullet     Bullet
-)
