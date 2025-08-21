@@ -68,7 +68,6 @@ type Sprite interface {
 	Animate(name SpriteAnimationName)
 	Ask(msg any)
 	BounceOffEdge()
-	Bounds() *mathf.Rect2
 	ChangeEffect(kind EffectKind, delta float64)
 	ChangeHeading(dir Direction)
 	ChangePenColor(kind PenColorParam, delta float64)
@@ -1789,7 +1788,7 @@ func (p *SpriteImpl) CostumeHeight() float64 {
 	return float64(h)
 }
 
-func (p *SpriteImpl) Bounds() *mathf.Rect2 {
+func (p *SpriteImpl) bounds() *mathf.Rect2 {
 	if !p.isVisible {
 		return nil
 	}
@@ -1824,7 +1823,7 @@ func (p *SpriteImpl) Bounds() *mathf.Rect2 {
 // -----------------------------------------------------------------------------
 
 func (p *SpriteImpl) fixWorldRange(x, y float64) (float64, float64) {
-	rect := p.Bounds()
+	rect := p.bounds()
 	if rect == nil {
 		return x, y
 	}
