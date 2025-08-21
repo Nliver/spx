@@ -45,12 +45,12 @@ onMsg "testLook", => {
 	assertFloat(size(), 100, "Sprite::Size")
 	wait 0.2
 	
-	// 9. Sprite::ChangeEffect	
-	changeEffect GhostEffect, 50
+	// 9. Sprite::ChangeGraphicEffect	
+	changeGraphicEffectGhostEffect, 50
 	wait 0.2
 
-	// 10. Sprite::SetEffect	
-	setEffect GhostEffect, 50
+	// 10. Sprite::SetGraphicEffect	
+	setGraphicEffectGhostEffect, 50
 	wait 0.2
 
 	// 11. Sprite::ClearGraphicEffects	

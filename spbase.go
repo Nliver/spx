@@ -405,20 +405,20 @@ func (p *baseObj) requireGreffUniforms() map[EffectKind]float64 {
 	return effs
 }
 
-func (p *baseObj) setEffect(kind EffectKind, val float64) {
+func (p *baseObj) setGraphicEffect(kind EffectKind, val float64) {
 	effs := p.requireGreffUniforms()
 	effs[kind] = float64(val)
-	p.doSetEffect(kind, false)
+	p.doSetGraphicEffect(kind, false)
 }
 
-func (p *baseObj) changeEffect(kind EffectKind, delta float64) {
+func (p *baseObj) changeGraphicEffect(kind EffectKind, delta float64) {
 	effs := p.requireGreffUniforms()
 	newVal := float64(delta)
 	if oldVal, ok := effs[kind]; ok {
 		newVal += oldVal
 	}
 	effs[kind] = newVal
-	p.setEffect(kind, newVal)
+	p.setGraphicEffect(kind, newVal)
 }
 
 func (p *baseObj) clearGraphicEffects() {
@@ -427,16 +427,16 @@ func (p *baseObj) clearGraphicEffects() {
 	for i := 0; i < int(enumNumOfEffect); i++ {
 		effs[EffectKind(i)] = 0
 	}
-	p.applyEffects(false)
+	p.applyGraphicEffects(false)
 }
 
-func (p *baseObj) applyEffects(isSync bool) {
+func (p *baseObj) applyGraphicEffects(isSync bool) {
 	for i := 0; i < int(enumNumOfEffect); i++ {
-		p.doSetEffect(EffectKind(i), isSync)
+		p.doSetGraphicEffect(EffectKind(i), isSync)
 	}
 }
 
-func (p *baseObj) doSetEffect(kind EffectKind, isSync bool) {
+func (p *baseObj) doSetGraphicEffect(kind EffectKind, isSync bool) {
 	if p.syncSprite == nil {
 		return
 	}

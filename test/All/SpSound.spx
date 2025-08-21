@@ -37,11 +37,11 @@ onMsg "testSound", => {
 	// 6. Sprite::Volume
 	assertFloat(volume(), 100, "Sprite::Volume")
 
-	// 7. Game::ChangeEffect	
+	// 7. Game::ChangeGraphicEffect	
 	say "test change sound effect : pitch (150)"
 	changeSoundEffect SoundPitchEffect, 50  // pitch 150
 	play "sound1", true
-	// 8. Game::SetEffect	
+	// 8. Game::SetGraphicEffect	
 	say "test set sound effect : pitch (150)"
 	setSoundEffect SoundPitchEffect, 50  // pitch 50
 	play "sound1", true
@@ -51,11 +51,11 @@ onMsg "testSound", => {
 
 
 	say "test sound effect : pan"
-	// 10. Game::ChangeEffect	
+	// 10. Game::ChangeGraphicEffect	
 	say "test change sound effect : pan (-100) left"
 	changeSoundEffect SoundPanEffect, -100  // left
 	play "sound1", true
-	// 11. Game::SetEffect	
+	// 11. Game::SetGraphicEffect	
 	say "test set sound effect : pan (100) right"
 	setSoundEffect SoundPanEffect, 100  // right
 	play "sound1", true
