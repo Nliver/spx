@@ -46,9 +46,6 @@ onMsg "testUnique", => {
     }
     costumeName = CostumeName()
     assert(costumeName != "", "Costume name should not be empty")
-    width = CostumeWidth()
-    height = CostumeHeight()
-    assert(width > 0 && height > 0, "Costume dimensions should be positive")
     PrevCostume()
     wait 0.1
 

@@ -77,10 +77,8 @@ type Sprite interface {
 	ChangeXYpos(dx, dy float64)
 	ChangeYpos(dy float64)
 	ClearGraphicEffects()
-	CostumeHeight() float64
 	CostumeIndex() int
 	CostumeName() SpriteCostumeName
-	CostumeWidth() float64
 	DeleteThisClone()
 	DeltaTime() float64
 	Destroy()
@@ -1771,20 +1769,6 @@ func (p *SpriteImpl) ShowVar(name string) {
 }
 
 // -----------------------------------------------------------------------------
-
-// CostumeWidth returns width of sprite current costume.
-func (p *SpriteImpl) CostumeWidth() float64 {
-	c := p.costumes[p.costumeIndex_]
-	w, _ := c.getSize()
-	return float64(w)
-}
-
-// CostumeHeight returns height of sprite current costume.
-func (p *SpriteImpl) CostumeHeight() float64 {
-	c := p.costumes[p.costumeIndex_]
-	_, h := c.getSize()
-	return float64(h)
-}
 
 func (p *SpriteImpl) bounds() *mathf.Rect2 {
 	if !p.isVisible {
