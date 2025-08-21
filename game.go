@@ -360,13 +360,6 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 	}
 }
 
-// MouseHitItem returns the topmost item which is hit by mouse.
-func (p *Game) MouseHitItem() (target *SpriteImpl, ok bool) {
-	//x, y := engine.GetMousePos()
-	// TODO(tanjp) use engine api
-	return
-}
-
 func instance(gamer reflect.Value) *Game {
 	fld := gamer.FieldByName("Game")
 	if !fld.IsValid() {
