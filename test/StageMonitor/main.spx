@@ -1,6 +1,5 @@
 var (
-	Monkey Monkey
-	downs  int
+	downs int
 )
 
 onKey KeyDown, => {

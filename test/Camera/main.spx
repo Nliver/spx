@@ -1,8 +1,3 @@
-var (
-	Monkey    *Monkey
-	Crocodile *Crocodile
-)
-
 func OnLoaded() {
 	println "onLoad"
 }
