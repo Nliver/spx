@@ -68,7 +68,6 @@ type Sprite interface {
 	Animate(name SpriteAnimationName)
 	Ask(msg any)
 	BounceOffEdge()
-	Bounds() *mathf.Rect2
 	ChangeEffect(kind EffectKind, delta float64)
 	ChangeHeading(dir Direction)
 	ChangePenColor(kind PenColorParam, delta float64)
@@ -78,10 +77,8 @@ type Sprite interface {
 	ChangeXYpos(dx, dy float64)
 	ChangeYpos(dy float64)
 	ClearGraphicEffects()
-	CostumeHeight() float64
 	CostumeIndex() int
 	CostumeName() SpriteCostumeName
-	CostumeWidth() float64
 	DeleteThisClone()
 	DeltaTime() float64
 	Destroy()
@@ -113,15 +110,12 @@ type Sprite interface {
 	OnCloned__1(onCloned func())
 	OnMoving__0(onMoving func(mi *MovingInfo))
 	OnMoving__1(onMoving func())
-	OnTouchStart__0(onTouchStart func(Sprite))
-	OnTouchStart__1(onTouchStart func())
-	OnTouchStart__2(sprite SpriteName, onTouchStart func(Sprite))
-	OnTouchStart__3(sprite SpriteName, onTouchStart func())
-	OnTouchStart__4(sprites []SpriteName, onTouchStart func(Sprite))
-	OnTouchStart__5(sprites []SpriteName, onTouchStart func())
+	OnTouchStart__0(sprite SpriteName, onTouchStart func(Sprite))
+	OnTouchStart__1(sprite SpriteName, onTouchStart func())
+	OnTouchStart__2(sprites []SpriteName, onTouchStart func(Sprite))
+	OnTouchStart__3(sprites []SpriteName, onTouchStart func())
 	OnTurning__0(onTurning func(ti *TurningInfo))
 	OnTurning__1(onTurning func())
-	Parent() *Game
 	PenDown()
 	PenUp()
 	PrevCostume()
@@ -135,7 +129,6 @@ type Sprite interface {
 	SetCostume__1(index float64)
 	SetCostume__2(index int)
 	SetCostume__3(action switchAction)
-	SetDying()
 	SetEffect(kind EffectKind, val float64)
 	SetHeading(dir Direction)
 	SetPenColor__0(color Color)
@@ -249,12 +242,8 @@ type SpriteImpl struct {
 	collisionTargets map[string]bool
 }
 
-func (p *SpriteImpl) SetDying() { // dying: visible but can't be touched
+func (p *SpriteImpl) setDying() { // dying: visible but can't be touched
 	p.isDying = true
-}
-
-func (p *SpriteImpl) Parent() *Game {
-	return p.g
 }
 
 func (p *SpriteImpl) getAllShapes() []Shape {
@@ -539,7 +528,7 @@ func (p *SpriteImpl) _onTouchStart(onTouchStart func(Sprite)) {
 	}
 }
 
-func (p *SpriteImpl) OnTouchStart__0(onTouchStart func(Sprite)) {
+func (p *SpriteImpl) onTouchStart__0(onTouchStart func(Sprite)) {
 	// collision with other sprites by default
 	for name, _ := range p.g.sprs {
 		p.collisionTargets[name] = true
@@ -547,7 +536,7 @@ func (p *SpriteImpl) OnTouchStart__0(onTouchStart func(Sprite)) {
 	p._onTouchStart(onTouchStart)
 }
 
-func (p *SpriteImpl) OnTouchStart__1(onTouchStart func()) {
+func (p *SpriteImpl) onTouchStart__1(onTouchStart func()) {
 	// collision with all other sprites by default
 	for name, _ := range p.g.sprs {
 		p.collisionTargets[name] = true
@@ -557,7 +546,7 @@ func (p *SpriteImpl) OnTouchStart__1(onTouchStart func()) {
 	})
 }
 
-func (p *SpriteImpl) OnTouchStart__2(sprite SpriteName, onTouchStart func(Sprite)) {
+func (p *SpriteImpl) OnTouchStart__0(sprite SpriteName, onTouchStart func(Sprite)) {
 	p.collisionTargets[sprite] = true
 	p._onTouchStart(func(s Sprite) {
 		impl := spriteOf(s)
@@ -567,14 +556,14 @@ func (p *SpriteImpl) OnTouchStart__2(sprite SpriteName, onTouchStart func(Sprite
 	})
 }
 
-func (p *SpriteImpl) OnTouchStart__3(sprite SpriteName, onTouchStart func()) {
+func (p *SpriteImpl) OnTouchStart__1(sprite SpriteName, onTouchStart func()) {
 	p.collisionTargets[sprite] = true
-	p.OnTouchStart__2(sprite, func(Sprite) {
+	p.OnTouchStart__0(sprite, func(Sprite) {
 		onTouchStart()
 	})
 }
 
-func (p *SpriteImpl) OnTouchStart__4(sprites []SpriteName, onTouchStart func(Sprite)) {
+func (p *SpriteImpl) OnTouchStart__2(sprites []SpriteName, onTouchStart func(Sprite)) {
 	for _, sprite := range sprites {
 		p.collisionTargets[sprite] = true
 	}
@@ -591,11 +580,11 @@ func (p *SpriteImpl) OnTouchStart__4(sprites []SpriteName, onTouchStart func(Spr
 	})
 }
 
-func (p *SpriteImpl) OnTouchStart__5(sprites []SpriteName, onTouchStart func()) {
+func (p *SpriteImpl) OnTouchStart__3(sprites []SpriteName, onTouchStart func()) {
 	for _, sprite := range sprites {
 		p.collisionTargets[sprite] = true
 	}
-	p.OnTouchStart__4(sprites, func(Sprite) {
+	p.OnTouchStart__2(sprites, func(Sprite) {
 		onTouchStart()
 	})
 }
@@ -665,7 +654,7 @@ func (p *SpriteImpl) OnTurning__1(onTurning func()) {
 
 func (p *SpriteImpl) Die() {
 	aniName := p.getStateAnimName(StateDie)
-	p.SetDying()
+	p.setDying()
 
 	p.Stop(OtherScriptsInSprite)
 	if ani, ok := p.animations[aniName]; ok {
@@ -1781,21 +1770,7 @@ func (p *SpriteImpl) ShowVar(name string) {
 
 // -----------------------------------------------------------------------------
 
-// CostumeWidth returns width of sprite current costume.
-func (p *SpriteImpl) CostumeWidth() float64 {
-	c := p.costumes[p.costumeIndex_]
-	w, _ := c.getSize()
-	return float64(w)
-}
-
-// CostumeHeight returns height of sprite current costume.
-func (p *SpriteImpl) CostumeHeight() float64 {
-	c := p.costumes[p.costumeIndex_]
-	_, h := c.getSize()
-	return float64(h)
-}
-
-func (p *SpriteImpl) Bounds() *mathf.Rect2 {
+func (p *SpriteImpl) bounds() *mathf.Rect2 {
 	if !p.isVisible {
 		return nil
 	}
@@ -1830,7 +1805,7 @@ func (p *SpriteImpl) Bounds() *mathf.Rect2 {
 // -----------------------------------------------------------------------------
 
 func (p *SpriteImpl) fixWorldRange(x, y float64) (float64, float64) {
-	rect := p.Bounds()
+	rect := p.bounds()
 	if rect == nil {
 		return x, y
 	}

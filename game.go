@@ -158,10 +158,6 @@ func (p *Game) getSpriteCollisionInfo(name string) *spriteCollisionInfo {
 	panic("Unknown sprite " + name)
 }
 
-func (p *Game) IsRunned() bool {
-	return p.isRunned
-}
-
 func (p *Game) newSpriteAndLoad(name string, tySpr reflect.Type, g reflect.Value) Sprite {
 	spr := reflect.New(tySpr).Interface().(Sprite)
 	if err := p.loadSprite(spr, name, g); err != nil {
@@ -362,13 +358,6 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 	if err := g.runLoop(&conf); err != nil {
 		panic(err)
 	}
-}
-
-// MouseHitItem returns the topmost item which is hit by mouse.
-func (p *Game) MouseHitItem() (target *SpriteImpl, ok bool) {
-	//x, y := engine.GetMousePos()
-	// TODO(tanjp) use engine api
-	return
 }
 
 func instance(gamer reflect.Value) *Game {
@@ -785,10 +774,6 @@ func (p *Game) runLoop(cfg *Config) (err error) {
 	platformMgr.SetWindowTitle(cfg.Title)
 	p.isRunned = true
 	return nil
-}
-
-func (p *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return p.windowSize_()
 }
 
 type clicker interface {

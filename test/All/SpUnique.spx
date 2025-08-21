@@ -25,10 +25,6 @@ onMsg "testUnique", => {
 
     // 3. Game state test
     say "test game state"
-    if IsRunned() {
-        say "game is running"
-        assert(true, "Game should be running")
-    }
     wait 0.1
 
     // 4. Background test
@@ -44,17 +40,12 @@ onMsg "testUnique", => {
         say "sprite is visible"
         assert(true, "Sprite should be visible")
     }
-    parent = Parent()
-    assert(parent != nil, "Parent should not be nil")
     if IsCloned() {
         say "this is a clone"
         assert(true, "Sprite should be a clone")
     }
     costumeName = CostumeName()
     assert(costumeName != "", "Costume name should not be empty")
-    width = CostumeWidth()
-    height = CostumeHeight()
-    assert(width > 0 && height > 0, "Costume dimensions should be positive")
     PrevCostume()
     wait 0.1
 
