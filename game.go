@@ -1295,13 +1295,13 @@ func (p *Game) BackdropIndex() int {
 
 type BackdropName = string
 
-// StartBackdrop func:
+// SetBackdrop func:
 //
-//	StartBackdrop(backdrop) or
-//	StartBackdrop(index) or
-//	StartBackdrop(spx.Next)
-//	StartBackdrop(spx.Prev)
-func (p *Game) startBackdrop(backdrop any, wait bool) {
+//	SetBackdrop(backdrop) or
+//	SetBackdrop(index) or
+//	SetBackdrop(spx.Next)
+//	SetBackdrop(spx.Prev)
+func (p *Game) setBackdrop(backdrop any, wait bool) {
 	if p.goSetCostume(backdrop) {
 		p.windowWidth_ = 0
 		p.setupBackdrop()
@@ -1310,52 +1310,33 @@ func (p *Game) startBackdrop(backdrop any, wait bool) {
 	}
 }
 
-func (p *Game) StartBackdrop__0(backdrop BackdropName) {
-	p.startBackdrop(backdrop, false)
+func (p *Game) SetBackdrop__0(backdrop BackdropName) {
+	p.setBackdrop(backdrop, false)
 }
 
-func (p *Game) StartBackdrop__1(backdrop BackdropName, wait bool) {
-	p.startBackdrop(backdrop, wait)
+func (p *Game) SetBackdrop__1(index float64) {
+	p.setBackdrop(index, false)
 }
 
-func (p *Game) StartBackdrop__2(index float64) {
-	p.startBackdrop(index, false)
+func (p *Game) SetBackdrop__2(index int) {
+	p.setBackdrop(index, false)
 }
 
-func (p *Game) StartBackdrop__3(index float64, wait bool) {
-	p.startBackdrop(index, wait)
+func (p *Game) SetBackdrop__3(action switchAction) {
+	p.setBackdrop(action, false)
 }
 
-func (p *Game) StartBackdrop__4(index int) {
-	p.startBackdrop(index, false)
+func (p *Game) SetBackdropAndWait__0(backdrop BackdropName) {
+	p.setBackdrop(backdrop, true)
 }
-
-func (p *Game) StartBackdrop__5(index int, wait bool) {
-	p.startBackdrop(index, wait)
+func (p *Game) SetBackdropAndWait__1(index float64) {
+	p.setBackdrop(index, true)
 }
-
-func (p *Game) StartBackdrop__6(action switchAction) {
-	p.startBackdrop(action, false)
+func (p *Game) SetBackdropAndWait__2(index int) {
+	p.setBackdrop(index, true)
 }
-
-func (p *Game) StartBackdrop__7(action switchAction, wait bool) {
-	p.startBackdrop(action, wait)
-}
-
-func (p *Game) NextBackdrop__0() {
-	p.StartBackdrop__6(Next)
-}
-
-func (p *Game) NextBackdrop__1(wait bool) {
-	p.StartBackdrop__7(Next, wait)
-}
-
-func (p *Game) PrevBackdrop__0() {
-	p.StartBackdrop__6(Prev)
-}
-
-func (p *Game) PrevBackdrop__1(wait bool) {
-	p.StartBackdrop__7(Prev, wait)
+func (p *Game) SetBackdropAndWait__3(action switchAction) {
+	p.setBackdrop(action, true)
 }
 
 // -----------------------------------------------------------------------------

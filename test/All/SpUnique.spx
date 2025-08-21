@@ -31,7 +31,7 @@ onMsg "testUnique", => {
     say "test background function"
     backdropName = BackdropName()
     assert(backdropName != "", "Backdrop name should not be empty")
-    PrevBackdrop()
+    SetBackdrop(Prev)
     wait 0.1
 
     // 6. Sprite property test
