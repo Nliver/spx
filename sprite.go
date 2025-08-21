@@ -112,12 +112,10 @@ type Sprite interface {
 	OnCloned__1(onCloned func())
 	OnMoving__0(onMoving func(mi *MovingInfo))
 	OnMoving__1(onMoving func())
-	OnTouchStart__0(onTouchStart func(Sprite))
-	OnTouchStart__1(onTouchStart func())
-	OnTouchStart__2(sprite SpriteName, onTouchStart func(Sprite))
-	OnTouchStart__3(sprite SpriteName, onTouchStart func())
-	OnTouchStart__4(sprites []SpriteName, onTouchStart func(Sprite))
-	OnTouchStart__5(sprites []SpriteName, onTouchStart func())
+	OnTouchStart__0(sprite SpriteName, onTouchStart func(Sprite))
+	OnTouchStart__1(sprite SpriteName, onTouchStart func())
+	OnTouchStart__2(sprites []SpriteName, onTouchStart func(Sprite))
+	OnTouchStart__3(sprites []SpriteName, onTouchStart func())
 	OnTurning__0(onTurning func(ti *TurningInfo))
 	OnTurning__1(onTurning func())
 	PenDown()
@@ -532,7 +530,7 @@ func (p *SpriteImpl) _onTouchStart(onTouchStart func(Sprite)) {
 	}
 }
 
-func (p *SpriteImpl) OnTouchStart__0(onTouchStart func(Sprite)) {
+func (p *SpriteImpl) onTouchStart__0(onTouchStart func(Sprite)) {
 	// collision with other sprites by default
 	for name, _ := range p.g.sprs {
 		p.collisionTargets[name] = true
@@ -540,7 +538,7 @@ func (p *SpriteImpl) OnTouchStart__0(onTouchStart func(Sprite)) {
 	p._onTouchStart(onTouchStart)
 }
 
-func (p *SpriteImpl) OnTouchStart__1(onTouchStart func()) {
+func (p *SpriteImpl) onTouchStart__1(onTouchStart func()) {
 	// collision with all other sprites by default
 	for name, _ := range p.g.sprs {
 		p.collisionTargets[name] = true
@@ -550,7 +548,7 @@ func (p *SpriteImpl) OnTouchStart__1(onTouchStart func()) {
 	})
 }
 
-func (p *SpriteImpl) OnTouchStart__2(sprite SpriteName, onTouchStart func(Sprite)) {
+func (p *SpriteImpl) OnTouchStart__0(sprite SpriteName, onTouchStart func(Sprite)) {
 	p.collisionTargets[sprite] = true
 	p._onTouchStart(func(s Sprite) {
 		impl := spriteOf(s)
@@ -560,14 +558,14 @@ func (p *SpriteImpl) OnTouchStart__2(sprite SpriteName, onTouchStart func(Sprite
 	})
 }
 
-func (p *SpriteImpl) OnTouchStart__3(sprite SpriteName, onTouchStart func()) {
+func (p *SpriteImpl) OnTouchStart__1(sprite SpriteName, onTouchStart func()) {
 	p.collisionTargets[sprite] = true
-	p.OnTouchStart__2(sprite, func(Sprite) {
+	p.OnTouchStart__0(sprite, func(Sprite) {
 		onTouchStart()
 	})
 }
 
-func (p *SpriteImpl) OnTouchStart__4(sprites []SpriteName, onTouchStart func(Sprite)) {
+func (p *SpriteImpl) OnTouchStart__2(sprites []SpriteName, onTouchStart func(Sprite)) {
 	for _, sprite := range sprites {
 		p.collisionTargets[sprite] = true
 	}
@@ -584,11 +582,11 @@ func (p *SpriteImpl) OnTouchStart__4(sprites []SpriteName, onTouchStart func(Spr
 	})
 }
 
-func (p *SpriteImpl) OnTouchStart__5(sprites []SpriteName, onTouchStart func()) {
+func (p *SpriteImpl) OnTouchStart__3(sprites []SpriteName, onTouchStart func()) {
 	for _, sprite := range sprites {
 		p.collisionTargets[sprite] = true
 	}
-	p.OnTouchStart__4(sprites, func(Sprite) {
+	p.OnTouchStart__2(sprites, func(Sprite) {
 		onTouchStart()
 	})
 }
