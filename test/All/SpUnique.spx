@@ -25,10 +25,6 @@ onMsg "testUnique", => {
 
     // 3. Game state test
     say "test game state"
-    if IsRunned() {
-        say "game is running"
-        assert(true, "Game should be running")
-    }
     wait 0.1
 
     // 4. Background test

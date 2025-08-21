@@ -158,10 +158,6 @@ func (p *Game) getSpriteCollisionInfo(name string) *spriteCollisionInfo {
 	panic("Unknown sprite " + name)
 }
 
-func (p *Game) IsRunned() bool {
-	return p.isRunned
-}
-
 func (p *Game) newSpriteAndLoad(name string, tySpr reflect.Type, g reflect.Value) Sprite {
 	spr := reflect.New(tySpr).Interface().(Sprite)
 	if err := p.loadSprite(spr, name, g); err != nil {
