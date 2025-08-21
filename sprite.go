@@ -135,7 +135,6 @@ type Sprite interface {
 	SetCostume__1(index float64)
 	SetCostume__2(index int)
 	SetCostume__3(action switchAction)
-	SetDying()
 	SetEffect(kind EffectKind, val float64)
 	SetHeading(dir Direction)
 	SetPenColor__0(color Color)
@@ -249,7 +248,7 @@ type SpriteImpl struct {
 	collisionTargets map[string]bool
 }
 
-func (p *SpriteImpl) SetDying() { // dying: visible but can't be touched
+func (p *SpriteImpl) setDying() { // dying: visible but can't be touched
 	p.isDying = true
 }
 
@@ -665,7 +664,7 @@ func (p *SpriteImpl) OnTurning__1(onTurning func()) {
 
 func (p *SpriteImpl) Die() {
 	aniName := p.getStateAnimName(StateDie)
-	p.SetDying()
+	p.setDying()
 
 	p.Stop(OtherScriptsInSprite)
 	if ani, ok := p.animations[aniName]; ok {
