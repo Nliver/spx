@@ -68,7 +68,7 @@ type Sprite interface {
 	Animate(name SpriteAnimationName)
 	Ask(msg any)
 	BounceOffEdge()
-	ChangeEffect(kind EffectKind, delta float64)
+	ChangeGraphicEffect(kind EffectKind, delta float64)
 	ChangeHeading(dir Direction)
 	ChangePenColor(kind PenColorParam, delta float64)
 	ChangePenSize(delta float64)
@@ -129,7 +129,7 @@ type Sprite interface {
 	SetCostume__1(index float64)
 	SetCostume__2(index int)
 	SetCostume__3(action switchAction)
-	SetEffect(kind EffectKind, val float64)
+	SetGraphicEffect(kind EffectKind, val float64)
 	SetHeading(dir Direction)
 	SetPenColor__0(color Color)
 	SetPenColor__1(kind PenColorParam, value float64)
@@ -1441,12 +1441,12 @@ func (p *SpriteImpl) ChangeSize(delta float64) {
 }
 
 // -----------------------------------------------------------------------------
-func (p *SpriteImpl) SetEffect(kind EffectKind, val float64) {
-	p.baseObj.setEffect(kind, val)
+func (p *SpriteImpl) SetGraphicEffect(kind EffectKind, val float64) {
+	p.baseObj.setGraphicEffect(kind, val)
 }
 
-func (p *SpriteImpl) ChangeEffect(kind EffectKind, delta float64) {
-	p.baseObj.changeEffect(kind, delta)
+func (p *SpriteImpl) ChangeGraphicEffect(kind EffectKind, delta float64) {
+	p.baseObj.changeGraphicEffect(kind, delta)
 }
 
 func (p *SpriteImpl) ClearGraphicEffects() {

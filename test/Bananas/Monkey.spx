@@ -28,14 +28,14 @@ onKey KeyM, => {
 }
 
 onKey KeyF, => {
-	setEffect ColorEffect, 100
+	setGraphicEffectColorEffect, 100
 }
 onKey KeyH, => {
-	setEffect GhostEffect, 50
+	setGraphicEffectGhostEffect, 50
 }
 
 onKey KeyG, => {
-	setEffect BrightnessEffect, 50
+	setGraphicEffectBrightnessEffect, 50
 }
 
 onKey KeyJ, => {

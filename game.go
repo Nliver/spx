@@ -1468,12 +1468,12 @@ func (kind EffectKind) String() string {
 	return greffNames[kind]
 }
 
-func (p *Game) SetEffect(kind EffectKind, val float64) {
-	p.baseObj.setEffect(kind, val)
+func (p *Game) SetGraphicEffect(kind EffectKind, val float64) {
+	p.baseObj.setGraphicEffect(kind, val)
 }
 
-func (p *Game) ChangeEffect(kind EffectKind, delta float64) {
-	p.baseObj.changeEffect(kind, delta)
+func (p *Game) ChangeGraphicEffect(kind EffectKind, delta float64) {
+	p.baseObj.changeGraphicEffect(kind, delta)
 }
 
 func (p *Game) ClearGraphicEffects() {

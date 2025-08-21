@@ -113,7 +113,7 @@ func (sprite *SpriteImpl) syncCheckInitProxy() {
 		sprite.syncSprite.Name = sprite.name
 		sprite.syncSprite.SetTypeName(sprite.name)
 		sprite.syncSprite.SetVisible(sprite.isVisible)
-		sprite.applyEffects(true)
+		sprite.applyGraphicEffects(true)
 	}
 }
 
