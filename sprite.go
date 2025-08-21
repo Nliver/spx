@@ -176,12 +176,9 @@ type Sprite interface {
 	GetSoundEffect(kind SoundEffectKind) float64
 	SetSoundEffect(kind SoundEffectKind, value float64)
 	ChangeSoundEffect(kind SoundEffectKind, delta float64)
-	Play__0(media Sound, action *PlayOptions)
-	Play__1(media Sound, wait bool)
-	Play__2(media Sound)
-	Play__3(media SoundName)
-	Play__4(media SoundName, wait bool)
-	Play__5(media SoundName, action *PlayOptions)
+	Play__0(media SoundName, action *PlayOptions)
+	Play__1(media SoundName, wait bool)
+	Play__2(media SoundName)
 }
 
 type SpriteName = string
@@ -903,7 +900,7 @@ func doAnimation(p *SpriteImpl, info *animState) {
 		p.syncSprite.PlayAnim(animName, info.Speed, info.IsLoop, false)
 	})
 	if info.OnStart != nil && info.OnStart.Play != "" {
-		p.Play__3(info.OnStart.Play)
+		p.Play__2(info.OnStart.Play)
 	}
 	if info.AniType == aniTypeFrame {
 		p.isAnimating = true
@@ -1892,44 +1889,30 @@ const (
 //	Play(media, wait) -- sync
 //	Play(media, opts)
 
-func (p *SpriteImpl) Play__0(media Sound, action *PlayOptions) {
-	if debugInstr {
-		log.Println("Play", media.Path)
-	}
-
-	p.checkAudioId()
-	err := p.g.play(p.audioId, media, action)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func (p *SpriteImpl) Play__1(media Sound, wait bool) {
-	p.Play__0(media, &PlayOptions{Wait: wait})
-}
-
-func (p *SpriteImpl) Play__2(media Sound) {
-	if media == nil {
-		panic("play media is nil")
-	}
-	p.Play__0(media, &PlayOptions{})
-}
-
-func (p *SpriteImpl) Play__3(media SoundName) {
-	p.Play__5(media, &PlayOptions{})
-}
-
-func (p *SpriteImpl) Play__4(media SoundName, wait bool) {
-	p.Play__5(media, &PlayOptions{Wait: wait})
-}
-
-func (p *SpriteImpl) Play__5(media SoundName, action *PlayOptions) {
+func (p *SpriteImpl) Play__0(media SoundName, action *PlayOptions) {
 	m, err := p.g.loadSound(media)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	p.Play__0(m, action)
+
+	if debugInstr {
+		log.Println("Play", m.Path)
+	}
+
+	p.checkAudioId()
+	err = p.g.play(p.audioId, m, action)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (p *SpriteImpl) Play__1(media SoundName, wait bool) {
+	p.Play__0(media, &PlayOptions{Wait: wait})
+}
+
+func (p *SpriteImpl) Play__2(media SoundName) {
+	p.Play__0(media, &PlayOptions{})
 }
 
 func (p *SpriteImpl) Volume() float64 {

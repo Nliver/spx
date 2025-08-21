@@ -346,14 +346,6 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 	for i, n := 0, v.NumField(); i < n; i++ {
 		name, val := getFieldPtrOrAlloc(g, v, i)
 		switch fld := val.(type) {
-		case *Sound:
-			if g.canBindSound(name) {
-				media, err := g.loadSound(name)
-				if err != nil {
-					panic(err)
-				}
-				*fld = media
-			}
 		case Sprite:
 			if g.canBindSprite(name) {
 				if err := g.loadSprite(fld, name, v); err != nil {
@@ -610,7 +602,7 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 
 	p.audioId = p.sounds.allocAudio()
 	if proj.Bgm != "" {
-		p.Play__5(proj.Bgm, &PlayOptions{Action: PlayRewind, Loop: true, Wait: false, Music: true})
+		p.Play__0(proj.Bgm, &PlayOptions{Action: PlayRewind, Loop: true, Wait: false, Music: true})
 	}
 	// game load success
 	p.isLoaded = true
@@ -751,7 +743,7 @@ func (p *Game) addStageSprites(g reflect.Value, v specsp, inits []Sprite) []Spri
 			if isPtr {
 				typItem, typItemPtr = typItem.Elem(), typItem
 			} else {
-				typItemPtr = reflect.PtrTo(typItem)
+				typItemPtr = reflect.PointerTo(typItem)
 			}
 			if typItemPtr.Implements(tySprite) {
 				spr := p.getSpriteProto(typItem, g)
@@ -1505,7 +1497,7 @@ func (p *Game) ClearGraphicEffects() {
 
 // -----------------------------------------------------------------------------
 
-type Sound *soundConfig
+type sound *soundConfig
 
 type SoundName = string
 
@@ -1514,11 +1506,7 @@ func hasAsset(path string) bool {
 	return resMgr.HasFile(finalPath)
 }
 
-func (p *Game) canBindSound(name string) bool {
-	return hasAsset("sounds/" + name + "/index.json")
-}
-
-func (p *Game) loadSound(name SoundName) (media Sound, err error) {
+func (p *Game) loadSound(name SoundName) (media sound, err error) {
 	if media, ok := p.sounds.audios[name]; ok {
 		return media, nil
 	}
@@ -1538,7 +1526,7 @@ func (p *Game) loadSound(name SoundName) (media Sound, err error) {
 	return
 }
 
-func (p *Game) play(audioId engine.Object, media Sound, opts *PlayOptions) (err error) {
+func (p *Game) play(audioId engine.Object, media sound, opts *PlayOptions) (err error) {
 	return p.sounds.play(audioId, media, opts)
 }
 
@@ -1549,43 +1537,29 @@ func (p *Game) play(audioId engine.Object, media Sound, opts *PlayOptions) (err 
 //	Play(media, wait) -- sync
 //	Play(media, opts)
 
-func (p *Game) Play__0(media Sound, action *PlayOptions) {
-	if debugInstr {
-		log.Println("Play", media.Path)
-	}
-	p.checkAudioId()
-	err := p.play(p.audioId, media, action)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func (p *Game) Play__1(media Sound, wait bool) {
-	p.Play__0(media, &PlayOptions{Wait: wait})
-}
-
-func (p *Game) Play__2(media Sound) {
-	if media == nil {
-		panic("play media is nil")
-	}
-	p.Play__0(media, &PlayOptions{})
-}
-
-func (p *Game) Play__3(media SoundName) {
-	p.Play__5(media, &PlayOptions{})
-}
-
-func (p *Game) Play__4(media SoundName, wait bool) {
-	p.Play__5(media, &PlayOptions{Wait: wait})
-}
-
-func (p *Game) Play__5(media SoundName, action *PlayOptions) {
+func (p *Game) Play__0(media SoundName, action *PlayOptions) {
 	m, err := p.loadSound(media)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	p.Play__0(m, action)
+
+	if debugInstr {
+		log.Println("Play", m.Path)
+	}
+	p.checkAudioId()
+	err = p.play(p.audioId, m, action)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (p *Game) Play__1(media SoundName, wait bool) {
+	p.Play__0(media, &PlayOptions{Wait: wait})
+}
+
+func (p *Game) Play__2(media SoundName) {
+	p.Play__0(media, &PlayOptions{})
 }
 
 func (p *Game) SetVolume(volume float64) {

@@ -75,7 +75,6 @@ func init() {
 			"PlayAction":      reflect.TypeOf((*q.PlayAction)(nil)).Elem(),
 			"PlayOptions":     reflect.TypeOf((*q.PlayOptions)(nil)).Elem(),
 			"RotationStyle":   reflect.TypeOf((*q.RotationStyle)(nil)).Elem(),
-			"Sound":           reflect.TypeOf((*q.Sound)(nil)).Elem(),
 			"SoundEffectKind": reflect.TypeOf((*q.SoundEffectKind)(nil)).Elem(),
 			"SpriteImpl":      reflect.TypeOf((*q.SpriteImpl)(nil)).Elem(),
 			"StopKind":        reflect.TypeOf((*q.StopKind)(nil)).Elem(),
