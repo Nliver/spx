@@ -121,7 +121,6 @@ type Sprite interface {
 	OnTouchStart__5(sprites []SpriteName, onTouchStart func())
 	OnTurning__0(onTurning func(ti *TurningInfo))
 	OnTurning__1(onTurning func())
-	Parent() *Game
 	PenDown()
 	PenUp()
 	PrevCostume()
@@ -250,10 +249,6 @@ type SpriteImpl struct {
 
 func (p *SpriteImpl) setDying() { // dying: visible but can't be touched
 	p.isDying = true
-}
-
-func (p *SpriteImpl) Parent() *Game {
-	return p.g
 }
 
 func (p *SpriteImpl) getAllShapes() []Shape {

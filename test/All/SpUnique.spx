@@ -40,8 +40,6 @@ onMsg "testUnique", => {
         say "sprite is visible"
         assert(true, "Sprite should be visible")
     }
-    parent = Parent()
-    assert(parent != nil, "Parent should not be nil")
     if IsCloned() {
         say "this is a clone"
         assert(true, "Sprite should be a clone")
