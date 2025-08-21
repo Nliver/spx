@@ -776,10 +776,6 @@ func (p *Game) runLoop(cfg *Config) (err error) {
 	return nil
 }
 
-func (p *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return p.windowSize_()
-}
-
 type clicker interface {
 	threadObj
 	doWhenClick(this threadObj)
