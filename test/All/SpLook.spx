@@ -46,11 +46,11 @@ onMsg "testLook", => {
 	wait 0.2
 	
 	// 9. Sprite::ChangeGraphicEffect	
-	changeGraphicEffectGhostEffect, 50
+	changeGraphicEffect GhostEffect, 50
 	wait 0.2
 
 	// 10. Sprite::SetGraphicEffect	
-	setGraphicEffectGhostEffect, 50
+	setGraphicEffect GhostEffect, 50
 	wait 0.2
 
 	// 11. Sprite::ClearGraphicEffects	
