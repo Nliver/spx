@@ -209,7 +209,7 @@ Here are all the codes in [Arrow.spx](tutorial/03-Clone/Arrow.spx):
 
 ```coffee
 onClick => {
-	broadcast "undo", true
+	broadcastAndWait "undo"
 	gid--
 }
 ```

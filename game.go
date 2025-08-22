@@ -1583,13 +1583,16 @@ func (p *Game) doBroadcast(msg string, data any, wait bool) {
 func (p *Game) Broadcast__0(msg string) {
 	p.doBroadcast(msg, nil, false)
 }
-
-func (p *Game) Broadcast__1(msg string, wait bool) {
-	p.doBroadcast(msg, nil, wait)
+func (p *Game) Broadcast__1(msg string, data any) {
+	p.doBroadcast(msg, data, false)
 }
 
-func (p *Game) Broadcast__2(msg string, data any, wait bool) {
-	p.doBroadcast(msg, data, wait)
+func (p *Game) BroadcastAndWait__0(msg string) {
+	p.doBroadcast(msg, nil, true)
+}
+
+func (p *Game) BroadcastAndWait__1(msg string, data any) {
+	p.doBroadcast(msg, data, true)
 }
 
 // -----------------------------------------------------------------------------
