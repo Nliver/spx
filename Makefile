@@ -199,6 +199,10 @@ rune:
 run:
 	cd  $(path) && spx run -movie=$(movie) && cd $(CURRENT_PATH) 
 
+# Run demo on PC (runtime mode)
+clear:
+	cd  $(path) && spx clear && cd $(CURRENT_PATH) 
+
 # Run tests
 test: runtest
 runtest:
