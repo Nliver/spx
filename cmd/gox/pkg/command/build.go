@@ -129,18 +129,25 @@ func (pself *CmdTool) BuildDll() error {
 	envs := []string{"CGO_ENABLED=1"}
 	rawPath := filepath.Base(pself.LibPath)
 	rawDir := filepath.Dir(pself.LibPath)
+	pself.LibPath = ""
 	for _, arch := range archs {
 		println("build dll arch=", arch, tagStr)
 		strs := strings.Split(rawPath, "-")
 		posfix := strings.Split(strs[2], ".")
 		newPath := rawDir + "/" + strs[0] + "-" + strs[1] + "-" + arch + "." + posfix[len(posfix)-1]
-		pself.LibPath = newPath
+		if arch == runtime.GOARCH {
+			pself.LibPath = newPath
+		}
 		envs = append(envs, "GOARCH="+arch)
 		if tagStr == "" {
 			util.RunGolang(envs, "build", "-o", newPath, "-buildmode=c-shared")
 		} else {
 			util.RunGolang(envs, "build", tagStr, "-o", newPath, "-buildmode=c-shared")
 		}
+	}
+
+	if pself.LibPath == "" {
+		panic("Build error: can not find matched arch dylib " + runtime.GOARCH)
 	}
 	os.Chdir(rawdir)
 	return nil
