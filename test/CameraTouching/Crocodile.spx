@@ -5,9 +5,9 @@ onStart => {
 }
 
 onClick => {
-	animate "sink"
+	animateAndWait "sink"
 	wait 0.8
-	animate "surface"
+	animateAndWait "surface"
 }
 
 onClick => {

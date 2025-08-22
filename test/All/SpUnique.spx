@@ -51,7 +51,7 @@ onMsg "testUnique", => {
 
     // 7. Animation test
     say "test animation"
-    Animate("walk")
+    animateAndWait("walk")
     assert(true, "Animation should start")
     wait 0.1
 
