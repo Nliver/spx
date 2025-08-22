@@ -92,12 +92,11 @@ type Sprite interface {
 	Glide__2(sprite SpriteName, secs float64)
 	Glide__3(obj specialObj, secs float64)
 	Glide__4(pos Pos, secs float64)
-	GoBackLayers(n int)
+	SetLayer__0(layer layerAction)
+	SetLayer__1(dir dirAction, delta int)
 	Goto__0(sprite Sprite)
 	Goto__1(sprite SpriteName)
 	Goto__2(obj specialObj)
-	GotoBack()
-	GotoFront()
 	Heading() Direction
 	Hide()
 	HideVar(name string)
@@ -1576,16 +1575,22 @@ func (p *SpriteImpl) checkTouchingScreen(where int) (touching int) {
 
 // -----------------------------------------------------------------------------
 
-func (p *SpriteImpl) GoBackLayers(n int) {
-	p.g.goBackLayers(p, n)
-}
+func (p *SpriteImpl) SetLayer__0(layer layerAction) {
+	switch layer {
+	case Front:
+		p.g.gotoFront(p)
+	case Back:
+		p.g.gotoBack(p)
+	}
 
-func (p *SpriteImpl) GotoFront() {
-	p.g.gotoFront(p)
 }
-
-func (p *SpriteImpl) GotoBack() {
-	p.g.gotoBack(p)
+func (p *SpriteImpl) SetLayer__1(dir dirAction, delta int) {
+	switch dir {
+	case Forward:
+		p.g.goBackLayers(p, -delta)
+	case Backward:
+		p.g.goBackLayers(p, delta)
+	}
 }
 
 // -----------------------------------------------------------------------------

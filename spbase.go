@@ -49,6 +49,20 @@ const (
 	Next switchAction = 1
 )
 
+type layerAction int
+
+const (
+	Front layerAction = -1
+	Back  layerAction = 1
+)
+
+type dirAction int
+
+const (
+	Forward  dirAction = -1
+	Backward dirAction = 1
+)
+
 // -------------------------------------------------------------------------------------
 
 type costumeSetImage struct {

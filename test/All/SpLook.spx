@@ -67,16 +67,16 @@ onMsg "testLook", => {
 	say "Show", 0.5
 
 	// TODO tanjp check
-	// 14. Sprite::GotoBack	
-	gotoBack()
+	// 14. Sprite::SetLayer	Back
+	setLayer(Back)
 	wait 0.1
 	
-	// 15. Sprite::GotoFront 
-	gotoFront()
+	// 15.  Sprite::SetLayer Front
+	setLayer(Front)
 	wait 0.1
 	
 	// 16. Sprite::GoBackLayers	
-	goBackLayers(1)
+	setLayer( Backward,1)
 	wait 0.1
 	
 	// 17. Game::SetBackdrop	
