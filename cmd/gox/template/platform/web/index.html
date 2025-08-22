@@ -67,6 +67,9 @@
 	<button id="startNewGameBtn">StartNew</button>
 	<button id="startRecordingBtn">StartRecording</button>
 	<button id="stopRecordingBtn">StopRecording</button>
+	<button id="screenshotBtn">Screenshot</button>
+	<button id="pauseGameBtn">Pause</button>
+	<button id="resumeGameBtn">Resume</button>
 	<progress id="progress-bar" value="0" max="1" style="display: none;"></progress>
 	<div id="tabs">
 		<div id="tab-loader">
@@ -109,6 +112,9 @@
 		document.getElementById('stopGameBtn').addEventListener('click', stopGame);
 		document.getElementById('startRecordingBtn').addEventListener('click', startRecording);
 		document.getElementById('stopRecordingBtn').addEventListener('click', stopRecording);
+		document.getElementById('screenshotBtn').addEventListener('click', takeScreenshot);
+		document.getElementById('pauseGameBtn').addEventListener('click', pauseGame);
+		document.getElementById('resumeGameBtn').addEventListener('click', resumeGame);
 		runnerWindow = document.getElementById('runnerFrame').contentWindow;
 		function onProgress(value) {
 			document.getElementById('progress-bar').value = value;
@@ -138,6 +144,40 @@
 		async function stopRecording() {
 			await runnerWindow.stopRecording()
 			runnerWindow.downloadRecordedVideo()
+		}
+		async function pauseGame() {
+			if (runnerWindow.pauseGame) {
+				runnerWindow.pauseGame();
+			} else {
+				console.warn("Pause function not available");
+			}
+		}
+
+		async function resumeGame() {
+			if (runnerWindow.resumeGame) {
+				runnerWindow.resumeGame();
+			} else {
+				console.warn("Resume function not available");
+			}
+		}
+		async function takeScreenshot() {
+			try {
+				const blob = await runnerWindow.getScreenshot()
+				if (blob) {
+					const url = URL.createObjectURL(blob)
+					const a = document.createElement('a')
+					a.href = url
+					a.download = `screenshot-${Date.now()}.png`
+					document.body.appendChild(a)
+					a.click()
+					document.body.removeChild(a)
+					URL.revokeObjectURL(url)
+				} else {
+					console.error('Failed to get screenshot')
+				}
+			} catch (error) {
+				console.error('Error taking screenshot:', error)
+			}
 		}
 		const LOG_LEVEL_VERBOSE = 0
 		async function startProject(zipUrl) {

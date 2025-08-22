@@ -188,7 +188,19 @@ class GameApp {
             this.stopGameResolve()
         }
     }
+    pause() {
+        let funPtr = this.game.rtenv["_gdspx_ext_pause"]
+        if(funPtr != null){
+            funPtr()
+        }
+    }
 
+    resume() {
+        let funPtr = this.game.rtenv["_gdspx_ext_resume"]
+        if(funPtr != null){
+            funPtr()
+        }
+    }
     //------------------ misc ------------------
     onProgress(value) {
         if (this.config.onProgress != null) {
