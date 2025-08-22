@@ -62,6 +62,7 @@ type IExtMgr interface {
 	Pause()
 	Resume()
 	IsPaused() bool
+	NextFrame()
 	DestroyAllPens()
 	CreatePen() Object
 	DestroyPen(obj Object)

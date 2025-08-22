@@ -70,6 +70,7 @@
 	<button id="screenshotBtn">Screenshot</button>
 	<button id="pauseGameBtn">Pause</button>
 	<button id="resumeGameBtn">Resume</button>
+	<button id="stepNextFrameBtn">NextFrame</button>
 	<progress id="progress-bar" value="0" max="1" style="display: none;"></progress>
 	<div id="tabs">
 		<div id="tab-loader">
@@ -115,6 +116,8 @@
 		document.getElementById('screenshotBtn').addEventListener('click', takeScreenshot);
 		document.getElementById('pauseGameBtn').addEventListener('click', pauseGame);
 		document.getElementById('resumeGameBtn').addEventListener('click', resumeGame);
+		document.getElementById('stepNextFrameBtn').addEventListener('click', stepNextFrame);
+		
 		runnerWindow = document.getElementById('runnerFrame').contentWindow;
 		function onProgress(value) {
 			document.getElementById('progress-bar').value = value;
@@ -158,6 +161,14 @@
 				runnerWindow.resumeGame();
 			} else {
 				console.warn("Resume function not available");
+			}
+		}
+
+		async function stepNextFrame() {
+			if (runnerWindow.stepNextFrame) {
+				runnerWindow.stepNextFrame();
+			} else {
+				console.warn("StepNextFrame function not available");
 			}
 		}
 		async function takeScreenshot() {

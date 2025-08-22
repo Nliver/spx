@@ -164,6 +164,7 @@ func (pself *extMgrImpl) IsPaused() bool {
 	var _ret1 bool
 	return _ret1
 }
+func (pself *extMgrImpl) NextFrame()      {}
 func (pself *extMgrImpl) DestroyAllPens() {}
 func (pself *extMgrImpl) CreatePen() gdx.Object {
 	var _ret1 gdx.Object

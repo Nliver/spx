@@ -201,6 +201,13 @@ class GameApp {
             funPtr()
         }
     }
+
+    stepNextFrame() {
+        let funPtr = this.game.rtenv["_gdspx_ext_next_frame"]
+        if(funPtr != null){
+            funPtr()
+        }
+    }
     //------------------ misc ------------------
     onProgress(value) {
         if (this.config.onProgress != null) {
