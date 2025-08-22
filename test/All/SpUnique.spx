@@ -46,7 +46,7 @@ onMsg "testUnique", => {
     }
     costumeName = CostumeName()
     assert(costumeName != "", "Costume name should not be empty")
-    PrevCostume()
+    setCostume Prev
     wait 0.1
 
     // 7. Animation test

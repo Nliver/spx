@@ -15,11 +15,11 @@ onMsg "testLook", => {
 	think "Think", 0.5
 
 	// 3. Sprite::NextCostume	
-	nextCostume()
+	setCostume Next
 	wait 0.1
-	nextCostume()
+	setCostume Next
 	wait 0.1
-	nextCostume()
+	setCostume Next
 	wait 0.1
 
 	// 4. Sprite::CostumeIndex	
