@@ -79,19 +79,19 @@ onMsg "testLook", => {
 	goBackLayers(1)
 	wait 0.1
 	
-	// 17. Game::StartBackdrop	
-	startBackdrop("backdrop1")
+	// 17. Game::SetBackdrop	
+	setBackdrop("backdrop1")
 	wait 0.1
 
 	// 18. Game::BackdropIndex	
 	assertFloat(float64(backdropIndex()), 0, "Game::BackdropIndex")
 	wait 0.1
 
-	// 19. Game::NextBackdrop	
-	nextBackdrop()
+	// 19. Game::SetBackdrop Next	
+	SetBackdrop(Next)
 	wait 0.1
 	assertFloat(float64(backdropIndex()), 1, "Game::BackdropIndex")
-	startBackdrop("backdrop1")
+	setBackdrop("backdrop1")
 	wait 0.1
 	assertFloat(float64(backdropIndex()), 0, "Game::BackdropIndex")
 	wait 0.1
