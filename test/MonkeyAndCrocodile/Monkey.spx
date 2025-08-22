@@ -20,12 +20,12 @@ onKey KeyH, => {
 }
 
 onKey KeyUp, => {
-	prevCostume
+	setCostume Prev
 	say costumeIndex
 }
 
 onKey KeyDown, => {
-	nextCostume
+	setCostume Next
 	say costumeIndex
 }
 

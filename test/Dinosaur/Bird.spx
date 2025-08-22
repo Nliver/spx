@@ -1,4 +1,4 @@
 onClick => {
-	nextCostume
+	setCostume Next
 	say costumeIndex
 }

@@ -105,7 +105,6 @@ type Sprite interface {
 	Move__0(step float64)
 	Move__1(step int)
 	Name() string
-	NextCostume()
 	OnCloned__0(onCloned func(data any))
 	OnCloned__1(onCloned func())
 	OnMoving__0(onMoving func(mi *MovingInfo))
@@ -118,7 +117,6 @@ type Sprite interface {
 	OnTurning__1(onTurning func())
 	PenDown()
 	PenUp()
-	PrevCostume()
 	Quote__0(message string)
 	Quote__1(message string, secs float64)
 	Quote__2(message, description string)
@@ -757,22 +755,6 @@ func (p *SpriteImpl) SetCostume__2(index int) {
 
 func (p *SpriteImpl) SetCostume__3(action switchAction) {
 	p.setCostume(action)
-}
-
-func (p *SpriteImpl) NextCostume() {
-	if debugInstr {
-		log.Println("NextCostume", p.name)
-	}
-	p.goNextCostume()
-	p.defaultCostumeIndex = p.costumeIndex_
-}
-
-func (p *SpriteImpl) PrevCostume() {
-	if debugInstr {
-		log.Println("PrevCostume", p.name)
-	}
-	p.goPrevCostume()
-	p.defaultCostumeIndex = p.costumeIndex_
 }
 
 // -----------------------------------------------------------------------------

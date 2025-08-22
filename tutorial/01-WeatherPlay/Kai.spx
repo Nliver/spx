@@ -20,6 +20,6 @@ onMsg "4", => {
 onMsg "6", => {
 	play "recordingBye2"
 	say "Thanks. Bye!", 2
-	nextCostume
+	setCostume Next
 	broadcast "7"
 }
