@@ -96,6 +96,9 @@ void cgo_callfn_GDExtensionSpxExtResume(const GDExtensionSpxExtResume fn) {
 void cgo_callfn_GDExtensionSpxExtIsPaused(const GDExtensionSpxExtIsPaused fn, GdBool* ret_val) {
 	fn(ret_val);
 }
+void cgo_callfn_GDExtensionSpxExtNextFrame(const GDExtensionSpxExtNextFrame fn) {
+	fn();
+}
 void cgo_callfn_GDExtensionSpxExtDestroyAllPens(const GDExtensionSpxExtDestroyAllPens fn) {
 	fn();
 }

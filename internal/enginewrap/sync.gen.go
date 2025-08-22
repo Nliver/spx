@@ -264,6 +264,11 @@ func (pself *extMgrImpl) IsPaused() bool {
 	})
 	return _ret1
 }
+func (pself *extMgrImpl) NextFrame() {
+	callInMainThread(func() {
+		gdx.ExtMgr.NextFrame()
+	})
+}
 func (pself *extMgrImpl) DestroyAllPens() {
 	callInMainThread(func() {
 		gdx.ExtMgr.DestroyAllPens()

@@ -101,6 +101,7 @@ type GDExtensionSpxExtOnRuntimePanic C.GDExtensionSpxExtOnRuntimePanic
 type GDExtensionSpxExtPause C.GDExtensionSpxExtPause
 type GDExtensionSpxExtResume C.GDExtensionSpxExtResume
 type GDExtensionSpxExtIsPaused C.GDExtensionSpxExtIsPaused
+type GDExtensionSpxExtNextFrame C.GDExtensionSpxExtNextFrame
 type GDExtensionSpxExtDestroyAllPens C.GDExtensionSpxExtDestroyAllPens
 type GDExtensionSpxExtCreatePen C.GDExtensionSpxExtCreatePen
 type GDExtensionSpxExtDestroyPen C.GDExtensionSpxExtDestroyPen
@@ -549,6 +550,11 @@ func CallExtIsPaused() GdBool {
 	var ret_val C.GdBool
 	C.cgo_callfn_GDExtensionSpxExtIsPaused(arg0, &ret_val)
 	return (GdBool)(ret_val)
+}
+func CallExtNextFrame() {
+	arg0 := (C.GDExtensionSpxExtNextFrame)(api.SpxExtNextFrame)
+
+	C.cgo_callfn_GDExtensionSpxExtNextFrame(arg0)
 }
 func CallExtDestroyAllPens() {
 	arg0 := (C.GDExtensionSpxExtDestroyAllPens)(api.SpxExtDestroyAllPens)
