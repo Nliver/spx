@@ -565,7 +565,7 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 	for _, ini := range inits {
 		spr := spriteOf(ini)
 		if spr != nil {
-			spr.OnStart(func() {
+			spr.onAwake(func() {
 				spr.awake()
 			})
 		}
@@ -876,6 +876,7 @@ func (p *Game) handleEvent(event event) {
 	case *eventKeyDown:
 		p.sinkMgr.doWhenKeyPressed(ev.Key)
 	case *eventStart:
+		p.sinkMgr.doWhenAwake()
 		p.sinkMgr.doWhenStart()
 	case *eventTimer:
 		p.sinkMgr.doWhenTimer(ev.Time)
