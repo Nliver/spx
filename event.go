@@ -93,6 +93,7 @@ func (p *eventSink) call(wait bool, data any, doSth func(*eventSink)) {
 
 type eventSinkMgr struct {
 	allWhenStart           *eventSink
+	allWhenAwake           *eventSink
 	allWhenKeyPressed      *eventSink
 	allWhenSwipe           *eventSink
 	allWhenIReceive        *eventSink
@@ -110,6 +111,7 @@ type eventSinkMgr struct {
 
 func (p *eventSinkMgr) reset() {
 	p.allWhenStart = nil
+	p.allWhenAwake = nil
 	p.allWhenKeyPressed = nil
 	p.allWhenSwipe = nil
 	p.allWhenIReceive = nil
@@ -127,6 +129,7 @@ func (p *eventSinkMgr) reset() {
 
 func (p *eventSinkMgr) doDeleteClone(this any) {
 	p.allWhenStart = p.allWhenStart.doDeleteClone(this)
+	p.allWhenAwake = p.allWhenAwake.doDeleteClone(this)
 	p.allWhenKeyPressed = p.allWhenKeyPressed.doDeleteClone(this)
 	p.allWhenSwipe = p.allWhenSwipe.doDeleteClone(this)
 	p.allWhenIReceive = p.allWhenIReceive.doDeleteClone(this)
@@ -151,6 +154,15 @@ func (p *eventSinkMgr) doWhenStart() {
 			ev.sink.(func())()
 		})
 	}
+}
+
+func (p *eventSinkMgr) doWhenAwake() {
+	p.allWhenAwake.syncCall(nil, func(ev *eventSink) {
+		if debugEvent {
+			log.Println("==> onAwake", nameOf(ev.pthis))
+		}
+		ev.sink.(func())()
+	})
 }
 
 func (p *eventSinkMgr) doWhenTimer(time float64) {
@@ -300,6 +312,14 @@ func (p *eventSinks) OnStart(onStart func()) {
 		prev:  p.allWhenStart,
 		pthis: p.pthis,
 		sink:  onStart,
+	}
+}
+
+func (p *eventSinks) onAwake(onAwake func()) {
+	p.allWhenAwake = &eventSink{
+		prev:  p.allWhenAwake,
+		pthis: p.pthis,
+		sink:  onAwake,
 	}
 }
 
