@@ -139,7 +139,6 @@ func (p *Game) syncUpdateProxy() {
 	for _, item := range items {
 		sprite, ok := item.(*SpriteImpl)
 		if ok {
-			sprite.syncCheckInitProxy()
 			if sprite.HasDestroyed {
 				continue
 			}
