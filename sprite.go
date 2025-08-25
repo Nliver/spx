@@ -157,11 +157,20 @@ type Sprite interface {
 	Touching__2(obj specialObj) bool
 	TouchingColor(color Color) bool
 	Turn__0(dir Direction)
-	Turn__1(ti *TurningInfo)
-	TurnTo__0(sprite Sprite)
-	TurnTo__1(sprite SpriteName)
+	Turn__1(dir Direction, speed float64)
+	Turn__2(dir Direction, speed float64, animation SpriteAnimationName)
+	TurnTo__0(target Sprite)
+	TurnTo__1(target SpriteName)
 	TurnTo__2(dir Direction)
-	TurnTo__3(obj specialObj)
+	TurnTo__3(target specialObj)
+	TurnTo__4(target Sprite, speed float64)
+	TurnTo__5(target SpriteName, speed float64)
+	TurnTo__6(dir Direction, speed float64)
+	TurnTo__7(target specialObj, speed float64)
+	TurnTo__8(target Sprite, speed float64, animation SpriteAnimationName)
+	TurnTo__9(target SpriteName, speed float64, animation SpriteAnimationName)
+	TurnTo__10(dir Direction, speed float64, animation SpriteAnimationName)
+	TurnTo__11(target specialObj, speed float64, animation SpriteAnimationName)
 	Visible() bool
 	Xpos() float64
 	Ypos() float64
@@ -1227,7 +1236,7 @@ func (p *SpriteImpl) doStepTo(obj any, speed float64, animation SpriteAnimationN
 		p.SetXYpos(x, y)
 	} else {
 		distance := p.distanceTo(obj)
-		p.turnTo(obj)
+		p.doTurnTo(obj, 1, "")
 		p.doStep(distance, speed, animation)
 	}
 }
@@ -1341,57 +1350,77 @@ func (p *SpriteImpl) Name() string {
 	return p.name
 }
 
-// Turn func:
-//
-//	Turn(degree)
-//	Turn(spx.Left)
-//	Turn(spx.Right)
-//	Turn(ti *spx.TurningInfo)
-func (p *SpriteImpl) turn(val any) {
-	var delta float64
-	switch v := val.(type) {
-	case Direction:
-		delta = v
-	case *TurningInfo:
-		p.doTurnTogether(v) // don't animate
-		return
-	default:
-		panic("Turn: unexpected input")
+func (p *SpriteImpl) Turn__0(dir Direction) {
+	p.doTurn(dir, 1, "")
+
+}
+func (p *SpriteImpl) Turn__1(dir Direction, speed float64) {
+	p.doTurn(dir, speed, "")
+
+}
+func (p *SpriteImpl) Turn__2(dir Direction, speed float64, animation SpriteAnimationName) {
+	p.doTurn(dir, speed, animation)
+}
+func (p *SpriteImpl) TurnTo__0(target Sprite) {
+	p.doTurnTo(target, 1, "")
+}
+func (p *SpriteImpl) TurnTo__1(target SpriteName) {
+	p.doTurnTo(target, 1, "")
+}
+func (p *SpriteImpl) TurnTo__2(dir Direction) {
+	p.doTurnTo(dir, 1, "")
+}
+func (p *SpriteImpl) TurnTo__3(target specialObj) {
+	p.doTurnTo(target, 1, "")
+}
+func (p *SpriteImpl) TurnTo__4(target Sprite, speed float64) {
+	p.doTurnTo(target, speed, "")
+}
+func (p *SpriteImpl) TurnTo__5(target SpriteName, speed float64) {
+	p.doTurnTo(target, speed, "")
+}
+func (p *SpriteImpl) TurnTo__6(dir Direction, speed float64) {
+	p.doTurnTo(dir, speed, "")
+}
+func (p *SpriteImpl) TurnTo__7(target specialObj, speed float64) {
+	p.doTurnTo(target, speed, "")
+}
+func (p *SpriteImpl) TurnTo__8(target Sprite, speed float64, animation SpriteAnimationName) {
+	p.doTurnTo(target, speed, animation)
+}
+func (p *SpriteImpl) TurnTo__9(target SpriteName, speed float64, animation SpriteAnimationName) {
+	p.doTurnTo(target, speed, animation)
+}
+func (p *SpriteImpl) TurnTo__10(dir Direction, speed float64, animation SpriteAnimationName) {
+	p.doTurnTo(dir, speed, animation)
+}
+func (p *SpriteImpl) TurnTo__11(target specialObj, speed float64, animation SpriteAnimationName) {
+	p.doTurnTo(target, speed, animation)
+}
+
+func (p *SpriteImpl) doTurn(val Direction, speed float64, animation SpriteAnimationName) {
+	delta := val
+	if animation == "" {
+		animation = p.getStateAnimName(StateTurn)
 	}
-	animName := p.getStateAnimName(StateTurn)
-	if ani, ok := p.animations[animName]; ok {
+	if ani, ok := p.animations[animation]; ok {
 		anicopy := *ani
 		anicopy.From = p.direction
 		anicopy.To = p.direction + delta
-		anicopy.Duration = ani.TurnToDuration / 360.0 * math.Abs(delta)
+		anicopy.Duration = ani.TurnToDuration / 360.0 * math.Abs(delta) / speed
 		anicopy.AniType = aniTypeTurn
 		anicopy.IsLoop = true
-		p.goAnimate(animName, &anicopy)
+		anicopy.Speed = speed
+		p.goAnimate(animation, &anicopy)
 		return
 	}
-	if p.setDirection(delta, true) && debugInstr {
+	p.setDirection(delta, true)
+	if debugInstr {
 		log.Println("Turn", p.name, val)
 	}
 }
 
-func (p *SpriteImpl) Turn__0(dir Direction) {
-	p.turn(dir)
-}
-
-func (p *SpriteImpl) Turn__1(ti *TurningInfo) {
-	p.turn(ti)
-}
-
-// TurnTo func:
-//
-//	TurnTo(sprite)
-//	TurnTo(spx.Mouse)
-//	TurnTo(degree)
-//	TurnTo(spx.Left)
-//	TurnTo(spx.Right)
-//	TurnTo(spx.Up)
-//	TurnTo(spx.Down)
-func (p *SpriteImpl) turnTo(obj any) {
+func (p *SpriteImpl) doTurnTo(obj any, speed float64, animation SpriteAnimationName) {
 	var angle float64
 	switch v := obj.(type) {
 	case Direction:
@@ -1403,8 +1432,10 @@ func (p *SpriteImpl) turnTo(obj any) {
 		angle = 90 - math.Atan2(dy, dx)*180/math.Pi
 	}
 
-	animName := p.getStateAnimName(StateTurn)
-	if ani, ok := p.animations[animName]; ok {
+	if animation == "" {
+		animation = p.getStateAnimName(StateTurn)
+	}
+	if ani, ok := p.animations[animation]; ok {
 		fromangle := math.Mod(p.direction+360.0, 360.0)
 		toangle := math.Mod(angle+360.0, 360.0)
 		if toangle-fromangle > 180.0 {
@@ -1417,31 +1448,16 @@ func (p *SpriteImpl) turnTo(obj any) {
 		anicopy := *ani
 		anicopy.From = fromangle
 		anicopy.To = toangle
-		anicopy.Duration = ani.TurnToDuration / 360.0 * math.Abs(delta)
+		anicopy.Duration = ani.TurnToDuration / 360.0 * math.Abs(delta) / speed
 		anicopy.AniType = aniTypeTurn
 		anicopy.IsLoop = true
-		p.goAnimate(animName, &anicopy)
+		anicopy.Speed = speed
+		p.goAnimate(animation, &anicopy)
 		return
 	}
 	if p.setDirection(angle, false) && debugInstr {
 		log.Println("TurnTo", p.name, obj)
 	}
-}
-
-func (p *SpriteImpl) TurnTo__0(sprite Sprite) {
-	p.turnTo(sprite)
-}
-
-func (p *SpriteImpl) TurnTo__1(sprite SpriteName) {
-	p.turnTo(sprite)
-}
-
-func (p *SpriteImpl) TurnTo__2(dir Direction) {
-	p.turnTo(dir)
-}
-
-func (p *SpriteImpl) TurnTo__3(obj specialObj) {
-	p.turnTo(obj)
 }
 func (p *SpriteImpl) SetHeading(dir Direction) {
 	p.setDirection(dir, false)
