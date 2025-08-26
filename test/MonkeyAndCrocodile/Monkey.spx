@@ -61,10 +61,3 @@ onKey KeyF, => {
 	step 100, 1 , "animstep"
 	println distanceTo("Crocodile")
 }
-
-onMoving mi => {
-}
-
-onTurning ti => {
-	Crocodile.SetHeading ti.NewDir
-}

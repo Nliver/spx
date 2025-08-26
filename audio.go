@@ -20,16 +20,6 @@ import (
 	"github.com/goplus/spx/v2/internal/engine"
 )
 
-type PlayAction int
-
-const (
-	PlayRewind PlayAction = iota
-	PlayContinue
-	PlayPause
-	PlayResume
-	PlayStop
-)
-
 type soundMgr struct {
 	g        *Game
 	audios   map[string]sound
