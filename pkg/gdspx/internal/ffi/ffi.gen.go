@@ -46,6 +46,7 @@ type GDExtensionInterface struct {
 	SpxExtPause                              GDExtensionSpxExtPause
 	SpxExtResume                             GDExtensionSpxExtResume
 	SpxExtIsPaused                           GDExtensionSpxExtIsPaused
+	SpxExtNextFrame                          GDExtensionSpxExtNextFrame
 	SpxExtDestroyAllPens                     GDExtensionSpxExtDestroyAllPens
 	SpxExtCreatePen                          GDExtensionSpxExtCreatePen
 	SpxExtDestroyPen                         GDExtensionSpxExtDestroyPen
@@ -280,6 +281,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtPause = (GDExtensionSpxExtPause)(dlsymGD("spx_ext_pause"))
 	x.SpxExtResume = (GDExtensionSpxExtResume)(dlsymGD("spx_ext_resume"))
 	x.SpxExtIsPaused = (GDExtensionSpxExtIsPaused)(dlsymGD("spx_ext_is_paused"))
+	x.SpxExtNextFrame = (GDExtensionSpxExtNextFrame)(dlsymGD("spx_ext_next_frame"))
 	x.SpxExtDestroyAllPens = (GDExtensionSpxExtDestroyAllPens)(dlsymGD("spx_ext_destroy_all_pens"))
 	x.SpxExtCreatePen = (GDExtensionSpxExtCreatePen)(dlsymGD("spx_ext_create_pen"))
 	x.SpxExtDestroyPen = (GDExtensionSpxExtDestroyPen)(dlsymGD("spx_ext_destroy_pen"))

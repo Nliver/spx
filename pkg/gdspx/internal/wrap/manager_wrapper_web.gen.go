@@ -229,6 +229,9 @@ func (pself *extMgr) IsPaused() bool {
 	_retValue := API.SpxExtIsPaused.Invoke()
 	return JsToGdBool(_retValue)
 }
+func (pself *extMgr) NextFrame() {
+	API.SpxExtNextFrame.Invoke()
+}
 func (pself *extMgr) DestroyAllPens() {
 	API.SpxExtDestroyAllPens.Invoke()
 }
