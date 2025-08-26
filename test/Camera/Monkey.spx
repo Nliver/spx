@@ -1,5 +1,5 @@
 onClick => {
-	animate "clap"
+	animateAndWait "clap"
 }
 
 onStart => {

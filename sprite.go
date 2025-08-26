@@ -66,6 +66,8 @@ type Sprite interface {
 	Shape
 	Main()
 	Animate(name SpriteAnimationName)
+	AnimateAndWait(name SpriteAnimationName)
+	StopAnimation()
 	Ask(msg any)
 	BounceOffEdge()
 	ChangeGraphicEffect(kind EffectKind, delta float64)
@@ -932,9 +934,38 @@ func (p *SpriteImpl) Animate(name SpriteAnimationName) {
 		log.Println("==> Animation", name)
 	}
 	if ani, ok := p.animations[name]; ok {
-		p.goAnimate(name, ani)
+		p.goAnimateInternal(name, ani, false)
 	} else {
 		log.Println("Animation not found:", name)
+	}
+}
+
+func (p *SpriteImpl) AnimateAndWait(name SpriteAnimationName) {
+	if debugInstr {
+		log.Println("==> AnimateAndWait", name)
+	}
+	if ani, ok := p.animations[name]; ok {
+		p.goAnimateInternal(name, ani, true)
+	} else {
+		log.Println("Animation not found:", name)
+	}
+}
+
+func (p *SpriteImpl) StopAnimation() {
+	for p.syncSprite == nil {
+		engine.WaitNextFrame()
+	}
+	p.syncSprite.PauseAnim()
+	defaultAnim := p.defaultAnimation
+	// if no default animation, set costume to default
+	if defaultAnim == "" {
+		p.setCostume(p.defaultCostumeIndex)
+		return
+	}
+
+	// play default animation async
+	if ani, ok := p.animations[defaultAnim]; ok {
+		p.goAnimateInternal(defaultAnim, ani, false)
 	}
 }
 

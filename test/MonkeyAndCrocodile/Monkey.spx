@@ -3,11 +3,11 @@ var (
 )
 
 onClick => {
-	animate "clap"
+	animateAndWait "clap"
 }
 
 onKey KeySpace, => {
-	animate "think"
+	animateAndWait "think"
 }
 
 onKey KeyH, => {
