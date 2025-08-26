@@ -65,7 +65,8 @@ type Sprite interface {
 	IEventSinks
 	Shape
 	Main()
-	Animate(name SpriteAnimationName)
+	Animate__0(name SpriteAnimationName)
+	Animate__1(name SpriteAnimationName, loop bool)
 	AnimateAndWait(name SpriteAnimationName)
 	StopAnimation()
 	Ask(msg any)
@@ -876,7 +877,11 @@ func doAnimation(p *SpriteImpl, info *animState) {
 	}
 }
 
-func (p *SpriteImpl) Animate(name SpriteAnimationName) {
+func (p *SpriteImpl) Animate__0(name SpriteAnimationName) {
+	p.Animate__1(name, false)
+}
+
+func (p *SpriteImpl) Animate__1(name SpriteAnimationName, loop bool) {
 	if debugInstr {
 		log.Println("==> Animation", name)
 	}
