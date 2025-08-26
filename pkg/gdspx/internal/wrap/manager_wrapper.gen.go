@@ -238,6 +238,9 @@ func (pself *extMgr) IsPaused() bool {
 	retValue := CallExtIsPaused()
 	return ToBool(retValue)
 }
+func (pself *extMgr) NextFrame() {
+	CallExtNextFrame()
+}
 func (pself *extMgr) DestroyAllPens() {
 	CallExtDestroyAllPens()
 }
