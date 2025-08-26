@@ -853,7 +853,7 @@ func (p *Game) handleEvent(event event) {
 	case *eventKeyDown:
 		p.sinkMgr.doWhenKeyPressed(ev.Key)
 	case *eventStart:
-		p.sinkMgr.doWhenAwake()
+		p.sinkMgr.doWhenAwake(nil)
 		p.sinkMgr.doWhenStart()
 	case *eventTimer:
 		p.sinkMgr.doWhenTimer(ev.Time)

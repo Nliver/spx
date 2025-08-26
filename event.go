@@ -156,8 +156,8 @@ func (p *eventSinkMgr) doWhenStart() {
 	}
 }
 
-func (p *eventSinkMgr) doWhenAwake() {
-	p.allWhenAwake.syncCall(nil, func(ev *eventSink) {
+func (p *eventSinkMgr) doWhenAwake(this threadObj) {
+	p.allWhenAwake.syncCall(this, func(ev *eventSink) {
 		if debugEvent {
 			log.Println("==> onAwake", nameOf(ev.pthis))
 		}
@@ -316,10 +316,14 @@ func (p *eventSinks) OnStart(onStart func()) {
 }
 
 func (p *eventSinks) onAwake(onAwake func()) {
+	pthis := p.pthis
 	p.allWhenAwake = &eventSink{
 		prev:  p.allWhenAwake,
 		pthis: p.pthis,
 		sink:  onAwake,
+		cond: func(data any) bool {
+			return data == nil || data == pthis
+		},
 	}
 }
 
