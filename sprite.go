@@ -103,14 +103,10 @@ type Sprite interface {
 	Name() string
 	OnCloned__0(onCloned func(data any))
 	OnCloned__1(onCloned func())
-	OnMoving__0(onMoving func(mi *MovingInfo))
-	OnMoving__1(onMoving func())
 	OnTouchStart__0(sprite SpriteName, onTouchStart func(Sprite))
 	OnTouchStart__1(sprite SpriteName, onTouchStart func())
 	OnTouchStart__2(sprites []SpriteName, onTouchStart func(Sprite))
 	OnTouchStart__3(sprites []SpriteName, onTouchStart func())
-	OnTurning__0(onTurning func(ti *TurningInfo))
-	OnTurning__1(onTurning func())
 	PenDown()
 	PenUp()
 	Quote__0(message string)
@@ -226,8 +222,6 @@ type SpriteImpl struct {
 	isPenDown bool
 	isDying   bool
 
-	hasOnTurning    bool
-	hasOnMoving     bool
 	hasOnCloned     bool
 	hasOnTouchStart bool
 	hasOnTouching   bool
@@ -385,8 +379,6 @@ func (p *SpriteImpl) InitFrom(src *SpriteImpl) {
 	p.isPenDown = src.isPenDown
 	p.isDying = false
 
-	p.hasOnTurning = false
-	p.hasOnMoving = false
 	p.hasOnCloned = false
 	p.hasOnTouchStart = false
 	p.hasOnTouching = false
@@ -609,69 +601,6 @@ func (p *SpriteImpl) OnTouchStart__3(sprites []SpriteName, onTouchStart func()) 
 	}
 	p.OnTouchStart__2(sprites, func(Sprite) {
 		onTouchStart()
-	})
-}
-
-type MovingInfo struct {
-	OldX, OldY float64
-	NewX, NewY float64
-	Obj        *SpriteImpl
-}
-
-func (p *MovingInfo) StopMoving() {
-}
-
-func (p *MovingInfo) Dx() float64 {
-	return p.NewX - p.OldX
-}
-
-func (p *MovingInfo) Dy() float64 {
-	return p.NewY - p.OldY
-}
-
-func (p *SpriteImpl) OnMoving__0(onMoving func(mi *MovingInfo)) {
-	p.hasOnMoving = true
-	p.allWhenMoving = &eventSink{
-		prev:  p.allWhenMoving,
-		pthis: p,
-		sink:  onMoving,
-		cond: func(data any) bool {
-			return data == p
-		},
-	}
-}
-
-func (p *SpriteImpl) OnMoving__1(onMoving func()) {
-	p.OnMoving__0(func(mi *MovingInfo) {
-		onMoving()
-	})
-}
-
-type TurningInfo struct {
-	OldDir Direction
-	NewDir Direction
-	Obj    *SpriteImpl
-}
-
-func (p *TurningInfo) Dir() float64 {
-	return p.NewDir - p.OldDir
-}
-
-func (p *SpriteImpl) OnTurning__0(onTurning func(ti *TurningInfo)) {
-	p.hasOnTurning = true
-	p.allWhenTurning = &eventSink{
-		prev:  p.allWhenTurning,
-		pthis: p,
-		sink:  onTurning,
-		cond: func(data any) bool {
-			return data == p
-		},
-	}
-}
-
-func (p *SpriteImpl) OnTurning__1(onTurning func()) {
-	p.OnTurning__0(func(*TurningInfo) {
-		onTurning()
 	})
 }
 
@@ -1102,10 +1031,6 @@ func (p *SpriteImpl) doMoveTo(x, y float64) {
 
 func (p *SpriteImpl) doMoveToForAnim(x, y float64) {
 	x, y = p.fixWorldRange(x, y)
-	if p.hasOnMoving {
-		mi := &MovingInfo{OldX: p.x, OldY: p.y, NewX: x, NewY: y, Obj: p}
-		p.doWhenMoving(p, mi)
-	}
 	if p.isPenDown {
 		p.movePen(x, y)
 	}
@@ -1475,24 +1400,9 @@ func (p *SpriteImpl) setDirection(dir float64, change bool) bool {
 	if p.direction == dir {
 		return false
 	}
-	if p.hasOnTurning {
-		p.doWhenTurning(p, &TurningInfo{NewDir: dir, OldDir: p.direction, Obj: p})
-	}
 	p.direction = dir
 	p.updateTransform()
 	return true
-}
-
-func (p *SpriteImpl) doTurnTogether(ti *TurningInfo) {
-	/*
-	 x’ = x0 + cos * (x-x0) + sin * (y-y0)
-	 y’ = y0 - sin * (x-x0) + cos * (y-y0)
-	*/
-	x0, y0 := ti.Obj.x, ti.Obj.y
-	dir := ti.Dir()
-	sin, cos := math.Sincos(dir * (math.Pi / 180))
-	p.x, p.y = x0+cos*(p.x-x0)+sin*(p.y-y0), y0-sin*(p.x-x0)+cos*(p.y-y0)
-	p.direction = normalizeDirection(p.direction + dir)
 }
 
 // -----------------------------------------------------------------------------

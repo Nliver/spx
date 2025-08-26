@@ -103,8 +103,6 @@ type eventSinkMgr struct {
 	allWhenTouching        *eventSink
 	allWhenTouchEnd        *eventSink
 	allWhenClick           *eventSink
-	allWhenMoving          *eventSink
-	allWhenTurning         *eventSink
 	allWhenTimer           *eventSink
 	calledStart            bool
 }
@@ -121,8 +119,6 @@ func (p *eventSinkMgr) reset() {
 	p.allWhenTouching = nil
 	p.allWhenTouchEnd = nil
 	p.allWhenClick = nil
-	p.allWhenMoving = nil
-	p.allWhenTurning = nil
 	p.allWhenTimer = nil
 	p.calledStart = false
 }
@@ -139,8 +135,6 @@ func (p *eventSinkMgr) doDeleteClone(this any) {
 	p.allWhenTouching = p.allWhenTouching.doDeleteClone(this)
 	p.allWhenTouchEnd = p.allWhenTouchEnd.doDeleteClone(this)
 	p.allWhenClick = p.allWhenClick.doDeleteClone(this)
-	p.allWhenMoving = p.allWhenMoving.doDeleteClone(this)
-	p.allWhenTurning = p.allWhenTurning.doDeleteClone(this)
 	p.allWhenTimer = p.allWhenTimer.doDeleteClone(this)
 }
 
@@ -227,18 +221,6 @@ func (p *eventSinkMgr) doWhenCloned(this threadObj, data any) {
 			log.Println("==> onCloned", nameOf(this))
 		}
 		ev.sink.(func(any))(data)
-	})
-}
-
-func (p *eventSinkMgr) doWhenMoving(this threadObj, mi *MovingInfo) {
-	p.allWhenMoving.asyncCall(true, this, func(ev *eventSink) {
-		ev.sink.(func(*MovingInfo))(mi)
-	})
-}
-
-func (p *eventSinkMgr) doWhenTurning(this threadObj, mi *TurningInfo) {
-	p.allWhenTurning.asyncCall(true, this, func(ev *eventSink) {
-		ev.sink.(func(*TurningInfo))(mi)
 	})
 }
 
