@@ -471,6 +471,7 @@ func cloneSprite(out reflect.Value, outPtr Sprite, in reflect.Value, v specsp) *
 	dest.syncSprite = nil
 	engine.WaitMainThread(func() {
 		dest.syncCheckInitProxy()
+		syncCheckUpdateCostume(&dest.baseObj)
 	})
 	return dest
 }
