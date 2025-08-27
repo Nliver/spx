@@ -197,7 +197,7 @@ func main() {
 	xgobuild.RegisterProject(&modfile.Project{
 		Ext:      ".spx",
 		Class:    "Game",
-		Works:    []*modfile.Class{{Ext: ".spx", Class: "SpriteImpl"}},
+		Works:    []*modfile.Class{{Ext: ".spx", Class: "SpriteImpl", Embedded: true}},
 		PkgPaths: []string{"github.com/goplus/spx/v2", "math"},
 		Import:   []*modfile.Import{{Name: "ai", Path: "github.com/goplus/builder/tools/ai"}},
 	})
