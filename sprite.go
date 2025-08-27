@@ -820,8 +820,6 @@ func (p *SpriteImpl) doTween(name SpriteAnimationName, ani *aniConfig) {
 	p.doAnimation(animName, ani, ani.IsLoop, ani.Speed, false)
 	duration := ani.Duration
 	timer := 0.0
-	predirection := p.direction
-	dirSin, dirCos := math.Sincos(toRadian(predirection))
 	prePercent := 0.0
 	for timer < duration {
 		if info.IsCanceled {
@@ -833,11 +831,11 @@ func (p *SpriteImpl) doTween(name SpriteAnimationName, ani *aniConfig) {
 		prePercent = percent
 		switch ani.AniType {
 		case aniTypeMove:
-			src, _ := tools.GetFloat(ani.From)
-			dst, _ := tools.GetFloat(ani.To)
-			diff := dst - src
-			val := diff * deltaPercent
-			p.ChangeXYpos(val*dirSin, val*dirCos)
+			src, _ := tools.GetVec2(ani.From)
+			dst, _ := tools.GetVec2(ani.To)
+			diff := dst.Sub(src)
+			val := diff.Mulf(deltaPercent)
+			p.ChangeXYpos(val.X, val.Y)
 		case aniTypeGlide:
 			src, _ := tools.GetVec2(ani.From)
 			dst, _ := tools.GetVec2(ani.To)
@@ -1056,26 +1054,43 @@ func (p *SpriteImpl) Step__2(step float64, speed float64, animation SpriteAnimat
 	p.doStep(step, speed, animation)
 }
 
-func (p *SpriteImpl) doStep(step float64, speed float64, animation SpriteAnimationName) {
-	if debugInstr {
-		log.Println("Step", p.name, step)
-	}
+func (p *SpriteImpl) doStepToPos(x, y float64, speed float64, animation SpriteAnimationName) {
 	if animation == "" {
 		animation = p.getStateAnimName(StateStep)
 	}
-
-	if ani, ok := p.animations[animation]; ok {
-		anicopy := *ani
-		anicopy.From = 0
-		anicopy.To = step
-		anicopy.AniType = aniTypeMove
-		anicopy.Duration = math.Abs(step) * ani.StepDuration / speed
-		anicopy.IsLoop = true
-		anicopy.Speed = speed
-		p.doTween(animation, &anicopy)
-		return
+	// if no animation, goto target immediately
+	if animation == "" {
+		p.SetXYpos(x, y)
+	} else {
+		speed = math.Max(speed, 0.001)
+		from := mathf.NewVec2(p.x, p.y)
+		to := mathf.NewVec2(x, y)
+		distance := from.DistanceTo(to)
+		if ani, ok := p.animations[animation]; ok {
+			anicopy := *ani
+			anicopy.From = &from
+			anicopy.To = &to
+			anicopy.AniType = aniTypeMove
+			anicopy.Duration = math.Abs(distance) * ani.StepDuration / speed
+			anicopy.IsLoop = true
+			anicopy.Speed = speed
+			p.doTween(animation, &anicopy)
+			return
+		}
 	}
-	p.goMoveForward(step)
+}
+func (p *SpriteImpl) doStepTo(obj any, speed float64, animation SpriteAnimationName) {
+	if debugInstr {
+		log.Println("Goto", p.name, obj)
+	}
+	x, y := p.g.objectPos(obj)
+	p.doStepToPos(x, y, speed, animation)
+}
+func (p *SpriteImpl) doStep(step float64, speed float64, animation SpriteAnimationName) {
+	dirSin, dirCos := math.Sincos(toRadian(p.direction))
+	diff := mathf.NewVec2(step*dirSin, step*dirCos)
+	to := mathf.NewVec2(p.x, p.y).Add(diff)
+	p.doStepToPos(to.X, to.Y, speed, animation)
 }
 func (p *SpriteImpl) playDefaultAnim() {
 	animName := ""
@@ -1108,11 +1123,6 @@ func (p *SpriteImpl) playDefaultAnim() {
 	}
 }
 
-// Goto func:
-//
-//	Goto(sprite)
-//	Goto(spx.Mouse)
-//	Goto(spx.Random)
 func (p *SpriteImpl) StepTo__0(sprite Sprite) {
 	p.doStepTo(sprite, 1, "")
 }
@@ -1148,27 +1158,15 @@ func (p *SpriteImpl) StepTo__7(sprite SpriteName, speed float64, animation Sprit
 func (p *SpriteImpl) StepTo__8(obj specialObj, speed float64, animation SpriteAnimationName) {
 	p.doStepTo(obj, speed, animation)
 }
-
-func (p *SpriteImpl) doStepTo(obj any, speed float64, animation SpriteAnimationName) {
+func (p *SpriteImpl) doGlideTo(obj any, secs float64) {
 	if debugInstr {
-		log.Println("Goto", p.name, obj)
+		log.Println("Glide", obj, secs)
 	}
-	if animation == "" {
-		animation = p.getStateAnimName(StateStep)
-	}
-	speed = math.Max(speed, 0.001)
 	x, y := p.g.objectPos(obj)
-	// no animation goto target immediately
-	if animation == "" {
-		p.SetXYpos(x, y)
-	} else {
-		distance := p.distanceTo(obj)
-		p.doTurnTo(obj, 1, "")
-		p.doStep(distance, speed, animation)
-	}
+	p.doGlide(x, y, secs)
 }
 
-func (p *SpriteImpl) Glide__0(x, y float64, secs float64) {
+func (p *SpriteImpl) doGlide(x, y float64, secs float64) {
 	if debugInstr {
 		log.Println("Glide", p.name, x, y, secs)
 	}
@@ -1185,29 +1183,24 @@ func (p *SpriteImpl) Glide__0(x, y float64, secs float64) {
 	animName := p.getStateAnimName(StateGlide)
 	p.doTween(animName, &anicopy)
 }
-
-func (p *SpriteImpl) goGlide(obj any, secs float64) {
-	if debugInstr {
-		log.Println("Glide", obj, secs)
-	}
-	x, y := p.g.objectPos(obj)
-	p.Glide__0(x, y, secs)
+func (p *SpriteImpl) Glide__0(x, y float64, secs float64) {
+	p.doGlide(x, y, secs)
 }
 
 func (p *SpriteImpl) Glide__1(sprite Sprite, secs float64) {
-	p.goGlide(sprite, secs)
+	p.doGlideTo(sprite, secs)
 }
 
 func (p *SpriteImpl) Glide__2(sprite SpriteName, secs float64) {
-	p.goGlide(sprite, secs)
+	p.doGlideTo(sprite, secs)
 }
 
 func (p *SpriteImpl) Glide__3(obj specialObj, secs float64) {
-	p.goGlide(obj, secs)
+	p.doGlideTo(obj, secs)
 }
 
 func (p *SpriteImpl) Glide__4(pos Pos, secs float64) {
-	p.goGlide(pos, secs)
+	p.doGlideTo(pos, secs)
 }
 
 func (p *SpriteImpl) SetXYpos(x, y float64) {
