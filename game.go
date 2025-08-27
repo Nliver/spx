@@ -1493,12 +1493,12 @@ func (p *Game) loadSound(name SoundName) (media sound, err error) {
 	return
 }
 
-func (p *Game) playSound(audioId engine.Object, name SoundName, isLoop bool) {
+func (p *Game) playSound(audioId engine.Object, name SoundName, isLoop bool) soundId {
 	m, err := p.loadSound(name)
 	if err != nil {
-		return
+		return invalidSoundId
 	}
-	p.sounds.play(audioId, m, isLoop, false)
+	return p.sounds.play(audioId, m, isLoop, false)
 }
 func (p *Game) playSoundAndWait(audioId engine.Object, name SoundName) {
 	m, err := p.loadSound(name)
@@ -1540,7 +1540,6 @@ func (p *Game) Play__0(name SoundName, loop bool) {
 func (p *Game) Play__1(name SoundName) {
 	p.Play__0(name, false)
 }
-
 func (p *Game) PlayAndWait(name SoundName) {
 	p.checkAudioId()
 	p.playSoundAndWait(p.audioId, name)
@@ -1557,6 +1556,10 @@ func (p *Game) ResumePlaying(name SoundName) {
 func (p *Game) StopPlaying(name SoundName) {
 	p.checkAudioId()
 	p.stopSound(p.audioId, name)
+}
+
+func (p *Game) stopSoundInstance(instanceId soundId) {
+	p.sounds.stopInstance(instanceId)
 }
 
 func (p *Game) SetVolume(volume float64) {

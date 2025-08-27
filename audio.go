@@ -20,6 +20,10 @@ import (
 	"github.com/goplus/spx/v2/internal/engine"
 )
 
+type soundId = int64
+
+const invalidSoundId = 0
+
 type soundMgr struct {
 	g        *Game
 	audios   map[string]sound
@@ -59,8 +63,12 @@ func (p *soundMgr) stop(audioId engine.Object, media sound) {
 	delete(p.path2ids, media.Path)
 }
 
-func (p *soundMgr) play(audioId engine.Object, media sound, isLoop, isWait bool) {
-	var curId int64 = 0
+func (p *soundMgr) stopInstance(audioId soundId) {
+	audioMgr.Stop(audioId)
+}
+
+func (p *soundMgr) play(audioId engine.Object, media sound, isLoop, isWait bool) soundId {
+	var curId soundId = 0
 	curId = audioMgr.Play(audioId, engine.ToAssetPath(media.Path))
 	p.path2ids[media.Path] = append(p.path2ids[media.Path], curId)
 	if isLoop {
@@ -77,6 +85,7 @@ func (p *soundMgr) play(audioId engine.Object, media sound, isLoop, isWait bool)
 			}
 		}
 	}
+	return curId
 }
 
 func (p *soundMgr) stopAll() {
