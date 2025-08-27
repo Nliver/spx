@@ -587,6 +587,13 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 				log.Println("init sprite collision info", spr.name, info.Layer, info.Mask)
 			}
 		}
+		// recalc sprite prototype's physic info
+		engine.WaitMainThread(func() {
+			for _, ini := range inits {
+				spr := spriteOf(ini)
+				syncInitSpritePhysicInfo(spr, spr.syncSprite)
+			}
+		})
 	}
 
 	p.audioId = p.sounds.allocAudio()
