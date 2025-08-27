@@ -876,11 +876,29 @@ func (p *Game) eventLoop(me coroutine.Thread) int {
 	}
 }
 func (p *Game) logicLoop(me coroutine.Thread) int {
+	tempAudios := []string{}
 	for {
 		tempItems := p.getTempShapes()
 		for _, item := range tempItems {
 			if result, ok := item.(interface{ onUpdate(float64) }); ok {
 				result.onUpdate(gtime.DeltaTime())
+			}
+		}
+
+		// play audios
+		for _, item := range tempItems {
+			if sprite, ok := item.(*SpriteImpl); ok {
+				engine.Lock()
+				for _, audio := range sprite.pendingAudios {
+					tempAudios = append(tempAudios, audio)
+				}
+				sprite.pendingAudios = sprite.pendingAudios[:0]
+				engine.Unlock()
+
+				for _, audio := range tempAudios {
+					sprite.playAudio(audio, false)
+				}
+				tempAudios = tempAudios[:0]
 			}
 		}
 

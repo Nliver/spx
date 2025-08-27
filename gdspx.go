@@ -120,9 +120,18 @@ func (sprite *SpriteImpl) syncCheckInitProxy() {
 		sprite.syncSprite.SetTypeName(sprite.name)
 		sprite.syncSprite.SetVisible(sprite.isVisible)
 		sprite.applyGraphicEffects(true)
+		sprite.syncSprite.RegisterOnAnimationLooped(sprite.syncOnAnimationLooped)
 	}
 }
 
+func (sprite *SpriteImpl) syncOnAnimationLooped() {
+	engine.Lock()
+	defer engine.Unlock()
+	state := sprite.curTweenState
+	if state != nil {
+		sprite.pendingAudios = append(sprite.pendingAudios, state.AudioName)
+	}
+}
 func (sprite *SpriteImpl) updateProxyTransform(isSync bool) {
 	if sprite.syncSprite == nil {
 		return

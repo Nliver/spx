@@ -251,6 +251,7 @@ type SpriteImpl struct {
 	audioId engine.Object
 
 	collisionTargets map[string]bool
+	pendingAudios    []string
 }
 
 func (p *SpriteImpl) setDying() { // dying: visible but can't be touched
@@ -333,6 +334,7 @@ func (p *SpriteImpl) init(
 		registerAnimToEngine(p.name, animName, ani, p.baseObj.costumes, p.isCostumeSet, spriteCfg.ApplyCustumeOffset2Animation)
 	}
 
+	p.pendingAudios = make([]string, 0)
 	// create engine object
 	p.syncSprite = nil
 	engine.WaitMainThread(func() {
@@ -401,6 +403,7 @@ func (p *SpriteImpl) InitFrom(src *SpriteImpl) {
 	p.triggerSize = src.triggerSize
 	p.triggerRadius = src.triggerRadius
 
+	p.pendingAudios = make([]string, 0)
 }
 
 func cloneMap(v map[string]any) map[string]any {
