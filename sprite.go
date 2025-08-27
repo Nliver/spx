@@ -615,7 +615,7 @@ func (p *SpriteImpl) Die() {
 
 	p.Stop(OtherScriptsInSprite)
 	if ani, ok := p.animations[aniName]; ok {
-		p.doAnimation(aniName, ani, false, 1, true)
+		p.doAnimation(aniName, ani, false, 1, true, true)
 	}
 	p.Destroy()
 }
@@ -768,30 +768,24 @@ func (p *SpriteImpl) hasAnim(animName string) bool {
 }
 
 type animState struct {
-	AniType aniTypeEnum
-	Name    string
-
+	AniType    aniTypeEnum
+	Name       string
 	IsCanceled bool
+	AudioName  string
+	AudioId    soundId
 }
 
-func (p *SpriteImpl) doAnimation(animName SpriteAnimationName, ani *aniConfig, loop bool, speed float64, isBlocking bool) {
-	if ani.OnStart != nil && ani.OnStart.Play != "" {
-		p.Play__1(ani.OnStart.Play)
-	}
-
-	if !p.hasAnim(animName) {
-		return
-	}
-	if p.curAnimState != nil {
-		p.curAnimState.IsCanceled = true
-	}
+func (p *SpriteImpl) doAnimation(animName SpriteAnimationName, ani *aniConfig, loop bool, speed float64, isBlocking bool, playAudio bool) {
+	p.stopAnimState(p.curAnimState)
 	p.curAnimState = &animState{
 		AniType:    aniTypeFrame,
 		IsCanceled: false,
 		Name:       animName,
 	}
 	info := p.curAnimState
-
+	if playAudio {
+		p.playAnimAudio(ani, info)
+	}
 	p.isCostumeDirty = false
 	spriteMgr.PlayAnim(p.syncSprite.GetId(), animName, speed, loop, false)
 	if isBlocking {
@@ -803,6 +797,7 @@ func (p *SpriteImpl) doAnimation(animName SpriteAnimationName, ani *aniConfig, l
 			engine.WaitNextFrame()
 		}
 		p.isAnimating = false
+		p.stopAnimState(info)
 	}
 }
 
@@ -812,12 +807,13 @@ func (p *SpriteImpl) doTween(name SpriteAnimationName, ani *aniConfig) {
 		Name:       name,
 		IsCanceled: false,
 	}
-	if p.curTweenState != nil {
-		p.curTweenState.IsCanceled = true
-	}
+	p.stopAnimState(p.curTweenState)
 	p.curTweenState = info
 	animName := info.Name
-	p.doAnimation(animName, ani, ani.IsLoop, ani.Speed, false)
+	if p.hasAnim(animName) {
+		p.doAnimation(animName, ani, ani.IsLoop, ani.Speed, false, false)
+		p.playAnimAudio(ani, info)
+	}
 	duration := ani.Duration
 	timer := 0.0
 	prePercent := 0.0
@@ -854,7 +850,31 @@ func (p *SpriteImpl) doTween(name SpriteAnimationName, ani *aniConfig) {
 	if animName != p.defaultAnimation && !ani.IsKeepOnStop {
 		p.playDefaultAnim()
 	}
+	p.stopAnimState(info)
 	p.curTweenState = nil
+}
+
+func (p *SpriteImpl) stopAnimState(state *animState) {
+	if state == nil {
+		return
+	}
+	state.IsCanceled = true
+	// don't need to stop audio when anim is canceled
+	//p.stopAnimAudio(state)
+}
+
+func (p *SpriteImpl) stopAnimAudio(state *animState) {
+	if state != nil {
+		if state.AudioName != "" {
+			p.g.stopSoundInstance(state.AudioId)
+		}
+	}
+}
+func (p *SpriteImpl) playAnimAudio(ani *aniConfig, info *animState) {
+	if ani.OnStart != nil && ani.OnStart.Play != "" {
+		info.AudioName = ani.OnStart.Play
+		info.AudioId = p.playAudio(info.AudioName, false)
+	}
 }
 
 func (p *SpriteImpl) Animate__0(name SpriteAnimationName) {
@@ -866,7 +886,7 @@ func (p *SpriteImpl) Animate__1(name SpriteAnimationName, loop bool) {
 		log.Println("==> Animation", name)
 	}
 	if ani, ok := p.animations[name]; ok {
-		p.doAnimation(name, ani, loop, 1, false)
+		p.doAnimation(name, ani, loop, 1, false, true)
 	} else {
 		log.Println("Animation not found:", name)
 	}
@@ -877,7 +897,7 @@ func (p *SpriteImpl) AnimateAndWait(name SpriteAnimationName) {
 		log.Println("==> AnimateAndWait", name)
 	}
 	if ani, ok := p.animations[name]; ok {
-		p.doAnimation(name, ani, false, 1, true)
+		p.doAnimation(name, ani, false, 1, true, true)
 	} else {
 		log.Println("Animation not found:", name)
 	}
@@ -897,7 +917,7 @@ func (p *SpriteImpl) StopAnimation() {
 
 	// play default animation async
 	if ani, ok := p.animations[defaultAnim]; ok {
-		p.doAnimation(defaultAnim, ani, true, 1, false)
+		p.doAnimation(defaultAnim, ani, true, 1, false, true)
 	}
 }
 
@@ -1059,7 +1079,7 @@ func (p *SpriteImpl) doStepToPos(x, y float64, speed float64, animation SpriteAn
 		animation = p.getStateAnimName(StateStep)
 	}
 	// if no animation, goto target immediately
-	if animation == "" {
+	if !p.hasAnim(animation) {
 		p.SetXYpos(x, y)
 	} else {
 		speed = math.Max(speed, 0.001)
@@ -1846,6 +1866,11 @@ const (
 	SoundPanEffect SoundEffectKind = iota
 	SoundPitchEffect
 )
+
+func (p *SpriteImpl) playAudio(name SoundName, loop bool) soundId {
+	p.checkAudioId()
+	return p.g.playSound(p.audioId, name, loop)
+}
 
 func (p *SpriteImpl) Play__0(name SoundName, loop bool) {
 	p.checkAudioId()
