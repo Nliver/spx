@@ -51,9 +51,18 @@ var (
 	lastTimestamp      stime.Time
 	timeSinceLevelLoad float64
 
+	logicMutex sync.Mutex
 	// statistic info
 	fps float64
 )
+
+func Lock() {
+	logicMutex.Lock()
+}
+
+func Unlock() {
+	logicMutex.Unlock()
+}
 
 type IGame interface {
 	OnEngineStart()
