@@ -474,6 +474,10 @@ func (pself *spriteMgrImpl) IsAnimFlippedV(obj gdx.Object) bool {
 	var _ret1 bool
 	return _ret1
 }
+func (pself *spriteMgrImpl) GetCurrentAnimName(obj gdx.Object) string {
+	var _ret1 string
+	return _ret1
+}
 func (pself *spriteMgrImpl) SetVelocity(obj gdx.Object, velocity Vec2) {}
 func (pself *spriteMgrImpl) GetVelocity(obj gdx.Object) Vec2 {
 	var _ret1 Vec2

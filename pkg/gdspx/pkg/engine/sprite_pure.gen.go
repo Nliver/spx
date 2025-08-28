@@ -122,6 +122,11 @@ func (pself *Sprite) GetColor() Color {
 	return _val
 }
 
+func (pself *Sprite) GetCurrentAnimName() string {
+	var _val string
+	return _val
+}
+
 func (pself *Sprite) GetFloorNormal() Vec2 {
 	var _val Vec2
 	return _val

@@ -252,6 +252,7 @@ type SpriteImpl struct {
 
 	collisionTargets map[string]bool
 	pendingAudios    []string
+	donedAnimations  []string
 }
 
 func (p *SpriteImpl) setDying() { // dying: visible but can't be touched
@@ -774,8 +775,15 @@ type animState struct {
 	AniType    aniTypeEnum
 	Name       string
 	IsCanceled bool
+	Speed      float64
 	AudioName  string
 	AudioId    soundId
+}
+
+func (p *SpriteImpl) onAnimationDone(animName string) {
+	if p.curAnimState != nil && p.curAnimState.Name == animName {
+		p.playDefaultAnim()
+	}
 }
 
 func (p *SpriteImpl) doAnimation(animName SpriteAnimationName, ani *aniConfig, loop bool, speed float64, isBlocking bool, playAudio bool) {
@@ -784,6 +792,7 @@ func (p *SpriteImpl) doAnimation(animName SpriteAnimationName, ani *aniConfig, l
 		AniType:    aniTypeFrame,
 		IsCanceled: false,
 		Name:       animName,
+		Speed:      speed,
 	}
 	info := p.curAnimState
 	if playAudio {
@@ -808,6 +817,7 @@ func (p *SpriteImpl) doTween(name SpriteAnimationName, ani *aniConfig) {
 	info := &animState{
 		AniType:    ani.AniType,
 		Name:       name,
+		Speed:      ani.Speed,
 		IsCanceled: false,
 	}
 	p.stopAnimState(p.curTweenState)
@@ -850,11 +860,11 @@ func (p *SpriteImpl) doTween(name SpriteAnimationName, ani *aniConfig) {
 		}
 		engine.WaitNextFrame()
 	}
+	p.stopAnimState(info)
+	p.curTweenState = nil
 	if animName != p.defaultAnimation && !ani.IsKeepOnStop {
 		p.playDefaultAnim()
 	}
-	p.stopAnimState(info)
-	p.curTweenState = nil
 }
 
 func (p *SpriteImpl) stopAnimState(state *animState) {
@@ -1116,10 +1126,11 @@ func (p *SpriteImpl) playDefaultAnim() {
 	if !p.isVisible || p.isDying {
 		return
 	}
-	if p.curAnimState == nil {
+	speed := 1.0
+	if p.curTweenState == nil {
 		animName = p.defaultAnimation
 	} else {
-		switch p.curAnimState.AniType {
+		switch p.curTweenState.AniType {
 		case aniTypeMove:
 			animName = p.getStateAnimName(StateStep)
 			break
@@ -1130,6 +1141,7 @@ func (p *SpriteImpl) playDefaultAnim() {
 			animName = p.getStateAnimName(StateGlide)
 			break
 		}
+		speed = p.curTweenState.Speed
 	}
 
 	if animName == "" {
@@ -1137,7 +1149,7 @@ func (p *SpriteImpl) playDefaultAnim() {
 	}
 
 	if _, ok := p.animations[animName]; ok {
-		spriteMgr.PlayAnim(p.syncSprite.GetId(), animName, 1, true, false)
+		spriteMgr.PlayAnim(p.syncSprite.GetId(), animName, speed, true, false)
 	} else {
 		p.goSetCostume(p.defaultCostumeIndex)
 	}

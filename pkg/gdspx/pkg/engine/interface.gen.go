@@ -201,6 +201,7 @@ type ISpriteMgr interface {
 	IsAnimFlippedH(obj Object) bool
 	SetAnimFlipV(obj Object, p_flip bool)
 	IsAnimFlippedV(obj Object) bool
+	GetCurrentAnimName(obj Object) string
 	SetVelocity(obj Object, velocity Vec2)
 	GetVelocity(obj Object) Vec2
 	IsOnFloor(obj Object) bool

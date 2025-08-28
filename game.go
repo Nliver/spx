@@ -890,6 +890,7 @@ func (p *Game) eventLoop(me coroutine.Thread) int {
 }
 func (p *Game) logicLoop(me coroutine.Thread) int {
 	tempAudios := []string{}
+	tempAnimations := []string{}
 	for {
 		tempItems := p.getTempShapes()
 		for _, item := range tempItems {
@@ -912,6 +913,22 @@ func (p *Game) logicLoop(me coroutine.Thread) int {
 					sprite.playAudio(audio, false)
 				}
 				tempAudios = tempAudios[:0]
+			}
+		}
+		// check anim done events
+		for _, item := range tempItems {
+			if sprite, ok := item.(*SpriteImpl); ok {
+				engine.Lock()
+				for _, animName := range sprite.donedAnimations {
+					tempAnimations = append(tempAnimations, animName)
+				}
+				sprite.donedAnimations = sprite.donedAnimations[:0]
+				engine.Unlock()
+
+				for _, animName := range tempAnimations {
+					sprite.onAnimationDone(animName)
+				}
+				tempAnimations = tempAnimations[:0]
 			}
 		}
 

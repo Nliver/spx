@@ -222,6 +222,7 @@ type GDExtensionSpxSpriteSetAnimFlipH C.GDExtensionSpxSpriteSetAnimFlipH
 type GDExtensionSpxSpriteIsAnimFlippedH C.GDExtensionSpxSpriteIsAnimFlippedH
 type GDExtensionSpxSpriteSetAnimFlipV C.GDExtensionSpxSpriteSetAnimFlipV
 type GDExtensionSpxSpriteIsAnimFlippedV C.GDExtensionSpxSpriteIsAnimFlippedV
+type GDExtensionSpxSpriteGetCurrentAnimName C.GDExtensionSpxSpriteGetCurrentAnimName
 type GDExtensionSpxSpriteSetVelocity C.GDExtensionSpxSpriteSetVelocity
 type GDExtensionSpxSpriteGetVelocity C.GDExtensionSpxSpriteGetVelocity
 type GDExtensionSpxSpriteIsOnFloor C.GDExtensionSpxSpriteIsOnFloor
@@ -1797,6 +1798,16 @@ func CallSpriteIsAnimFlippedV(
 	C.cgo_callfn_GDExtensionSpxSpriteIsAnimFlippedV(arg0, arg1GdObj, &ret_val)
 
 	return (GdBool)(ret_val)
+}
+func CallSpriteGetCurrentAnimName(
+	obj GdObj,
+) GdString {
+	arg0 := (C.GDExtensionSpxSpriteGetCurrentAnimName)(api.SpxSpriteGetCurrentAnimName)
+	arg1GdObj := (C.GdObj)(obj)
+	var ret_val C.GdString
+	C.cgo_callfn_GDExtensionSpxSpriteGetCurrentAnimName(arg0, arg1GdObj, &ret_val)
+
+	return (GdString)(ret_val)
 }
 func CallSpriteSetVelocity(
 	obj GdObj,

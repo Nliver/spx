@@ -121,9 +121,18 @@ func (sprite *SpriteImpl) syncCheckInitProxy() {
 		sprite.syncSprite.SetVisible(sprite.isVisible)
 		sprite.applyGraphicEffects(true)
 		sprite.syncSprite.RegisterOnAnimationLooped(sprite.syncOnAnimationLooped)
+		sprite.syncSprite.RegisterOnAnimationFinished(sprite.syncOnAnimationFinished)
 	}
 }
-
+func (sprite *SpriteImpl) syncOnAnimationFinished() {
+	engine.Lock()
+	defer engine.Unlock()
+	state := sprite.curAnimState
+	if state != nil && state.Name != "" {
+		curAnimName := sprite.syncSprite.GetCurrentAnimName()
+		sprite.donedAnimations = append(sprite.donedAnimations, curAnimName)
+	}
+}
 func (sprite *SpriteImpl) syncOnAnimationLooped() {
 	engine.Lock()
 	defer engine.Unlock()

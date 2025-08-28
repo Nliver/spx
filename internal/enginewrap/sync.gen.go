@@ -997,6 +997,13 @@ func (pself *spriteMgrImpl) IsAnimFlippedV(obj gdx.Object) bool {
 	})
 	return _ret1
 }
+func (pself *spriteMgrImpl) GetCurrentAnimName(obj gdx.Object) string {
+	var _ret1 string
+	callInMainThread(func() {
+		_ret1 = gdx.SpriteMgr.GetCurrentAnimName(obj)
+	})
+	return _ret1
+}
 func (pself *spriteMgrImpl) SetVelocity(obj gdx.Object, velocity Vec2) {
 	callInMainThread(func() {
 		gdx.SpriteMgr.SetVelocity(obj, velocity)

@@ -933,6 +933,11 @@ func (pself *spriteMgr) IsAnimFlippedV(obj Object) bool {
 	retValue := CallSpriteIsAnimFlippedV(arg0)
 	return ToBool(retValue)
 }
+func (pself *spriteMgr) GetCurrentAnimName(obj Object) string {
+	arg0 := ToGdObj(obj)
+	retValue := CallSpriteGetCurrentAnimName(arg0)
+	return ToString(retValue)
+}
 func (pself *spriteMgr) SetVelocity(obj Object, velocity Vec2) {
 	arg0 := ToGdObj(obj)
 	arg1 := ToGdVec2(velocity)

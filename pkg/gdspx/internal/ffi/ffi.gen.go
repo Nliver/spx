@@ -167,6 +167,7 @@ type GDExtensionInterface struct {
 	SpxSpriteIsAnimFlippedH                  GDExtensionSpxSpriteIsAnimFlippedH
 	SpxSpriteSetAnimFlipV                    GDExtensionSpxSpriteSetAnimFlipV
 	SpxSpriteIsAnimFlippedV                  GDExtensionSpxSpriteIsAnimFlippedV
+	SpxSpriteGetCurrentAnimName              GDExtensionSpxSpriteGetCurrentAnimName
 	SpxSpriteSetVelocity                     GDExtensionSpxSpriteSetVelocity
 	SpxSpriteGetVelocity                     GDExtensionSpxSpriteGetVelocity
 	SpxSpriteIsOnFloor                       GDExtensionSpxSpriteIsOnFloor
@@ -402,6 +403,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxSpriteIsAnimFlippedH = (GDExtensionSpxSpriteIsAnimFlippedH)(dlsymGD("spx_sprite_is_anim_flipped_h"))
 	x.SpxSpriteSetAnimFlipV = (GDExtensionSpxSpriteSetAnimFlipV)(dlsymGD("spx_sprite_set_anim_flip_v"))
 	x.SpxSpriteIsAnimFlippedV = (GDExtensionSpxSpriteIsAnimFlippedV)(dlsymGD("spx_sprite_is_anim_flipped_v"))
+	x.SpxSpriteGetCurrentAnimName = (GDExtensionSpxSpriteGetCurrentAnimName)(dlsymGD("spx_sprite_get_current_anim_name"))
 	x.SpxSpriteSetVelocity = (GDExtensionSpxSpriteSetVelocity)(dlsymGD("spx_sprite_set_velocity"))
 	x.SpxSpriteGetVelocity = (GDExtensionSpxSpriteGetVelocity)(dlsymGD("spx_sprite_get_velocity"))
 	x.SpxSpriteIsOnFloor = (GDExtensionSpxSpriteIsOnFloor)(dlsymGD("spx_sprite_is_on_floor"))

@@ -171,6 +171,7 @@ type GDExtensionInterface struct {
 	SpxSpriteIsAnimFlippedH                  js.Value
 	SpxSpriteSetAnimFlipV                    js.Value
 	SpxSpriteIsAnimFlippedV                  js.Value
+	SpxSpriteGetCurrentAnimName              js.Value
 	SpxSpriteSetVelocity                     js.Value
 	SpxSpriteGetVelocity                     js.Value
 	SpxSpriteIsOnFloor                       js.Value
@@ -406,6 +407,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxSpriteIsAnimFlippedH = dlsymGD("gdspx_sprite_is_anim_flipped_h")
 	x.SpxSpriteSetAnimFlipV = dlsymGD("gdspx_sprite_set_anim_flip_v")
 	x.SpxSpriteIsAnimFlippedV = dlsymGD("gdspx_sprite_is_anim_flipped_v")
+	x.SpxSpriteGetCurrentAnimName = dlsymGD("gdspx_sprite_get_current_anim_name")
 	x.SpxSpriteSetVelocity = dlsymGD("gdspx_sprite_set_velocity")
 	x.SpxSpriteGetVelocity = dlsymGD("gdspx_sprite_get_velocity")
 	x.SpxSpriteIsOnFloor = dlsymGD("gdspx_sprite_is_on_floor")
