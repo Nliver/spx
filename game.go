@@ -392,6 +392,9 @@ func getFieldPtrOrAlloc(g *Game, v reflect.Value, i int) (name string, val any) 
 }
 
 func findFieldPtr(v reflect.Value, name string, from int) any {
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
 	t := v.Type()
 	for i, n := from, v.NumField(); i < n; i++ {
 		tFld := t.Field(i)
@@ -404,6 +407,9 @@ func findFieldPtr(v reflect.Value, name string, from int) any {
 }
 
 func findObjPtr(v reflect.Value, name string, from int) any {
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
 	t := v.Type()
 	for i, n := from, v.NumField(); i < n; i++ {
 		tFld := t.Field(i)
