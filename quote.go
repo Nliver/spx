@@ -44,7 +44,7 @@ func (p *quoter) refresh() {
 	if p.panel == nil {
 		return
 	}
-	bound := p.sprite.Bounds()
+	bound := p.sprite.bounds()
 	center := bound.Center()
 	size := bound.Size
 	extSize := 10.0

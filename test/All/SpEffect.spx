@@ -4,7 +4,7 @@ import "math"
 import "fmt"
 func effectTest(eff EffectKind, start, end float64, step float64, waitTime float64) {
     for i := start; i <= end; i += step {
-        setEffect eff, i
+        setGraphicEffect eff, i
         say fmt.Sprintf("test %d i=%.0f", eff, i)
         wait waitTime
     }
@@ -14,13 +14,13 @@ func effectTest(eff EffectKind, start, end float64, step float64, waitTime float
 }
 func testCloneEffect() {
 	wait 0.5
-	setEffect ColorEffect, 100
+	setGraphicEffect ColorEffect, 100
 	wait 0.1
 	cloneNum++
 	clone 
 
 	wait 0.5
-	setEffect PixelateEffect, 50
+	setGraphicEffect PixelateEffect, 50
 	wait 0.1
 	clone 
 	cloneNum++

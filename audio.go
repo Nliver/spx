@@ -20,31 +20,18 @@ import (
 	"github.com/goplus/spx/v2/internal/engine"
 )
 
-type PlayAction int
+type soundId = int64
 
-const (
-	PlayRewind PlayAction = iota
-	PlayContinue
-	PlayPause
-	PlayResume
-	PlayStop
-)
-
-type PlayOptions struct {
-	Action PlayAction
-	Wait   bool
-	Loop   bool
-	Music  bool
-}
+const invalidSoundId = 0
 
 type soundMgr struct {
 	g        *Game
-	audios   map[string]Sound
+	audios   map[string]sound
 	path2ids map[string][]int64
 }
 
 func (p *soundMgr) init(g *Game) {
-	p.audios = make(map[string]Sound)
+	p.audios = make(map[string]sound)
 	p.path2ids = make(map[string][]int64)
 	p.g = g
 }
@@ -59,39 +46,37 @@ func (p *soundMgr) releaseAudio(audioId engine.Object) {
 	}
 	audioMgr.DestroyAudio(audioId)
 }
-
-func (p *soundMgr) play(audioId engine.Object, media Sound, opts *PlayOptions) (err error) {
-	action := opts.Action
-	var curId int64 = 0
-	switch action {
-	case PlayRewind:
-		curId = audioMgr.Play(audioId, engine.ToAssetPath(media.Path))
-		p.path2ids[media.Path] = append(p.path2ids[media.Path], curId)
-	case PlayContinue:
-		for _, id := range p.path2ids[media.Path] {
-			audioMgr.Resume(id)
-		}
-	case PlayPause:
-		for _, id := range p.path2ids[media.Path] {
-			audioMgr.Pause(id)
-		}
-	case PlayResume:
-		for _, id := range p.path2ids[media.Path] {
-			audioMgr.Resume(id)
-		}
-	case PlayStop:
-		for _, id := range p.path2ids[media.Path] {
-			audioMgr.Stop(id)
-		}
-		delete(p.path2ids, media.Path)
+func (p *soundMgr) pause(audioId engine.Object, media sound) {
+	for _, id := range p.path2ids[media.Path] {
+		audioMgr.Pause(id)
 	}
+}
+func (p *soundMgr) resume(audioId engine.Object, media sound) {
+	for _, id := range p.path2ids[media.Path] {
+		audioMgr.Resume(id)
+	}
+}
+func (p *soundMgr) stop(audioId engine.Object, media sound) {
+	for _, id := range p.path2ids[media.Path] {
+		audioMgr.Stop(id)
+	}
+	delete(p.path2ids, media.Path)
+}
 
-	if opts.Loop {
+func (p *soundMgr) stopInstance(audioId soundId) {
+	audioMgr.Stop(audioId)
+}
+
+func (p *soundMgr) play(audioId engine.Object, media sound, isLoop, isWait bool) soundId {
+	var curId soundId = 0
+	curId = audioMgr.Play(audioId, engine.ToAssetPath(media.Path))
+	p.path2ids[media.Path] = append(p.path2ids[media.Path], curId)
+	if isLoop {
 		for _, id := range p.path2ids[media.Path] {
 			audioMgr.SetLoop(id, true)
 		}
 	} else {
-		if opts.Wait {
+		if isWait {
 			for {
 				if !audioMgr.IsPlaying(curId) {
 					break
@@ -100,7 +85,7 @@ func (p *soundMgr) play(audioId engine.Object, media Sound, opts *PlayOptions) (
 			}
 		}
 	}
-	return
+	return curId
 }
 
 func (p *soundMgr) stopAll() {

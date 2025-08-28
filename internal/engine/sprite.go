@@ -63,3 +63,6 @@ func (pself *Sprite) OnTriggerEnter(target gdx.ISpriter) {
 		triggerEventsTemp = append(triggerEventsTemp, TriggerEvent{Src: pself, Dst: sprite})
 	}
 }
+func (pself *Sprite) RegisterOnAnimationLooped(f func()) {
+	pself.Sprite.OnAnimationLoopedEvent.Subscribe(f)
+}

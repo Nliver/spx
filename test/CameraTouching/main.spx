@@ -1,9 +1,1 @@
-var (
-	Box       Box
-	Monkey    *Monkey
-	Crocodile *Crocodile
-	chomp     Sound
-	clap      Sound
-)
-
 run "assets", {Title: "CameraTouching (by XGo)", Width: 640, Height: 480}

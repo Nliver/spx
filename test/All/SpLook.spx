@@ -15,11 +15,11 @@ onMsg "testLook", => {
 	think "Think", 0.5
 
 	// 3. Sprite::NextCostume	
-	nextCostume()
+	setCostume Next
 	wait 0.1
-	nextCostume()
+	setCostume Next
 	wait 0.1
-	nextCostume()
+	setCostume Next
 	wait 0.1
 
 	// 4. Sprite::CostumeIndex	
@@ -45,12 +45,12 @@ onMsg "testLook", => {
 	assertFloat(size(), 100, "Sprite::Size")
 	wait 0.2
 	
-	// 9. Sprite::ChangeEffect	
-	changeEffect GhostEffect, 50
+	// 9. Sprite::ChangeGraphicEffect	
+	changeGraphicEffect GhostEffect, 50
 	wait 0.2
 
-	// 10. Sprite::SetEffect	
-	setEffect GhostEffect, 50
+	// 10. Sprite::SetGraphicEffect	
+	setGraphicEffect GhostEffect, 50
 	wait 0.2
 
 	// 11. Sprite::ClearGraphicEffects	
@@ -67,31 +67,31 @@ onMsg "testLook", => {
 	say "Show", 0.5
 
 	// TODO tanjp check
-	// 14. Sprite::GotoBack	
-	gotoBack()
+	// 14. Sprite::SetLayer	Back
+	setLayer(Back)
 	wait 0.1
 	
-	// 15. Sprite::GotoFront 
-	gotoFront()
+	// 15.  Sprite::SetLayer Front
+	setLayer(Front)
 	wait 0.1
 	
 	// 16. Sprite::GoBackLayers	
-	goBackLayers(1)
+	setLayer( Backward,1)
 	wait 0.1
 	
-	// 17. Game::StartBackdrop	
-	startBackdrop("backdrop1")
+	// 17. Game::SetBackdrop	
+	setBackdrop("backdrop1")
 	wait 0.1
 
 	// 18. Game::BackdropIndex	
 	assertFloat(float64(backdropIndex()), 0, "Game::BackdropIndex")
 	wait 0.1
 
-	// 19. Game::NextBackdrop	
-	nextBackdrop()
+	// 19. Game::SetBackdrop Next	
+	SetBackdrop(Next)
 	wait 0.1
 	assertFloat(float64(backdropIndex()), 1, "Game::BackdropIndex")
-	startBackdrop("backdrop1")
+	setBackdrop("backdrop1")
 	wait 0.1
 	assertFloat(float64(backdropIndex()), 0, "Game::BackdropIndex")
 	wait 0.1

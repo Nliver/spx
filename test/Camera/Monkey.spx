@@ -1,5 +1,5 @@
 onClick => {
-	animate "clap"
+	animateAndWait "clap"
 }
 
 onStart => {
@@ -51,8 +51,4 @@ onKey KeyLeft, => {
 
 onKey KeyRight, => {
 	Camera.changeXYpos 100, 0
-}
-
-onTurning ti => {
-	Crocodile.setHeading ti.NewDir
 }
