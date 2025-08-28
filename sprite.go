@@ -166,8 +166,8 @@ type Sprite interface {
 	TurnTo__7(target specialObj, speed float64)
 	TurnTo__8(target Sprite, speed float64, animation SpriteAnimationName)
 	TurnTo__9(target SpriteName, speed float64, animation SpriteAnimationName)
-	TurnTo__10(dir Direction, speed float64, animation SpriteAnimationName)
-	TurnTo__11(target specialObj, speed float64, animation SpriteAnimationName)
+	TurnTo__a(dir Direction, speed float64, animation SpriteAnimationName)
+	TurnTo__b(target specialObj, speed float64, animation SpriteAnimationName)
 	Visible() bool
 	Xpos() float64
 	Ypos() float64
@@ -1334,10 +1334,10 @@ func (p *SpriteImpl) TurnTo__8(target Sprite, speed float64, animation SpriteAni
 func (p *SpriteImpl) TurnTo__9(target SpriteName, speed float64, animation SpriteAnimationName) {
 	p.doTurnTo(target, speed, animation)
 }
-func (p *SpriteImpl) TurnTo__10(dir Direction, speed float64, animation SpriteAnimationName) {
+func (p *SpriteImpl) TurnTo__a(dir Direction, speed float64, animation SpriteAnimationName) {
 	p.doTurnTo(dir, speed, animation)
 }
-func (p *SpriteImpl) TurnTo__11(target specialObj, speed float64, animation SpriteAnimationName) {
+func (p *SpriteImpl) TurnTo__b(target specialObj, speed float64, animation SpriteAnimationName) {
 	p.doTurnTo(target, speed, animation)
 }
 
