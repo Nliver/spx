@@ -18,6 +18,7 @@ package spx
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"syscall"
 
@@ -37,9 +38,11 @@ func resourceDir(resource any) (fs spxfs.Dir, err error) {
 func loadJson(ret any, fs spxfs.Dir, file string) (err error) {
 	if _, ok := fs.(spxfs.GdDir); ok {
 		filePath := engine.ToAssetPath(file)
-		value := engine.ReadAllText(filePath)
-		json.Unmarshal([]byte(value), ret)
-		return
+		if engine.HasFile(filePath) {
+			value := engine.ReadAllText(filePath)
+			return json.Unmarshal([]byte(value), ret)
+		}
+		return errors.New("error : Load json failed,file not exit " + filePath)
 	}
 
 	f, err := fs.Open(file)

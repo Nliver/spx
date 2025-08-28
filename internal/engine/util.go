@@ -98,6 +98,10 @@ func ReadAllText(path string) string {
 	return resMgr.ReadAllText(path)
 }
 
+func HasFile(path string) bool {
+	return resMgr.HasFile(path)
+}
+
 // =============== setting ===================
 
 func SetDebugMode(isDebug bool) {
