@@ -68,7 +68,7 @@ type Sprite interface {
 	Animate__0(name SpriteAnimationName)
 	Animate__1(name SpriteAnimationName, loop bool)
 	AnimateAndWait(name SpriteAnimationName)
-	StopAnimation()
+	StopAnimation(name SpriteAnimationName)
 	Ask(msg any)
 	BounceOffEdge()
 	ChangeGraphicEffect(kind EffectKind, delta float64)
@@ -906,22 +906,18 @@ func (p *SpriteImpl) AnimateAndWait(name SpriteAnimationName) {
 	}
 }
 
-func (p *SpriteImpl) StopAnimation() {
-	for p.syncSprite == nil {
-		engine.WaitNextFrame()
-	}
-	p.syncSprite.PauseAnim()
-	defaultAnim := p.defaultAnimation
-	// if no default animation, set costume to default
-	if defaultAnim == "" {
-		p.setCostume(p.defaultCostumeIndex)
+func (p *SpriteImpl) StopAnimation(name SpriteAnimationName) {
+	if name == "" {
 		return
 	}
-
-	// play default animation async
-	if ani, ok := p.animations[defaultAnim]; ok {
-		p.doAnimation(defaultAnim, ani, true, 1, false, true)
+	if !p.hasAnim(name) {
+		return
 	}
+	if p.curAnimState == nil || p.curAnimState.Name != name {
+		return
+	}
+	p.syncSprite.PauseAnim()
+	p.playDefaultAnim()
 }
 
 // -----------------------------------------------------------------------------
@@ -1117,6 +1113,9 @@ func (p *SpriteImpl) doStep(step float64, speed float64, animation SpriteAnimati
 }
 func (p *SpriteImpl) playDefaultAnim() {
 	animName := ""
+	if !p.isVisible || p.isDying {
+		return
+	}
 	if p.curTweenState == nil {
 		animName = p.defaultAnimation
 	} else {
@@ -1137,12 +1136,10 @@ func (p *SpriteImpl) playDefaultAnim() {
 		animName = p.defaultAnimation
 	}
 
-	if p.isVisible && !p.isDying {
-		if _, ok := p.animations[animName]; ok {
-			spriteMgr.PlayAnim(p.syncSprite.GetId(), animName, 1, true, false)
-		} else {
-			p.goSetCostume(p.defaultCostumeIndex)
-		}
+	if _, ok := p.animations[animName]; ok {
+		spriteMgr.PlayAnim(p.syncSprite.GetId(), animName, 1, true, false)
+	} else {
+		p.goSetCostume(p.defaultCostumeIndex)
 	}
 }
 
