@@ -1116,7 +1116,7 @@ func (p *SpriteImpl) playDefaultAnim() {
 	if !p.isVisible || p.isDying {
 		return
 	}
-	if p.curTweenState == nil {
+	if p.curAnimState == nil {
 		animName = p.defaultAnimation
 	} else {
 		switch p.curAnimState.AniType {
