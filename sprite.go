@@ -65,11 +65,13 @@ type Sprite interface {
 	IEventSinks
 	Shape
 	Main()
-	Animate(name SpriteAnimationName)
+	Animate__0(name SpriteAnimationName)
+	Animate__1(name SpriteAnimationName, loop bool)
+	AnimateAndWait(name SpriteAnimationName)
+	StopAnimation()
 	Ask(msg any)
 	BounceOffEdge()
-	Bounds() *mathf.Rect2
-	ChangeEffect(kind EffectKind, delta float64)
+	ChangeGraphicEffect(kind EffectKind, delta float64)
 	ChangeHeading(dir Direction)
 	ChangePenColor(kind PenColorParam, delta float64)
 	ChangePenSize(delta float64)
@@ -78,10 +80,8 @@ type Sprite interface {
 	ChangeXYpos(dx, dy float64)
 	ChangeYpos(dy float64)
 	ClearGraphicEffects()
-	CostumeHeight() float64
 	CostumeIndex() int
 	CostumeName() SpriteCostumeName
-	CostumeWidth() float64
 	DeleteThisClone()
 	DeltaTime() float64
 	Destroy()
@@ -95,36 +95,21 @@ type Sprite interface {
 	Glide__2(sprite SpriteName, secs float64)
 	Glide__3(obj specialObj, secs float64)
 	Glide__4(pos Pos, secs float64)
-	GoBackLayers(n int)
-	Goto__0(sprite Sprite)
-	Goto__1(sprite SpriteName)
-	Goto__2(obj specialObj)
-	GotoBack()
-	GotoFront()
+	SetLayer__0(layer layerAction)
+	SetLayer__1(dir dirAction, delta int)
 	Heading() Direction
 	Hide()
 	HideVar(name string)
 	IsCloned() bool
-	Move__0(step float64)
-	Move__1(step int)
 	Name() string
-	NextCostume()
 	OnCloned__0(onCloned func(data any))
 	OnCloned__1(onCloned func())
-	OnMoving__0(onMoving func(mi *MovingInfo))
-	OnMoving__1(onMoving func())
-	OnTouchStart__0(onTouchStart func(Sprite))
-	OnTouchStart__1(onTouchStart func())
-	OnTouchStart__2(sprite SpriteName, onTouchStart func(Sprite))
-	OnTouchStart__3(sprite SpriteName, onTouchStart func())
-	OnTouchStart__4(sprites []SpriteName, onTouchStart func(Sprite))
-	OnTouchStart__5(sprites []SpriteName, onTouchStart func())
-	OnTurning__0(onTurning func(ti *TurningInfo))
-	OnTurning__1(onTurning func())
-	Parent() *Game
+	OnTouchStart__0(sprite SpriteName, onTouchStart func(Sprite))
+	OnTouchStart__1(sprite SpriteName, onTouchStart func())
+	OnTouchStart__2(sprites []SpriteName, onTouchStart func(Sprite))
+	OnTouchStart__3(sprites []SpriteName, onTouchStart func())
 	PenDown()
 	PenUp()
-	PrevCostume()
 	Quote__0(message string)
 	Quote__1(message string, secs float64)
 	Quote__2(message, description string)
@@ -135,8 +120,7 @@ type Sprite interface {
 	SetCostume__1(index float64)
 	SetCostume__2(index int)
 	SetCostume__3(action switchAction)
-	SetDying()
-	SetEffect(kind EffectKind, val float64)
+	SetGraphicEffect(kind EffectKind, val float64)
 	SetHeading(dir Direction)
 	SetPenColor__0(color Color)
 	SetPenColor__1(kind PenColorParam, value float64)
@@ -151,8 +135,17 @@ type Sprite interface {
 	Size() float64
 	Stamp()
 	Step__0(step float64)
-	Step__1(step float64, animation SpriteAnimationName)
-	Step__2(step int)
+	Step__1(step float64, speed float64)
+	Step__2(step float64, speed float64, animation SpriteAnimationName)
+	StepTo__0(sprite Sprite)
+	StepTo__1(sprite SpriteName)
+	StepTo__2(obj specialObj)
+	StepTo__3(sprite Sprite, speed float64)
+	StepTo__4(sprite SpriteName, speed float64)
+	StepTo__5(obj specialObj, speed float64)
+	StepTo__6(sprite Sprite, speed float64, animation SpriteAnimationName)
+	StepTo__7(sprite SpriteName, speed float64, animation SpriteAnimationName)
+	StepTo__8(obj specialObj, speed float64, animation SpriteAnimationName)
 	Think__0(msg any)
 	Think__1(msg any, secs float64)
 	TimeSinceLevelLoad() float64
@@ -161,11 +154,20 @@ type Sprite interface {
 	Touching__2(obj specialObj) bool
 	TouchingColor(color Color) bool
 	Turn__0(dir Direction)
-	Turn__1(ti *TurningInfo)
-	TurnTo__0(sprite Sprite)
-	TurnTo__1(sprite SpriteName)
+	Turn__1(dir Direction, speed float64)
+	Turn__2(dir Direction, speed float64, animation SpriteAnimationName)
+	TurnTo__0(target Sprite)
+	TurnTo__1(target SpriteName)
 	TurnTo__2(dir Direction)
-	TurnTo__3(obj specialObj)
+	TurnTo__3(target specialObj)
+	TurnTo__4(target Sprite, speed float64)
+	TurnTo__5(target SpriteName, speed float64)
+	TurnTo__6(dir Direction, speed float64)
+	TurnTo__7(target specialObj, speed float64)
+	TurnTo__8(target Sprite, speed float64, animation SpriteAnimationName)
+	TurnTo__9(target SpriteName, speed float64, animation SpriteAnimationName)
+	TurnTo__10(dir Direction, speed float64, animation SpriteAnimationName)
+	TurnTo__11(target specialObj, speed float64, animation SpriteAnimationName)
 	Visible() bool
 	Xpos() float64
 	Ypos() float64
@@ -176,12 +178,12 @@ type Sprite interface {
 	GetSoundEffect(kind SoundEffectKind) float64
 	SetSoundEffect(kind SoundEffectKind, value float64)
 	ChangeSoundEffect(kind SoundEffectKind, delta float64)
-	Play__0(media Sound, action *PlayOptions)
-	Play__1(media Sound, wait bool)
-	Play__2(media Sound)
-	Play__3(media SoundName)
-	Play__4(media SoundName, wait bool)
-	Play__5(media SoundName, action *PlayOptions)
+	Play__0(name SoundName, loop bool)
+	Play__1(name SoundName)
+	PlayAndWait(name SoundName)
+	PausePlaying(name SoundName)
+	ResumePlaying(name SoundName)
+	StopPlaying(name SoundName)
 }
 
 type SpriteName = string
@@ -221,8 +223,6 @@ type SpriteImpl struct {
 	isPenDown bool
 	isDying   bool
 
-	hasOnTurning    bool
-	hasOnMoving     bool
 	hasOnCloned     bool
 	hasOnTouchStart bool
 	hasOnTouching   bool
@@ -230,6 +230,7 @@ type SpriteImpl struct {
 
 	gamer               reflect.Value
 	curAnimState        *animState
+	curTweenState       *animState
 	defaultCostumeIndex int
 
 	triggerMask   int64
@@ -250,14 +251,11 @@ type SpriteImpl struct {
 	audioId engine.Object
 
 	collisionTargets map[string]bool
+	pendingAudios    []string
 }
 
-func (p *SpriteImpl) SetDying() { // dying: visible but can't be touched
+func (p *SpriteImpl) setDying() { // dying: visible but can't be touched
 	p.isDying = true
-}
-
-func (p *SpriteImpl) Parent() *Game {
-	return p.g
 }
 
 func (p *SpriteImpl) getAllShapes() []Shape {
@@ -336,6 +334,12 @@ func (p *SpriteImpl) init(
 		registerAnimToEngine(p.name, animName, ani, p.baseObj.costumes, p.isCostumeSet, spriteCfg.ApplyCustumeOffset2Animation)
 	}
 
+	p.pendingAudios = make([]string, 0)
+	// create engine object
+	p.syncSprite = nil
+	engine.WaitMainThread(func() {
+		p.syncCheckInitProxy()
+	})
 }
 
 func (p *SpriteImpl) awake() {
@@ -379,8 +383,6 @@ func (p *SpriteImpl) InitFrom(src *SpriteImpl) {
 	p.isPenDown = src.isPenDown
 	p.isDying = false
 
-	p.hasOnTurning = false
-	p.hasOnMoving = false
 	p.hasOnCloned = false
 	p.hasOnTouchStart = false
 	p.hasOnTouching = false
@@ -401,6 +403,7 @@ func (p *SpriteImpl) InitFrom(src *SpriteImpl) {
 	p.triggerSize = src.triggerSize
 	p.triggerRadius = src.triggerRadius
 
+	p.pendingAudios = make([]string, 0)
 }
 
 func cloneMap(v map[string]any) map[string]any {
@@ -464,11 +467,18 @@ func cloneSprite(out reflect.Value, outPtr Sprite, in reflect.Value, v specsp) *
 	if v != nil { // in loadSprite
 		applySpriteProps(dest, v)
 	} else { // in sprite.Clone
-		dest.OnCloned__1(func() {
+		dest.onAwake(func() {
 			dest.awake()
 		})
 		runMain(outPtr.Main)
 	}
+	dest.syncSprite = nil
+	dest.curAnimState = nil
+	dest.curTweenState = nil
+	engine.WaitMainThread(func() {
+		dest.syncCheckInitProxy()
+		syncCheckUpdateCostume(&dest.baseObj)
+	})
 	return dest
 }
 
@@ -488,12 +498,12 @@ func Gopt_SpriteImpl_Clone__1(sprite Sprite, data any) {
 	src.g.addClonedShape(src, dest)
 
 	if dest.hasOnCloned {
+		dest.doWhenAwake(dest)
 		dest.doWhenCloned(dest, data)
 	}
 }
 
 func (p *SpriteImpl) OnCloned__0(onCloned func(data any)) {
-	p.syncSprite = nil
 	p.hasOnCloned = true
 	p.allWhenCloned = &eventSink{
 		prev:  p.allWhenCloned,
@@ -506,7 +516,6 @@ func (p *SpriteImpl) OnCloned__0(onCloned func(data any)) {
 }
 
 func (p *SpriteImpl) OnCloned__1(onCloned func()) {
-	p.syncSprite = nil
 	p.OnCloned__0(func(any) {
 		onCloned()
 	})
@@ -542,7 +551,7 @@ func (p *SpriteImpl) _onTouchStart(onTouchStart func(Sprite)) {
 	}
 }
 
-func (p *SpriteImpl) OnTouchStart__0(onTouchStart func(Sprite)) {
+func (p *SpriteImpl) onTouchStart__0(onTouchStart func(Sprite)) {
 	// collision with other sprites by default
 	for name, _ := range p.g.sprs {
 		p.collisionTargets[name] = true
@@ -550,7 +559,7 @@ func (p *SpriteImpl) OnTouchStart__0(onTouchStart func(Sprite)) {
 	p._onTouchStart(onTouchStart)
 }
 
-func (p *SpriteImpl) OnTouchStart__1(onTouchStart func()) {
+func (p *SpriteImpl) onTouchStart__1(onTouchStart func()) {
 	// collision with all other sprites by default
 	for name, _ := range p.g.sprs {
 		p.collisionTargets[name] = true
@@ -560,7 +569,7 @@ func (p *SpriteImpl) OnTouchStart__1(onTouchStart func()) {
 	})
 }
 
-func (p *SpriteImpl) OnTouchStart__2(sprite SpriteName, onTouchStart func(Sprite)) {
+func (p *SpriteImpl) OnTouchStart__0(sprite SpriteName, onTouchStart func(Sprite)) {
 	p.collisionTargets[sprite] = true
 	p._onTouchStart(func(s Sprite) {
 		impl := spriteOf(s)
@@ -570,14 +579,14 @@ func (p *SpriteImpl) OnTouchStart__2(sprite SpriteName, onTouchStart func(Sprite
 	})
 }
 
-func (p *SpriteImpl) OnTouchStart__3(sprite SpriteName, onTouchStart func()) {
+func (p *SpriteImpl) OnTouchStart__1(sprite SpriteName, onTouchStart func()) {
 	p.collisionTargets[sprite] = true
-	p.OnTouchStart__2(sprite, func(Sprite) {
+	p.OnTouchStart__0(sprite, func(Sprite) {
 		onTouchStart()
 	})
 }
 
-func (p *SpriteImpl) OnTouchStart__4(sprites []SpriteName, onTouchStart func(Sprite)) {
+func (p *SpriteImpl) OnTouchStart__2(sprites []SpriteName, onTouchStart func(Sprite)) {
 	for _, sprite := range sprites {
 		p.collisionTargets[sprite] = true
 	}
@@ -594,87 +603,23 @@ func (p *SpriteImpl) OnTouchStart__4(sprites []SpriteName, onTouchStart func(Spr
 	})
 }
 
-func (p *SpriteImpl) OnTouchStart__5(sprites []SpriteName, onTouchStart func()) {
+func (p *SpriteImpl) OnTouchStart__3(sprites []SpriteName, onTouchStart func()) {
 	for _, sprite := range sprites {
 		p.collisionTargets[sprite] = true
 	}
-	p.OnTouchStart__4(sprites, func(Sprite) {
+	p.OnTouchStart__2(sprites, func(Sprite) {
 		onTouchStart()
-	})
-}
-
-type MovingInfo struct {
-	OldX, OldY float64
-	NewX, NewY float64
-	Obj        *SpriteImpl
-}
-
-func (p *MovingInfo) StopMoving() {
-}
-
-func (p *MovingInfo) Dx() float64 {
-	return p.NewX - p.OldX
-}
-
-func (p *MovingInfo) Dy() float64 {
-	return p.NewY - p.OldY
-}
-
-func (p *SpriteImpl) OnMoving__0(onMoving func(mi *MovingInfo)) {
-	p.hasOnMoving = true
-	p.allWhenMoving = &eventSink{
-		prev:  p.allWhenMoving,
-		pthis: p,
-		sink:  onMoving,
-		cond: func(data any) bool {
-			return data == p
-		},
-	}
-}
-
-func (p *SpriteImpl) OnMoving__1(onMoving func()) {
-	p.OnMoving__0(func(mi *MovingInfo) {
-		onMoving()
-	})
-}
-
-type TurningInfo struct {
-	OldDir Direction
-	NewDir Direction
-	Obj    *SpriteImpl
-}
-
-func (p *TurningInfo) Dir() float64 {
-	return p.NewDir - p.OldDir
-}
-
-func (p *SpriteImpl) OnTurning__0(onTurning func(ti *TurningInfo)) {
-	p.hasOnTurning = true
-	p.allWhenTurning = &eventSink{
-		prev:  p.allWhenTurning,
-		pthis: p,
-		sink:  onTurning,
-		cond: func(data any) bool {
-			return data == p
-		},
-	}
-}
-
-func (p *SpriteImpl) OnTurning__1(onTurning func()) {
-	p.OnTurning__0(func(*TurningInfo) {
-		onTurning()
 	})
 }
 
 func (p *SpriteImpl) Die() {
 	aniName := p.getStateAnimName(StateDie)
-	p.SetDying()
+	p.setDying()
 
 	p.Stop(OtherScriptsInSprite)
 	if ani, ok := p.animations[aniName]; ok {
-		p.goAnimate(aniName, ani)
+		p.doAnimation(aniName, ani, false, 1, true, true)
 	}
-
 	p.Destroy()
 }
 
@@ -773,22 +718,6 @@ func (p *SpriteImpl) SetCostume__3(action switchAction) {
 	p.setCostume(action)
 }
 
-func (p *SpriteImpl) NextCostume() {
-	if debugInstr {
-		log.Println("NextCostume", p.name)
-	}
-	p.goNextCostume()
-	p.defaultCostumeIndex = p.costumeIndex_
-}
-
-func (p *SpriteImpl) PrevCostume() {
-	if debugInstr {
-		log.Println("PrevCostume", p.name)
-	}
-	p.goPrevCostume()
-	p.defaultCostumeIndex = p.costumeIndex_
-}
-
 // -----------------------------------------------------------------------------
 
 func (p *SpriteImpl) getFromAnToForAni(anitype aniTypeEnum, from any, to any) (any, any) {
@@ -842,70 +771,27 @@ func (p *SpriteImpl) hasAnim(animName string) bool {
 }
 
 type animState struct {
-	AniType  aniTypeEnum
-	Name     string
-	Duration float64
-	From     any
-	To       any
-	Speed    float64
-	IsLoop   bool
-
-	OnStart      *actionConfig
-	OnPlay       *actionConfig
-	IsCanceled   bool
-	IsKeepOnStop bool
+	AniType    aniTypeEnum
+	Name       string
+	IsCanceled bool
+	AudioName  string
+	AudioId    soundId
 }
 
-func (p *SpriteImpl) goAnimate(name SpriteAnimationName, ani *aniConfig) {
-	p.goAnimateInternal(name, ani, true)
-}
-func (p *SpriteImpl) goAnimateInternal(name SpriteAnimationName, ani *aniConfig, isBlocking bool) *animState {
-	info := &animState{
-		AniType:      ani.AniType,
-		Name:         name,
-		Duration:     ani.Duration,
-		From:         ani.From,
-		To:           ani.To,
-		Speed:        ani.Speed,
-		IsLoop:       ani.IsLoop,
-		OnStart:      ani.OnStart,
-		OnPlay:       ani.OnPlay,
-		IsKeepOnStop: ani.IsKeepOnStop,
-		IsCanceled:   false,
+func (p *SpriteImpl) doAnimation(animName SpriteAnimationName, ani *aniConfig, loop bool, speed float64, isBlocking bool, playAudio bool) {
+	p.stopAnimState(p.curAnimState)
+	p.curAnimState = &animState{
+		AniType:    aniTypeFrame,
+		IsCanceled: false,
+		Name:       animName,
 	}
-	if p.curAnimState != nil {
-		p.curAnimState.IsCanceled = true
+	info := p.curAnimState
+	if playAudio {
+		p.playAnimAudio(ani, info)
 	}
-	p.curAnimState = info
+	p.isCostumeDirty = false
+	spriteMgr.PlayAnim(p.syncSprite.GetId(), animName, speed, loop, false)
 	if isBlocking {
-		doAnimation(p, info)
-	} else {
-		engine.Go(p.pthis, func() {
-			doAnimation(p, info)
-		})
-	}
-	return info
-}
-
-func doAnimation(p *SpriteImpl, info *animState) {
-	animName := info.Name
-	for p.syncSprite == nil {
-		engine.WaitNextFrame()
-	}
-	engine.WaitMainThread(func() {
-		if info.IsCanceled {
-			return
-		}
-		if !p.hasAnim(animName) {
-			return
-		}
-		p.isCostumeDirty = false
-		p.syncSprite.PlayAnim(animName, info.Speed, info.IsLoop, false)
-	})
-	if info.OnStart != nil && info.OnStart.Play != "" {
-		p.Play__3(info.OnStart.Play)
-	}
-	if info.AniType == aniTypeFrame {
 		p.isAnimating = true
 		for spriteMgr.IsPlayingAnim(p.syncSprite.GetId()) {
 			if info.IsCanceled {
@@ -914,60 +800,127 @@ func doAnimation(p *SpriteImpl, info *animState) {
 			engine.WaitNextFrame()
 		}
 		p.isAnimating = false
-	} else {
-		duration := info.Duration
-		timer := 0.0
-		pre_x, pre_y := p.x, p.y
-		pre_direction := p.direction
-		for timer < duration {
-			timer += time.DeltaTime()
-			percent := mathf.Clamp01f(timer / duration)
-			switch info.AniType {
-			case aniTypeMove:
-				src, _ := tools.GetFloat(info.From)
-				dst, _ := tools.GetFloat(info.To)
-				val := mathf.Lerpf(src, dst, percent)
-				sin, cos := math.Sincos(toRadian(pre_direction))
-				p.doMoveToForAnim(pre_x+val*sin, pre_y+val*cos)
-			case aniTypeGlide:
-				src, _ := tools.GetVec2(info.From)
-				dst, _ := tools.GetVec2(info.To)
-				val := src.Lerp(dst, percent)
-				p.SetXYpos(val.X, val.Y)
-			case aniTypeTurn:
-				src, _ := tools.GetFloat(info.From)
-				dst, _ := tools.GetFloat(info.To)
-				val := mathf.Lerpf(src, dst, percent)
-				p.setDirection(val, false)
-			}
-			if info.IsCanceled {
-				break
-			}
-			engine.WaitNextFrame()
-		}
-	}
-	if !info.IsCanceled {
-		isNeedPlayDefault := false
-		if animName != p.defaultAnimation && p.isVisible && !info.IsKeepOnStop {
-			dieAnimName := p.getStateAnimName(StateDie)
-			if animName != dieAnimName {
-				isNeedPlayDefault = true
-			}
-		}
-		if isNeedPlayDefault {
-			p.playDefaultAnim()
-		}
+		p.stopAnimState(info)
 	}
 }
 
-func (p *SpriteImpl) Animate(name SpriteAnimationName) {
+func (p *SpriteImpl) doTween(name SpriteAnimationName, ani *aniConfig) {
+	info := &animState{
+		AniType:    ani.AniType,
+		Name:       name,
+		IsCanceled: false,
+	}
+	p.stopAnimState(p.curTweenState)
+	p.curTweenState = info
+	animName := info.Name
+	if p.hasAnim(animName) {
+		p.doAnimation(animName, ani, ani.IsLoop, ani.Speed, false, false)
+		p.playAnimAudio(ani, info)
+	}
+	duration := ani.Duration
+	timer := 0.0
+	prePercent := 0.0
+	for timer < duration {
+		if info.IsCanceled {
+			return
+		}
+		timer += time.DeltaTime()
+		percent := mathf.Clamp01f(timer / duration)
+		deltaPercent := percent - prePercent
+		prePercent = percent
+		switch ani.AniType {
+		case aniTypeMove:
+			src, _ := tools.GetVec2(ani.From)
+			dst, _ := tools.GetVec2(ani.To)
+			diff := dst.Sub(src)
+			val := diff.Mulf(deltaPercent)
+			p.ChangeXYpos(val.X, val.Y)
+		case aniTypeGlide:
+			src, _ := tools.GetVec2(ani.From)
+			dst, _ := tools.GetVec2(ani.To)
+			diff := dst.Sub(src)
+			val := diff.Mulf(deltaPercent)
+			p.ChangeXYpos(val.X, val.Y)
+		case aniTypeTurn:
+			src, _ := tools.GetFloat(ani.From)
+			dst, _ := tools.GetFloat(ani.To)
+			diff := dst - src
+			val := diff * deltaPercent
+			p.ChangeHeading(val)
+		}
+		engine.WaitNextFrame()
+	}
+	if animName != p.defaultAnimation && !ani.IsKeepOnStop {
+		p.playDefaultAnim()
+	}
+	p.stopAnimState(info)
+	p.curTweenState = nil
+}
+
+func (p *SpriteImpl) stopAnimState(state *animState) {
+	if state == nil {
+		return
+	}
+	state.IsCanceled = true
+	// don't need to stop audio when anim is canceled
+	//p.stopAnimAudio(state)
+}
+
+func (p *SpriteImpl) stopAnimAudio(state *animState) {
+	if state != nil {
+		if state.AudioName != "" {
+			p.g.stopSoundInstance(state.AudioId)
+		}
+	}
+}
+func (p *SpriteImpl) playAnimAudio(ani *aniConfig, info *animState) {
+	if ani.OnStart != nil && ani.OnStart.Play != "" {
+		info.AudioName = ani.OnStart.Play
+		info.AudioId = p.playAudio(info.AudioName, false)
+	}
+}
+
+func (p *SpriteImpl) Animate__0(name SpriteAnimationName) {
+	p.Animate__1(name, false)
+}
+
+func (p *SpriteImpl) Animate__1(name SpriteAnimationName, loop bool) {
 	if debugInstr {
 		log.Println("==> Animation", name)
 	}
 	if ani, ok := p.animations[name]; ok {
-		p.goAnimate(name, ani)
+		p.doAnimation(name, ani, loop, 1, false, true)
 	} else {
 		log.Println("Animation not found:", name)
+	}
+}
+
+func (p *SpriteImpl) AnimateAndWait(name SpriteAnimationName) {
+	if debugInstr {
+		log.Println("==> AnimateAndWait", name)
+	}
+	if ani, ok := p.animations[name]; ok {
+		p.doAnimation(name, ani, false, 1, true, true)
+	} else {
+		log.Println("Animation not found:", name)
+	}
+}
+
+func (p *SpriteImpl) StopAnimation() {
+	for p.syncSprite == nil {
+		engine.WaitNextFrame()
+	}
+	p.syncSprite.PauseAnim()
+	defaultAnim := p.defaultAnimation
+	// if no default animation, set costume to default
+	if defaultAnim == "" {
+		p.setCostume(p.defaultCostumeIndex)
+		return
+	}
+
+	// play default animation async
+	if ani, ok := p.animations[defaultAnim]; ok {
+		p.doAnimation(defaultAnim, ani, true, 1, false, true)
 	}
 }
 
@@ -1086,10 +1039,6 @@ func (p *SpriteImpl) doMoveTo(x, y float64) {
 
 func (p *SpriteImpl) doMoveToForAnim(x, y float64) {
 	x, y = p.fixWorldRange(x, y)
-	if p.hasOnMoving {
-		mi := &MovingInfo{OldX: p.x, OldY: p.y, NewX: x, NewY: y, Obj: p}
-		p.doWhenMoving(p, mi)
-	}
 	if p.isPenDown {
 		p.movePen(x, y)
 	}
@@ -1117,112 +1066,164 @@ func (p *SpriteImpl) Move__1(step int) {
 }
 
 func (p *SpriteImpl) Step__0(step float64) {
-	animName := p.getStateAnimName(StateStep)
-	p.Step__1(step, animName)
+	p.doStep(step, 1, "")
 }
 
-func (p *SpriteImpl) Step__1(step float64, animation SpriteAnimationName) {
-	if debugInstr {
-		log.Println("Step", p.name, step)
+func (p *SpriteImpl) Step__1(step float64, speed float64) {
+	p.doStep(step, speed, "")
+}
+
+func (p *SpriteImpl) Step__2(step float64, speed float64, animation SpriteAnimationName) {
+	p.doStep(step, speed, animation)
+}
+
+func (p *SpriteImpl) doStepToPos(x, y float64, speed float64, animation SpriteAnimationName) {
+	if animation == "" {
+		animation = p.getStateAnimName(StateStep)
 	}
-	if ani, ok := p.animations[animation]; ok {
-		anicopy := *ani
-		anicopy.From = 0
-		anicopy.To = step
-		anicopy.AniType = aniTypeMove
-		anicopy.Duration = math.Abs(step) * ani.StepDuration
-		anicopy.IsLoop = true
-		p.goAnimate(animation, &anicopy)
-		return
-	}
-	p.goMoveForward(step)
-}
-
-func (p *SpriteImpl) Step__2(step int) {
-	p.Step__0(float64(step))
-}
-
-func (p *SpriteImpl) playDefaultAnim() {
-	animName := p.defaultAnimation
-	if p.isVisible {
-		isPlayAnim := false
-		if ani, ok := p.animations[animName]; ok {
-			isPlayAnim = true
+	// if no animation, goto target immediately
+	if !p.hasAnim(animation) {
+		p.SetXYpos(x, y)
+	} else {
+		speed = math.Max(speed, 0.001)
+		from := mathf.NewVec2(p.x, p.y)
+		to := mathf.NewVec2(x, y)
+		distance := from.DistanceTo(to)
+		if ani, ok := p.animations[animation]; ok {
 			anicopy := *ani
+			anicopy.From = &from
+			anicopy.To = &to
+			anicopy.AniType = aniTypeMove
+			anicopy.Duration = math.Abs(distance) * ani.StepDuration / speed
 			anicopy.IsLoop = true
-			p.goAnimateInternal(animName, &anicopy, false)
+			anicopy.Speed = speed
+			p.doTween(animation, &anicopy)
+			return
 		}
-		if !isPlayAnim {
+	}
+}
+func (p *SpriteImpl) doStepTo(obj any, speed float64, animation SpriteAnimationName) {
+	if debugInstr {
+		log.Println("Goto", p.name, obj)
+	}
+	x, y := p.g.objectPos(obj)
+	p.doStepToPos(x, y, speed, animation)
+}
+func (p *SpriteImpl) doStep(step float64, speed float64, animation SpriteAnimationName) {
+	dirSin, dirCos := math.Sincos(toRadian(p.direction))
+	diff := mathf.NewVec2(step*dirSin, step*dirCos)
+	to := mathf.NewVec2(p.x, p.y).Add(diff)
+	p.doStepToPos(to.X, to.Y, speed, animation)
+}
+func (p *SpriteImpl) playDefaultAnim() {
+	animName := ""
+	if p.curTweenState == nil {
+		animName = p.defaultAnimation
+	} else {
+		switch p.curAnimState.AniType {
+		case aniTypeMove:
+			animName = p.getStateAnimName(StateStep)
+			break
+		case aniTypeTurn:
+			animName = p.getStateAnimName(StateTurn)
+			break
+		case aniTypeGlide:
+			animName = p.getStateAnimName(StateGlide)
+			break
+		}
+	}
+
+	if animName == "" {
+		animName = p.defaultAnimation
+	}
+
+	if p.isVisible && !p.isDying {
+		if _, ok := p.animations[animName]; ok {
+			spriteMgr.PlayAnim(p.syncSprite.GetId(), animName, 1, true, false)
+		} else {
 			p.goSetCostume(p.defaultCostumeIndex)
 		}
 	}
 }
 
-// Goto func:
-//
-//	Goto(sprite)
-//	Goto(spx.Mouse)
-//	Goto(spx.Random)
-func (p *SpriteImpl) goGoto(obj any) {
+func (p *SpriteImpl) StepTo__0(sprite Sprite) {
+	p.doStepTo(sprite, 1, "")
+}
+
+func (p *SpriteImpl) StepTo__1(sprite SpriteName) {
+	p.doStepTo(sprite, 1, "")
+}
+
+func (p *SpriteImpl) StepTo__2(obj specialObj) {
+	p.doStepTo(obj, 1, "")
+}
+
+func (p *SpriteImpl) StepTo__3(sprite Sprite, speed float64) {
+	p.doStepTo(sprite, speed, "")
+}
+
+func (p *SpriteImpl) StepTo__4(sprite SpriteName, speed float64) {
+	p.doStepTo(sprite, speed, "")
+}
+
+func (p *SpriteImpl) StepTo__5(obj specialObj, speed float64) {
+	p.doStepTo(obj, speed, "")
+}
+
+func (p *SpriteImpl) StepTo__6(sprite Sprite, speed float64, animation SpriteAnimationName) {
+	p.doStepTo(sprite, speed, animation)
+}
+
+func (p *SpriteImpl) StepTo__7(sprite SpriteName, speed float64, animation SpriteAnimationName) {
+	p.doStepTo(sprite, speed, animation)
+}
+
+func (p *SpriteImpl) StepTo__8(obj specialObj, speed float64, animation SpriteAnimationName) {
+	p.doStepTo(obj, speed, animation)
+}
+func (p *SpriteImpl) doGlideTo(obj any, secs float64) {
 	if debugInstr {
-		log.Println("Goto", p.name, obj)
+		log.Println("Glide", obj, secs)
 	}
 	x, y := p.g.objectPos(obj)
-	p.SetXYpos(x, y)
+	p.doGlide(x, y, secs)
 }
 
-func (p *SpriteImpl) Goto__0(sprite Sprite) {
-	p.goGoto(sprite)
-}
-
-func (p *SpriteImpl) Goto__1(sprite SpriteName) {
-	p.goGoto(sprite)
-}
-
-func (p *SpriteImpl) Goto__2(obj specialObj) {
-	p.goGoto(obj)
-}
-
-func (p *SpriteImpl) Glide__0(x, y float64, secs float64) {
+func (p *SpriteImpl) doGlide(x, y float64, secs float64) {
 	if debugInstr {
 		log.Println("Glide", p.name, x, y, secs)
 	}
 	x0, y0 := p.getXY()
 	from := mathf.NewVec2(x0, y0)
 	to := mathf.NewVec2(x, y)
-	ani := &aniConfig{
+	anicopy := aniConfig{
 		Duration: secs,
 		From:     &from,
 		To:       &to,
 		AniType:  aniTypeGlide,
 	}
-	ani.IsLoop = true
+	anicopy.IsLoop = true
 	animName := p.getStateAnimName(StateGlide)
-	p.goAnimate(animName, ani)
+	p.doTween(animName, &anicopy)
 }
-
-func (p *SpriteImpl) goGlide(obj any, secs float64) {
-	if debugInstr {
-		log.Println("Glide", obj, secs)
-	}
-	x, y := p.g.objectPos(obj)
-	p.Glide__0(x, y, secs)
+func (p *SpriteImpl) Glide__0(x, y float64, secs float64) {
+	p.doGlide(x, y, secs)
 }
 
 func (p *SpriteImpl) Glide__1(sprite Sprite, secs float64) {
-	p.goGlide(sprite, secs)
+	p.doGlideTo(sprite, secs)
 }
 
 func (p *SpriteImpl) Glide__2(sprite SpriteName, secs float64) {
-	p.goGlide(sprite, secs)
+	p.doGlideTo(sprite, secs)
 }
 
 func (p *SpriteImpl) Glide__3(obj specialObj, secs float64) {
-	p.goGlide(obj, secs)
+	p.doGlideTo(obj, secs)
 }
 
 func (p *SpriteImpl) Glide__4(pos Pos, secs float64) {
-	p.goGlide(pos, secs)
+	p.doGlideTo(pos, secs)
 }
 
 func (p *SpriteImpl) SetXYpos(x, y float64) {
@@ -1292,57 +1293,77 @@ func (p *SpriteImpl) Name() string {
 	return p.name
 }
 
-// Turn func:
-//
-//	Turn(degree)
-//	Turn(spx.Left)
-//	Turn(spx.Right)
-//	Turn(ti *spx.TurningInfo)
-func (p *SpriteImpl) turn(val any) {
-	var delta float64
-	switch v := val.(type) {
-	case Direction:
-		delta = v
-	case *TurningInfo:
-		p.doTurnTogether(v) // don't animate
-		return
-	default:
-		panic("Turn: unexpected input")
+func (p *SpriteImpl) Turn__0(dir Direction) {
+	p.doTurn(dir, 1, "")
+
+}
+func (p *SpriteImpl) Turn__1(dir Direction, speed float64) {
+	p.doTurn(dir, speed, "")
+
+}
+func (p *SpriteImpl) Turn__2(dir Direction, speed float64, animation SpriteAnimationName) {
+	p.doTurn(dir, speed, animation)
+}
+func (p *SpriteImpl) TurnTo__0(target Sprite) {
+	p.doTurnTo(target, 1, "")
+}
+func (p *SpriteImpl) TurnTo__1(target SpriteName) {
+	p.doTurnTo(target, 1, "")
+}
+func (p *SpriteImpl) TurnTo__2(dir Direction) {
+	p.doTurnTo(dir, 1, "")
+}
+func (p *SpriteImpl) TurnTo__3(target specialObj) {
+	p.doTurnTo(target, 1, "")
+}
+func (p *SpriteImpl) TurnTo__4(target Sprite, speed float64) {
+	p.doTurnTo(target, speed, "")
+}
+func (p *SpriteImpl) TurnTo__5(target SpriteName, speed float64) {
+	p.doTurnTo(target, speed, "")
+}
+func (p *SpriteImpl) TurnTo__6(dir Direction, speed float64) {
+	p.doTurnTo(dir, speed, "")
+}
+func (p *SpriteImpl) TurnTo__7(target specialObj, speed float64) {
+	p.doTurnTo(target, speed, "")
+}
+func (p *SpriteImpl) TurnTo__8(target Sprite, speed float64, animation SpriteAnimationName) {
+	p.doTurnTo(target, speed, animation)
+}
+func (p *SpriteImpl) TurnTo__9(target SpriteName, speed float64, animation SpriteAnimationName) {
+	p.doTurnTo(target, speed, animation)
+}
+func (p *SpriteImpl) TurnTo__10(dir Direction, speed float64, animation SpriteAnimationName) {
+	p.doTurnTo(dir, speed, animation)
+}
+func (p *SpriteImpl) TurnTo__11(target specialObj, speed float64, animation SpriteAnimationName) {
+	p.doTurnTo(target, speed, animation)
+}
+
+func (p *SpriteImpl) doTurn(val Direction, speed float64, animation SpriteAnimationName) {
+	delta := val
+	if animation == "" {
+		animation = p.getStateAnimName(StateTurn)
 	}
-	animName := p.getStateAnimName(StateTurn)
-	if ani, ok := p.animations[animName]; ok {
+	if ani, ok := p.animations[animation]; ok {
 		anicopy := *ani
 		anicopy.From = p.direction
 		anicopy.To = p.direction + delta
-		anicopy.Duration = ani.TurnToDuration / 360.0 * math.Abs(delta)
+		anicopy.Duration = ani.TurnToDuration / 360.0 * math.Abs(delta) / speed
 		anicopy.AniType = aniTypeTurn
 		anicopy.IsLoop = true
-		p.goAnimate(animName, &anicopy)
+		anicopy.Speed = speed
+		p.doTween(animation, &anicopy)
 		return
 	}
-	if p.setDirection(delta, true) && debugInstr {
+	p.setDirection(delta, true)
+	if debugInstr {
 		log.Println("Turn", p.name, val)
 	}
 }
 
-func (p *SpriteImpl) Turn__0(dir Direction) {
-	p.turn(dir)
-}
-
-func (p *SpriteImpl) Turn__1(ti *TurningInfo) {
-	p.turn(ti)
-}
-
-// TurnTo func:
-//
-//	TurnTo(sprite)
-//	TurnTo(spx.Mouse)
-//	TurnTo(degree)
-//	TurnTo(spx.Left)
-//	TurnTo(spx.Right)
-//	TurnTo(spx.Up)
-//	TurnTo(spx.Down)
-func (p *SpriteImpl) turnTo(obj any) {
+func (p *SpriteImpl) doTurnTo(obj any, speed float64, animation SpriteAnimationName) {
 	var angle float64
 	switch v := obj.(type) {
 	case Direction:
@@ -1354,8 +1375,10 @@ func (p *SpriteImpl) turnTo(obj any) {
 		angle = 90 - math.Atan2(dy, dx)*180/math.Pi
 	}
 
-	animName := p.getStateAnimName(StateTurn)
-	if ani, ok := p.animations[animName]; ok {
+	if animation == "" {
+		animation = p.getStateAnimName(StateTurn)
+	}
+	if ani, ok := p.animations[animation]; ok {
 		fromangle := math.Mod(p.direction+360.0, 360.0)
 		toangle := math.Mod(angle+360.0, 360.0)
 		if toangle-fromangle > 180.0 {
@@ -1368,31 +1391,16 @@ func (p *SpriteImpl) turnTo(obj any) {
 		anicopy := *ani
 		anicopy.From = fromangle
 		anicopy.To = toangle
-		anicopy.Duration = ani.TurnToDuration / 360.0 * math.Abs(delta)
+		anicopy.Duration = ani.TurnToDuration / 360.0 * math.Abs(delta) / speed
 		anicopy.AniType = aniTypeTurn
 		anicopy.IsLoop = true
-		p.goAnimate(animName, &anicopy)
+		anicopy.Speed = speed
+		p.doTween(animation, &anicopy)
 		return
 	}
 	if p.setDirection(angle, false) && debugInstr {
 		log.Println("TurnTo", p.name, obj)
 	}
-}
-
-func (p *SpriteImpl) TurnTo__0(sprite Sprite) {
-	p.turnTo(sprite)
-}
-
-func (p *SpriteImpl) TurnTo__1(sprite SpriteName) {
-	p.turnTo(sprite)
-}
-
-func (p *SpriteImpl) TurnTo__2(dir Direction) {
-	p.turnTo(dir)
-}
-
-func (p *SpriteImpl) TurnTo__3(obj specialObj) {
-	p.turnTo(obj)
 }
 func (p *SpriteImpl) SetHeading(dir Direction) {
 	p.setDirection(dir, false)
@@ -1410,24 +1418,9 @@ func (p *SpriteImpl) setDirection(dir float64, change bool) bool {
 	if p.direction == dir {
 		return false
 	}
-	if p.hasOnTurning {
-		p.doWhenTurning(p, &TurningInfo{NewDir: dir, OldDir: p.direction, Obj: p})
-	}
 	p.direction = dir
 	p.updateTransform()
 	return true
-}
-
-func (p *SpriteImpl) doTurnTogether(ti *TurningInfo) {
-	/*
-	 x’ = x0 + cos * (x-x0) + sin * (y-y0)
-	 y’ = y0 - sin * (x-x0) + cos * (y-y0)
-	*/
-	x0, y0 := ti.Obj.x, ti.Obj.y
-	dir := ti.Dir()
-	sin, cos := math.Sincos(dir * (math.Pi / 180))
-	p.x, p.y = x0+cos*(p.x-x0)+sin*(p.y-y0), y0-sin*(p.x-x0)+cos*(p.y-y0)
-	p.direction = normalizeDirection(p.direction + dir)
 }
 
 // -----------------------------------------------------------------------------
@@ -1455,12 +1448,12 @@ func (p *SpriteImpl) ChangeSize(delta float64) {
 }
 
 // -----------------------------------------------------------------------------
-func (p *SpriteImpl) SetEffect(kind EffectKind, val float64) {
-	p.baseObj.setEffect(kind, val)
+func (p *SpriteImpl) SetGraphicEffect(kind EffectKind, val float64) {
+	p.baseObj.setGraphicEffect(kind, val)
 }
 
-func (p *SpriteImpl) ChangeEffect(kind EffectKind, delta float64) {
-	p.baseObj.changeEffect(kind, delta)
+func (p *SpriteImpl) ChangeGraphicEffect(kind EffectKind, delta float64) {
+	p.baseObj.changeGraphicEffect(kind, delta)
 }
 
 func (p *SpriteImpl) ClearGraphicEffects() {
@@ -1608,16 +1601,22 @@ func (p *SpriteImpl) checkTouchingScreen(where int) (touching int) {
 
 // -----------------------------------------------------------------------------
 
-func (p *SpriteImpl) GoBackLayers(n int) {
-	p.g.goBackLayers(p, n)
-}
+func (p *SpriteImpl) SetLayer__0(layer layerAction) {
+	switch layer {
+	case Front:
+		p.g.gotoFront(p)
+	case Back:
+		p.g.gotoBack(p)
+	}
 
-func (p *SpriteImpl) GotoFront() {
-	p.g.gotoFront(p)
 }
-
-func (p *SpriteImpl) GotoBack() {
-	p.g.gotoBack(p)
+func (p *SpriteImpl) SetLayer__1(dir dirAction, delta int) {
+	switch dir {
+	case Forward:
+		p.g.goBackLayers(p, -delta)
+	case Backward:
+		p.g.goBackLayers(p, delta)
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -1784,21 +1783,7 @@ func (p *SpriteImpl) ShowVar(name string) {
 
 // -----------------------------------------------------------------------------
 
-// CostumeWidth returns width of sprite current costume.
-func (p *SpriteImpl) CostumeWidth() float64 {
-	c := p.costumes[p.costumeIndex_]
-	w, _ := c.getSize()
-	return float64(w)
-}
-
-// CostumeHeight returns height of sprite current costume.
-func (p *SpriteImpl) CostumeHeight() float64 {
-	c := p.costumes[p.costumeIndex_]
-	_, h := c.getSize()
-	return float64(h)
-}
-
-func (p *SpriteImpl) Bounds() *mathf.Rect2 {
+func (p *SpriteImpl) bounds() *mathf.Rect2 {
 	if !p.isVisible {
 		return nil
 	}
@@ -1833,7 +1818,7 @@ func (p *SpriteImpl) Bounds() *mathf.Rect2 {
 // -----------------------------------------------------------------------------
 
 func (p *SpriteImpl) fixWorldRange(x, y float64) (float64, float64) {
-	rect := p.Bounds()
+	rect := p.bounds()
 	if rect == nil {
 		return x, y
 	}
@@ -1885,54 +1870,40 @@ const (
 	SoundPitchEffect
 )
 
-// Play func:
-//
-//	Play(sound)
-//	Play(video) -- maybe
-//	Play(media, wait) -- sync
-//	Play(media, opts)
-
-func (p *SpriteImpl) Play__0(media Sound, action *PlayOptions) {
-	if debugInstr {
-		log.Println("Play", media.Path)
-	}
-
+func (p *SpriteImpl) playAudio(name SoundName, loop bool) soundId {
 	p.checkAudioId()
-	err := p.g.play(p.audioId, media, action)
-	if err != nil {
-		panic(err)
-	}
+	return p.g.playSound(p.audioId, name, loop)
 }
 
-func (p *SpriteImpl) Play__1(media Sound, wait bool) {
-	p.Play__0(media, &PlayOptions{Wait: wait})
+func (p *SpriteImpl) Play__0(name SoundName, loop bool) {
+	p.checkAudioId()
+	p.g.playSound(p.audioId, name, loop)
 }
 
-func (p *SpriteImpl) Play__2(media Sound) {
-	if media == nil {
-		panic("play media is nil")
-	}
-	p.Play__0(media, &PlayOptions{})
+func (p *SpriteImpl) Play__1(name SoundName) {
+	p.Play__0(name, false)
 }
 
-func (p *SpriteImpl) Play__3(media SoundName) {
-	p.Play__5(media, &PlayOptions{})
+func (p *SpriteImpl) PlayAndWait(name SoundName) {
+	p.checkAudioId()
+	p.g.playSoundAndWait(p.audioId, name)
 }
 
-func (p *SpriteImpl) Play__4(media SoundName, wait bool) {
-	p.Play__5(media, &PlayOptions{Wait: wait})
+func (p *SpriteImpl) PausePlaying(name SoundName) {
+	p.checkAudioId()
+	p.g.pauseSound(p.audioId, name)
 }
-
-func (p *SpriteImpl) Play__5(media SoundName, action *PlayOptions) {
-	m, err := p.g.loadSound(media)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	p.Play__0(m, action)
+func (p *SpriteImpl) ResumePlaying(name SoundName) {
+	p.checkAudioId()
+	p.g.resumeSound(p.audioId, name)
+}
+func (p *SpriteImpl) StopPlaying(name SoundName) {
+	p.checkAudioId()
+	p.g.stopSound(p.audioId, name)
 }
 
 func (p *SpriteImpl) Volume() float64 {
+	p.checkAudioId()
 	return p.g.sounds.getVolume(p.audioId)
 }
 

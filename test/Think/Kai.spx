@@ -16,6 +16,6 @@ onMsg "4", => {
 
 onMsg "6", => {
 	think "Thanks. Bye!", 2
-	nextCostume
+	setCostume Next
 	broadcast "7"
 }

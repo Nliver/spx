@@ -119,10 +119,19 @@ func (sprite *SpriteImpl) syncCheckInitProxy() {
 		sprite.syncSprite.Name = sprite.name
 		sprite.syncSprite.SetTypeName(sprite.name)
 		sprite.syncSprite.SetVisible(sprite.isVisible)
-		sprite.applyEffects(true)
+		sprite.applyGraphicEffects(true)
+		sprite.syncSprite.RegisterOnAnimationLooped(sprite.syncOnAnimationLooped)
 	}
 }
 
+func (sprite *SpriteImpl) syncOnAnimationLooped() {
+	engine.Lock()
+	defer engine.Unlock()
+	state := sprite.curTweenState
+	if state != nil {
+		sprite.pendingAudios = append(sprite.pendingAudios, state.AudioName)
+	}
+}
 func (sprite *SpriteImpl) updateProxyTransform(isSync bool) {
 	if sprite.syncSprite == nil {
 		return
@@ -139,7 +148,6 @@ func (p *Game) syncUpdateProxy() {
 	for _, item := range items {
 		sprite, ok := item.(*SpriteImpl)
 		if ok {
-			sprite.syncCheckInitProxy()
 			if sprite.HasDestroyed {
 				continue
 			}

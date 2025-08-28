@@ -1,5 +1,1 @@
-var (
-	Monkey Monkey
-)
-
 run "res", {Title: "Turn Heading (by XGo)"}

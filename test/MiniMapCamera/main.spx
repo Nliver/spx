@@ -1,6 +1,1 @@
-var (
-	Monkey    Monkey
-	Crocodile Crocodile
-)
-
 run "res", {Title: "Camera (by XGo)", Width: 640, Height: 480}

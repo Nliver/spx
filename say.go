@@ -46,7 +46,7 @@ func (p *sayOrThinker) refresh() {
 	if p.panel == nil {
 		return
 	}
-	bound := p.sp.Bounds()
+	bound := p.sp.bounds()
 	center := bound.Center()
 	size := bound.Size
 	p.panel.SetText(p.sp.g.getWindowSize(), center, size, p.msg)

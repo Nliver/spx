@@ -1,7 +1,7 @@
 onKey KeyUp, => {
 	turnTo 0
 	step 10
-	println bounds
+
 	if touching(EdgeTop) {
 		println "EdgeTop"
 	}
@@ -40,15 +40,13 @@ onKey KeyD, => {
 }
 
 onKey KeyB, => {
-	println bounds
-	println Crocodile.bounds
 	if touching(Crocodile) {
 		println "Touch Crocodile"
 	}
 }
 
 onClick => {
-	println bounds
+
 	if touching(Mouse) {
 		println "Touching Mouse"
 	}

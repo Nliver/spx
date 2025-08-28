@@ -1,7 +1,1 @@
-var (
-	Banana  Banana
-	Banana2 Banana2
-	Monkey  Monkey
-)
-
 run "res", {Title: "Turn Together (by XGo)"}

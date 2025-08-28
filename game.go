@@ -158,10 +158,6 @@ func (p *Game) getSpriteCollisionInfo(name string) *spriteCollisionInfo {
 	panic("Unknown sprite " + name)
 }
 
-func (p *Game) IsRunned() bool {
-	return p.isRunned
-}
-
 func (p *Game) newSpriteAndLoad(name string, tySpr reflect.Type, g reflect.Value) Sprite {
 	spr := reflect.New(tySpr).Interface().(Sprite)
 	if err := p.loadSprite(spr, name, g); err != nil {
@@ -346,14 +342,6 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 	for i, n := 0, v.NumField(); i < n; i++ {
 		name, val := getFieldPtrOrAlloc(g, v, i)
 		switch fld := val.(type) {
-		case *Sound:
-			if g.canBindSound(name) {
-				media, err := g.loadSound(name)
-				if err != nil {
-					panic(err)
-				}
-				*fld = media
-			}
 		case Sprite:
 			if g.canBindSprite(name) {
 				if err := g.loadSprite(fld, name, v); err != nil {
@@ -370,13 +358,6 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 	if err := g.runLoop(&conf); err != nil {
 		panic(err)
 	}
-}
-
-// MouseHitItem returns the topmost item which is hit by mouse.
-func (p *Game) MouseHitItem() (target *SpriteImpl, ok bool) {
-	//x, y := engine.GetMousePos()
-	// TODO(tanjp) use engine api
-	return
 }
 
 func instance(gamer reflect.Value) *Game {
@@ -606,11 +587,18 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 				log.Println("init sprite collision info", spr.name, info.Layer, info.Mask)
 			}
 		}
+		// recalc sprite prototype's physic info
+		engine.WaitMainThread(func() {
+			for _, ini := range inits {
+				spr := spriteOf(ini)
+				syncInitSpritePhysicInfo(spr, spr.syncSprite)
+			}
+		})
 	}
 
 	p.audioId = p.sounds.allocAudio()
 	if proj.Bgm != "" {
-		p.Play__5(proj.Bgm, &PlayOptions{Action: PlayRewind, Loop: true, Wait: false, Music: true})
+		p.Play__0(proj.Bgm, true)
 	}
 	// game load success
 	p.isLoaded = true
@@ -751,7 +739,7 @@ func (p *Game) addStageSprites(g reflect.Value, v specsp, inits []Sprite) []Spri
 			if isPtr {
 				typItem, typItemPtr = typItem.Elem(), typItem
 			} else {
-				typItemPtr = reflect.PtrTo(typItem)
+				typItemPtr = reflect.PointerTo(typItem)
 			}
 			if typItemPtr.Implements(tySprite) {
 				spr := p.getSpriteProto(typItem, g)
@@ -793,10 +781,6 @@ func (p *Game) runLoop(cfg *Config) (err error) {
 	platformMgr.SetWindowTitle(cfg.Title)
 	p.isRunned = true
 	return nil
-}
-
-func (p *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return p.windowSize_()
 }
 
 type clicker interface {
@@ -876,7 +860,7 @@ func (p *Game) handleEvent(event event) {
 	case *eventKeyDown:
 		p.sinkMgr.doWhenKeyPressed(ev.Key)
 	case *eventStart:
-		p.sinkMgr.doWhenAwake()
+		p.sinkMgr.doWhenAwake(nil)
 		p.sinkMgr.doWhenStart()
 	case *eventTimer:
 		p.sinkMgr.doWhenTimer(ev.Time)
@@ -899,11 +883,29 @@ func (p *Game) eventLoop(me coroutine.Thread) int {
 	}
 }
 func (p *Game) logicLoop(me coroutine.Thread) int {
+	tempAudios := []string{}
 	for {
 		tempItems := p.getTempShapes()
 		for _, item := range tempItems {
 			if result, ok := item.(interface{ onUpdate(float64) }); ok {
 				result.onUpdate(gtime.DeltaTime())
+			}
+		}
+
+		// play audios
+		for _, item := range tempItems {
+			if sprite, ok := item.(*SpriteImpl); ok {
+				engine.Lock()
+				for _, audio := range sprite.pendingAudios {
+					tempAudios = append(tempAudios, audio)
+				}
+				sprite.pendingAudios = sprite.pendingAudios[:0]
+				engine.Unlock()
+
+				for _, audio := range tempAudios {
+					sprite.playAudio(audio, false)
+				}
+				tempAudios = tempAudios[:0]
 			}
 		}
 
@@ -1319,13 +1321,13 @@ func (p *Game) BackdropIndex() int {
 
 type BackdropName = string
 
-// StartBackdrop func:
+// SetBackdrop func:
 //
-//	StartBackdrop(backdrop) or
-//	StartBackdrop(index) or
-//	StartBackdrop(spx.Next)
-//	StartBackdrop(spx.Prev)
-func (p *Game) startBackdrop(backdrop any, wait bool) {
+//	SetBackdrop(backdrop) or
+//	SetBackdrop(index) or
+//	SetBackdrop(spx.Next)
+//	SetBackdrop(spx.Prev)
+func (p *Game) setBackdrop(backdrop any, wait bool) {
 	if p.goSetCostume(backdrop) {
 		p.windowWidth_ = 0
 		p.setupBackdrop()
@@ -1334,52 +1336,33 @@ func (p *Game) startBackdrop(backdrop any, wait bool) {
 	}
 }
 
-func (p *Game) StartBackdrop__0(backdrop BackdropName) {
-	p.startBackdrop(backdrop, false)
+func (p *Game) SetBackdrop__0(backdrop BackdropName) {
+	p.setBackdrop(backdrop, false)
 }
 
-func (p *Game) StartBackdrop__1(backdrop BackdropName, wait bool) {
-	p.startBackdrop(backdrop, wait)
+func (p *Game) SetBackdrop__1(index float64) {
+	p.setBackdrop(index, false)
 }
 
-func (p *Game) StartBackdrop__2(index float64) {
-	p.startBackdrop(index, false)
+func (p *Game) SetBackdrop__2(index int) {
+	p.setBackdrop(index, false)
 }
 
-func (p *Game) StartBackdrop__3(index float64, wait bool) {
-	p.startBackdrop(index, wait)
+func (p *Game) SetBackdrop__3(action switchAction) {
+	p.setBackdrop(action, false)
 }
 
-func (p *Game) StartBackdrop__4(index int) {
-	p.startBackdrop(index, false)
+func (p *Game) SetBackdropAndWait__0(backdrop BackdropName) {
+	p.setBackdrop(backdrop, true)
 }
-
-func (p *Game) StartBackdrop__5(index int, wait bool) {
-	p.startBackdrop(index, wait)
+func (p *Game) SetBackdropAndWait__1(index float64) {
+	p.setBackdrop(index, true)
 }
-
-func (p *Game) StartBackdrop__6(action switchAction) {
-	p.startBackdrop(action, false)
+func (p *Game) SetBackdropAndWait__2(index int) {
+	p.setBackdrop(index, true)
 }
-
-func (p *Game) StartBackdrop__7(action switchAction, wait bool) {
-	p.startBackdrop(action, wait)
-}
-
-func (p *Game) NextBackdrop__0() {
-	p.StartBackdrop__6(Next)
-}
-
-func (p *Game) NextBackdrop__1(wait bool) {
-	p.StartBackdrop__7(Next, wait)
-}
-
-func (p *Game) PrevBackdrop__0() {
-	p.StartBackdrop__6(Prev)
-}
-
-func (p *Game) PrevBackdrop__1(wait bool) {
-	p.StartBackdrop__7(Prev, wait)
+func (p *Game) SetBackdropAndWait__3(action switchAction) {
+	p.setBackdrop(action, true)
 }
 
 // -----------------------------------------------------------------------------
@@ -1492,12 +1475,12 @@ func (kind EffectKind) String() string {
 	return greffNames[kind]
 }
 
-func (p *Game) SetEffect(kind EffectKind, val float64) {
-	p.baseObj.setEffect(kind, val)
+func (p *Game) SetGraphicEffect(kind EffectKind, val float64) {
+	p.baseObj.setGraphicEffect(kind, val)
 }
 
-func (p *Game) ChangeEffect(kind EffectKind, delta float64) {
-	p.baseObj.changeEffect(kind, delta)
+func (p *Game) ChangeGraphicEffect(kind EffectKind, delta float64) {
+	p.baseObj.changeGraphicEffect(kind, delta)
 }
 
 func (p *Game) ClearGraphicEffects() {
@@ -1506,7 +1489,7 @@ func (p *Game) ClearGraphicEffects() {
 
 // -----------------------------------------------------------------------------
 
-type Sound *soundConfig
+type sound *soundConfig
 
 type SoundName = string
 
@@ -1515,11 +1498,7 @@ func hasAsset(path string) bool {
 	return resMgr.HasFile(finalPath)
 }
 
-func (p *Game) canBindSound(name string) bool {
-	return hasAsset("sounds/" + name + "/index.json")
-}
-
-func (p *Game) loadSound(name SoundName) (media Sound, err error) {
+func (p *Game) loadSound(name SoundName) (media sound, err error) {
 	if media, ok := p.sounds.audios[name]; ok {
 		return media, nil
 	}
@@ -1539,54 +1518,73 @@ func (p *Game) loadSound(name SoundName) (media Sound, err error) {
 	return
 }
 
-func (p *Game) play(audioId engine.Object, media Sound, opts *PlayOptions) (err error) {
-	return p.sounds.play(audioId, media, opts)
-}
-
-// Play func:
-//
-//	Play(sound)
-//	Play(video) -- maybe
-//	Play(media, wait) -- sync
-//	Play(media, opts)
-
-func (p *Game) Play__0(media Sound, action *PlayOptions) {
-	if debugInstr {
-		log.Println("Play", media.Path)
-	}
-	p.checkAudioId()
-	err := p.play(p.audioId, media, action)
+func (p *Game) playSound(audioId engine.Object, name SoundName, isLoop bool) soundId {
+	m, err := p.loadSound(name)
 	if err != nil {
-		panic(err)
+		return invalidSoundId
 	}
+	return p.sounds.play(audioId, m, isLoop, false)
 }
-
-func (p *Game) Play__1(media Sound, wait bool) {
-	p.Play__0(media, &PlayOptions{Wait: wait})
-}
-
-func (p *Game) Play__2(media Sound) {
-	if media == nil {
-		panic("play media is nil")
-	}
-	p.Play__0(media, &PlayOptions{})
-}
-
-func (p *Game) Play__3(media SoundName) {
-	p.Play__5(media, &PlayOptions{})
-}
-
-func (p *Game) Play__4(media SoundName, wait bool) {
-	p.Play__5(media, &PlayOptions{Wait: wait})
-}
-
-func (p *Game) Play__5(media SoundName, action *PlayOptions) {
-	m, err := p.loadSound(media)
+func (p *Game) playSoundAndWait(audioId engine.Object, name SoundName) {
+	m, err := p.loadSound(name)
 	if err != nil {
-		log.Println(err)
 		return
 	}
-	p.Play__0(m, action)
+	p.sounds.play(audioId, m, false, true)
+}
+func (p *Game) pauseSound(audioId engine.Object, name SoundName) {
+	m, err := p.loadSound(name)
+	if err != nil {
+		return
+	}
+	p.sounds.pause(audioId, m)
+}
+func (p *Game) resumeSound(audioId engine.Object, name SoundName) {
+	m, err := p.loadSound(name)
+	if err != nil {
+		return
+	}
+	p.sounds.resume(audioId, m)
+}
+func (p *Game) stopSound(audioId engine.Object, name SoundName) {
+	m, err := p.loadSound(name)
+	if err != nil {
+		return
+	}
+	p.sounds.stop(audioId, m)
+}
+func (p *Game) Volume() float64 {
+	p.checkAudioId()
+	return p.sounds.getVolume(p.audioId)
+}
+func (p *Game) Play__0(name SoundName, loop bool) {
+	p.checkAudioId()
+	p.playSound(p.audioId, name, loop)
+}
+
+func (p *Game) Play__1(name SoundName) {
+	p.Play__0(name, false)
+}
+func (p *Game) PlayAndWait(name SoundName) {
+	p.checkAudioId()
+	p.playSoundAndWait(p.audioId, name)
+}
+
+func (p *Game) PausePlaying(name SoundName) {
+	p.checkAudioId()
+	p.pauseSound(p.audioId, name)
+}
+func (p *Game) ResumePlaying(name SoundName) {
+	p.checkAudioId()
+	p.resumeSound(p.audioId, name)
+}
+func (p *Game) StopPlaying(name SoundName) {
+	p.checkAudioId()
+	p.stopSound(p.audioId, name)
+}
+
+func (p *Game) stopSoundInstance(instanceId soundId) {
+	p.sounds.stopInstance(instanceId)
 }
 
 func (p *Game) SetVolume(volume float64) {
@@ -1644,13 +1642,16 @@ func (p *Game) doBroadcast(msg string, data any, wait bool) {
 func (p *Game) Broadcast__0(msg string) {
 	p.doBroadcast(msg, nil, false)
 }
-
-func (p *Game) Broadcast__1(msg string, wait bool) {
-	p.doBroadcast(msg, nil, wait)
+func (p *Game) Broadcast__1(msg string, data any) {
+	p.doBroadcast(msg, data, false)
 }
 
-func (p *Game) Broadcast__2(msg string, data any, wait bool) {
-	p.doBroadcast(msg, data, wait)
+func (p *Game) BroadcastAndWait__0(msg string) {
+	p.doBroadcast(msg, nil, true)
+}
+
+func (p *Game) BroadcastAndWait__1(msg string, data any) {
+	p.doBroadcast(msg, data, true)
 }
 
 // -----------------------------------------------------------------------------

@@ -1,3 +1,0 @@
-Monkey.onTurning ti => {
-	turn ti
-}

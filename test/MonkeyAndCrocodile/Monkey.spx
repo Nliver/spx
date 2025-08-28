@@ -3,11 +3,11 @@ var (
 )
 
 onClick => {
-	animate "clap"
+	animateAndWait "clap"
 }
 
 onKey KeySpace, => {
-	animate "think"
+	animateAndWait "think"
 }
 
 onKey KeyH, => {
@@ -20,12 +20,12 @@ onKey KeyH, => {
 }
 
 onKey KeyUp, => {
-	prevCostume
+	setCostume Prev
 	say costumeIndex
 }
 
 onKey KeyDown, => {
-	nextCostume
+	setCostume Next
 	say costumeIndex
 }
 
@@ -46,11 +46,11 @@ onKey KeyB, => {
 }
 
 onKey KeyC, => {
-	step 100, "faststep"
+	step 100, 1, "faststep"
 	println distanceTo("Crocodile")
 }
 onKey KeyD, => {
-	step -100, "slowstep"
+	step -100,1, "slowstep"
 	println distanceTo("Crocodile")
 }
 onKey KeyE, => {
@@ -58,13 +58,6 @@ onKey KeyE, => {
 	println distanceTo("Crocodile")
 }
 onKey KeyF, => {
-	step 100, "animstep"
+	step 100, 1 , "animstep"
 	println distanceTo("Crocodile")
-}
-
-onMoving mi => {
-}
-
-onTurning ti => {
-	Crocodile.SetHeading ti.NewDir
 }

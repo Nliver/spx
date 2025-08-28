@@ -55,7 +55,7 @@ onMsg "testEvent", => {
 	assert(hasStarted, "Sprite::OnStart")
 
 	// 4. Sprite::onBackdrop
-	startBackdrop "backdrop2"
+	setBackdrop "backdrop2"
 	wait 0.1
 	for !hasChangedBackdrop {
 		waitNextFrame
