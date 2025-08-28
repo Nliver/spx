@@ -128,7 +128,7 @@ func (sprite *SpriteImpl) syncOnAnimationLooped() {
 	engine.Lock()
 	defer engine.Unlock()
 	state := sprite.curTweenState
-	if state != nil {
+	if state != nil && state.AudioName != "" {
 		sprite.pendingAudios = append(sprite.pendingAudios, state.AudioName)
 	}
 }
