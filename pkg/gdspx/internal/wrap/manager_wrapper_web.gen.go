@@ -836,6 +836,11 @@ func (pself *spriteMgr) IsAnimFlippedV(obj Object) bool {
 	_retValue := API.SpxSpriteIsAnimFlippedV.Invoke(arg0)
 	return JsToGdBool(_retValue)
 }
+func (pself *spriteMgr) GetCurrentAnimName(obj Object) string {
+	arg0 := JsFromGdObj(obj)
+	_retValue := API.SpxSpriteGetCurrentAnimName.Invoke(arg0)
+	return JsToGdString(_retValue)
+}
 func (pself *spriteMgr) SetVelocity(obj Object, velocity Vec2) {
 	arg0 := JsFromGdObj(obj)
 	arg1 := JsFromGdVec2(velocity)

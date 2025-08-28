@@ -66,3 +66,7 @@ func (pself *Sprite) OnTriggerEnter(target gdx.ISpriter) {
 func (pself *Sprite) RegisterOnAnimationLooped(f func()) {
 	pself.Sprite.OnAnimationLoopedEvent.Subscribe(f)
 }
+
+func (pself *Sprite) RegisterOnAnimationFinished(f func()) {
+	pself.Sprite.OnAnimationFinishedEvent.Subscribe(f)
+}

@@ -459,6 +459,9 @@ void cgo_callfn_GDExtensionSpxSpriteSetAnimFlipV(const GDExtensionSpxSpriteSetAn
 void cgo_callfn_GDExtensionSpxSpriteIsAnimFlippedV(const GDExtensionSpxSpriteIsAnimFlippedV fn, GdObj obj, GdBool* ret_val) {
 	fn(obj,ret_val);
 }
+void cgo_callfn_GDExtensionSpxSpriteGetCurrentAnimName(const GDExtensionSpxSpriteGetCurrentAnimName fn, GdObj obj, GdString* ret_val) {
+	fn(obj,ret_val);
+}
 void cgo_callfn_GDExtensionSpxSpriteSetVelocity(const GDExtensionSpxSpriteSetVelocity fn, GdObj obj, GdVec2 velocity) {
 	fn(obj, velocity);
 }

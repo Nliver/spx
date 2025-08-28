@@ -104,6 +104,10 @@ func (pself *Sprite) GetColor() Color {
 	return SpriteMgr.GetColor(pself.Id)
 }
 
+func (pself *Sprite) GetCurrentAnimName() string {
+	return SpriteMgr.GetCurrentAnimName(pself.Id)
+}
+
 func (pself *Sprite) GetFloorNormal() Vec2 {
 	return SpriteMgr.GetFloorNormal(pself.Id)
 }
