@@ -64,6 +64,8 @@ type GDExtensionInterface struct {
 	SpxExtChangePenSizeBy                    js.Value
 	SpxExtSetPenSizeTo                       js.Value
 	SpxExtSetPenStampTexture                 js.Value
+	SpxExtDebugDrawCircle                    js.Value
+	SpxExtDebugDrawRect                      js.Value
 	SpxInputGetMousePos                      js.Value
 	SpxInputGetKey                           js.Value
 	SpxInputGetMouseState                    js.Value
@@ -77,6 +79,14 @@ type GDExtensionInterface struct {
 	SpxPhysicCheckTouchedCameraBoundaries    js.Value
 	SpxPhysicCheckTouchedCameraBoundary      js.Value
 	SpxPhysicSetCollisionSystemType          js.Value
+	SpxPhysicSetGlobalGravity                js.Value
+	SpxPhysicGetGlobalGravity                js.Value
+	SpxPhysicSetGlobalFriction               js.Value
+	SpxPhysicGetGlobalFriction               js.Value
+	SpxPhysicSetGlobalAirDrag                js.Value
+	SpxPhysicGetGlobalAirDrag                js.Value
+	SpxPhysicCheckCollisionRect              js.Value
+	SpxPhysicCheckCollisionCircle            js.Value
 	SpxPlatformSetStretchMode                js.Value
 	SpxPlatformSetWindowPosition             js.Value
 	SpxPlatformGetWindowPosition             js.Value
@@ -193,6 +203,16 @@ type GDExtensionInterface struct {
 	SpxSpriteGetMass                         js.Value
 	SpxSpriteAddForce                        js.Value
 	SpxSpriteAddImpulse                      js.Value
+	SpxSpriteSetPhysicsMode                  js.Value
+	SpxSpriteGetPhysicsMode                  js.Value
+	SpxSpriteSetUseGravity                   js.Value
+	SpxSpriteIsUseGravity                    js.Value
+	SpxSpriteSetGravityScale                 js.Value
+	SpxSpriteGetGravityScale                 js.Value
+	SpxSpriteSetDrag                         js.Value
+	SpxSpriteGetDrag                         js.Value
+	SpxSpriteSetFriction                     js.Value
+	SpxSpriteGetFriction                     js.Value
 	SpxSpriteSetCollisionLayer               js.Value
 	SpxSpriteGetCollisionLayer               js.Value
 	SpxSpriteSetCollisionMask                js.Value
@@ -301,6 +321,8 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtChangePenSizeBy = dlsymGD("gdspx_ext_change_pen_size_by")
 	x.SpxExtSetPenSizeTo = dlsymGD("gdspx_ext_set_pen_size_to")
 	x.SpxExtSetPenStampTexture = dlsymGD("gdspx_ext_set_pen_stamp_texture")
+	x.SpxExtDebugDrawCircle = dlsymGD("gdspx_ext_debug_draw_circle")
+	x.SpxExtDebugDrawRect = dlsymGD("gdspx_ext_debug_draw_rect")
 	x.SpxInputGetMousePos = dlsymGD("gdspx_input_get_mouse_pos")
 	x.SpxInputGetKey = dlsymGD("gdspx_input_get_key")
 	x.SpxInputGetMouseState = dlsymGD("gdspx_input_get_mouse_state")
@@ -314,6 +336,14 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxPhysicCheckTouchedCameraBoundaries = dlsymGD("gdspx_physic_check_touched_camera_boundaries")
 	x.SpxPhysicCheckTouchedCameraBoundary = dlsymGD("gdspx_physic_check_touched_camera_boundary")
 	x.SpxPhysicSetCollisionSystemType = dlsymGD("gdspx_physic_set_collision_system_type")
+	x.SpxPhysicSetGlobalGravity = dlsymGD("gdspx_physic_set_global_gravity")
+	x.SpxPhysicGetGlobalGravity = dlsymGD("gdspx_physic_get_global_gravity")
+	x.SpxPhysicSetGlobalFriction = dlsymGD("gdspx_physic_set_global_friction")
+	x.SpxPhysicGetGlobalFriction = dlsymGD("gdspx_physic_get_global_friction")
+	x.SpxPhysicSetGlobalAirDrag = dlsymGD("gdspx_physic_set_global_air_drag")
+	x.SpxPhysicGetGlobalAirDrag = dlsymGD("gdspx_physic_get_global_air_drag")
+	x.SpxPhysicCheckCollisionRect = dlsymGD("gdspx_physic_check_collision_rect")
+	x.SpxPhysicCheckCollisionCircle = dlsymGD("gdspx_physic_check_collision_circle")
 	x.SpxPlatformSetStretchMode = dlsymGD("gdspx_platform_set_stretch_mode")
 	x.SpxPlatformSetWindowPosition = dlsymGD("gdspx_platform_set_window_position")
 	x.SpxPlatformGetWindowPosition = dlsymGD("gdspx_platform_get_window_position")
@@ -430,6 +460,16 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxSpriteGetMass = dlsymGD("gdspx_sprite_get_mass")
 	x.SpxSpriteAddForce = dlsymGD("gdspx_sprite_add_force")
 	x.SpxSpriteAddImpulse = dlsymGD("gdspx_sprite_add_impulse")
+	x.SpxSpriteSetPhysicsMode = dlsymGD("gdspx_sprite_set_physics_mode")
+	x.SpxSpriteGetPhysicsMode = dlsymGD("gdspx_sprite_get_physics_mode")
+	x.SpxSpriteSetUseGravity = dlsymGD("gdspx_sprite_set_use_gravity")
+	x.SpxSpriteIsUseGravity = dlsymGD("gdspx_sprite_is_use_gravity")
+	x.SpxSpriteSetGravityScale = dlsymGD("gdspx_sprite_set_gravity_scale")
+	x.SpxSpriteGetGravityScale = dlsymGD("gdspx_sprite_get_gravity_scale")
+	x.SpxSpriteSetDrag = dlsymGD("gdspx_sprite_set_drag")
+	x.SpxSpriteGetDrag = dlsymGD("gdspx_sprite_get_drag")
+	x.SpxSpriteSetFriction = dlsymGD("gdspx_sprite_set_friction")
+	x.SpxSpriteGetFriction = dlsymGD("gdspx_sprite_get_friction")
 	x.SpxSpriteSetCollisionLayer = dlsymGD("gdspx_sprite_set_collision_layer")
 	x.SpxSpriteGetCollisionLayer = dlsymGD("gdspx_sprite_get_collision_layer")
 	x.SpxSpriteSetCollisionMask = dlsymGD("gdspx_sprite_set_collision_mask")

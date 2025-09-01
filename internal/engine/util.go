@@ -134,6 +134,15 @@ func ReloadScene() {
 	})
 }
 
+func GetSprite(id gdx.Object) *Sprite {
+	target := gdx.GetSprite(id)
+	sprite, ok := target.(*Sprite)
+	if ok {
+		return sprite
+	}
+	return nil
+}
+
 func GetFPS() float64 {
 	return fps
 }

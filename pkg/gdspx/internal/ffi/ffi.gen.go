@@ -60,6 +60,8 @@ type GDExtensionInterface struct {
 	SpxExtChangePenSizeBy                    GDExtensionSpxExtChangePenSizeBy
 	SpxExtSetPenSizeTo                       GDExtensionSpxExtSetPenSizeTo
 	SpxExtSetPenStampTexture                 GDExtensionSpxExtSetPenStampTexture
+	SpxExtDebugDrawCircle                    GDExtensionSpxExtDebugDrawCircle
+	SpxExtDebugDrawRect                      GDExtensionSpxExtDebugDrawRect
 	SpxInputGetMousePos                      GDExtensionSpxInputGetMousePos
 	SpxInputGetKey                           GDExtensionSpxInputGetKey
 	SpxInputGetMouseState                    GDExtensionSpxInputGetMouseState
@@ -73,6 +75,14 @@ type GDExtensionInterface struct {
 	SpxPhysicCheckTouchedCameraBoundaries    GDExtensionSpxPhysicCheckTouchedCameraBoundaries
 	SpxPhysicCheckTouchedCameraBoundary      GDExtensionSpxPhysicCheckTouchedCameraBoundary
 	SpxPhysicSetCollisionSystemType          GDExtensionSpxPhysicSetCollisionSystemType
+	SpxPhysicSetGlobalGravity                GDExtensionSpxPhysicSetGlobalGravity
+	SpxPhysicGetGlobalGravity                GDExtensionSpxPhysicGetGlobalGravity
+	SpxPhysicSetGlobalFriction               GDExtensionSpxPhysicSetGlobalFriction
+	SpxPhysicGetGlobalFriction               GDExtensionSpxPhysicGetGlobalFriction
+	SpxPhysicSetGlobalAirDrag                GDExtensionSpxPhysicSetGlobalAirDrag
+	SpxPhysicGetGlobalAirDrag                GDExtensionSpxPhysicGetGlobalAirDrag
+	SpxPhysicCheckCollisionRect              GDExtensionSpxPhysicCheckCollisionRect
+	SpxPhysicCheckCollisionCircle            GDExtensionSpxPhysicCheckCollisionCircle
 	SpxPlatformSetStretchMode                GDExtensionSpxPlatformSetStretchMode
 	SpxPlatformSetWindowPosition             GDExtensionSpxPlatformSetWindowPosition
 	SpxPlatformGetWindowPosition             GDExtensionSpxPlatformGetWindowPosition
@@ -189,6 +199,16 @@ type GDExtensionInterface struct {
 	SpxSpriteGetMass                         GDExtensionSpxSpriteGetMass
 	SpxSpriteAddForce                        GDExtensionSpxSpriteAddForce
 	SpxSpriteAddImpulse                      GDExtensionSpxSpriteAddImpulse
+	SpxSpriteSetPhysicsMode                  GDExtensionSpxSpriteSetPhysicsMode
+	SpxSpriteGetPhysicsMode                  GDExtensionSpxSpriteGetPhysicsMode
+	SpxSpriteSetUseGravity                   GDExtensionSpxSpriteSetUseGravity
+	SpxSpriteIsUseGravity                    GDExtensionSpxSpriteIsUseGravity
+	SpxSpriteSetGravityScale                 GDExtensionSpxSpriteSetGravityScale
+	SpxSpriteGetGravityScale                 GDExtensionSpxSpriteGetGravityScale
+	SpxSpriteSetDrag                         GDExtensionSpxSpriteSetDrag
+	SpxSpriteGetDrag                         GDExtensionSpxSpriteGetDrag
+	SpxSpriteSetFriction                     GDExtensionSpxSpriteSetFriction
+	SpxSpriteGetFriction                     GDExtensionSpxSpriteGetFriction
 	SpxSpriteSetCollisionLayer               GDExtensionSpxSpriteSetCollisionLayer
 	SpxSpriteGetCollisionLayer               GDExtensionSpxSpriteGetCollisionLayer
 	SpxSpriteSetCollisionMask                GDExtensionSpxSpriteSetCollisionMask
@@ -297,6 +317,8 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtChangePenSizeBy = (GDExtensionSpxExtChangePenSizeBy)(dlsymGD("spx_ext_change_pen_size_by"))
 	x.SpxExtSetPenSizeTo = (GDExtensionSpxExtSetPenSizeTo)(dlsymGD("spx_ext_set_pen_size_to"))
 	x.SpxExtSetPenStampTexture = (GDExtensionSpxExtSetPenStampTexture)(dlsymGD("spx_ext_set_pen_stamp_texture"))
+	x.SpxExtDebugDrawCircle = (GDExtensionSpxExtDebugDrawCircle)(dlsymGD("spx_ext_debug_draw_circle"))
+	x.SpxExtDebugDrawRect = (GDExtensionSpxExtDebugDrawRect)(dlsymGD("spx_ext_debug_draw_rect"))
 	x.SpxInputGetMousePos = (GDExtensionSpxInputGetMousePos)(dlsymGD("spx_input_get_mouse_pos"))
 	x.SpxInputGetKey = (GDExtensionSpxInputGetKey)(dlsymGD("spx_input_get_key"))
 	x.SpxInputGetMouseState = (GDExtensionSpxInputGetMouseState)(dlsymGD("spx_input_get_mouse_state"))
@@ -310,6 +332,14 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxPhysicCheckTouchedCameraBoundaries = (GDExtensionSpxPhysicCheckTouchedCameraBoundaries)(dlsymGD("spx_physic_check_touched_camera_boundaries"))
 	x.SpxPhysicCheckTouchedCameraBoundary = (GDExtensionSpxPhysicCheckTouchedCameraBoundary)(dlsymGD("spx_physic_check_touched_camera_boundary"))
 	x.SpxPhysicSetCollisionSystemType = (GDExtensionSpxPhysicSetCollisionSystemType)(dlsymGD("spx_physic_set_collision_system_type"))
+	x.SpxPhysicSetGlobalGravity = (GDExtensionSpxPhysicSetGlobalGravity)(dlsymGD("spx_physic_set_global_gravity"))
+	x.SpxPhysicGetGlobalGravity = (GDExtensionSpxPhysicGetGlobalGravity)(dlsymGD("spx_physic_get_global_gravity"))
+	x.SpxPhysicSetGlobalFriction = (GDExtensionSpxPhysicSetGlobalFriction)(dlsymGD("spx_physic_set_global_friction"))
+	x.SpxPhysicGetGlobalFriction = (GDExtensionSpxPhysicGetGlobalFriction)(dlsymGD("spx_physic_get_global_friction"))
+	x.SpxPhysicSetGlobalAirDrag = (GDExtensionSpxPhysicSetGlobalAirDrag)(dlsymGD("spx_physic_set_global_air_drag"))
+	x.SpxPhysicGetGlobalAirDrag = (GDExtensionSpxPhysicGetGlobalAirDrag)(dlsymGD("spx_physic_get_global_air_drag"))
+	x.SpxPhysicCheckCollisionRect = (GDExtensionSpxPhysicCheckCollisionRect)(dlsymGD("spx_physic_check_collision_rect"))
+	x.SpxPhysicCheckCollisionCircle = (GDExtensionSpxPhysicCheckCollisionCircle)(dlsymGD("spx_physic_check_collision_circle"))
 	x.SpxPlatformSetStretchMode = (GDExtensionSpxPlatformSetStretchMode)(dlsymGD("spx_platform_set_stretch_mode"))
 	x.SpxPlatformSetWindowPosition = (GDExtensionSpxPlatformSetWindowPosition)(dlsymGD("spx_platform_set_window_position"))
 	x.SpxPlatformGetWindowPosition = (GDExtensionSpxPlatformGetWindowPosition)(dlsymGD("spx_platform_get_window_position"))
@@ -426,6 +456,16 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxSpriteGetMass = (GDExtensionSpxSpriteGetMass)(dlsymGD("spx_sprite_get_mass"))
 	x.SpxSpriteAddForce = (GDExtensionSpxSpriteAddForce)(dlsymGD("spx_sprite_add_force"))
 	x.SpxSpriteAddImpulse = (GDExtensionSpxSpriteAddImpulse)(dlsymGD("spx_sprite_add_impulse"))
+	x.SpxSpriteSetPhysicsMode = (GDExtensionSpxSpriteSetPhysicsMode)(dlsymGD("spx_sprite_set_physics_mode"))
+	x.SpxSpriteGetPhysicsMode = (GDExtensionSpxSpriteGetPhysicsMode)(dlsymGD("spx_sprite_get_physics_mode"))
+	x.SpxSpriteSetUseGravity = (GDExtensionSpxSpriteSetUseGravity)(dlsymGD("spx_sprite_set_use_gravity"))
+	x.SpxSpriteIsUseGravity = (GDExtensionSpxSpriteIsUseGravity)(dlsymGD("spx_sprite_is_use_gravity"))
+	x.SpxSpriteSetGravityScale = (GDExtensionSpxSpriteSetGravityScale)(dlsymGD("spx_sprite_set_gravity_scale"))
+	x.SpxSpriteGetGravityScale = (GDExtensionSpxSpriteGetGravityScale)(dlsymGD("spx_sprite_get_gravity_scale"))
+	x.SpxSpriteSetDrag = (GDExtensionSpxSpriteSetDrag)(dlsymGD("spx_sprite_set_drag"))
+	x.SpxSpriteGetDrag = (GDExtensionSpxSpriteGetDrag)(dlsymGD("spx_sprite_get_drag"))
+	x.SpxSpriteSetFriction = (GDExtensionSpxSpriteSetFriction)(dlsymGD("spx_sprite_set_friction"))
+	x.SpxSpriteGetFriction = (GDExtensionSpxSpriteGetFriction)(dlsymGD("spx_sprite_get_friction"))
 	x.SpxSpriteSetCollisionLayer = (GDExtensionSpxSpriteSetCollisionLayer)(dlsymGD("spx_sprite_set_collision_layer"))
 	x.SpxSpriteGetCollisionLayer = (GDExtensionSpxSpriteGetCollisionLayer)(dlsymGD("spx_sprite_get_collision_layer"))
 	x.SpxSpriteSetCollisionMask = (GDExtensionSpxSpriteSetCollisionMask)(dlsymGD("spx_sprite_set_collision_mask"))

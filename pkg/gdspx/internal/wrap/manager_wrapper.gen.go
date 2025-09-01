@@ -304,6 +304,18 @@ func (pself *extMgr) SetPenStampTexture(obj Object, texture_path string) {
 	defer C.free(unsafe.Pointer(arg1Str))
 	CallExtSetPenStampTexture(arg0, arg1)
 }
+func (pself *extMgr) DebugDrawCircle(pos Vec2, radius float64, color Color) {
+	arg0 := ToGdVec2(pos)
+	arg1 := ToGdFloat(radius)
+	arg2 := ToGdColor(color)
+	CallExtDebugDrawCircle(arg0, arg1, arg2)
+}
+func (pself *extMgr) DebugDrawRect(pos Vec2, size Vec2, color Color) {
+	arg0 := ToGdVec2(pos)
+	arg1 := ToGdVec2(size)
+	arg2 := ToGdColor(color)
+	CallExtDebugDrawRect(arg0, arg1, arg2)
+}
 func (pself *inputMgr) GetMousePos() Vec2 {
 	retValue := CallInputGetMousePos()
 	return ToVec2(retValue)
@@ -384,6 +396,44 @@ func (pself *physicMgr) CheckTouchedCameraBoundary(obj Object, board_type int64)
 func (pself *physicMgr) SetCollisionSystemType(is_collision_by_alpha bool) {
 	arg0 := ToGdBool(is_collision_by_alpha)
 	CallPhysicSetCollisionSystemType(arg0)
+}
+func (pself *physicMgr) SetGlobalGravity(gravity float64) {
+	arg0 := ToGdFloat(gravity)
+	CallPhysicSetGlobalGravity(arg0)
+}
+func (pself *physicMgr) GetGlobalGravity() float64 {
+	retValue := CallPhysicGetGlobalGravity()
+	return ToFloat64(retValue)
+}
+func (pself *physicMgr) SetGlobalFriction(friction float64) {
+	arg0 := ToGdFloat(friction)
+	CallPhysicSetGlobalFriction(arg0)
+}
+func (pself *physicMgr) GetGlobalFriction() float64 {
+	retValue := CallPhysicGetGlobalFriction()
+	return ToFloat64(retValue)
+}
+func (pself *physicMgr) SetGlobalAirDrag(air_drag float64) {
+	arg0 := ToGdFloat(air_drag)
+	CallPhysicSetGlobalAirDrag(arg0)
+}
+func (pself *physicMgr) GetGlobalAirDrag() float64 {
+	retValue := CallPhysicGetGlobalAirDrag()
+	return ToFloat64(retValue)
+}
+func (pself *physicMgr) CheckCollisionRect(pos Vec2, size Vec2, collision_mask int64) Array {
+	arg0 := ToGdVec2(pos)
+	arg1 := ToGdVec2(size)
+	arg2 := ToGdInt(collision_mask)
+	retValue := CallPhysicCheckCollisionRect(arg0, arg1, arg2)
+	return ToArray(retValue)
+}
+func (pself *physicMgr) CheckCollisionCircle(pos Vec2, radius float64, collision_mask int64) Array {
+	arg0 := ToGdVec2(pos)
+	arg1 := ToGdFloat(radius)
+	arg2 := ToGdInt(collision_mask)
+	retValue := CallPhysicCheckCollisionCircle(arg0, arg1, arg2)
+	return ToArray(retValue)
 }
 func (pself *platformMgr) SetStretchMode(enable bool) {
 	arg0 := ToGdBool(enable)
@@ -1040,6 +1090,56 @@ func (pself *spriteMgr) AddImpulse(obj Object, impulse Vec2) {
 	arg0 := ToGdObj(obj)
 	arg1 := ToGdVec2(impulse)
 	CallSpriteAddImpulse(arg0, arg1)
+}
+func (pself *spriteMgr) SetPhysicsMode(obj Object, mode int64) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdInt(mode)
+	CallSpriteSetPhysicsMode(arg0, arg1)
+}
+func (pself *spriteMgr) GetPhysicsMode(obj Object) int64 {
+	arg0 := ToGdObj(obj)
+	retValue := CallSpriteGetPhysicsMode(arg0)
+	return ToInt64(retValue)
+}
+func (pself *spriteMgr) SetUseGravity(obj Object, enabled bool) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdBool(enabled)
+	CallSpriteSetUseGravity(arg0, arg1)
+}
+func (pself *spriteMgr) IsUseGravity(obj Object) bool {
+	arg0 := ToGdObj(obj)
+	retValue := CallSpriteIsUseGravity(arg0)
+	return ToBool(retValue)
+}
+func (pself *spriteMgr) SetGravityScale(obj Object, scale float64) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdFloat(scale)
+	CallSpriteSetGravityScale(arg0, arg1)
+}
+func (pself *spriteMgr) GetGravityScale(obj Object) float64 {
+	arg0 := ToGdObj(obj)
+	retValue := CallSpriteGetGravityScale(arg0)
+	return ToFloat64(retValue)
+}
+func (pself *spriteMgr) SetDrag(obj Object, drag float64) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdFloat(drag)
+	CallSpriteSetDrag(arg0, arg1)
+}
+func (pself *spriteMgr) GetDrag(obj Object) float64 {
+	arg0 := ToGdObj(obj)
+	retValue := CallSpriteGetDrag(arg0)
+	return ToFloat64(retValue)
+}
+func (pself *spriteMgr) SetFriction(obj Object, friction float64) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdFloat(friction)
+	CallSpriteSetFriction(arg0, arg1)
+}
+func (pself *spriteMgr) GetFriction(obj Object) float64 {
+	arg0 := ToGdObj(obj)
+	retValue := CallSpriteGetFriction(arg0)
+	return ToFloat64(retValue)
 }
 func (pself *spriteMgr) SetCollisionLayer(obj Object, layer int64) {
 	arg0 := ToGdObj(obj)

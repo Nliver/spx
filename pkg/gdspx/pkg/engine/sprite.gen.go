@@ -108,12 +108,24 @@ func (pself *Sprite) GetCurrentAnimName() string {
 	return SpriteMgr.GetCurrentAnimName(pself.Id)
 }
 
+func (pself *Sprite) GetDrag() float64 {
+	return SpriteMgr.GetDrag(pself.Id)
+}
+
 func (pself *Sprite) GetFloorNormal() Vec2 {
 	return SpriteMgr.GetFloorNormal(pself.Id)
 }
 
+func (pself *Sprite) GetFriction() float64 {
+	return SpriteMgr.GetFriction(pself.Id)
+}
+
 func (pself *Sprite) GetGravity() float64 {
 	return SpriteMgr.GetGravity(pself.Id)
+}
+
+func (pself *Sprite) GetGravityScale() float64 {
+	return SpriteMgr.GetGravityScale(pself.Id)
 }
 
 func (pself *Sprite) GetLastMotion() Vec2 {
@@ -138,6 +150,10 @@ func (pself *Sprite) GetMaterialParamsVec4(effect string) Vec4 {
 
 func (pself *Sprite) GetMaterialShader() string {
 	return SpriteMgr.GetMaterialShader(pself.Id)
+}
+
+func (pself *Sprite) GetPhysicsMode() int64 {
+	return SpriteMgr.GetPhysicsMode(pself.Id)
 }
 
 func (pself *Sprite) GetPosition() Vec2 {
@@ -244,6 +260,10 @@ func (pself *Sprite) IsTriggerEnabled() bool {
 	return SpriteMgr.IsTriggerEnabled(pself.Id)
 }
 
+func (pself *Sprite) IsUseGravity() bool {
+	return SpriteMgr.IsUseGravity(pself.Id)
+}
+
 func (pself *Sprite) MoveAndSlide() {
 	SpriteMgr.MoveAndSlide(pself.Id)
 }
@@ -332,8 +352,20 @@ func (pself *Sprite) SetDontDestroyOnLoad() {
 	SpriteMgr.SetDontDestroyOnLoad(pself.Id)
 }
 
+func (pself *Sprite) SetDrag(drag float64) {
+	SpriteMgr.SetDrag(pself.Id, drag)
+}
+
+func (pself *Sprite) SetFriction(friction float64) {
+	SpriteMgr.SetFriction(pself.Id, friction)
+}
+
 func (pself *Sprite) SetGravity(gravity float64) {
 	SpriteMgr.SetGravity(pself.Id, gravity)
+}
+
+func (pself *Sprite) SetGravityScale(scale float64) {
+	SpriteMgr.SetGravityScale(pself.Id, scale)
 }
 
 func (pself *Sprite) SetMass(mass float64) {
@@ -362,6 +394,10 @@ func (pself *Sprite) SetMaterialShader(path string) {
 
 func (pself *Sprite) SetPhysicProcess(is_on bool) {
 	SpriteMgr.SetPhysicProcess(pself.Id, is_on)
+}
+
+func (pself *Sprite) SetPhysicsMode(mode int64) {
+	SpriteMgr.SetPhysicsMode(pself.Id, mode)
 }
 
 func (pself *Sprite) SetPosition(pos Vec2) {
@@ -426,6 +462,10 @@ func (pself *Sprite) SetTriggerRect(center Vec2, size Vec2) {
 
 func (pself *Sprite) SetTypeName(type_name string) {
 	SpriteMgr.SetTypeName(pself.Id, type_name)
+}
+
+func (pself *Sprite) SetUseGravity(enabled bool) {
+	SpriteMgr.SetUseGravity(pself.Id, enabled)
 }
 
 func (pself *Sprite) SetVelocity(velocity Vec2) {

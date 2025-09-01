@@ -99,16 +99,36 @@ func deserializeGdArray(data []byte) (*GdArrayInfo, error) {
 }
 
 func serializeDataByType(arrayType int32, data interface{}) ([]byte, error) {
+	if data == nil {
+		return []byte{}, nil
+	}
+
+	// Check for empty arrays
 	switch arrayType {
 	case GD_ARRAY_TYPE_INT64, GD_ARRAY_TYPE_GDOBJ:
+		if arr := data.([]int64); len(arr) == 0 {
+			return []byte{}, nil
+		}
 		return serializeInt64Array(data.([]int64))
 	case GD_ARRAY_TYPE_FLOAT:
+		if arr := data.([]float32); len(arr) == 0 {
+			return []byte{}, nil
+		}
 		return serializeFloatArray(data.([]float32))
 	case GD_ARRAY_TYPE_BOOL:
+		if arr := data.([]bool); len(arr) == 0 {
+			return []byte{}, nil
+		}
 		return serializeBoolArray(data.([]bool))
 	case GD_ARRAY_TYPE_BYTE:
+		if arr := data.([]byte); len(arr) == 0 {
+			return []byte{}, nil
+		}
 		return data.([]byte), nil
 	case GD_ARRAY_TYPE_STRING:
+		if arr := data.([]string); len(arr) == 0 {
+			return []byte{}, nil
+		}
 		return serializeStringArray(data.([]string))
 	default:
 		return nil, fmt.Errorf("array type is not supported: %d", arrayType)
@@ -116,6 +136,23 @@ func serializeDataByType(arrayType int32, data interface{}) ([]byte, error) {
 }
 
 func deserializeDataByType(arrayType int32, data []byte, size int32) (interface{}, error) {
+	if len(data) == 0 || size == 0 {
+		switch arrayType {
+		case GD_ARRAY_TYPE_INT64, GD_ARRAY_TYPE_GDOBJ:
+			return []int64{}, nil
+		case GD_ARRAY_TYPE_FLOAT:
+			return []float32{}, nil
+		case GD_ARRAY_TYPE_BOOL:
+			return []bool{}, nil
+		case GD_ARRAY_TYPE_BYTE:
+			return []byte{}, nil
+		case GD_ARRAY_TYPE_STRING:
+			return []string{}, nil
+		default:
+			return nil, fmt.Errorf("array type is not supported: %d", arrayType)
+		}
+	}
+
 	switch arrayType {
 	case GD_ARRAY_TYPE_INT64, GD_ARRAY_TYPE_GDOBJ:
 		return deserializeInt64Array(data, size)
@@ -473,6 +510,7 @@ func JsToGdInt64(val js.Value) int64 {
 
 func JsFromGdArray(arrayPtr Array) js.Value {
 	if arrayPtr == nil {
+		panic("JsFromGdArray doesn't support nil array")
 		return js.ValueOf(nil)
 	}
 

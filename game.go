@@ -25,6 +25,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"sort"
 	"sync"
 	"time"
 	"unsafe"
@@ -75,6 +76,8 @@ var (
 var (
 	isSchedInMain bool
 	mainSchedTime time.Time
+
+	enabledPhysics bool
 )
 
 func SetDebug(flags dbgFlags) {
@@ -299,6 +302,11 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 		conf.Title = appName + " (by XGo Builder)"
 	}
 	proj.FullScreen = proj.FullScreen || conf.FullScreen
+
+	enabledPhysics = proj.Physics
+	physicMgr.SetGlobalGravity(parseDefaultFloatValue(proj.GlobalGravity, 1))
+	physicMgr.SetGlobalAirDrag(parseDefaultFloatValue(proj.GlobalAirDrag, 1))
+	physicMgr.SetGlobalFriction(parseDefaultFloatValue(proj.GlobalFriction, 1))
 
 	key := conf.ScreenshotKey
 	if key == "" {
@@ -1749,4 +1757,40 @@ func Gopt_Game_Gopx_GetWidget[T any](sg ShapeGetter, name WidgetName) *T {
 	} else {
 		panic("GetWidget: type mismatch")
 	}
+}
+
+func (p *Game) checkCollision(ary any) []Sprite {
+	spriteIdAry := ary.([]engine.Object)
+	sprites := make([]Sprite, 1)
+	sort.Slice(spriteIdAry, func(i, j int) bool { return spriteIdAry[i] < spriteIdAry[j] })
+	for _, item := range spriteIdAry {
+		sprite := engine.GetSprite(item)
+		if sprite != nil {
+			impl := sprite.Target.(*SpriteImpl)
+			if impl != nil {
+				sprites = append(sprites, impl.sprite)
+			} else {
+				println(" collision ", item, " not Sprite")
+			}
+		}
+	}
+	return sprites
+}
+
+func (p *Game) CheckCollision__0(posX, posY, width, height float64) []Sprite {
+	ary := physicMgr.CheckCollisionRect(mathf.NewVec2(posX, posY), mathf.NewVec2(width, height), -1)
+	return p.checkCollision(ary)
+}
+
+func (p *Game) CheckCollision__1(posX, posY, radius float64) []Sprite {
+	ary := physicMgr.CheckCollisionCircle(mathf.NewVec2(posX, posY), radius, -1)
+	return p.checkCollision(ary)
+}
+
+func (p *Game) DebugDrawRect(posX, posY, width, height float64, color Color) {
+	extMgr.DebugDrawRect(mathf.NewVec2(posX, posY), mathf.NewVec2(width, height), toMathfColor(color))
+}
+
+func (p *Game) DebugDrawCircle(posX, posY, radius float64, color Color) {
+	extMgr.DebugDrawCircle(mathf.NewVec2(posX, posY), radius, toMathfColor(color))
 }

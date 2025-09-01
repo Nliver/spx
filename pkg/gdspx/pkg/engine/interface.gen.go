@@ -76,6 +76,8 @@ type IExtMgr interface {
 	ChangePenSizeBy(obj Object, amount float64)
 	SetPenSizeTo(obj Object, size float64)
 	SetPenStampTexture(obj Object, texture_path string)
+	DebugDrawCircle(pos Vec2, radius float64, color Color)
+	DebugDrawRect(pos Vec2, size Vec2, color Color)
 }
 
 type IInputMgr interface {
@@ -95,6 +97,14 @@ type IPhysicMgr interface {
 	CheckTouchedCameraBoundaries(obj Object) int64
 	CheckTouchedCameraBoundary(obj Object, board_type int64) bool
 	SetCollisionSystemType(is_collision_by_alpha bool)
+	SetGlobalGravity(gravity float64)
+	GetGlobalGravity() float64
+	SetGlobalFriction(friction float64)
+	GetGlobalFriction() float64
+	SetGlobalAirDrag(air_drag float64)
+	GetGlobalAirDrag() float64
+	CheckCollisionRect(pos Vec2, size Vec2, collision_mask int64) Array
+	CheckCollisionCircle(pos Vec2, radius float64, collision_mask int64) Array
 }
 
 type IPlatformMgr interface {
@@ -223,6 +233,16 @@ type ISpriteMgr interface {
 	GetMass(obj Object) float64
 	AddForce(obj Object, force Vec2)
 	AddImpulse(obj Object, impulse Vec2)
+	SetPhysicsMode(obj Object, mode int64)
+	GetPhysicsMode(obj Object) int64
+	SetUseGravity(obj Object, enabled bool)
+	IsUseGravity(obj Object) bool
+	SetGravityScale(obj Object, scale float64)
+	GetGravityScale(obj Object) float64
+	SetDrag(obj Object, drag float64)
+	GetDrag(obj Object) float64
+	SetFriction(obj Object, friction float64)
+	GetFriction(obj Object) float64
 	SetCollisionLayer(obj Object, layer int64)
 	GetCollisionLayer(obj Object) int64
 	SetCollisionMask(obj Object, mask int64)

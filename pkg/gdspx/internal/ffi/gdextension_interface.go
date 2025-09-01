@@ -717,18 +717,18 @@ func (a *ArrayInfoImpl) ToBytes() []byte {
 	return result
 }
 
-func (a *ArrayInfoImpl) ToObjects() []GdObj {
+func (a *ArrayInfoImpl) ToObjects() []int64 {
 	if a.gdArray == nil || a.Type() != ArrayTypeGdObj {
 		return nil
 	}
 	size := a.Size()
 	if size == 0 {
-		return []GdObj{}
+		return []int64{}
 	}
 	slice := (*[1 << 30]C.GdObj)(unsafe.Pointer(a.gdArray.data))[:size:size]
-	result := make([]GdObj, size)
+	result := make([]int64, size)
 	for i, v := range slice {
-		result[i] = GdObj(v)
+		result[i] = int64(v)
 	}
 	return result
 }

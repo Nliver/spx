@@ -293,6 +293,18 @@ func (pself *extMgr) SetPenStampTexture(obj Object, texture_path string) {
 	arg1 := JsFromGdString(texture_path)
 	API.SpxExtSetPenStampTexture.Invoke(arg0, arg1)
 }
+func (pself *extMgr) DebugDrawCircle(pos Vec2, radius float64, color Color) {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdFloat(radius)
+	arg2 := JsFromGdColor(color)
+	API.SpxExtDebugDrawCircle.Invoke(arg0, arg1, arg2)
+}
+func (pself *extMgr) DebugDrawRect(pos Vec2, size Vec2, color Color) {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdVec2(size)
+	arg2 := JsFromGdColor(color)
+	API.SpxExtDebugDrawRect.Invoke(arg0, arg1, arg2)
+}
 func (pself *inputMgr) GetMousePos() Vec2 {
 	_retValue := API.SpxInputGetMousePos.Invoke()
 	return JsToGdVec2(_retValue)
@@ -363,6 +375,44 @@ func (pself *physicMgr) CheckTouchedCameraBoundary(obj Object, board_type int64)
 func (pself *physicMgr) SetCollisionSystemType(is_collision_by_alpha bool) {
 	arg0 := JsFromGdBool(is_collision_by_alpha)
 	API.SpxPhysicSetCollisionSystemType.Invoke(arg0)
+}
+func (pself *physicMgr) SetGlobalGravity(gravity float64) {
+	arg0 := JsFromGdFloat(gravity)
+	API.SpxPhysicSetGlobalGravity.Invoke(arg0)
+}
+func (pself *physicMgr) GetGlobalGravity() float64 {
+	_retValue := API.SpxPhysicGetGlobalGravity.Invoke()
+	return JsToGdFloat(_retValue)
+}
+func (pself *physicMgr) SetGlobalFriction(friction float64) {
+	arg0 := JsFromGdFloat(friction)
+	API.SpxPhysicSetGlobalFriction.Invoke(arg0)
+}
+func (pself *physicMgr) GetGlobalFriction() float64 {
+	_retValue := API.SpxPhysicGetGlobalFriction.Invoke()
+	return JsToGdFloat(_retValue)
+}
+func (pself *physicMgr) SetGlobalAirDrag(air_drag float64) {
+	arg0 := JsFromGdFloat(air_drag)
+	API.SpxPhysicSetGlobalAirDrag.Invoke(arg0)
+}
+func (pself *physicMgr) GetGlobalAirDrag() float64 {
+	_retValue := API.SpxPhysicGetGlobalAirDrag.Invoke()
+	return JsToGdFloat(_retValue)
+}
+func (pself *physicMgr) CheckCollisionRect(pos Vec2, size Vec2, collision_mask int64) Array {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdVec2(size)
+	arg2 := JsFromGdInt(collision_mask)
+	_retValue := API.SpxPhysicCheckCollisionRect.Invoke(arg0, arg1, arg2)
+	return JsToGdArray(_retValue)
+}
+func (pself *physicMgr) CheckCollisionCircle(pos Vec2, radius float64, collision_mask int64) Array {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdFloat(radius)
+	arg2 := JsFromGdInt(collision_mask)
+	_retValue := API.SpxPhysicCheckCollisionCircle.Invoke(arg0, arg1, arg2)
+	return JsToGdArray(_retValue)
 }
 func (pself *platformMgr) SetStretchMode(enable bool) {
 	arg0 := JsFromGdBool(enable)
@@ -943,6 +993,56 @@ func (pself *spriteMgr) AddImpulse(obj Object, impulse Vec2) {
 	arg0 := JsFromGdObj(obj)
 	arg1 := JsFromGdVec2(impulse)
 	API.SpxSpriteAddImpulse.Invoke(arg0, arg1)
+}
+func (pself *spriteMgr) SetPhysicsMode(obj Object, mode int64) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdInt(mode)
+	API.SpxSpriteSetPhysicsMode.Invoke(arg0, arg1)
+}
+func (pself *spriteMgr) GetPhysicsMode(obj Object) int64 {
+	arg0 := JsFromGdObj(obj)
+	_retValue := API.SpxSpriteGetPhysicsMode.Invoke(arg0)
+	return JsToGdInt(_retValue)
+}
+func (pself *spriteMgr) SetUseGravity(obj Object, enabled bool) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdBool(enabled)
+	API.SpxSpriteSetUseGravity.Invoke(arg0, arg1)
+}
+func (pself *spriteMgr) IsUseGravity(obj Object) bool {
+	arg0 := JsFromGdObj(obj)
+	_retValue := API.SpxSpriteIsUseGravity.Invoke(arg0)
+	return JsToGdBool(_retValue)
+}
+func (pself *spriteMgr) SetGravityScale(obj Object, scale float64) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdFloat(scale)
+	API.SpxSpriteSetGravityScale.Invoke(arg0, arg1)
+}
+func (pself *spriteMgr) GetGravityScale(obj Object) float64 {
+	arg0 := JsFromGdObj(obj)
+	_retValue := API.SpxSpriteGetGravityScale.Invoke(arg0)
+	return JsToGdFloat(_retValue)
+}
+func (pself *spriteMgr) SetDrag(obj Object, drag float64) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdFloat(drag)
+	API.SpxSpriteSetDrag.Invoke(arg0, arg1)
+}
+func (pself *spriteMgr) GetDrag(obj Object) float64 {
+	arg0 := JsFromGdObj(obj)
+	_retValue := API.SpxSpriteGetDrag.Invoke(arg0)
+	return JsToGdFloat(_retValue)
+}
+func (pself *spriteMgr) SetFriction(obj Object, friction float64) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdFloat(friction)
+	API.SpxSpriteSetFriction.Invoke(arg0, arg1)
+}
+func (pself *spriteMgr) GetFriction(obj Object) float64 {
+	arg0 := JsFromGdObj(obj)
+	_retValue := API.SpxSpriteGetFriction.Invoke(arg0)
+	return JsToGdFloat(_retValue)
 }
 func (pself *spriteMgr) SetCollisionLayer(obj Object, layer int64) {
 	arg0 := JsFromGdObj(obj)

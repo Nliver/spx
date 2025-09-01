@@ -127,12 +127,27 @@ func (pself *Sprite) GetCurrentAnimName() string {
 	return _val
 }
 
+func (pself *Sprite) GetDrag() float64 {
+	var _val float64
+	return _val
+}
+
 func (pself *Sprite) GetFloorNormal() Vec2 {
 	var _val Vec2
 	return _val
 }
 
+func (pself *Sprite) GetFriction() float64 {
+	var _val float64
+	return _val
+}
+
 func (pself *Sprite) GetGravity() float64 {
+	var _val float64
+	return _val
+}
+
+func (pself *Sprite) GetGravityScale() float64 {
 	var _val float64
 	return _val
 }
@@ -164,6 +179,11 @@ func (pself *Sprite) GetMaterialParamsVec4(effect string) Vec4 {
 
 func (pself *Sprite) GetMaterialShader() string {
 	var _val string
+	return _val
+}
+
+func (pself *Sprite) GetPhysicsMode() int64 {
+	var _val int64
 	return _val
 }
 
@@ -297,6 +317,11 @@ func (pself *Sprite) IsTriggerEnabled() bool {
 	return _val
 }
 
+func (pself *Sprite) IsUseGravity() bool {
+	var _val bool
+	return _val
+}
+
 func (pself *Sprite) MoveAndSlide() {
 }
 
@@ -363,7 +388,16 @@ func (pself *Sprite) SetColor(color Color) {
 func (pself *Sprite) SetDontDestroyOnLoad() {
 }
 
+func (pself *Sprite) SetDrag(drag float64) {
+}
+
+func (pself *Sprite) SetFriction(friction float64) {
+}
+
 func (pself *Sprite) SetGravity(gravity float64) {
+}
+
+func (pself *Sprite) SetGravityScale(scale float64) {
 }
 
 func (pself *Sprite) SetMass(mass float64) {
@@ -385,6 +419,9 @@ func (pself *Sprite) SetMaterialShader(path string) {
 }
 
 func (pself *Sprite) SetPhysicProcess(is_on bool) {
+}
+
+func (pself *Sprite) SetPhysicsMode(mode int64) {
 }
 
 func (pself *Sprite) SetPosition(pos Vec2) {
@@ -433,6 +470,9 @@ func (pself *Sprite) SetTriggerRect(center Vec2, size Vec2) {
 }
 
 func (pself *Sprite) SetTypeName(type_name string) {
+}
+
+func (pself *Sprite) SetUseGravity(enabled bool) {
 }
 
 func (pself *Sprite) SetVelocity(velocity Vec2) {

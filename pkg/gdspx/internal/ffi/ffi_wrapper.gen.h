@@ -138,6 +138,12 @@ void cgo_callfn_GDExtensionSpxExtSetPenSizeTo(const GDExtensionSpxExtSetPenSizeT
 void cgo_callfn_GDExtensionSpxExtSetPenStampTexture(const GDExtensionSpxExtSetPenStampTexture fn, GdObj obj, GdString texture_path) {
 	fn(obj, texture_path);
 }
+void cgo_callfn_GDExtensionSpxExtDebugDrawCircle(const GDExtensionSpxExtDebugDrawCircle fn, GdVec2 pos, GdFloat radius, GdColor color) {
+	fn(pos, radius, color);
+}
+void cgo_callfn_GDExtensionSpxExtDebugDrawRect(const GDExtensionSpxExtDebugDrawRect fn, GdVec2 pos, GdVec2 size, GdColor color) {
+	fn(pos, size, color);
+}
 void cgo_callfn_GDExtensionSpxInputGetMousePos(const GDExtensionSpxInputGetMousePos fn, GdVec2* ret_val) {
 	fn(ret_val);
 }
@@ -176,6 +182,30 @@ void cgo_callfn_GDExtensionSpxPhysicCheckTouchedCameraBoundary(const GDExtension
 }
 void cgo_callfn_GDExtensionSpxPhysicSetCollisionSystemType(const GDExtensionSpxPhysicSetCollisionSystemType fn, GdBool is_collision_by_alpha) {
 	fn(is_collision_by_alpha);
+}
+void cgo_callfn_GDExtensionSpxPhysicSetGlobalGravity(const GDExtensionSpxPhysicSetGlobalGravity fn, GdFloat gravity) {
+	fn(gravity);
+}
+void cgo_callfn_GDExtensionSpxPhysicGetGlobalGravity(const GDExtensionSpxPhysicGetGlobalGravity fn, GdFloat* ret_val) {
+	fn(ret_val);
+}
+void cgo_callfn_GDExtensionSpxPhysicSetGlobalFriction(const GDExtensionSpxPhysicSetGlobalFriction fn, GdFloat friction) {
+	fn(friction);
+}
+void cgo_callfn_GDExtensionSpxPhysicGetGlobalFriction(const GDExtensionSpxPhysicGetGlobalFriction fn, GdFloat* ret_val) {
+	fn(ret_val);
+}
+void cgo_callfn_GDExtensionSpxPhysicSetGlobalAirDrag(const GDExtensionSpxPhysicSetGlobalAirDrag fn, GdFloat air_drag) {
+	fn(air_drag);
+}
+void cgo_callfn_GDExtensionSpxPhysicGetGlobalAirDrag(const GDExtensionSpxPhysicGetGlobalAirDrag fn, GdFloat* ret_val) {
+	fn(ret_val);
+}
+void cgo_callfn_GDExtensionSpxPhysicCheckCollisionRect(const GDExtensionSpxPhysicCheckCollisionRect fn, GdVec2 pos, GdVec2 size, GdInt collision_mask, GdArray* ret_val) {
+	fn(pos, size, collision_mask,ret_val);
+}
+void cgo_callfn_GDExtensionSpxPhysicCheckCollisionCircle(const GDExtensionSpxPhysicCheckCollisionCircle fn, GdVec2 pos, GdFloat radius, GdInt collision_mask, GdArray* ret_val) {
+	fn(pos, radius, collision_mask,ret_val);
 }
 void cgo_callfn_GDExtensionSpxPlatformSetStretchMode(const GDExtensionSpxPlatformSetStretchMode fn, GdBool enable) {
 	fn(enable);
@@ -524,6 +554,36 @@ void cgo_callfn_GDExtensionSpxSpriteAddForce(const GDExtensionSpxSpriteAddForce 
 }
 void cgo_callfn_GDExtensionSpxSpriteAddImpulse(const GDExtensionSpxSpriteAddImpulse fn, GdObj obj, GdVec2 impulse) {
 	fn(obj, impulse);
+}
+void cgo_callfn_GDExtensionSpxSpriteSetPhysicsMode(const GDExtensionSpxSpriteSetPhysicsMode fn, GdObj obj, GdInt mode) {
+	fn(obj, mode);
+}
+void cgo_callfn_GDExtensionSpxSpriteGetPhysicsMode(const GDExtensionSpxSpriteGetPhysicsMode fn, GdObj obj, GdInt* ret_val) {
+	fn(obj,ret_val);
+}
+void cgo_callfn_GDExtensionSpxSpriteSetUseGravity(const GDExtensionSpxSpriteSetUseGravity fn, GdObj obj, GdBool enabled) {
+	fn(obj, enabled);
+}
+void cgo_callfn_GDExtensionSpxSpriteIsUseGravity(const GDExtensionSpxSpriteIsUseGravity fn, GdObj obj, GdBool* ret_val) {
+	fn(obj,ret_val);
+}
+void cgo_callfn_GDExtensionSpxSpriteSetGravityScale(const GDExtensionSpxSpriteSetGravityScale fn, GdObj obj, GdFloat scale) {
+	fn(obj, scale);
+}
+void cgo_callfn_GDExtensionSpxSpriteGetGravityScale(const GDExtensionSpxSpriteGetGravityScale fn, GdObj obj, GdFloat* ret_val) {
+	fn(obj,ret_val);
+}
+void cgo_callfn_GDExtensionSpxSpriteSetDrag(const GDExtensionSpxSpriteSetDrag fn, GdObj obj, GdFloat drag) {
+	fn(obj, drag);
+}
+void cgo_callfn_GDExtensionSpxSpriteGetDrag(const GDExtensionSpxSpriteGetDrag fn, GdObj obj, GdFloat* ret_val) {
+	fn(obj,ret_val);
+}
+void cgo_callfn_GDExtensionSpxSpriteSetFriction(const GDExtensionSpxSpriteSetFriction fn, GdObj obj, GdFloat friction) {
+	fn(obj, friction);
+}
+void cgo_callfn_GDExtensionSpxSpriteGetFriction(const GDExtensionSpxSpriteGetFriction fn, GdObj obj, GdFloat* ret_val) {
+	fn(obj,ret_val);
 }
 void cgo_callfn_GDExtensionSpxSpriteSetCollisionLayer(const GDExtensionSpxSpriteSetCollisionLayer fn, GdObj obj, GdInt layer) {
 	fn(obj, layer);

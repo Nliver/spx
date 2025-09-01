@@ -74,6 +74,7 @@ func (p *Game) OnEngineUpdate(delta float64) {
 	p.syncUpdateInput()
 	p.syncUpdateCamera()
 	p.syncUpdateLogic()
+	p.syncEnginePositions()
 }
 func (p *Game) OnEngineRender(delta float64) {
 	if !p.isRunned {
@@ -94,6 +95,18 @@ func (p *Game) syncUpdateLogic() error {
 		p.fireEvent(&eventStart{})
 	})
 
+	return nil
+}
+func (p *Game) syncEnginePositions() error {
+	items := p.getTempShapes()
+	for _, item := range items {
+		sprite, ok := item.(*SpriteImpl)
+		if ok && sprite.syncSprite != nil {
+			if sprite.physicMode != NoPhysic {
+				sprite.x, sprite.y = sprite.syncGetEnginePosition(true)
+			}
+		}
+	}
 	return nil
 }
 
@@ -122,6 +135,7 @@ func (sprite *SpriteImpl) syncCheckInitProxy() {
 		sprite.applyGraphicEffects(true)
 		sprite.syncSprite.RegisterOnAnimationLooped(sprite.syncOnAnimationLooped)
 		sprite.syncSprite.RegisterOnAnimationFinished(sprite.syncOnAnimationFinished)
+		sprite.updateProxyTransform(true)
 	}
 }
 func (sprite *SpriteImpl) syncOnAnimationFinished() {
@@ -151,6 +165,16 @@ func (sprite *SpriteImpl) updateProxyTransform(isSync bool) {
 	sprite.syncSprite.UpdateTransform(x, y, rot, scale, isSync)
 }
 
+func (sprite *SpriteImpl) syncGetEnginePosition(isSync bool) (float64, float64) {
+	if sprite.syncSprite == nil {
+		return sprite.x, sprite.y
+	}
+	pos := sprite.syncSprite.GetPosition()
+	x, y := pos.X, pos.Y
+	revertRenderOffset(sprite, &x, &y)
+	return x, y
+}
+
 func (p *Game) syncUpdateProxy() {
 	count := 0
 	items := p.getItems()
@@ -160,10 +184,10 @@ func (p *Game) syncUpdateProxy() {
 			if sprite.HasDestroyed {
 				continue
 			}
+
 			syncSprite := sprite.syncSprite
 			// sync position
 			if sprite.isVisible {
-				sprite.updateProxyTransform(true)
 				syncCheckUpdateCostume(&sprite.baseObj)
 				count++
 			}
@@ -260,6 +284,8 @@ func syncInitSpritePhysicInfo(sprite *SpriteImpl, syncProxy *engine.Sprite) {
 	case physicColliderNone:
 		syncProxy.SetCollisionEnabled(false)
 	}
+	// trigger's default size should be larger than the collision bounding box
+	const extraPixelSize = 2
 
 	switch sprite.triggerType {
 	case physicColliderCircle:
@@ -271,11 +297,15 @@ func syncInitSpritePhysicInfo(sprite *SpriteImpl, syncProxy *engine.Sprite) {
 		syncProxy.SetTriggerRect(sprite.triggerCenter, sprite.triggerSize)
 	case physicColliderAuto:
 		sprite.triggerCenter, sprite.triggerSize = syncGetCostumeBoundByAlpha(sprite, sprite.scale)
+		sprite.triggerSize.X += extraPixelSize
+		sprite.triggerSize.Y += extraPixelSize
 		syncProxy.SetTriggerEnabled(true)
 		syncProxy.SetTriggerRect(sprite.triggerCenter, sprite.triggerSize)
 	case physicColliderNone:
 		syncProxy.SetTriggerEnabled(false)
 	}
+	syncProxy.SetGravityScale(sprite.gravity)
+	syncProxy.SetPhysicsMode(sprite.physicMode)
 }
 func syncGetCostumeBoundByAlpha(p *SpriteImpl, pscale float64) (mathf.Vec2, mathf.Vec2) {
 	return getCostumeBoundByAlpha(p, pscale, true)
@@ -336,8 +366,7 @@ func calcRenderRotation(p *SpriteImpl) (float64, float64) {
 	}
 	return degree, hScale
 }
-
-func applyRenderOffset(p *SpriteImpl, cx, cy *float64) {
+func getRenderOffset(p *SpriteImpl) (float64, float64) {
 	cs := p.costumes[p.costumeIndex_]
 	x, y := -((cs.center.X)/float64(cs.bitmapResolution)+p.pivot.X)*p.scale,
 		((cs.center.Y)/float64(cs.bitmapResolution)-p.pivot.Y)*p.scale
@@ -348,8 +377,19 @@ func applyRenderOffset(p *SpriteImpl, cx, cy *float64) {
 	x = x + float64(w)/2*p.scale
 	y = y - float64(h)/2*p.scale
 
+	return x, y
+}
+
+func applyRenderOffset(p *SpriteImpl, cx, cy *float64) {
+	x, y := getRenderOffset(p)
 	*cx = *cx + x
 	*cy = *cy + y
+}
+
+func revertRenderOffset(p *SpriteImpl, cx, cy *float64) {
+	x, y := getRenderOffset(p)
+	*cx = *cx - x
+	*cy = *cy - y
 }
 
 func registerAnimToEngine(spriteName string, animName string, animCfg *aniConfig, costumes []*costume, isCostumeSet bool, applyCustumeOffset2Animation bool) {

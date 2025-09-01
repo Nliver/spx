@@ -47,12 +47,12 @@ func init() {
 			"Event0":             reflect.TypeOf((*q.Event0)(nil)).Elem(),
 			"KeyCode":            reflect.TypeOf((*q.KeyCode)(nil)).Elem(),
 			"Node":               reflect.TypeOf((*q.Node)(nil)).Elem(),
-			"Object":             reflect.TypeOf((*q.Object)(nil)).Elem(),
 			"Sprite":             reflect.TypeOf((*q.Sprite)(nil)).Elem(),
 			"UiNode":             reflect.TypeOf((*q.UiNode)(nil)).Elem(),
 		},
 		AliasTypes: map[string]reflect.Type{
-			"Array": reflect.TypeOf((*q.Array)(nil)).Elem(),
+			"Array":  reflect.TypeOf((*q.Array)(nil)).Elem(),
+			"Object": reflect.TypeOf((*q.Object)(nil)).Elem(),
 		},
 		Vars: map[string]reflect.Value{
 			"AudioMgr":           reflect.ValueOf(&q.AudioMgr),
