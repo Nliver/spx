@@ -1,13 +1,296 @@
 package webffi
 
 import (
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"syscall/js"
+	"unsafe"
 
 	. "github.com/goplus/spbase/mathf"
 	. "github.com/goplus/spx/v2/pkg/gdspx/pkg/engine"
 )
+
+var isLittleEndian bool
+var byteOrder binary.ByteOrder
+
+func init() {
+	buf := [2]byte{}
+	*(*uint16)(unsafe.Pointer(&buf[0])) = uint16(0xABCD)
+
+	switch buf {
+	case [2]byte{0xCD, 0xAB}:
+		isLittleEndian = true
+		byteOrder = binary.LittleEndian
+	case [2]byte{0xAB, 0xCD}:
+		isLittleEndian = false
+		byteOrder = binary.BigEndian
+	default:
+		panic("Could not determine native endianness.")
+	}
+}
+
+const (
+	GD_ARRAY_TYPE_UNKNOWN = 0
+	GD_ARRAY_TYPE_INT64   = 1
+	GD_ARRAY_TYPE_FLOAT   = 2
+	GD_ARRAY_TYPE_BOOL    = 3
+	GD_ARRAY_TYPE_STRING  = 4
+	GD_ARRAY_TYPE_BYTE    = 5
+	GD_ARRAY_TYPE_GDOBJ   = 6
+)
+
+type GdArrayInfo struct {
+	Size int32
+	Type int32
+	Data interface{}
+}
+
+func serializeGdArray(info *GdArrayInfo) ([]byte, error) {
+	if info == nil {
+		return nil, fmt.Errorf("GdArrayInfo is null")
+	}
+
+	dataBytes, err := serializeDataByType(info.Type, info.Data)
+	if err != nil {
+		return nil, err
+	}
+
+	totalSize := 8 + len(dataBytes)
+	result := make([]byte, totalSize)
+
+	if isLittleEndian {
+		*(*uint32)(unsafe.Pointer(&result[0])) = uint32(info.Size)
+		*(*uint32)(unsafe.Pointer(&result[4])) = uint32(info.Type)
+	} else {
+		binary.LittleEndian.PutUint32(result[0:4], uint32(info.Size))
+		binary.LittleEndian.PutUint32(result[4:8], uint32(info.Type))
+	}
+
+	copy(result[8:], dataBytes)
+
+	return result, nil
+}
+
+func deserializeGdArray(data []byte) (*GdArrayInfo, error) {
+	if len(data) < 8 {
+		return nil, fmt.Errorf("data length is not enough")
+	}
+
+	var size, arrayType int32
+	if isLittleEndian {
+		size = int32(*(*uint32)(unsafe.Pointer(&data[0])))
+		arrayType = int32(*(*uint32)(unsafe.Pointer(&data[4])))
+	} else {
+		size = int32(binary.LittleEndian.Uint32(data[0:4]))
+		arrayType = int32(binary.LittleEndian.Uint32(data[4:8]))
+	}
+
+	arrayData, err := deserializeDataByType(arrayType, data[8:], size)
+	if err != nil {
+		return nil, err
+	}
+
+	return &GdArrayInfo{
+		Size: size,
+		Type: arrayType,
+		Data: arrayData,
+	}, nil
+}
+
+func serializeDataByType(arrayType int32, data interface{}) ([]byte, error) {
+	switch arrayType {
+	case GD_ARRAY_TYPE_INT64, GD_ARRAY_TYPE_GDOBJ:
+		return serializeInt64Array(data.([]int64))
+	case GD_ARRAY_TYPE_FLOAT:
+		return serializeFloatArray(data.([]float32))
+	case GD_ARRAY_TYPE_BOOL:
+		return serializeBoolArray(data.([]bool))
+	case GD_ARRAY_TYPE_BYTE:
+		return data.([]byte), nil
+	case GD_ARRAY_TYPE_STRING:
+		return serializeStringArray(data.([]string))
+	default:
+		return nil, fmt.Errorf("array type is not supported: %d", arrayType)
+	}
+}
+
+func deserializeDataByType(arrayType int32, data []byte, size int32) (interface{}, error) {
+	switch arrayType {
+	case GD_ARRAY_TYPE_INT64, GD_ARRAY_TYPE_GDOBJ:
+		return deserializeInt64Array(data, size)
+	case GD_ARRAY_TYPE_FLOAT:
+		return deserializeFloatArray(data, size)
+	case GD_ARRAY_TYPE_BOOL:
+		return deserializeBoolArray(data, size)
+	case GD_ARRAY_TYPE_BYTE:
+		return data, nil
+	case GD_ARRAY_TYPE_STRING:
+		return deserializeStringArray(data)
+	default:
+		return nil, fmt.Errorf("array type is not supported: %d", arrayType)
+	}
+}
+
+func serializeInt64Array(data []int64) ([]byte, error) {
+	if isLittleEndian {
+		// Zero-copy conversion: directly convert []int64 to []byte
+		return (*[1 << 30]byte)(unsafe.Pointer(&data[0]))[: len(data)*8 : len(data)*8], nil
+	} else {
+		// Big endian machines need byte order conversion
+		result := make([]byte, len(data)*8)
+		for i, val := range data {
+			binary.LittleEndian.PutUint64(result[i*8:(i+1)*8], uint64(val))
+		}
+		return result, nil
+	}
+}
+
+func deserializeInt64Array(data []byte, size int32) ([]int64, error) {
+	if len(data) < int(size*8) {
+		return nil, fmt.Errorf("array data length is not enough")
+	}
+
+	if isLittleEndian {
+		// Zero-copy conversion: directly convert []byte to []int64
+		return (*[1 << 27]int64)(unsafe.Pointer(&data[0]))[:size:size], nil
+	} else {
+		// Big endian machines need byte order conversion
+		result := make([]int64, size)
+		for i := int32(0); i < size; i++ {
+			result[i] = int64(binary.LittleEndian.Uint64(data[i*8 : (i+1)*8]))
+		}
+		return result, nil
+	}
+}
+
+func serializeFloatArray(data []float32) ([]byte, error) {
+	if isLittleEndian {
+		// Zero-copy conversion: directly convert []float32 to []byte
+		return (*[1 << 30]byte)(unsafe.Pointer(&data[0]))[: len(data)*4 : len(data)*4], nil
+	} else {
+		// Big endian machines need byte order conversion
+		result := make([]byte, len(data)*4)
+		for i, val := range data {
+			bits := *(*uint32)(unsafe.Pointer(&val))
+			binary.LittleEndian.PutUint32(result[i*4:(i+1)*4], bits)
+		}
+		return result, nil
+	}
+}
+
+func deserializeFloatArray(data []byte, size int32) ([]float32, error) {
+	if len(data) < int(size*4) {
+		return nil, fmt.Errorf("array data length is not enough")
+	}
+
+	if isLittleEndian {
+		// Zero-copy conversion: directly convert []byte to []float32
+		return (*[1 << 28]float32)(unsafe.Pointer(&data[0]))[:size:size], nil
+	} else {
+		// Big endian machines need byte order conversion
+		result := make([]float32, size)
+		for i := int32(0); i < size; i++ {
+			bits := binary.LittleEndian.Uint32(data[i*4 : (i+1)*4])
+			result[i] = *(*float32)(unsafe.Pointer(&bits))
+		}
+		return result, nil
+	}
+}
+
+func serializeBoolArray(data []bool) ([]byte, error) {
+	result := make([]byte, len(data))
+	for i, val := range data {
+		if val {
+			result[i] = 1
+		} else {
+			result[i] = 0
+		}
+	}
+	return result, nil
+}
+
+func deserializeBoolArray(data []byte, size int32) ([]bool, error) {
+	if len(data) < int(size) {
+		return nil, fmt.Errorf("array data length is not enough")
+	}
+
+	result := make([]bool, size)
+	for i := int32(0); i < size; i++ {
+		result[i] = data[i] != 0
+	}
+	return result, nil
+}
+
+func serializeStringArray(data []string) ([]byte, error) {
+	var result []byte
+	for _, str := range data {
+		strBytes := []byte(str)
+		lengthBytes := make([]byte, 4)
+
+		if isLittleEndian {
+			*(*uint32)(unsafe.Pointer(&lengthBytes[0])) = uint32(len(strBytes))
+		} else {
+			binary.LittleEndian.PutUint32(lengthBytes, uint32(len(strBytes)))
+		}
+
+		result = append(result, lengthBytes...)
+		result = append(result, strBytes...)
+	}
+	return result, nil
+}
+
+func deserializeStringArray(data []byte) ([]string, error) {
+	var result []string
+	offset := 0
+
+	for offset < len(data) {
+		if offset+4 > len(data) {
+			break
+		}
+
+		var strLen int
+		if isLittleEndian {
+			strLen = int(*(*uint32)(unsafe.Pointer(&data[offset])))
+		} else {
+			strLen = int(binary.LittleEndian.Uint32(data[offset : offset+4]))
+		}
+		offset += 4
+
+		if offset+strLen > len(data) {
+			return nil, fmt.Errorf("string data is not complete")
+		}
+
+		str := string(data[offset : offset+strLen])
+		result = append(result, str)
+		offset += strLen
+	}
+
+	return result, nil
+}
+
+func arrayToGdArrayInfo(arrayPtr Array) *GdArrayInfo {
+	switch data := arrayPtr.(type) {
+	case []int64:
+		return &GdArrayInfo{Size: int32(len(data)), Type: GD_ARRAY_TYPE_INT64, Data: data}
+	case []float32:
+		return &GdArrayInfo{Size: int32(len(data)), Type: GD_ARRAY_TYPE_FLOAT, Data: data}
+	case []bool:
+		return &GdArrayInfo{Size: int32(len(data)), Type: GD_ARRAY_TYPE_BOOL, Data: data}
+	case []string:
+		return &GdArrayInfo{Size: int32(len(data)), Type: GD_ARRAY_TYPE_STRING, Data: data}
+	case []byte:
+		return &GdArrayInfo{Size: int32(len(data)), Type: GD_ARRAY_TYPE_BYTE, Data: data}
+	case []uint64:
+		int64Data := make([]int64, len(data))
+		for i, v := range data {
+			int64Data[i] = int64(v)
+		}
+		return &GdArrayInfo{Size: int32(len(data)), Type: GD_ARRAY_TYPE_GDOBJ, Data: int64Data}
+	default:
+		return nil
+	}
+}
 
 func jsValue2Go(value js.Value) any {
 	switch value.Type() {
@@ -186,4 +469,49 @@ func JsToGdFloat32(val js.Value) float32 {
 
 func JsToGdInt64(val js.Value) int64 {
 	return int64(val.Int())
+}
+
+func JsFromGdArray(arrayPtr Array) js.Value {
+	if arrayPtr == nil {
+		return js.ValueOf(nil)
+	}
+
+	info := arrayToGdArrayInfo(arrayPtr)
+	if info == nil {
+		return js.ValueOf(nil)
+	}
+
+	serializedBytes, err := serializeGdArray(info)
+	if err != nil {
+		return js.ValueOf(nil)
+	}
+
+	jsBytes := js.Global().Get("Uint8Array").New(len(serializedBytes))
+	js.CopyBytesToJS(jsBytes, serializedBytes)
+
+	return jsBytes
+}
+func JsToGdArray(val js.Value) Array {
+	if val.IsNull() || val.IsUndefined() {
+		return nil
+	}
+
+	if val.Type() != js.TypeObject {
+		return nil
+	}
+
+	length := val.Get("length").Int()
+	if length == 0 {
+		return nil
+	}
+
+	serializedBytes := make([]byte, length)
+	js.CopyBytesToGo(serializedBytes, val)
+
+	info, err := deserializeGdArray(serializedBytes)
+	if err != nil {
+		return nil
+	}
+
+	return info.Data
 }

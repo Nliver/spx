@@ -98,6 +98,11 @@ func GoArgumentType(t clang.PrimativeType, name string) string {
 			return "*Uint64T"
 		}
 		return "Uint64T"
+	case "GdArray":
+		if t.IsPointer {
+			return "*GdArray"
+		}
+		return "GdArray"
 	default:
 		if t.IsPointer {
 			return fmt.Sprintf("*%s", n)
@@ -170,6 +175,12 @@ func GoReturnType(t clang.PrimativeType) string {
 		} else {
 			return ""
 		}
+	case "GdArray":
+		if t.IsPointer {
+			return "*GdArray"
+		} else {
+			return "GdArray"
+		}
 	default:
 		if t.IsPointer {
 			return fmt.Sprintf("*%s", n)
@@ -223,6 +234,12 @@ func CgoCastArgument(a clang.Argument, defaultName string) string {
 				}
 			} else {
 				panic(fmt.Sprintf("unhandled type: %s", t.CStyleString()))
+			}
+		case "GdArray":
+			if t.IsPointer {
+				return fmt.Sprintf("(*C.GdArray)(%s)", goVarName)
+			} else {
+				return fmt.Sprintf("(*C.GdArray)(&%s)", goVarName)
 			}
 		default:
 			if t.IsPointer {
@@ -329,6 +346,12 @@ func CgoCastReturnType(t clang.PrimativeType, argName string) string {
 			return fmt.Sprintf("(*float32)(%s)", argName)
 		} else {
 			return fmt.Sprintf("float32(%s)", argName)
+		}
+	case "GdArray":
+		if t.IsPointer {
+			return fmt.Sprintf("(*GdArray)(%s)", argName)
+		} else {
+			return fmt.Sprintf("GdArray(%s)", argName)
 		}
 	default:
 		if t.IsPointer {
@@ -443,6 +466,7 @@ func GetManagers(ast clang.CHeaderFileAST) []string {
 		"GdString": "string",
 		"GdBool":   "bool",
 		"GdColor":  "Color",
+		"GdArray":  "Array",
 	}
 	return managers
 }

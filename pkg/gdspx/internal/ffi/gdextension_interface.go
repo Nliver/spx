@@ -2,10 +2,75 @@ package ffi
 
 /*
 #include "gdextension_spx_interface.h"
+#include <stdlib.h>
+
+static inline GdArray createArrayInfo(int type, int size){
+	if (size < 0) {
+		return NULL;
+	}
+	GdArray array = (GdArray)malloc(sizeof(GdArrayInfo));
+	if (!array) {
+		return NULL;
+	}
+	array->size = size;
+	array->type = type;
+
+	if (size == 0) {
+		array->data = NULL;
+		return array;
+	}
+
+	size_t element_size = 0;
+	switch (type) {
+		case GD_ARRAY_TYPE_INT64 :
+			element_size = sizeof(int64_t);
+			break;
+		case GD_ARRAY_TYPE_FLOAT :
+			element_size = sizeof(float);
+			break;
+		case GD_ARRAY_TYPE_BOOL :
+			element_size = sizeof(uint8_t); // Store as uint8_t for alignment
+			break;
+		case GD_ARRAY_TYPE_STRING :
+			element_size = sizeof(char*);
+			break;
+		case GD_ARRAY_TYPE_BYTE :
+			element_size = sizeof(uint8_t);
+			break;
+		case GD_ARRAY_TYPE_GDOBJ :
+			element_size = sizeof(GdObj);
+			break;
+		default:
+			free(array);
+			return NULL;
+	}
+
+	array->data = malloc(size * element_size);
+	if (!array->data && size > 0) {
+		free(array);
+		return NULL;
+	}
+
+	return array;
+}
+static inline void freeArrayInfo(GdArray arrayInfo) {
+    if (arrayInfo == NULL) return;
+    if (arrayInfo->type == 4  && arrayInfo->data != NULL) {//ARRAY_TYPE_STRING
+        char** stringData = (char**)arrayInfo->data;
+        for (int i = 0; i < arrayInfo->size; i++) {
+            free(stringData[i]);
+        }
+    }
+	if (arrayInfo->data != NULL) {
+		free(arrayInfo->data);
+	}
+    free(arrayInfo);
+}
 */
 import "C"
 
 import (
+	"fmt"
 	"unsafe"
 
 	"github.com/goplus/spbase/mathf"
@@ -35,6 +100,37 @@ type GdVec2 C.GdVec2
 type GdColor C.GdColor
 type GdRect2 C.GdRect2
 type GdObj C.GdObj
+type GdArray C.GdArray
+
+// Array type constants
+const (
+	ArayTypeUnknown = 0
+	ArrayTypeInt64  = 1
+	ArrayTypeFloat  = 2
+	ArrayTypeBool   = 3
+	ArrayTypeString = 4
+	ArrayTypeByte   = 5
+	ArrayTypeGdObj  = 6
+)
+
+// IArrayInfo interface for unified array operations
+type IArrayInfo interface {
+	Size() int64
+	Type() int64
+	ToInt64s() []int64
+	ToFloats() []float32
+	ToBools() []bool
+	ToBytes() []byte
+	ToObjects() []GdObj
+	ToStrings() []string
+	Free()
+}
+
+// Go wrapper for GdArray
+type ArrayInfoImpl struct {
+	gdArray   C.GdArray
+	needsFree bool
+}
 
 func ToGdBool(val bool) GdBool {
 	if val {
@@ -529,4 +625,266 @@ func func_on_sprite_frames_set_changed(id C.GDExtensionInt) {
 	if callbacks.OnSpriteFramesSetChanged != nil {
 		callbacks.OnSpriteFramesSetChanged(int64(id))
 	}
+}
+
+// GdArray implementation
+
+// ArrayInfoImpl methods
+func (a *ArrayInfoImpl) Size() int64 {
+	if a.gdArray == nil {
+		return 0
+	}
+	return int64(a.gdArray.size)
+}
+
+func (a *ArrayInfoImpl) Type() int64 {
+	if a.gdArray == nil {
+		return 0
+	}
+	// In Go, we need to use a different way to access reserved words in C structs
+	return int64(a.gdArray._type)
+}
+
+func (a *ArrayInfoImpl) Free() {
+	if a.gdArray != nil && a.needsFree {
+		C.freeArrayInfo(a.gdArray)
+		a.gdArray = nil
+		a.needsFree = false
+	}
+}
+
+func (a *ArrayInfoImpl) ToInt64s() []int64 {
+	if a.gdArray == nil || a.Type() != ArrayTypeInt64 {
+		return nil
+	}
+	size := a.Size()
+	if size == 0 {
+		return []int64{}
+	}
+	slice := (*[1 << 30]C.int64_t)(unsafe.Pointer(a.gdArray.data))[:size:size]
+	result := make([]int64, size)
+	for i, v := range slice {
+		result[i] = int64(v)
+	}
+	return result
+}
+
+func (a *ArrayInfoImpl) ToFloats() []float32 {
+	if a.gdArray == nil || a.Type() != ArrayTypeFloat {
+		return nil
+	}
+	size := a.Size()
+	if size == 0 {
+		return []float32{}
+	}
+	slice := (*[1 << 30]C.float)(unsafe.Pointer(a.gdArray.data))[:size:size]
+	result := make([]float32, size)
+	for i, v := range slice {
+		result[i] = float32(v)
+	}
+	return result
+}
+
+func (a *ArrayInfoImpl) ToBools() []bool {
+	if a.gdArray == nil || a.Type() != ArrayTypeBool {
+		return nil
+	}
+	size := a.Size()
+	if size == 0 {
+		return []bool{}
+	}
+	slice := (*[1 << 30]C.int64_t)(unsafe.Pointer(a.gdArray.data))[:size:size]
+	result := make([]bool, size)
+	for i, v := range slice {
+		result[i] = int64(v) != 0
+	}
+	return result
+}
+
+func (a *ArrayInfoImpl) ToBytes() []byte {
+	if a.gdArray == nil || a.Type() != ArrayTypeByte {
+		return nil
+	}
+	size := a.Size()
+	if size == 0 {
+		return []byte{}
+	}
+	slice := (*[1 << 30]C.uchar)(unsafe.Pointer(a.gdArray.data))[:size:size]
+	result := make([]byte, size)
+	for i, v := range slice {
+		result[i] = byte(v)
+	}
+	return result
+}
+
+func (a *ArrayInfoImpl) ToObjects() []GdObj {
+	if a.gdArray == nil || a.Type() != ArrayTypeGdObj {
+		return nil
+	}
+	size := a.Size()
+	if size == 0 {
+		return []GdObj{}
+	}
+	slice := (*[1 << 30]C.GdObj)(unsafe.Pointer(a.gdArray.data))[:size:size]
+	result := make([]GdObj, size)
+	for i, v := range slice {
+		result[i] = GdObj(v)
+	}
+	return result
+}
+
+func (a *ArrayInfoImpl) ToStrings() []string {
+	if a.gdArray == nil || a.Type() != ArrayTypeString {
+		return nil
+	}
+	size := a.Size()
+	if size == 0 {
+		return []string{}
+	}
+	slice := (*[1 << 30]*C.char)(unsafe.Pointer(a.gdArray.data))[:size:size]
+	result := make([]string, size)
+	for i, cStr := range slice {
+		result[i] = C.GoString(cStr)
+	}
+	return result
+}
+func ToGdArray(slice interface{}) GdArray {
+	var info *ArrayInfoImpl = nil
+	switch v := slice.(type) {
+	case []int64:
+		info = createGdArrayFromInt64s(v)
+	case []float32:
+		info = createGdArrayFromFloats(v)
+	case []bool:
+		info = createGdArrayFromBools(v)
+	case []string:
+		info = createGdArrayFromStrings(v)
+	case []GdObj:
+		info = createGdArrayFromObjects(v)
+	case []byte:
+		info = createGdArrayFromBytes(v)
+	default:
+		panic(fmt.Sprintf("unsupported array type: %T", slice))
+	}
+	return GdArray(info.gdArray)
+}
+
+// Conversion functions
+func ToArray(arrayInfo GdArray) any {
+	if arrayInfo == nil {
+		return nil
+	}
+	info := ArrayInfoImpl{gdArray: C.GdArray(arrayInfo), needsFree: false}
+	defer info.Free()
+	switch info.Type() {
+	case ArrayTypeInt64:
+		return info.ToInt64s()
+	case ArrayTypeFloat:
+		return info.ToFloats()
+	case ArrayTypeBool:
+		return info.ToBools()
+	case ArrayTypeString:
+		return info.ToStrings()
+	case ArrayTypeGdObj:
+		return info.ToObjects()
+	case ArrayTypeByte:
+		return info.ToBytes()
+	default:
+		return nil
+	}
+}
+
+func createGdArrayFromInt64s(ints []int64) *ArrayInfoImpl {
+	if len(ints) == 0 {
+		return &ArrayInfoImpl{gdArray: nil, needsFree: false}
+	}
+	arrayInfo := C.createArrayInfo(C.int(ArrayTypeInt64), C.int(len(ints)))
+	if arrayInfo == nil {
+		return nil
+	}
+	cIntSlice := (*[1 << 30]C.int64_t)(unsafe.Pointer(arrayInfo.data))[:len(ints):len(ints)]
+	for i, v := range ints {
+		cIntSlice[i] = C.int64_t(v)
+	}
+	return &ArrayInfoImpl{gdArray: arrayInfo, needsFree: true}
+}
+
+func createGdArrayFromFloats(floats []float32) *ArrayInfoImpl {
+	if len(floats) == 0 {
+		return &ArrayInfoImpl{gdArray: nil, needsFree: false}
+	}
+	arrayInfo := C.createArrayInfo(C.int(ArrayTypeFloat), C.int(len(floats)))
+	if arrayInfo == nil {
+		return nil
+	}
+	cFloatSlice := (*[1 << 30]C.float)(unsafe.Pointer(arrayInfo.data))[:len(floats):len(floats)]
+	for i, v := range floats {
+		cFloatSlice[i] = C.float(v)
+	}
+	return &ArrayInfoImpl{gdArray: arrayInfo, needsFree: true}
+}
+
+func createGdArrayFromBools(bools []bool) *ArrayInfoImpl {
+	if len(bools) == 0 {
+		return &ArrayInfoImpl{gdArray: nil, needsFree: false}
+	}
+	arrayInfo := C.createArrayInfo(C.int(ArrayTypeBool), C.int(len(bools)))
+	if arrayInfo == nil {
+		return nil
+	}
+	cBoolSlice := (*[1 << 30]C.uint8_t)(unsafe.Pointer(arrayInfo.data))[:len(bools):len(bools)]
+	for i, v := range bools {
+		if v {
+			cBoolSlice[i] = 1
+		} else {
+			cBoolSlice[i] = 0
+		}
+	}
+	return &ArrayInfoImpl{gdArray: arrayInfo, needsFree: true}
+}
+
+func createGdArrayFromBytes(bytes []byte) *ArrayInfoImpl {
+	if len(bytes) == 0 {
+		return &ArrayInfoImpl{gdArray: nil, needsFree: false}
+	}
+	arrayInfo := C.createArrayInfo(C.int(ArrayTypeByte), C.int(len(bytes)))
+	if arrayInfo == nil {
+		return nil
+	}
+	cByteSlice := (*[1 << 30]C.uchar)(unsafe.Pointer(arrayInfo.data))[:len(bytes):len(bytes)]
+	for i, v := range bytes {
+		cByteSlice[i] = C.uchar(v)
+	}
+	return &ArrayInfoImpl{gdArray: arrayInfo, needsFree: true}
+}
+
+func createGdArrayFromObjects(objects []GdObj) *ArrayInfoImpl {
+	if len(objects) == 0 {
+		return &ArrayInfoImpl{gdArray: nil, needsFree: false}
+	}
+	arrayInfo := C.createArrayInfo(C.int(ArrayTypeGdObj), C.int(len(objects)))
+	if arrayInfo == nil {
+		return nil
+	}
+	cObjSlice := (*[1 << 30]C.GdObj)(unsafe.Pointer(arrayInfo.data))[:len(objects):len(objects)]
+	for i, v := range objects {
+		cObjSlice[i] = C.GdObj(v)
+	}
+	return &ArrayInfoImpl{gdArray: arrayInfo, needsFree: true}
+}
+
+func createGdArrayFromStrings(strings []string) *ArrayInfoImpl {
+	if len(strings) == 0 {
+		return &ArrayInfoImpl{gdArray: nil, needsFree: false}
+	}
+	arrayInfo := C.createArrayInfo(C.int(ArrayTypeString), C.int(len(strings)))
+	if arrayInfo == nil {
+		return nil
+	}
+	cStrSlice := (*[1 << 30]*C.char)(unsafe.Pointer(arrayInfo.data))[:len(strings):len(strings)]
+	for i, v := range strings {
+		cStr := C.CString(v)
+		cStrSlice[i] = cStr
+	}
+	return &ArrayInfoImpl{gdArray: arrayInfo, needsFree: true}
 }
