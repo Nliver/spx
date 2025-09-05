@@ -128,6 +128,14 @@ define GET_DEMO
 $(word $(DEMO_INDEX),$(DEMOS))
 endef
 
+editor: ## Open demo in editor: make editor DEMO_INDEX=N
+ifndef DEMO_INDEX
+	$(error DEMO_INDEX is not set! Usage: make editor DEMO_INDEX=N)
+endif
+	@DEMO=$(GET_DEMO); \
+	echo "Opening editor for demo #$(DEMO_INDEX): $$DEMO"; \
+	cd $$DEMO && spx editor -movie=$(MOVIE)
+
 run: ## Run demo on PC: make run DEMO_INDEX=N
 ifndef DEMO_INDEX
 	$(error DEMO_INDEX is not set! Usage: make run DEMO_INDEX=N)
