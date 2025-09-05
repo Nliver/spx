@@ -52,6 +52,23 @@ typedef Vector2 GdVec2;
 typedef Color GdColor;
 typedef Rect2 GdRect2;
 
+typedef struct {
+    int32_t size;
+    int32_t type;
+    void* data;
+} GdArrayInfo;
+
+typedef GdArrayInfo* GdArray;
+
+typedef enum  {
+    GD_ARRAY_TYPE_UNKNOWN = 0,
+    GD_ARRAY_TYPE_INT64 = 1,
+    GD_ARRAY_TYPE_FLOAT = 2,
+	GD_ARRAY_TYPE_BOOL = 3,
+	GD_ARRAY_TYPE_STRING = 4,
+	GD_ARRAY_TYPE_BYTE = 5,
+	GD_ARRAY_TYPE_GDOBJ = 6,
+} GdArrayType;
 
 typedef struct {
 	// 0 is return value
@@ -258,6 +275,7 @@ typedef void (*GDExtensionSpxPhysicCheckTouchedCameraBoundaries)(GdObj obj, GdIn
 typedef void (*GDExtensionSpxPhysicCheckTouchedCameraBoundary)(GdObj obj,GdInt board_type, GdBool* ret_value);
 typedef void (*GDExtensionSpxPhysicSetCollisionSystemType)(GdBool is_collision_by_alpha);
 // SpxPlatform
+typedef void (*GDExtensionSpxPlatformSetStretchMode)(GdBool enable);
 typedef void (*GDExtensionSpxPlatformSetWindowPosition)(GdVec2 pos);
 typedef void (*GDExtensionSpxPlatformGetWindowPosition)(GdVec2* ret_value);
 typedef void (*GDExtensionSpxPlatformSetWindowSize)(GdInt width, GdInt height);

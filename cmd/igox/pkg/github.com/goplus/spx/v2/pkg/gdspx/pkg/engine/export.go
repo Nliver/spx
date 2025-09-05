@@ -51,7 +51,9 @@ func init() {
 			"Sprite":             reflect.TypeOf((*q.Sprite)(nil)).Elem(),
 			"UiNode":             reflect.TypeOf((*q.UiNode)(nil)).Elem(),
 		},
-		AliasTypes: map[string]reflect.Type{},
+		AliasTypes: map[string]reflect.Type{
+			"Array": reflect.TypeOf((*q.Array)(nil)).Elem(),
+		},
 		Vars: map[string]reflect.Value{
 			"AudioMgr":           reflect.ValueOf(&q.AudioMgr),
 			"CameraMgr":          reflect.ValueOf(&q.CameraMgr),

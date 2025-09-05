@@ -400,6 +400,9 @@ func GetGdxFuncParamTypeString(typeName string) string {
 	if name == "Object" {
 		return "gdx." + name
 	}
+	if name == "Array" {
+		return "gdx.Array"
+	}
 	return name
 }
 func genSyncPureApiWrapFunction(function *clang.TypedefFunction) string {

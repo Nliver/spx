@@ -21,6 +21,17 @@ import "C"
 
 // C type aliases
 // enums
+type GdArrayType C.GdArrayType
+
+const (
+	GD_ARRAY_TYPE_UNKNOWN GdArrayType = 0
+	GD_ARRAY_TYPE_INT64               = 1
+	GD_ARRAY_TYPE_FLOAT               = 2
+	GD_ARRAY_TYPE_BOOL                = 3
+	GD_ARRAY_TYPE_STRING              = 4
+	GD_ARRAY_TYPE_BYTE                = 5
+	GD_ARRAY_TYPE_GDOBJ               = 6
+)
 
 // C function aliases
 type GDExtensionSpxGlobalRegisterCallbacks C.GDExtensionSpxGlobalRegisterCallbacks
@@ -128,6 +139,7 @@ type GDExtensionSpxPhysicCheckCollision C.GDExtensionSpxPhysicCheckCollision
 type GDExtensionSpxPhysicCheckTouchedCameraBoundaries C.GDExtensionSpxPhysicCheckTouchedCameraBoundaries
 type GDExtensionSpxPhysicCheckTouchedCameraBoundary C.GDExtensionSpxPhysicCheckTouchedCameraBoundary
 type GDExtensionSpxPhysicSetCollisionSystemType C.GDExtensionSpxPhysicSetCollisionSystemType
+type GDExtensionSpxPlatformSetStretchMode C.GDExtensionSpxPlatformSetStretchMode
 type GDExtensionSpxPlatformSetWindowPosition C.GDExtensionSpxPlatformSetWindowPosition
 type GDExtensionSpxPlatformGetWindowPosition C.GDExtensionSpxPlatformGetWindowPosition
 type GDExtensionSpxPlatformSetWindowSize C.GDExtensionSpxPlatformSetWindowSize
@@ -826,6 +838,15 @@ func CallPhysicSetCollisionSystemType(
 	arg1GdBool := (C.GdBool)(is_collision_by_alpha)
 
 	C.cgo_callfn_GDExtensionSpxPhysicSetCollisionSystemType(arg0, arg1GdBool)
+
+}
+func CallPlatformSetStretchMode(
+	enable GdBool,
+) {
+	arg0 := (C.GDExtensionSpxPlatformSetStretchMode)(api.SpxPlatformSetStretchMode)
+	arg1GdBool := (C.GdBool)(enable)
+
+	C.cgo_callfn_GDExtensionSpxPlatformSetStretchMode(arg0, arg1GdBool)
 
 }
 func CallPlatformSetWindowPosition(
