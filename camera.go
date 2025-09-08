@@ -29,18 +29,36 @@ type Camera struct {
 
 func (c *Camera) init(g *Game) {
 	c.g = g
+	c.SetZoom(1)
 }
-func (c *Camera) SetCameraZoom(scale float64) {
+func (c *Camera) onUpdate(delta float64) {
+	if c.on_ == nil {
+		return
+	}
+	val, pos := c.getFollowPos()
+	if val {
+		c.SetXYpos(pos.X, pos.Y)
+	}
+}
+
+func (c *Camera) SetZoom(scale float64) {
+	scale *= c.g.windowScale
 	cameraMgr.SetCameraZoom(mathf.NewVec2(scale, scale))
 }
 
-func (c *Camera) GetCameraZoom() float64 {
-	return cameraMgr.GetCameraZoom().X
+func (c *Camera) Zoom() float64 {
+	scale := cameraMgr.GetCameraZoom().X
+	scale /= c.g.windowScale
+	return scale
+}
+func (c *Camera) Xpos() float64 {
+	pos := cameraMgr.GetPosition()
+	return pos.X
 }
 
-func (c *Camera) GetXYpos() (float64, float64) {
+func (c *Camera) Ypos() float64 {
 	pos := cameraMgr.GetPosition()
-	return pos.X, pos.Y
+	return pos.Y
 }
 
 func (c *Camera) SetXYpos(x float64, y float64) {
@@ -49,15 +67,19 @@ func (c *Camera) SetXYpos(x float64, y float64) {
 
 func (c *Camera) ChangeXYpos(x float64, y float64) {
 	c.on_ = nil
-	posX, posY := c.GetXYpos()
+	posX, posY := c.Xpos(), c.Ypos()
 	c.SetXYpos(posX+x, posY+y)
 }
 
 func (c *Camera) getFollowPos() (bool, mathf.Vec2) {
 	if c.on_ != nil {
 		switch v := c.on_.(type) {
-		case SpriteImpl:
+		case *SpriteImpl:
 			return true, mathf.NewVec2(v.x, v.y)
+		case specialObj:
+			if c.on_ == Mouse {
+				return true, c.g.mousePos
+			}
 		}
 	}
 	return false, mathf.NewVec2(0, 0)
@@ -67,38 +89,31 @@ func (c *Camera) on(obj any) {
 	case SpriteName:
 		sp := c.g.findSprite(v)
 		if sp == nil {
-			log.Println("Camera.On: sprite not found -", v)
+			log.Println("Camera.Follow: sprite not found -", v)
 			return
 		}
 		obj = sp
-		println("Camera.On: sprite found -", sp.name)
+		println("Camera.Follow: sprite found -", sp.name)
 	case *SpriteImpl:
 	case nil:
 	case Sprite:
 		obj = spriteOf(v)
+		println("Camera.Follow: obj -", obj.(*SpriteImpl).name)
 	case specialObj:
 		if v != Mouse {
-			log.Println("Camera.On: not support -", v)
+			log.Println("Camera.Follow: not support -", v)
 			return
 		}
 	default:
-		panic("Camera.On: unexpected parameter")
+		panic("Camera.Follow: unexpected parameter")
 	}
 	c.on_ = obj
 }
 
-func (c *Camera) On__0(sprite Sprite) {
+func (c *Camera) Follow__0(sprite Sprite) {
 	c.on(sprite)
 }
 
-func (c *Camera) On__1(sprite *SpriteImpl) {
+func (c *Camera) Follow__1(sprite SpriteName) {
 	c.on(sprite)
-}
-
-func (c *Camera) On__2(sprite SpriteName) {
-	c.on(sprite)
-}
-
-func (c *Camera) On__3(obj specialObj) {
-	c.on(obj)
 }

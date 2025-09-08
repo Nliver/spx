@@ -18,9 +18,9 @@ onMsg "testUnique", => {
 
     // 2. Camera test
     say "test camera function"
-    SetCameraZoom(1.5)
-    assert(GetCameraZoom() == 1.5, "Camera zoom setting failed")
-    On(this)
+    Camera.SetZoom(1.5)
+    assert(Camera.Zoom() == 1.5, "Camera zoom setting failed")
+    Camera.Follow(this)
     wait 0.1
 
     // 3. Game state test
