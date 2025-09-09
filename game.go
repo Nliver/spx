@@ -1806,6 +1806,10 @@ func (p *Game) SetTileTexture(costumePath string) {
 	extMgr.SetTile(path)
 }
 
+func (p *Game) PlaceTiles(positions []float32) {
+	extMgr.PlaceTiles(positions)
+}
+
 func (p *Game) PlaceTile(x, y float64) {
 	extMgr.PlaceTile(mathf.NewVec2(x, y))
 }

@@ -361,6 +361,11 @@ func (pself *extMgrImpl) SetTile(texture_path string) {
 		gdx.ExtMgr.SetTile(texture_path)
 	})
 }
+func (pself *extMgrImpl) PlaceTiles(positions gdx.Array) {
+	callInMainThread(func() {
+		gdx.ExtMgr.PlaceTiles(positions)
+	})
+}
 func (pself *extMgrImpl) PlaceTile(pos Vec2) {
 	callInMainThread(func() {
 		gdx.ExtMgr.PlaceTile(pos)

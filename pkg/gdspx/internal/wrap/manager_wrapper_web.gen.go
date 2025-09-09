@@ -316,6 +316,10 @@ func (pself *extMgr) SetTile(texture_path string) {
 	arg0 := JsFromGdString(texture_path)
 	API.SpxExtSetTile.Invoke(arg0)
 }
+func (pself *extMgr) PlaceTiles(positions Array) {
+	arg0 := JsFromGdArray(positions)
+	API.SpxExtPlaceTiles.Invoke(arg0)
+}
 func (pself *extMgr) PlaceTile(pos Vec2) {
 	arg0 := JsFromGdVec2(pos)
 	API.SpxExtPlaceTile.Invoke(arg0)

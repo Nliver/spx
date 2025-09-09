@@ -81,6 +81,7 @@ type IExtMgr interface {
 	OpenDrawTiles()
 	SetLayerIndex(index int64)
 	SetTile(texture_path string)
+	PlaceTiles(positions Array)
 	PlaceTile(pos Vec2)
 	EraseTile(pos Vec2)
 	CloseDrawTiles()
