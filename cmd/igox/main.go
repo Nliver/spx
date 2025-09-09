@@ -154,10 +154,12 @@ func logWithPanicInfo(info *ixgo.PanicInfo) {
 		"column", position.Column,
 	)
 }
-func logErrorAndExit(msg string, err error) {
-	logger.Error(msg, "error", err)
-	js.Global().Call("gdspx_ext_on_runtime_panic", msg+": "+err.Error())
+
+func logErrorAndExit(err error) {
+	fmt.Println(err)
+	js.Global().Call("gdspx_ext_on_runtime_panic", err.Error())
 	js.Global().Call("gdspx_ext_request_exit", 1)
+	os.Exit(1)
 }
 
 func main() {
@@ -178,7 +180,7 @@ func main() {
 
 	zipReader, err := zip.NewReader(bytes.NewReader(zipData), int64(len(zipData)))
 	if err != nil {
-		log.Fatalln("Failed to read zip data:", err)
+		logErrorAndExit(fmt.Errorf("Failed to read zip data: %w", err))
 	}
 	fs := zipfs.NewZipFsFromReader(zipReader)
 	// Configure spx to load project files from zip-based file system.
@@ -188,7 +190,7 @@ func main() {
 
 	ctx := ixgo.NewContext(0)
 	ctx.Lookup = func(root, path string) (dir string, found bool) {
-		log.Fatalf("Failed to resolve package import %q. This package is not available in the current environment.", path)
+		logErrorAndExit(fmt.Errorf("Failed to resolve package import %q", path))
 		return
 	}
 	ctx.SetPanic(logWithPanicInfo)
@@ -218,7 +220,7 @@ func Gopt_Game_Gopx_GetWidget[T any](sg ShapeGetter, name string) *T {
 	}
 }
 `); err != nil {
-		log.Fatalln("Failed to register package patch for github.com/goplus/spx:", err)
+		logErrorAndExit(fmt.Errorf("Failed to register package patch for github.com/goplus/spx: %w", err))
 	}
 
 	if err := xgobuild.RegisterPackagePatch(ctx, "github.com/goplus/builder/tools/ai", `
@@ -231,7 +233,7 @@ func Gopt_Player_Gopx_OnCmd[T any](p *Player, handler func(cmd T) error) {
 	PlayerOnCmd_(p, cmd, handler)
 }
 `); err != nil {
-		log.Fatalln("Failed to register package patch for github.com/goplus/builder/tools/ai:", err)
+		logErrorAndExit(fmt.Errorf("Failed to register package patch for github.com/goplus/builder/tools/ai: %w", err))
 	}
 	ai.SetDefaultTransport(wasmtrans.New(
 		wasmtrans.WithEndpoint(aiInteractionAPIEndpoint),
@@ -259,14 +261,12 @@ func Gopt_Player_Gopx_OnCmd[T any](p *Player, handler func(cmd T) error) {
 
 	source, err := xgobuild.BuildFSDir(ctx, fs, "")
 	if err != nil {
-		logErrorAndExit("Failed to build XGo source:", err)
-		return
+		logErrorAndExit(fmt.Errorf("Failed to build XGo source: %w", err))
 	}
 
 	code, err := ctx.RunFile("main.go", source, nil)
 	if err != nil {
-		logErrorAndExit(fmt.Sprintf("Failed to run XGo source: %d", code), err)
-		return
+		logErrorAndExit(fmt.Errorf("Failed to run XGo source (code %d): %w", code, err))
 	}
 }
 
