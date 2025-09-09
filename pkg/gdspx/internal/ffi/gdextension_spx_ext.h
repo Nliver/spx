@@ -259,6 +259,8 @@ typedef void (*GDExtensionSpxExtSetPenTo)(GdObj obj, GdInt property, GdFloat val
 typedef void (*GDExtensionSpxExtChangePenSizeBy)(GdObj obj, GdFloat amount);
 typedef void (*GDExtensionSpxExtSetPenSizeTo)(GdObj obj, GdFloat size);
 typedef void (*GDExtensionSpxExtSetPenStampTexture)(GdObj obj, GdString texture_path);
+typedef void (*GDExtensionSpxExtDebugDrawCircle)(GdVec2 pos, GdFloat radius, GdColor color);
+typedef void (*GDExtensionSpxExtDebugDrawRect)(GdVec2 pos, GdVec2 size, GdColor color);
 // SpxInput
 typedef void (*GDExtensionSpxInputGetMousePos)(GdVec2* ret_value);
 typedef void (*GDExtensionSpxInputGetKey)(GdInt key, GdBool* ret_value);
@@ -274,6 +276,14 @@ typedef void (*GDExtensionSpxPhysicCheckCollision)(GdVec2 from, GdVec2 to, GdInt
 typedef void (*GDExtensionSpxPhysicCheckTouchedCameraBoundaries)(GdObj obj, GdInt* ret_value);
 typedef void (*GDExtensionSpxPhysicCheckTouchedCameraBoundary)(GdObj obj,GdInt board_type, GdBool* ret_value);
 typedef void (*GDExtensionSpxPhysicSetCollisionSystemType)(GdBool is_collision_by_alpha);
+typedef void (*GDExtensionSpxPhysicSetGlobalGravity)(GdFloat gravity);
+typedef void (*GDExtensionSpxPhysicGetGlobalGravity)(GdFloat* ret_value);
+typedef void (*GDExtensionSpxPhysicSetGlobalFriction)(GdFloat friction);
+typedef void (*GDExtensionSpxPhysicGetGlobalFriction)(GdFloat* ret_value);
+typedef void (*GDExtensionSpxPhysicSetGlobalAirDrag)(GdFloat air_drag);
+typedef void (*GDExtensionSpxPhysicGetGlobalAirDrag)(GdFloat* ret_value);
+typedef void (*GDExtensionSpxPhysicCheckCollisionRect)(GdVec2 pos, GdVec2 size, GdInt collision_mask, GdArray* ret_value);
+typedef void (*GDExtensionSpxPhysicCheckCollisionCircle)(GdVec2 pos, GdFloat radius, GdInt collision_mask, GdArray* ret_value);
 // SpxPlatform
 typedef void (*GDExtensionSpxPlatformSetStretchMode)(GdBool enable);
 typedef void (*GDExtensionSpxPlatformSetWindowPosition)(GdVec2 pos);
@@ -394,6 +404,16 @@ typedef void (*GDExtensionSpxSpriteSetMass)(GdObj obj, GdFloat mass);
 typedef void (*GDExtensionSpxSpriteGetMass)(GdObj obj, GdFloat* ret_value);
 typedef void (*GDExtensionSpxSpriteAddForce)(GdObj obj, GdVec2 force);
 typedef void (*GDExtensionSpxSpriteAddImpulse)(GdObj obj, GdVec2 impulse);
+typedef void (*GDExtensionSpxSpriteSetPhysicsMode)(GdObj obj, GdInt mode);
+typedef void (*GDExtensionSpxSpriteGetPhysicsMode)(GdObj obj, GdInt* ret_value);
+typedef void (*GDExtensionSpxSpriteSetUseGravity)(GdObj obj, GdBool enabled);
+typedef void (*GDExtensionSpxSpriteIsUseGravity)(GdObj obj, GdBool* ret_value);
+typedef void (*GDExtensionSpxSpriteSetGravityScale)(GdObj obj, GdFloat scale);
+typedef void (*GDExtensionSpxSpriteGetGravityScale)(GdObj obj, GdFloat* ret_value);
+typedef void (*GDExtensionSpxSpriteSetDrag)(GdObj obj, GdFloat drag);
+typedef void (*GDExtensionSpxSpriteGetDrag)(GdObj obj, GdFloat* ret_value);
+typedef void (*GDExtensionSpxSpriteSetFriction)(GdObj obj, GdFloat friction);
+typedef void (*GDExtensionSpxSpriteGetFriction)(GdObj obj, GdFloat* ret_value);
 typedef void (*GDExtensionSpxSpriteSetCollisionLayer)(GdObj obj, GdInt layer);
 typedef void (*GDExtensionSpxSpriteGetCollisionLayer)(GdObj obj, GdInt* ret_value);
 typedef void (*GDExtensionSpxSpriteSetCollisionMask)(GdObj obj, GdInt mask);

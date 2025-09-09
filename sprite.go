@@ -253,6 +253,12 @@ type SpriteImpl struct {
 	collisionTargets map[string]bool
 	pendingAudios    []string
 	donedAnimations  []string
+
+	physicMode PhysicsMode
+	mass       float64
+	friction   float64
+	airDrag    float64
+	gravity    float64
 }
 
 func (p *SpriteImpl) setDying() { // dying: visible but can't be touched
@@ -292,7 +298,11 @@ func (p *SpriteImpl) init(
 	p.collisionMask = parseLayerMaskValue(spriteCfg.CollisionMask)
 	p.collisionLayer = parseLayerMaskValue(spriteCfg.CollisionLayer)
 	// collider is disable by default
-	p.colliderType = paserColliderType(spriteCfg.ColliderType, physicColliderNone)
+	var defaultCollsionType int64 = physicColliderNone
+	if enabledPhysics {
+		defaultCollsionType = physicColliderAuto
+	}
+	p.colliderType = paserColliderType(spriteCfg.ColliderType, defaultCollsionType)
 	p.colliderCenter = spriteCfg.ColliderCenter
 	p.colliderSize = spriteCfg.ColliderSize
 	p.colliderRadius = spriteCfg.ColliderRadius
@@ -303,6 +313,12 @@ func (p *SpriteImpl) init(
 	p.triggerCenter = spriteCfg.TriggerCenter
 	p.triggerSize = spriteCfg.TriggerSize
 	p.triggerRadius = spriteCfg.TriggerRadius
+
+	p.physicMode = toPhysicMode(spriteCfg.PhysicMode)
+	p.airDrag = parseDefaultFloatValue(spriteCfg.AirDrag, 1)
+	p.gravity = parseDefaultFloatValue(spriteCfg.Gravity, 1)
+	p.friction = parseDefaultFloatValue(spriteCfg.Friction, 1)
+	p.mass = parseDefaultFloatValue(spriteCfg.Mass, 1)
 
 	// setup animations
 	p.defaultAnimation = spriteCfg.DefaultAnimation
@@ -350,10 +366,14 @@ func (p *SpriteImpl) awake() {
 func (p *SpriteImpl) initCollisionParams() {
 	if p.g.isAutoSetCollisionLayer {
 		info := p.g.getSpriteCollisionInfo(p.name)
-		p.collisionMask = 0
 		p.collisionLayer = 0
+		p.collisionMask = 0
 		p.triggerLayer = int64(info.Layer)
 		p.triggerMask = int64(info.Mask)
+		if enabledPhysics {
+			p.collisionLayer = int64(info.Layer)
+			p.collisionMask = int64(info.Mask)
+		}
 	}
 }
 
@@ -1942,4 +1962,173 @@ func (p *SpriteImpl) checkAudioId() {
 	if p.audioId == 0 {
 		p.audioId = p.g.sounds.allocAudio()
 	}
+}
+
+// ------------------------ physic ----------------------------------------
+type PhysicsMode = int64
+
+const (
+	NoPhysic        PhysicsMode = 0 // Pure visual, no collision, best performance (current default) eg: decorators
+	KinematicPhysic PhysicsMode = 1 // Code-controlled movement with collision detection eg: player
+	DynamicPhysic   PhysicsMode = 2 // Affected by physics, automatic gravity and collision eg: items
+	StaticPhysic    PhysicsMode = 3 // Static immovable, but has collision, affects other objects : eg: walls
+)
+
+type colliderType = int
+
+const (
+	RectCollider    colliderType = 0
+	CircleCollider  colliderType = 1
+	CapsuleCollider colliderType = 2
+	PolygonCollider colliderType = 3
+)
+
+func toPhysicMode(mode string) PhysicsMode {
+	if mode == "" {
+		return NoPhysic
+	}
+	switch mode {
+	case "kinematic":
+		return KinematicPhysic
+	case "dynamic":
+		return DynamicPhysic
+	case "static":
+		return StaticPhysic
+	case "no":
+		return NoPhysic
+	}
+	println("config error: unknown physic mode ", mode)
+	return NoPhysic
+}
+
+// 物理控制（4个核心）
+func (p *SpriteImpl) SetPhysicsMode(mode PhysicsMode) {
+	p.physicMode = mode
+	spriteMgr.SetPhysicsMode(p.getSpriteId(), int64(mode))
+}
+func (p *SpriteImpl) SetVelocity(velocityX, velocityY float64) {
+	spriteMgr.SetVelocity(p.getSpriteId(), mathf.NewVec2(velocityX, velocityY))
+}
+func (p *SpriteImpl) SetGravity(gravity float64) {
+	spriteMgr.SetGravity(p.getSpriteId(), gravity)
+}
+
+func (p *SpriteImpl) AddImpulse(impulseX, impulseY float64) {
+	spriteMgr.AddImpulse(p.getSpriteId(), mathf.NewVec2(impulseX, impulseY))
+}
+
+func (p *SpriteImpl) setPosition(posX, posY float64) {
+	spriteMgr.SetPosition(p.getSpriteId(), mathf.NewVec2(posX, posY))
+}
+
+func (p *SpriteImpl) IsOnFloor() bool {
+	return spriteMgr.IsOnFloor(p.getSpriteId())
+}
+func (p *SpriteImpl) Raycast(fromX, fromY, toX, toY float64) (hit bool, hitX, hitY float64, sprite Sprite) {
+	from := mathf.NewVec2(fromX, fromY)
+	to := mathf.NewVec2(toX, toY)
+	hitObj := physicMgr.Raycast(from, to, p.collisionMask)
+
+	if hitObj != 0 {
+		for _, item := range p.g.items {
+			if s, ok := item.(Sprite); ok {
+				spriteImpl := spriteOf(s)
+				if spriteImpl != nil && spriteImpl.syncSprite != nil && spriteImpl.syncSprite.GetId() == hitObj {
+					return true, toX, toY, s
+				}
+			}
+		}
+	}
+	return false, 0, 0, nil
+}
+
+// 碰撞器设置函数
+func (p *SpriteImpl) SetColliderRect(width, height float64) {
+	p.colliderType = physicColliderRect
+	p.colliderSize = mathf.NewVec2(width, height)
+	if p.syncSprite != nil {
+		spriteMgr.SetColliderRect(p.getSpriteId(), p.colliderCenter, p.colliderSize)
+	}
+}
+
+func (p *SpriteImpl) SetColliderCicle(radius float64) {
+	p.colliderType = physicColliderCircle
+	p.colliderRadius = radius
+	if p.syncSprite != nil {
+		spriteMgr.SetColliderCircle(p.getSpriteId(), p.colliderCenter, radius)
+	}
+}
+
+func (p *SpriteImpl) SetColliderCapsure(radius, height float64) {
+	p.colliderType = physicColliderCapsule
+	p.colliderRadius = radius
+	p.colliderSize = mathf.NewVec2(radius*2, height)
+	if p.syncSprite != nil {
+		spriteMgr.SetColliderCapsule(p.getSpriteId(), p.colliderCenter, p.colliderSize)
+	}
+}
+
+func (p *SpriteImpl) SetColliderPolygon(vertices []float64) {
+	p.colliderType = physicColliderPolygon
+	println("SetColliderPolygon: Not implemented yet")
+}
+
+func (p *SpriteImpl) SetColliderPivot(offsetX, offsetY float64) {
+	p.colliderCenter = mathf.NewVec2(offsetX, offsetY)
+	if p.syncSprite != nil {
+		switch p.colliderType {
+		case physicColliderRect:
+			spriteMgr.SetColliderRect(p.getSpriteId(), p.colliderCenter, p.colliderSize)
+		case physicColliderCircle:
+			spriteMgr.SetColliderCircle(p.getSpriteId(), p.colliderCenter, p.colliderRadius)
+		case physicColliderCapsule:
+			spriteMgr.SetColliderCapsule(p.getSpriteId(), p.colliderCenter, p.colliderSize)
+		}
+	}
+}
+
+// Getter 函数
+func (p *SpriteImpl) Velocity() (velocityX, velocityY float64) {
+	vel := spriteMgr.GetVelocity(p.getSpriteId())
+	return vel.X, vel.Y
+}
+
+func (p *SpriteImpl) Gravity() float64 {
+	return spriteMgr.GetGravity(p.getSpriteId())
+}
+
+func (p *SpriteImpl) PhysicsMode() PhysicsMode {
+	return p.physicMode
+}
+
+func (p *SpriteImpl) ColliderParams() []float64 {
+	switch p.colliderType {
+	case physicColliderRect:
+		return []float64{p.colliderSize.X, p.colliderSize.Y}
+	case physicColliderCircle:
+		return []float64{p.colliderRadius}
+	case physicColliderCapsule:
+		return []float64{p.colliderRadius, p.colliderSize.Y}
+	case physicColliderPolygon:
+		return []float64{}
+	}
+	return []float64{}
+}
+
+func (p *SpriteImpl) ColliderType() colliderType {
+	switch p.colliderType {
+	case physicColliderRect:
+		return RectCollider
+	case physicColliderCircle:
+		return CircleCollider
+	case physicColliderCapsule:
+		return CapsuleCollider
+	case physicColliderPolygon:
+		return PolygonCollider
+	}
+	return RectCollider
+}
+
+func (p *SpriteImpl) ColliderPivot() (offsetX, offsetY float64) {
+	return p.colliderCenter.X, p.colliderCenter.Y
 }

@@ -196,6 +196,9 @@ type baseObj struct {
 	isAnimating bool
 }
 
+func (p *baseObj) getSpriteId() engine.Object {
+	return p.syncSprite.GetId()
+}
 func (p *baseObj) setLayer(layer int) { // dying: visible but can't be touched
 	if p.layer != layer {
 		p.layer = layer

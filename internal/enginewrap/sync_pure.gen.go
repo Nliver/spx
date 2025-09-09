@@ -181,6 +181,8 @@ func (pself *extMgrImpl) SetPenTo(obj gdx.Object, property int64, value float64)
 func (pself *extMgrImpl) ChangePenSizeBy(obj gdx.Object, amount float64)             {}
 func (pself *extMgrImpl) SetPenSizeTo(obj gdx.Object, size float64)                  {}
 func (pself *extMgrImpl) SetPenStampTexture(obj gdx.Object, texture_path string)     {}
+func (pself *extMgrImpl) DebugDrawCircle(pos Vec2, radius float64, color Color)      {}
+func (pself *extMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color)             {}
 
 // IInputMgr
 func (pself *inputMgrImpl) GetMousePos() Vec2 {
@@ -234,6 +236,29 @@ func (pself *physicMgrImpl) CheckTouchedCameraBoundary(obj gdx.Object, board_typ
 	return _ret1
 }
 func (pself *physicMgrImpl) SetCollisionSystemType(is_collision_by_alpha bool) {}
+func (pself *physicMgrImpl) SetGlobalGravity(gravity float64)                  {}
+func (pself *physicMgrImpl) GetGlobalGravity() float64 {
+	var _ret1 float64
+	return _ret1
+}
+func (pself *physicMgrImpl) SetGlobalFriction(friction float64) {}
+func (pself *physicMgrImpl) GetGlobalFriction() float64 {
+	var _ret1 float64
+	return _ret1
+}
+func (pself *physicMgrImpl) SetGlobalAirDrag(air_drag float64) {}
+func (pself *physicMgrImpl) GetGlobalAirDrag() float64 {
+	var _ret1 float64
+	return _ret1
+}
+func (pself *physicMgrImpl) CheckCollisionRect(pos Vec2, size Vec2, collision_mask int64) gdx.Array {
+	var _ret1 gdx.Array
+	return _ret1
+}
+func (pself *physicMgrImpl) CheckCollisionCircle(pos Vec2, radius float64, collision_mask int64) gdx.Array {
+	var _ret1 gdx.Array
+	return _ret1
+}
 
 // IPlatformMgr
 func (pself *platformMgrImpl) SetStretchMode(enable bool) {}
@@ -539,8 +564,33 @@ func (pself *spriteMgrImpl) GetMass(obj gdx.Object) float64 {
 	var _ret1 float64
 	return _ret1
 }
-func (pself *spriteMgrImpl) AddForce(obj gdx.Object, force Vec2)           {}
-func (pself *spriteMgrImpl) AddImpulse(obj gdx.Object, impulse Vec2)       {}
+func (pself *spriteMgrImpl) AddForce(obj gdx.Object, force Vec2)       {}
+func (pself *spriteMgrImpl) AddImpulse(obj gdx.Object, impulse Vec2)   {}
+func (pself *spriteMgrImpl) SetPhysicsMode(obj gdx.Object, mode int64) {}
+func (pself *spriteMgrImpl) GetPhysicsMode(obj gdx.Object) int64 {
+	var _ret1 int64
+	return _ret1
+}
+func (pself *spriteMgrImpl) SetUseGravity(obj gdx.Object, enabled bool) {}
+func (pself *spriteMgrImpl) IsUseGravity(obj gdx.Object) bool {
+	var _ret1 bool
+	return _ret1
+}
+func (pself *spriteMgrImpl) SetGravityScale(obj gdx.Object, scale float64) {}
+func (pself *spriteMgrImpl) GetGravityScale(obj gdx.Object) float64 {
+	var _ret1 float64
+	return _ret1
+}
+func (pself *spriteMgrImpl) SetDrag(obj gdx.Object, drag float64) {}
+func (pself *spriteMgrImpl) GetDrag(obj gdx.Object) float64 {
+	var _ret1 float64
+	return _ret1
+}
+func (pself *spriteMgrImpl) SetFriction(obj gdx.Object, friction float64) {}
+func (pself *spriteMgrImpl) GetFriction(obj gdx.Object) float64 {
+	var _ret1 float64
+	return _ret1
+}
 func (pself *spriteMgrImpl) SetCollisionLayer(obj gdx.Object, layer int64) {}
 func (pself *spriteMgrImpl) GetCollisionLayer(obj gdx.Object) int64 {
 	var _ret1 int64

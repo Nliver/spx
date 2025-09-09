@@ -132,6 +132,11 @@ type projConfig struct {
 	AutoSetCollisionLayer *bool `json:"autoSetCollisionLayer"` // whether to auto set collision layer, default true
 	CollisionByShape      bool  `json:"collisionByShape"`      // whether to use collision by shape or pixel, default false
 	FullScreen            bool  `json:"fullscreen"`            // whether to use fullscreen, default false
+
+	Physics        bool     `json:"physics"`        // Enable physics mode, default false, compatible with Scratch
+	GlobalGravity  *float64 `json:"globalGravity"`  // Global gravity scaling factor, default 1
+	GlobalFriction *float64 `json:"globalFriction"` // Global friction scaling factor, default 1
+	GlobalAirDrag  *float64 `json:"globalAirDrag"`  // Global air drag scaling factor, default 1
 }
 
 func (p *projConfig) getBackdrops() []*backdropConfig {
@@ -283,6 +288,13 @@ type spriteConfig struct {
 	TriggerRadius       float64               `json:"triggerRadius"`
 
 	ApplyCustumeOffset2Animation bool `json:"applyCustumeOffset2Animation"`
+
+	// physic
+	PhysicMode string   `json:"physicMode"`
+	Mass       *float64 `json:"mass"`
+	Friction   *float64 `json:"friction"`
+	AirDrag    *float64 `json:"airDrag"`
+	Gravity    *float64 `json:"gravity"`
 }
 
 func (p *spriteConfig) getCostumeIndex() int {

@@ -336,6 +336,16 @@ func (pself *extMgrImpl) SetPenStampTexture(obj gdx.Object, texture_path string)
 		gdx.ExtMgr.SetPenStampTexture(obj, texture_path)
 	})
 }
+func (pself *extMgrImpl) DebugDrawCircle(pos Vec2, radius float64, color Color) {
+	callInMainThread(func() {
+		gdx.ExtMgr.DebugDrawCircle(pos, radius, color)
+	})
+}
+func (pself *extMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color) {
+	callInMainThread(func() {
+		gdx.ExtMgr.DebugDrawRect(pos, size, color)
+	})
+}
 
 // IInputMgr
 func (pself *inputMgrImpl) GetMousePos() Vec2 {
@@ -428,6 +438,56 @@ func (pself *physicMgrImpl) SetCollisionSystemType(is_collision_by_alpha bool) {
 	callInMainThread(func() {
 		gdx.PhysicMgr.SetCollisionSystemType(is_collision_by_alpha)
 	})
+}
+func (pself *physicMgrImpl) SetGlobalGravity(gravity float64) {
+	callInMainThread(func() {
+		gdx.PhysicMgr.SetGlobalGravity(gravity)
+	})
+}
+func (pself *physicMgrImpl) GetGlobalGravity() float64 {
+	var _ret1 float64
+	callInMainThread(func() {
+		_ret1 = gdx.PhysicMgr.GetGlobalGravity()
+	})
+	return _ret1
+}
+func (pself *physicMgrImpl) SetGlobalFriction(friction float64) {
+	callInMainThread(func() {
+		gdx.PhysicMgr.SetGlobalFriction(friction)
+	})
+}
+func (pself *physicMgrImpl) GetGlobalFriction() float64 {
+	var _ret1 float64
+	callInMainThread(func() {
+		_ret1 = gdx.PhysicMgr.GetGlobalFriction()
+	})
+	return _ret1
+}
+func (pself *physicMgrImpl) SetGlobalAirDrag(air_drag float64) {
+	callInMainThread(func() {
+		gdx.PhysicMgr.SetGlobalAirDrag(air_drag)
+	})
+}
+func (pself *physicMgrImpl) GetGlobalAirDrag() float64 {
+	var _ret1 float64
+	callInMainThread(func() {
+		_ret1 = gdx.PhysicMgr.GetGlobalAirDrag()
+	})
+	return _ret1
+}
+func (pself *physicMgrImpl) CheckCollisionRect(pos Vec2, size Vec2, collision_mask int64) gdx.Array {
+	var _ret1 gdx.Array
+	callInMainThread(func() {
+		_ret1 = gdx.PhysicMgr.CheckCollisionRect(pos, size, collision_mask)
+	})
+	return _ret1
+}
+func (pself *physicMgrImpl) CheckCollisionCircle(pos Vec2, radius float64, collision_mask int64) gdx.Array {
+	var _ret1 gdx.Array
+	callInMainThread(func() {
+		_ret1 = gdx.PhysicMgr.CheckCollisionCircle(pos, radius, collision_mask)
+	})
+	return _ret1
 }
 
 // IPlatformMgr
@@ -1136,6 +1196,66 @@ func (pself *spriteMgrImpl) AddImpulse(obj gdx.Object, impulse Vec2) {
 	callInMainThread(func() {
 		gdx.SpriteMgr.AddImpulse(obj, impulse)
 	})
+}
+func (pself *spriteMgrImpl) SetPhysicsMode(obj gdx.Object, mode int64) {
+	callInMainThread(func() {
+		gdx.SpriteMgr.SetPhysicsMode(obj, mode)
+	})
+}
+func (pself *spriteMgrImpl) GetPhysicsMode(obj gdx.Object) int64 {
+	var _ret1 int64
+	callInMainThread(func() {
+		_ret1 = gdx.SpriteMgr.GetPhysicsMode(obj)
+	})
+	return _ret1
+}
+func (pself *spriteMgrImpl) SetUseGravity(obj gdx.Object, enabled bool) {
+	callInMainThread(func() {
+		gdx.SpriteMgr.SetUseGravity(obj, enabled)
+	})
+}
+func (pself *spriteMgrImpl) IsUseGravity(obj gdx.Object) bool {
+	var _ret1 bool
+	callInMainThread(func() {
+		_ret1 = gdx.SpriteMgr.IsUseGravity(obj)
+	})
+	return _ret1
+}
+func (pself *spriteMgrImpl) SetGravityScale(obj gdx.Object, scale float64) {
+	callInMainThread(func() {
+		gdx.SpriteMgr.SetGravityScale(obj, scale)
+	})
+}
+func (pself *spriteMgrImpl) GetGravityScale(obj gdx.Object) float64 {
+	var _ret1 float64
+	callInMainThread(func() {
+		_ret1 = gdx.SpriteMgr.GetGravityScale(obj)
+	})
+	return _ret1
+}
+func (pself *spriteMgrImpl) SetDrag(obj gdx.Object, drag float64) {
+	callInMainThread(func() {
+		gdx.SpriteMgr.SetDrag(obj, drag)
+	})
+}
+func (pself *spriteMgrImpl) GetDrag(obj gdx.Object) float64 {
+	var _ret1 float64
+	callInMainThread(func() {
+		_ret1 = gdx.SpriteMgr.GetDrag(obj)
+	})
+	return _ret1
+}
+func (pself *spriteMgrImpl) SetFriction(obj gdx.Object, friction float64) {
+	callInMainThread(func() {
+		gdx.SpriteMgr.SetFriction(obj, friction)
+	})
+}
+func (pself *spriteMgrImpl) GetFriction(obj gdx.Object) float64 {
+	var _ret1 float64
+	callInMainThread(func() {
+		_ret1 = gdx.SpriteMgr.GetFriction(obj)
+	})
+	return _ret1
 }
 func (pself *spriteMgrImpl) SetCollisionLayer(obj gdx.Object, layer int64) {
 	callInMainThread(func() {
