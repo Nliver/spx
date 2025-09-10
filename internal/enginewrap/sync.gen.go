@@ -346,6 +346,36 @@ func (pself *extMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color) {
 		gdx.ExtMgr.DebugDrawRect(pos, size, color)
 	})
 }
+func (pself *extMgrImpl) OpenDrawTiles() {
+	callInMainThread(func() {
+		gdx.ExtMgr.OpenDrawTiles()
+	})
+}
+func (pself *extMgrImpl) SetLayerIndex(index int64) {
+	callInMainThread(func() {
+		gdx.ExtMgr.SetLayerIndex(index)
+	})
+}
+func (pself *extMgrImpl) SetTile(texture_path string) {
+	callInMainThread(func() {
+		gdx.ExtMgr.SetTile(texture_path)
+	})
+}
+func (pself *extMgrImpl) PlaceTile(pos Vec2) {
+	callInMainThread(func() {
+		gdx.ExtMgr.PlaceTile(pos)
+	})
+}
+func (pself *extMgrImpl) EraseTile(pos Vec2) {
+	callInMainThread(func() {
+		gdx.ExtMgr.EraseTile(pos)
+	})
+}
+func (pself *extMgrImpl) CloseDrawTiles() {
+	callInMainThread(func() {
+		gdx.ExtMgr.CloseDrawTiles()
+	})
+}
 
 // IInputMgr
 func (pself *inputMgrImpl) GetMousePos() Vec2 {

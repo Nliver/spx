@@ -144,6 +144,24 @@ void cgo_callfn_GDExtensionSpxExtDebugDrawCircle(const GDExtensionSpxExtDebugDra
 void cgo_callfn_GDExtensionSpxExtDebugDrawRect(const GDExtensionSpxExtDebugDrawRect fn, GdVec2 pos, GdVec2 size, GdColor color) {
 	fn(pos, size, color);
 }
+void cgo_callfn_GDExtensionSpxExtOpenDrawTiles(const GDExtensionSpxExtOpenDrawTiles fn) {
+	fn();
+}
+void cgo_callfn_GDExtensionSpxExtSetLayerIndex(const GDExtensionSpxExtSetLayerIndex fn, GdInt index) {
+	fn(index);
+}
+void cgo_callfn_GDExtensionSpxExtSetTile(const GDExtensionSpxExtSetTile fn, GdString texture_path) {
+	fn(texture_path);
+}
+void cgo_callfn_GDExtensionSpxExtPlaceTile(const GDExtensionSpxExtPlaceTile fn, GdVec2 pos) {
+	fn(pos);
+}
+void cgo_callfn_GDExtensionSpxExtEraseTile(const GDExtensionSpxExtEraseTile fn, GdVec2 pos) {
+	fn(pos);
+}
+void cgo_callfn_GDExtensionSpxExtCloseDrawTiles(const GDExtensionSpxExtCloseDrawTiles fn) {
+	fn();
+}
 void cgo_callfn_GDExtensionSpxInputGetMousePos(const GDExtensionSpxInputGetMousePos fn, GdVec2* ret_val) {
 	fn(ret_val);
 }

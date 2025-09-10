@@ -1794,3 +1794,24 @@ func (p *Game) DebugDrawRect(posX, posY, width, height float64, color Color) {
 func (p *Game) DebugDrawCircle(posX, posY, radius float64, color Color) {
 	extMgr.DebugDrawCircle(mathf.NewVec2(posX, posY), radius, toMathfColor(color))
 }
+
+// -----------------------------------------------------------------------------
+func (p *Game) SetTileMapLayerIndex(index int64) {
+	extMgr.OpenDrawTiles()
+	extMgr.SetLayerIndex(index)
+}
+
+func (p *Game) SetTileTexture(costumePath string) {
+	path := engine.ToAssetPath(costumePath)
+	extMgr.SetTile(path)
+}
+
+func (p *Game) PlaceTile(x, y float64) {
+	extMgr.PlaceTile(mathf.NewVec2(x, y))
+}
+
+func (p *Game) EraseTile(x, y float64) {
+	extMgr.EraseTile(mathf.NewVec2(x, y))
+}
+
+// -----------------------------------------------------------------------------

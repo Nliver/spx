@@ -316,6 +316,30 @@ func (pself *extMgr) DebugDrawRect(pos Vec2, size Vec2, color Color) {
 	arg2 := ToGdColor(color)
 	CallExtDebugDrawRect(arg0, arg1, arg2)
 }
+func (pself *extMgr) OpenDrawTiles() {
+	CallExtOpenDrawTiles()
+}
+func (pself *extMgr) SetLayerIndex(index int64) {
+	arg0 := ToGdInt(index)
+	CallExtSetLayerIndex(arg0)
+}
+func (pself *extMgr) SetTile(texture_path string) {
+	arg0Str := C.CString(texture_path)
+	arg0 := (GdString)(arg0Str)
+	defer C.free(unsafe.Pointer(arg0Str))
+	CallExtSetTile(arg0)
+}
+func (pself *extMgr) PlaceTile(pos Vec2) {
+	arg0 := ToGdVec2(pos)
+	CallExtPlaceTile(arg0)
+}
+func (pself *extMgr) EraseTile(pos Vec2) {
+	arg0 := ToGdVec2(pos)
+	CallExtEraseTile(arg0)
+}
+func (pself *extMgr) CloseDrawTiles() {
+	CallExtCloseDrawTiles()
+}
 func (pself *inputMgr) GetMousePos() Vec2 {
 	retValue := CallInputGetMousePos()
 	return ToVec2(retValue)
