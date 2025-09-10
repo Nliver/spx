@@ -183,6 +183,12 @@ func (pself *extMgrImpl) SetPenSizeTo(obj gdx.Object, size float64)             
 func (pself *extMgrImpl) SetPenStampTexture(obj gdx.Object, texture_path string)     {}
 func (pself *extMgrImpl) DebugDrawCircle(pos Vec2, radius float64, color Color)      {}
 func (pself *extMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color)             {}
+func (pself *extMgrImpl) OpenDrawTiles()                                             {}
+func (pself *extMgrImpl) SetLayerIndex(index int64)                                  {}
+func (pself *extMgrImpl) SetTile(texture_path string)                                {}
+func (pself *extMgrImpl) PlaceTile(pos Vec2)                                         {}
+func (pself *extMgrImpl) EraseTile(pos Vec2)                                         {}
+func (pself *extMgrImpl) CloseDrawTiles()                                            {}
 
 // IInputMgr
 func (pself *inputMgrImpl) GetMousePos() Vec2 {

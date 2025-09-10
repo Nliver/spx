@@ -128,6 +128,12 @@ type GDExtensionSpxExtSetPenSizeTo C.GDExtensionSpxExtSetPenSizeTo
 type GDExtensionSpxExtSetPenStampTexture C.GDExtensionSpxExtSetPenStampTexture
 type GDExtensionSpxExtDebugDrawCircle C.GDExtensionSpxExtDebugDrawCircle
 type GDExtensionSpxExtDebugDrawRect C.GDExtensionSpxExtDebugDrawRect
+type GDExtensionSpxExtOpenDrawTiles C.GDExtensionSpxExtOpenDrawTiles
+type GDExtensionSpxExtSetLayerIndex C.GDExtensionSpxExtSetLayerIndex
+type GDExtensionSpxExtSetTile C.GDExtensionSpxExtSetTile
+type GDExtensionSpxExtPlaceTile C.GDExtensionSpxExtPlaceTile
+type GDExtensionSpxExtEraseTile C.GDExtensionSpxExtEraseTile
+type GDExtensionSpxExtCloseDrawTiles C.GDExtensionSpxExtCloseDrawTiles
 type GDExtensionSpxInputGetMousePos C.GDExtensionSpxInputGetMousePos
 type GDExtensionSpxInputGetKey C.GDExtensionSpxInputGetKey
 type GDExtensionSpxInputGetMouseState C.GDExtensionSpxInputGetMouseState
@@ -744,6 +750,52 @@ func CallExtDebugDrawRect(
 
 	C.cgo_callfn_GDExtensionSpxExtDebugDrawRect(arg0, arg1GdVec2, arg2GdVec2, arg3GdColor)
 
+}
+func CallExtOpenDrawTiles() {
+	arg0 := (C.GDExtensionSpxExtOpenDrawTiles)(api.SpxExtOpenDrawTiles)
+
+	C.cgo_callfn_GDExtensionSpxExtOpenDrawTiles(arg0)
+}
+func CallExtSetLayerIndex(
+	index GdInt,
+) {
+	arg0 := (C.GDExtensionSpxExtSetLayerIndex)(api.SpxExtSetLayerIndex)
+	arg1GdInt := (C.GdInt)(index)
+
+	C.cgo_callfn_GDExtensionSpxExtSetLayerIndex(arg0, arg1GdInt)
+
+}
+func CallExtSetTile(
+	texture_path GdString,
+) {
+	arg0 := (C.GDExtensionSpxExtSetTile)(api.SpxExtSetTile)
+	arg1GdString := (C.GdString)(texture_path)
+
+	C.cgo_callfn_GDExtensionSpxExtSetTile(arg0, arg1GdString)
+
+}
+func CallExtPlaceTile(
+	pos GdVec2,
+) {
+	arg0 := (C.GDExtensionSpxExtPlaceTile)(api.SpxExtPlaceTile)
+	arg1GdVec2 := (C.GdVec2)(pos)
+
+	C.cgo_callfn_GDExtensionSpxExtPlaceTile(arg0, arg1GdVec2)
+
+}
+func CallExtEraseTile(
+	pos GdVec2,
+) {
+	arg0 := (C.GDExtensionSpxExtEraseTile)(api.SpxExtEraseTile)
+	arg1GdVec2 := (C.GdVec2)(pos)
+
+	C.cgo_callfn_GDExtensionSpxExtEraseTile(arg0, arg1GdVec2)
+
+}
+func CallExtCloseDrawTiles() {
+	arg0 := (C.GDExtensionSpxExtCloseDrawTiles)(api.SpxExtCloseDrawTiles)
+
+	C.cgo_callfn_GDExtensionSpxExtCloseDrawTiles(arg0)
 }
 func CallInputGetMousePos() GdVec2 {
 	arg0 := (C.GDExtensionSpxInputGetMousePos)(api.SpxInputGetMousePos)
