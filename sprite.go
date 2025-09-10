@@ -184,8 +184,6 @@ type Sprite interface {
 	PausePlaying(name SoundName)
 	ResumePlaying(name SoundName)
 	StopPlaying(name SoundName)
-
-	CostumePath() string
 }
 
 type SpriteName = string
@@ -1800,10 +1798,6 @@ func (p *SpriteImpl) applyPenHsvProperty() {
 	p.penColor = color
 	p.penColor.A = p.penTransparency / 100
 	extMgr.SetPenColorTo(*p.penObj, p.penColor)
-}
-
-func (p *SpriteImpl) CostumePath() string {
-	return p.getCostumePath()
 }
 
 // -----------------------------------------------------------------------------

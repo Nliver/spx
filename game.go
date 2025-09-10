@@ -127,6 +127,7 @@ type Game struct {
 	gamer_   Gamer
 
 	windowScale float64
+	stretchMode bool
 	audioId     engine.Object
 
 	askPanel  *ui.UiAsk
@@ -497,7 +498,7 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 		windowScale = proj.WindowScale
 	}
 	p.windowScale = windowScale
-
+	p.stretchMode = proj.StretchMode
 	p.debug = proj.Debug
 	if backdrops := proj.getBackdrops(); len(backdrops) > 0 {
 		p.baseObj.initBackdrops("", backdrops, proj.getBackdropIndex())
@@ -541,6 +542,7 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 	p.Camera.SetCameraZoom(p.windowScale)
 	ui.SetWindowScale(p.windowScale)
 
+	platformMgr.SetStretchMode(p.stretchMode)
 	// setup syncSprite's property
 	p.syncSprite = engine.NewBackdropProxy(p, p.getCostumePath(), p.getCostumeRenderScale())
 	p.setupBackdrop()
