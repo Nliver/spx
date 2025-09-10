@@ -185,7 +185,7 @@ func (pself *extMgrImpl) DebugDrawCircle(pos Vec2, radius float64, color Color) 
 func (pself *extMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color)             {}
 func (pself *extMgrImpl) OpenDrawTiles()                                             {}
 func (pself *extMgrImpl) SetLayerIndex(index int64)                                  {}
-func (pself *extMgrImpl) SetTile(texture_path string)                                {}
+func (pself *extMgrImpl) SetTile(texture_path string, with_collision bool)           {}
 func (pself *extMgrImpl) PlaceTiles(positions gdx.Array)                             {}
 func (pself *extMgrImpl) PlaceTile(pos Vec2)                                         {}
 func (pself *extMgrImpl) EraseTile(pos Vec2)                                         {}

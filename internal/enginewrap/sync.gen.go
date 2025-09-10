@@ -356,9 +356,9 @@ func (pself *extMgrImpl) SetLayerIndex(index int64) {
 		gdx.ExtMgr.SetLayerIndex(index)
 	})
 }
-func (pself *extMgrImpl) SetTile(texture_path string) {
+func (pself *extMgrImpl) SetTile(texture_path string, with_collision bool) {
 	callInMainThread(func() {
-		gdx.ExtMgr.SetTile(texture_path)
+		gdx.ExtMgr.SetTile(texture_path, with_collision)
 	})
 }
 func (pself *extMgrImpl) PlaceTiles(positions gdx.Array) {

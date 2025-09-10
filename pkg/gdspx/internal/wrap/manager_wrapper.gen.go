@@ -323,11 +323,12 @@ func (pself *extMgr) SetLayerIndex(index int64) {
 	arg0 := ToGdInt(index)
 	CallExtSetLayerIndex(arg0)
 }
-func (pself *extMgr) SetTile(texture_path string) {
+func (pself *extMgr) SetTile(texture_path string, with_collision bool) {
 	arg0Str := C.CString(texture_path)
 	arg0 := (GdString)(arg0Str)
 	defer C.free(unsafe.Pointer(arg0Str))
-	CallExtSetTile(arg0)
+	arg1 := ToGdBool(with_collision)
+	CallExtSetTile(arg0, arg1)
 }
 func (pself *extMgr) PlaceTiles(positions Array) {
 	arg0 := ToGdArray(positions)

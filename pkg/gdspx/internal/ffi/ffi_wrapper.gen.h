@@ -150,8 +150,8 @@ void cgo_callfn_GDExtensionSpxExtOpenDrawTiles(const GDExtensionSpxExtOpenDrawTi
 void cgo_callfn_GDExtensionSpxExtSetLayerIndex(const GDExtensionSpxExtSetLayerIndex fn, GdInt index) {
 	fn(index);
 }
-void cgo_callfn_GDExtensionSpxExtSetTile(const GDExtensionSpxExtSetTile fn, GdString texture_path) {
-	fn(texture_path);
+void cgo_callfn_GDExtensionSpxExtSetTile(const GDExtensionSpxExtSetTile fn, GdString texture_path, GdBool with_collision) {
+	fn(texture_path, with_collision);
 }
 void cgo_callfn_GDExtensionSpxExtPlaceTiles(const GDExtensionSpxExtPlaceTiles fn, GdArray positions) {
 	fn(positions);

@@ -768,11 +768,13 @@ func CallExtSetLayerIndex(
 }
 func CallExtSetTile(
 	texture_path GdString,
+	with_collision GdBool,
 ) {
 	arg0 := (C.GDExtensionSpxExtSetTile)(api.SpxExtSetTile)
 	arg1GdString := (C.GdString)(texture_path)
+	arg2GdBool := (C.GdBool)(with_collision)
 
-	C.cgo_callfn_GDExtensionSpxExtSetTile(arg0, arg1GdString)
+	C.cgo_callfn_GDExtensionSpxExtSetTile(arg0, arg1GdString, arg2GdBool)
 
 }
 func CallExtPlaceTiles(
