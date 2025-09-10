@@ -329,6 +329,10 @@ func (pself *extMgr) SetTile(texture_path string) {
 	defer C.free(unsafe.Pointer(arg0Str))
 	CallExtSetTile(arg0)
 }
+func (pself *extMgr) PlaceTiles(positions Array) {
+	arg0 := ToGdArray(positions)
+	CallExtPlaceTiles(arg0)
+}
 func (pself *extMgr) PlaceTile(pos Vec2) {
 	arg0 := ToGdVec2(pos)
 	CallExtPlaceTile(arg0)

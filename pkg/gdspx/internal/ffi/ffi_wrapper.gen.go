@@ -131,6 +131,7 @@ type GDExtensionSpxExtDebugDrawRect C.GDExtensionSpxExtDebugDrawRect
 type GDExtensionSpxExtOpenDrawTiles C.GDExtensionSpxExtOpenDrawTiles
 type GDExtensionSpxExtSetLayerIndex C.GDExtensionSpxExtSetLayerIndex
 type GDExtensionSpxExtSetTile C.GDExtensionSpxExtSetTile
+type GDExtensionSpxExtPlaceTiles C.GDExtensionSpxExtPlaceTiles
 type GDExtensionSpxExtPlaceTile C.GDExtensionSpxExtPlaceTile
 type GDExtensionSpxExtEraseTile C.GDExtensionSpxExtEraseTile
 type GDExtensionSpxExtCloseDrawTiles C.GDExtensionSpxExtCloseDrawTiles
@@ -772,6 +773,15 @@ func CallExtSetTile(
 	arg1GdString := (C.GdString)(texture_path)
 
 	C.cgo_callfn_GDExtensionSpxExtSetTile(arg0, arg1GdString)
+
+}
+func CallExtPlaceTiles(
+	positions GdArray,
+) {
+	arg0 := (C.GDExtensionSpxExtPlaceTiles)(api.SpxExtPlaceTiles)
+	arg1GdArray := (C.GdArray)(positions)
+
+	C.cgo_callfn_GDExtensionSpxExtPlaceTiles(arg0, arg1GdArray)
 
 }
 func CallExtPlaceTile(

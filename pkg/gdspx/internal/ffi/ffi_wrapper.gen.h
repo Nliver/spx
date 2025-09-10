@@ -153,6 +153,9 @@ void cgo_callfn_GDExtensionSpxExtSetLayerIndex(const GDExtensionSpxExtSetLayerIn
 void cgo_callfn_GDExtensionSpxExtSetTile(const GDExtensionSpxExtSetTile fn, GdString texture_path) {
 	fn(texture_path);
 }
+void cgo_callfn_GDExtensionSpxExtPlaceTiles(const GDExtensionSpxExtPlaceTiles fn, GdArray positions) {
+	fn(positions);
+}
 void cgo_callfn_GDExtensionSpxExtPlaceTile(const GDExtensionSpxExtPlaceTile fn, GdVec2 pos) {
 	fn(pos);
 }

@@ -3,13 +3,13 @@ package common
 import (
 	"bytes"
 	"fmt"
-	"html/template"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
+	"text/template"
 	"unicode"
 
 	"github.com/goplus/spx/v2/pkg/gdspx/cmd/codegen/gdextensionparser/clang"
@@ -239,7 +239,7 @@ func CgoCastArgument(a clang.Argument, defaultName string) string {
 			if t.IsPointer {
 				return fmt.Sprintf("(*C.GdArray)(%s)", goVarName)
 			} else {
-				return fmt.Sprintf("(*C.GdArray)(&%s)", goVarName)
+				return fmt.Sprintf("(C.GdArray)(%s)", goVarName)
 			}
 		default:
 			if t.IsPointer {
