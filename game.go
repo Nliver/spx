@@ -539,7 +539,7 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 
 	platformMgr.SetWindowSize(int64(float64(p.windowWidth_)*p.windowScale), int64(float64(p.windowHeight_)*p.windowScale))
 	p.Camera.init(p)
-	p.Camera.SetCameraZoom(p.windowScale)
+	engine.SetWindowScale(p.windowScale)
 	ui.SetWindowScale(p.windowScale)
 
 	platformMgr.SetStretchMode(p.stretchMode)
@@ -570,7 +570,7 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 	}
 
 	if proj.Camera != nil && proj.Camera.On != "" {
-		p.Camera.On__2(proj.Camera.On)
+		p.Camera.Follow__1(proj.Camera.On)
 	}
 	if loader, ok := g.Addr().Interface().(interface{ OnLoaded() }); ok {
 		loader.OnLoaded()
@@ -902,6 +902,7 @@ func (p *Game) logicLoop(me coroutine.Thread) int {
 	tempAudios := []string{}
 	tempAnimations := []string{}
 	for {
+		p.Camera.onUpdate(gtime.DeltaTime())
 		tempItems := p.getTempShapes()
 		for _, item := range tempItems {
 			if result, ok := item.(interface{ onUpdate(float64) }); ok {
