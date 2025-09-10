@@ -305,6 +305,10 @@ func (pself *extMgr) DebugDrawRect(pos Vec2, size Vec2, color Color) {
 	arg2 := JsFromGdColor(color)
 	API.SpxExtDebugDrawRect.Invoke(arg0, arg1, arg2)
 }
+func (pself *extMgr) OpenDrawTilesWithSize(tile_size int64) {
+	arg0 := JsFromGdInt(tile_size)
+	API.SpxExtOpenDrawTilesWithSize.Invoke(arg0)
+}
 func (pself *extMgr) OpenDrawTiles() {
 	API.SpxExtOpenDrawTiles.Invoke()
 }
@@ -316,6 +320,16 @@ func (pself *extMgr) SetTile(texture_path string, with_collision bool) {
 	arg0 := JsFromGdString(texture_path)
 	arg1 := JsFromGdBool(with_collision)
 	API.SpxExtSetTile.Invoke(arg0, arg1)
+}
+func (pself *extMgr) SetLayerOffset(index int64, offset Vec2) {
+	arg0 := JsFromGdInt(index)
+	arg1 := JsFromGdVec2(offset)
+	API.SpxExtSetLayerOffset.Invoke(arg0, arg1)
+}
+func (pself *extMgr) GetLayerOffset(index int64) Vec2 {
+	arg0 := JsFromGdInt(index)
+	_retValue := API.SpxExtGetLayerOffset.Invoke(arg0)
+	return JsToGdVec2(_retValue)
 }
 func (pself *extMgr) PlaceTiles(positions Array) {
 	arg0 := JsFromGdArray(positions)
@@ -337,6 +351,18 @@ func (pself *extMgr) GetLayerPointPath(p_from Vec2, p_to Vec2) Array {
 	arg1 := JsFromGdVec2(p_to)
 	_retValue := API.SpxExtGetLayerPointPath.Invoke(arg0, arg1)
 	return JsToGdArray(_retValue)
+}
+func (pself *extMgr) ExitTilemapEditorMode() {
+	API.SpxExtExitTilemapEditorMode.Invoke()
+}
+func (pself *extMgr) ClearPureSprites() {
+	API.SpxExtClearPureSprites.Invoke()
+}
+func (pself *extMgr) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {
+	arg0 := JsFromGdString(texture_path)
+	arg1 := JsFromGdVec2(pos)
+	arg2 := JsFromGdInt(zindex)
+	API.SpxExtCreatePureSprite.Invoke(arg0, arg1, arg2)
 }
 func (pself *inputMgr) GetMousePos() Vec2 {
 	_retValue := API.SpxInputGetMousePos.Invoke()

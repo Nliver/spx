@@ -204,15 +204,15 @@ func (pself *Sprite) GetScaleY() float64 {
 }
 
 func (pself *Sprite) SetScaleX(value float64) {
-	pos := pself.GetScale()
-	pos.X = value
-	pself.SetScale(pos)
+	scale := pself.GetScale()
+	scale.X = value
+	pself.SetScale(scale)
 }
 
 func (pself *Sprite) SetScaleY(value float64) {
-	pos := pself.GetScale()
-	pos.Y = value
-	pself.SetScale(pos)
+	scale := pself.GetScale()
+	scale.Y = value
+	pself.SetScale(scale)
 }
 
 func (pself *Sprite) PlayAnimation(name string) {

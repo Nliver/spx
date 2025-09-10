@@ -41,6 +41,14 @@ func (c *Camera) onUpdate(delta float64) {
 	}
 }
 
+func (c *Camera) ViewportRect() (float64, float64, float64, float64) {
+	cameraRect := cameraMgr.GetViewportRect()
+	zoom := cameraMgr.GetCameraZoom()
+	size := cameraRect.Size.Div(zoom)
+	cameraLeftBound := cameraMgr.GetCameraPosition().X - size.X/2
+	cameraBottomBound := cameraMgr.GetCameraPosition().Y - size.Y/2
+	return cameraLeftBound, cameraBottomBound, size.X, size.Y
+}
 func (c *Camera) SetZoom(scale float64) {
 	scale *= c.g.windowScale
 	cameraMgr.SetCameraZoom(mathf.NewVec2(scale, scale))

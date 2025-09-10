@@ -346,6 +346,11 @@ func (pself *extMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color) {
 		gdx.ExtMgr.DebugDrawRect(pos, size, color)
 	})
 }
+func (pself *extMgrImpl) OpenDrawTilesWithSize(tile_size int64) {
+	callInMainThread(func() {
+		gdx.ExtMgr.OpenDrawTilesWithSize(tile_size)
+	})
+}
 func (pself *extMgrImpl) OpenDrawTiles() {
 	callInMainThread(func() {
 		gdx.ExtMgr.OpenDrawTiles()
@@ -360,6 +365,18 @@ func (pself *extMgrImpl) SetTile(texture_path string, with_collision bool) {
 	callInMainThread(func() {
 		gdx.ExtMgr.SetTile(texture_path, with_collision)
 	})
+}
+func (pself *extMgrImpl) SetLayerOffset(index int64, offset Vec2) {
+	callInMainThread(func() {
+		gdx.ExtMgr.SetLayerOffset(index, offset)
+	})
+}
+func (pself *extMgrImpl) GetLayerOffset(index int64) Vec2 {
+	var _ret1 Vec2
+	callInMainThread(func() {
+		_ret1 = gdx.ExtMgr.GetLayerOffset(index)
+	})
+	return _ret1
 }
 func (pself *extMgrImpl) PlaceTiles(positions gdx.Array) {
 	callInMainThread(func() {
@@ -387,6 +404,21 @@ func (pself *extMgrImpl) GetLayerPointPath(p_from Vec2, p_to Vec2) gdx.Array {
 		_ret1 = gdx.ExtMgr.GetLayerPointPath(p_from, p_to)
 	})
 	return _ret1
+}
+func (pself *extMgrImpl) ExitTilemapEditorMode() {
+	callInMainThread(func() {
+		gdx.ExtMgr.ExitTilemapEditorMode()
+	})
+}
+func (pself *extMgrImpl) ClearPureSprites() {
+	callInMainThread(func() {
+		gdx.ExtMgr.ClearPureSprites()
+	})
+}
+func (pself *extMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {
+	callInMainThread(func() {
+		gdx.ExtMgr.CreatePureSprite(texture_path, pos, zindex)
+	})
 }
 
 // IInputMgr
