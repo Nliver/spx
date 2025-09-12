@@ -66,14 +66,20 @@ type GDExtensionInterface struct {
 	SpxExtSetPenStampTexture                 js.Value
 	SpxExtDebugDrawCircle                    js.Value
 	SpxExtDebugDrawRect                      js.Value
+	SpxExtOpenDrawTilesWithSize              js.Value
 	SpxExtOpenDrawTiles                      js.Value
 	SpxExtSetLayerIndex                      js.Value
 	SpxExtSetTile                            js.Value
+	SpxExtSetLayerOffset                     js.Value
+	SpxExtGetLayerOffset                     js.Value
 	SpxExtPlaceTiles                         js.Value
 	SpxExtPlaceTile                          js.Value
 	SpxExtEraseTile                          js.Value
 	SpxExtCloseDrawTiles                     js.Value
 	SpxExtGetLayerPointPath                  js.Value
+	SpxExtExitTilemapEditorMode              js.Value
+	SpxExtClearPureSprites                   js.Value
+	SpxExtCreatePureSprite                   js.Value
 	SpxInputGetMousePos                      js.Value
 	SpxInputGetKey                           js.Value
 	SpxInputGetMouseState                    js.Value
@@ -331,14 +337,20 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtSetPenStampTexture = dlsymGD("gdspx_ext_set_pen_stamp_texture")
 	x.SpxExtDebugDrawCircle = dlsymGD("gdspx_ext_debug_draw_circle")
 	x.SpxExtDebugDrawRect = dlsymGD("gdspx_ext_debug_draw_rect")
+	x.SpxExtOpenDrawTilesWithSize = dlsymGD("gdspx_ext_open_draw_tiles_with_size")
 	x.SpxExtOpenDrawTiles = dlsymGD("gdspx_ext_open_draw_tiles")
 	x.SpxExtSetLayerIndex = dlsymGD("gdspx_ext_set_layer_index")
 	x.SpxExtSetTile = dlsymGD("gdspx_ext_set_tile")
+	x.SpxExtSetLayerOffset = dlsymGD("gdspx_ext_set_layer_offset")
+	x.SpxExtGetLayerOffset = dlsymGD("gdspx_ext_get_layer_offset")
 	x.SpxExtPlaceTiles = dlsymGD("gdspx_ext_place_tiles")
 	x.SpxExtPlaceTile = dlsymGD("gdspx_ext_place_tile")
 	x.SpxExtEraseTile = dlsymGD("gdspx_ext_erase_tile")
 	x.SpxExtCloseDrawTiles = dlsymGD("gdspx_ext_close_draw_tiles")
 	x.SpxExtGetLayerPointPath = dlsymGD("gdspx_ext_get_layer_point_path")
+	x.SpxExtExitTilemapEditorMode = dlsymGD("gdspx_ext_exit_tilemap_editor_mode")
+	x.SpxExtClearPureSprites = dlsymGD("gdspx_ext_clear_pure_sprites")
+	x.SpxExtCreatePureSprite = dlsymGD("gdspx_ext_create_pure_sprite")
 	x.SpxInputGetMousePos = dlsymGD("gdspx_input_get_mouse_pos")
 	x.SpxInputGetKey = dlsymGD("gdspx_input_get_key")
 	x.SpxInputGetMouseState = dlsymGD("gdspx_input_get_mouse_state")

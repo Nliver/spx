@@ -47,12 +47,12 @@ func (pself *Sprite) UpdateTransform(x, y float64, rot float64, scale64 float64,
 	if isSync {
 		pself.SetPosition(pos)
 		pself.SetRotation(rad)
-		pself.SetScaleX(scale)
+		pself.SetScale(NewVec2(scale, 1))
 	} else {
 		WaitMainThread(func() {
 			pself.SetPosition(pos)
 			pself.SetRotation(rad)
-			pself.SetScaleX(scale)
+			pself.SetScale(NewVec2(scale, 1))
 		})
 	}
 }

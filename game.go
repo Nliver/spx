@@ -1825,4 +1825,17 @@ func (p *Game) EraseTile(x, y float64) {
 	extMgr.EraseTile(mathf.NewVec2(x, y))
 }
 
+func (p *Game) ExitTilemapEditMode() {
+	extMgr.ExitTilemapEditorMode()
+}
+
+func (p *Game) CreatePureSprite(texture_path string, x, y float64, zindex int64) {
+	extMgr.CreatePureSprite(engine.ToAssetPath(texture_path), mathf.NewVec2(x, y), zindex)
+}
+
+func (p *Game) SetTileMapOffset(index int64, x, y float64) {
+	extMgr.SetLayerOffset(index, mathf.NewVec2(x, y))
+
+}
+
 // -----------------------------------------------------------------------------

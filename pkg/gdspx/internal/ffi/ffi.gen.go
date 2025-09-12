@@ -62,14 +62,20 @@ type GDExtensionInterface struct {
 	SpxExtSetPenStampTexture                 GDExtensionSpxExtSetPenStampTexture
 	SpxExtDebugDrawCircle                    GDExtensionSpxExtDebugDrawCircle
 	SpxExtDebugDrawRect                      GDExtensionSpxExtDebugDrawRect
+	SpxExtOpenDrawTilesWithSize              GDExtensionSpxExtOpenDrawTilesWithSize
 	SpxExtOpenDrawTiles                      GDExtensionSpxExtOpenDrawTiles
 	SpxExtSetLayerIndex                      GDExtensionSpxExtSetLayerIndex
 	SpxExtSetTile                            GDExtensionSpxExtSetTile
+	SpxExtSetLayerOffset                     GDExtensionSpxExtSetLayerOffset
+	SpxExtGetLayerOffset                     GDExtensionSpxExtGetLayerOffset
 	SpxExtPlaceTiles                         GDExtensionSpxExtPlaceTiles
 	SpxExtPlaceTile                          GDExtensionSpxExtPlaceTile
 	SpxExtEraseTile                          GDExtensionSpxExtEraseTile
 	SpxExtCloseDrawTiles                     GDExtensionSpxExtCloseDrawTiles
 	SpxExtGetLayerPointPath                  GDExtensionSpxExtGetLayerPointPath
+	SpxExtExitTilemapEditorMode              GDExtensionSpxExtExitTilemapEditorMode
+	SpxExtClearPureSprites                   GDExtensionSpxExtClearPureSprites
+	SpxExtCreatePureSprite                   GDExtensionSpxExtCreatePureSprite
 	SpxInputGetMousePos                      GDExtensionSpxInputGetMousePos
 	SpxInputGetKey                           GDExtensionSpxInputGetKey
 	SpxInputGetMouseState                    GDExtensionSpxInputGetMouseState
@@ -327,14 +333,20 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtSetPenStampTexture = (GDExtensionSpxExtSetPenStampTexture)(dlsymGD("spx_ext_set_pen_stamp_texture"))
 	x.SpxExtDebugDrawCircle = (GDExtensionSpxExtDebugDrawCircle)(dlsymGD("spx_ext_debug_draw_circle"))
 	x.SpxExtDebugDrawRect = (GDExtensionSpxExtDebugDrawRect)(dlsymGD("spx_ext_debug_draw_rect"))
+	x.SpxExtOpenDrawTilesWithSize = (GDExtensionSpxExtOpenDrawTilesWithSize)(dlsymGD("spx_ext_open_draw_tiles_with_size"))
 	x.SpxExtOpenDrawTiles = (GDExtensionSpxExtOpenDrawTiles)(dlsymGD("spx_ext_open_draw_tiles"))
 	x.SpxExtSetLayerIndex = (GDExtensionSpxExtSetLayerIndex)(dlsymGD("spx_ext_set_layer_index"))
 	x.SpxExtSetTile = (GDExtensionSpxExtSetTile)(dlsymGD("spx_ext_set_tile"))
+	x.SpxExtSetLayerOffset = (GDExtensionSpxExtSetLayerOffset)(dlsymGD("spx_ext_set_layer_offset"))
+	x.SpxExtGetLayerOffset = (GDExtensionSpxExtGetLayerOffset)(dlsymGD("spx_ext_get_layer_offset"))
 	x.SpxExtPlaceTiles = (GDExtensionSpxExtPlaceTiles)(dlsymGD("spx_ext_place_tiles"))
 	x.SpxExtPlaceTile = (GDExtensionSpxExtPlaceTile)(dlsymGD("spx_ext_place_tile"))
 	x.SpxExtEraseTile = (GDExtensionSpxExtEraseTile)(dlsymGD("spx_ext_erase_tile"))
 	x.SpxExtCloseDrawTiles = (GDExtensionSpxExtCloseDrawTiles)(dlsymGD("spx_ext_close_draw_tiles"))
 	x.SpxExtGetLayerPointPath = (GDExtensionSpxExtGetLayerPointPath)(dlsymGD("spx_ext_get_layer_point_path"))
+	x.SpxExtExitTilemapEditorMode = (GDExtensionSpxExtExitTilemapEditorMode)(dlsymGD("spx_ext_exit_tilemap_editor_mode"))
+	x.SpxExtClearPureSprites = (GDExtensionSpxExtClearPureSprites)(dlsymGD("spx_ext_clear_pure_sprites"))
+	x.SpxExtCreatePureSprite = (GDExtensionSpxExtCreatePureSprite)(dlsymGD("spx_ext_create_pure_sprite"))
 	x.SpxInputGetMousePos = (GDExtensionSpxInputGetMousePos)(dlsymGD("spx_input_get_mouse_pos"))
 	x.SpxInputGetKey = (GDExtensionSpxInputGetKey)(dlsymGD("spx_input_get_key"))
 	x.SpxInputGetMouseState = (GDExtensionSpxInputGetMouseState)(dlsymGD("spx_input_get_mouse_state"))

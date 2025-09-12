@@ -2027,15 +2027,14 @@ func (p *SpriteImpl) IsOnFloor() bool {
 func (p *SpriteImpl) Raycast(fromX, fromY, toX, toY float64) (hit bool, hitX, hitY float64, sprite Sprite) {
 	from := mathf.NewVec2(fromX, fromY)
 	to := mathf.NewVec2(toX, toY)
+	// TODO update c++ api
 	hitObj := physicMgr.Raycast(from, to, p.collisionMask)
-
 	if hitObj != 0 {
-		for _, item := range p.g.items {
-			if s, ok := item.(Sprite); ok {
-				spriteImpl := spriteOf(s)
-				if spriteImpl != nil && spriteImpl.syncSprite != nil && spriteImpl.syncSprite.GetId() == hitObj {
-					return true, toX, toY, s
-				}
+		sprite := engine.GetSprite(hitObj)
+		if sprite != nil {
+			impl := sprite.Target.(*SpriteImpl)
+			if impl != nil {
+				return true, toX, toY, impl.sprite
 			}
 		}
 	}

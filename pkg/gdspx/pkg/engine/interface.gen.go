@@ -78,14 +78,20 @@ type IExtMgr interface {
 	SetPenStampTexture(obj Object, texture_path string)
 	DebugDrawCircle(pos Vec2, radius float64, color Color)
 	DebugDrawRect(pos Vec2, size Vec2, color Color)
+	OpenDrawTilesWithSize(tile_size int64)
 	OpenDrawTiles()
 	SetLayerIndex(index int64)
 	SetTile(texture_path string, with_collision bool)
+	SetLayerOffset(index int64, offset Vec2)
+	GetLayerOffset(index int64) Vec2
 	PlaceTiles(positions Array)
 	PlaceTile(pos Vec2)
 	EraseTile(pos Vec2)
 	CloseDrawTiles()
 	GetLayerPointPath(p_from Vec2, p_to Vec2) Array
+	ExitTilemapEditorMode()
+	ClearPureSprites()
+	CreatePureSprite(texture_path string, pos Vec2, zindex int64)
 }
 
 type IInputMgr interface {

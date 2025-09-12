@@ -22,3 +22,5 @@ func AngleToPoint(v Vec2, v2 Vec2) float64 {
 func Angle(v Vec2) float64 {
 	return float64(Atan2(float64(v.Y), float64(v.X)))
 }
+
+//return float64(math.Atan2(float64(y), float64(x)))

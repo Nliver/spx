@@ -128,14 +128,20 @@ type GDExtensionSpxExtSetPenSizeTo C.GDExtensionSpxExtSetPenSizeTo
 type GDExtensionSpxExtSetPenStampTexture C.GDExtensionSpxExtSetPenStampTexture
 type GDExtensionSpxExtDebugDrawCircle C.GDExtensionSpxExtDebugDrawCircle
 type GDExtensionSpxExtDebugDrawRect C.GDExtensionSpxExtDebugDrawRect
+type GDExtensionSpxExtOpenDrawTilesWithSize C.GDExtensionSpxExtOpenDrawTilesWithSize
 type GDExtensionSpxExtOpenDrawTiles C.GDExtensionSpxExtOpenDrawTiles
 type GDExtensionSpxExtSetLayerIndex C.GDExtensionSpxExtSetLayerIndex
 type GDExtensionSpxExtSetTile C.GDExtensionSpxExtSetTile
+type GDExtensionSpxExtSetLayerOffset C.GDExtensionSpxExtSetLayerOffset
+type GDExtensionSpxExtGetLayerOffset C.GDExtensionSpxExtGetLayerOffset
 type GDExtensionSpxExtPlaceTiles C.GDExtensionSpxExtPlaceTiles
 type GDExtensionSpxExtPlaceTile C.GDExtensionSpxExtPlaceTile
 type GDExtensionSpxExtEraseTile C.GDExtensionSpxExtEraseTile
 type GDExtensionSpxExtCloseDrawTiles C.GDExtensionSpxExtCloseDrawTiles
 type GDExtensionSpxExtGetLayerPointPath C.GDExtensionSpxExtGetLayerPointPath
+type GDExtensionSpxExtExitTilemapEditorMode C.GDExtensionSpxExtExitTilemapEditorMode
+type GDExtensionSpxExtClearPureSprites C.GDExtensionSpxExtClearPureSprites
+type GDExtensionSpxExtCreatePureSprite C.GDExtensionSpxExtCreatePureSprite
 type GDExtensionSpxInputGetMousePos C.GDExtensionSpxInputGetMousePos
 type GDExtensionSpxInputGetKey C.GDExtensionSpxInputGetKey
 type GDExtensionSpxInputGetMouseState C.GDExtensionSpxInputGetMouseState
@@ -753,6 +759,15 @@ func CallExtDebugDrawRect(
 	C.cgo_callfn_GDExtensionSpxExtDebugDrawRect(arg0, arg1GdVec2, arg2GdVec2, arg3GdColor)
 
 }
+func CallExtOpenDrawTilesWithSize(
+	tile_size GdInt,
+) {
+	arg0 := (C.GDExtensionSpxExtOpenDrawTilesWithSize)(api.SpxExtOpenDrawTilesWithSize)
+	arg1GdInt := (C.GdInt)(tile_size)
+
+	C.cgo_callfn_GDExtensionSpxExtOpenDrawTilesWithSize(arg0, arg1GdInt)
+
+}
 func CallExtOpenDrawTiles() {
 	arg0 := (C.GDExtensionSpxExtOpenDrawTiles)(api.SpxExtOpenDrawTiles)
 
@@ -777,6 +792,27 @@ func CallExtSetTile(
 
 	C.cgo_callfn_GDExtensionSpxExtSetTile(arg0, arg1GdString, arg2GdBool)
 
+}
+func CallExtSetLayerOffset(
+	index GdInt,
+	offset GdVec2,
+) {
+	arg0 := (C.GDExtensionSpxExtSetLayerOffset)(api.SpxExtSetLayerOffset)
+	arg1GdInt := (C.GdInt)(index)
+	arg2GdVec2 := (C.GdVec2)(offset)
+
+	C.cgo_callfn_GDExtensionSpxExtSetLayerOffset(arg0, arg1GdInt, arg2GdVec2)
+
+}
+func CallExtGetLayerOffset(
+	index GdInt,
+) GdVec2 {
+	arg0 := (C.GDExtensionSpxExtGetLayerOffset)(api.SpxExtGetLayerOffset)
+	arg1GdInt := (C.GdInt)(index)
+	var ret_val C.GdVec2
+	C.cgo_callfn_GDExtensionSpxExtGetLayerOffset(arg0, arg1GdInt, &ret_val)
+
+	return (GdVec2)(ret_val)
 }
 func CallExtPlaceTiles(
 	positions GdArray,
@@ -821,6 +857,29 @@ func CallExtGetLayerPointPath(
 	C.cgo_callfn_GDExtensionSpxExtGetLayerPointPath(arg0, arg1GdVec2, arg2GdVec2, &ret_val)
 
 	return GdArray(ret_val)
+}
+func CallExtExitTilemapEditorMode() {
+	arg0 := (C.GDExtensionSpxExtExitTilemapEditorMode)(api.SpxExtExitTilemapEditorMode)
+
+	C.cgo_callfn_GDExtensionSpxExtExitTilemapEditorMode(arg0)
+}
+func CallExtClearPureSprites() {
+	arg0 := (C.GDExtensionSpxExtClearPureSprites)(api.SpxExtClearPureSprites)
+
+	C.cgo_callfn_GDExtensionSpxExtClearPureSprites(arg0)
+}
+func CallExtCreatePureSprite(
+	texture_path GdString,
+	pos GdVec2,
+	zindex GdInt,
+) {
+	arg0 := (C.GDExtensionSpxExtCreatePureSprite)(api.SpxExtCreatePureSprite)
+	arg1GdString := (C.GdString)(texture_path)
+	arg2GdVec2 := (C.GdVec2)(pos)
+	arg3GdInt := (C.GdInt)(zindex)
+
+	C.cgo_callfn_GDExtensionSpxExtCreatePureSprite(arg0, arg1GdString, arg2GdVec2, arg3GdInt)
+
 }
 func CallInputGetMousePos() GdVec2 {
 	arg0 := (C.GDExtensionSpxInputGetMousePos)(api.SpxInputGetMousePos)

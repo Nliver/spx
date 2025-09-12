@@ -183,17 +183,26 @@ func (pself *extMgrImpl) SetPenSizeTo(obj gdx.Object, size float64)             
 func (pself *extMgrImpl) SetPenStampTexture(obj gdx.Object, texture_path string)     {}
 func (pself *extMgrImpl) DebugDrawCircle(pos Vec2, radius float64, color Color)      {}
 func (pself *extMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color)             {}
+func (pself *extMgrImpl) OpenDrawTilesWithSize(tile_size int64)                      {}
 func (pself *extMgrImpl) OpenDrawTiles()                                             {}
 func (pself *extMgrImpl) SetLayerIndex(index int64)                                  {}
 func (pself *extMgrImpl) SetTile(texture_path string, with_collision bool)           {}
-func (pself *extMgrImpl) PlaceTiles(positions gdx.Array)                             {}
-func (pself *extMgrImpl) PlaceTile(pos Vec2)                                         {}
-func (pself *extMgrImpl) EraseTile(pos Vec2)                                         {}
-func (pself *extMgrImpl) CloseDrawTiles()                                            {}
+func (pself *extMgrImpl) SetLayerOffset(index int64, offset Vec2)                    {}
+func (pself *extMgrImpl) GetLayerOffset(index int64) Vec2 {
+	var _ret1 Vec2
+	return _ret1
+}
+func (pself *extMgrImpl) PlaceTiles(positions gdx.Array) {}
+func (pself *extMgrImpl) PlaceTile(pos Vec2)             {}
+func (pself *extMgrImpl) EraseTile(pos Vec2)             {}
+func (pself *extMgrImpl) CloseDrawTiles()                {}
 func (pself *extMgrImpl) GetLayerPointPath(p_from Vec2, p_to Vec2) gdx.Array {
 	var _ret1 gdx.Array
 	return _ret1
 }
+func (pself *extMgrImpl) ExitTilemapEditorMode()                                       {}
+func (pself *extMgrImpl) ClearPureSprites()                                            {}
+func (pself *extMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {}
 
 // IInputMgr
 func (pself *inputMgrImpl) GetMousePos() Vec2 {

@@ -316,6 +316,10 @@ func (pself *extMgr) DebugDrawRect(pos Vec2, size Vec2, color Color) {
 	arg2 := ToGdColor(color)
 	CallExtDebugDrawRect(arg0, arg1, arg2)
 }
+func (pself *extMgr) OpenDrawTilesWithSize(tile_size int64) {
+	arg0 := ToGdInt(tile_size)
+	CallExtOpenDrawTilesWithSize(arg0)
+}
 func (pself *extMgr) OpenDrawTiles() {
 	CallExtOpenDrawTiles()
 }
@@ -329,6 +333,16 @@ func (pself *extMgr) SetTile(texture_path string, with_collision bool) {
 	defer C.free(unsafe.Pointer(arg0Str))
 	arg1 := ToGdBool(with_collision)
 	CallExtSetTile(arg0, arg1)
+}
+func (pself *extMgr) SetLayerOffset(index int64, offset Vec2) {
+	arg0 := ToGdInt(index)
+	arg1 := ToGdVec2(offset)
+	CallExtSetLayerOffset(arg0, arg1)
+}
+func (pself *extMgr) GetLayerOffset(index int64) Vec2 {
+	arg0 := ToGdInt(index)
+	retValue := CallExtGetLayerOffset(arg0)
+	return ToVec2(retValue)
 }
 func (pself *extMgr) PlaceTiles(positions Array) {
 	arg0 := ToGdArray(positions)
@@ -350,6 +364,20 @@ func (pself *extMgr) GetLayerPointPath(p_from Vec2, p_to Vec2) Array {
 	arg1 := ToGdVec2(p_to)
 	retValue := CallExtGetLayerPointPath(arg0, arg1)
 	return ToArray(retValue)
+}
+func (pself *extMgr) ExitTilemapEditorMode() {
+	CallExtExitTilemapEditorMode()
+}
+func (pself *extMgr) ClearPureSprites() {
+	CallExtClearPureSprites()
+}
+func (pself *extMgr) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {
+	arg0Str := C.CString(texture_path)
+	arg0 := (GdString)(arg0Str)
+	defer C.free(unsafe.Pointer(arg0Str))
+	arg1 := ToGdVec2(pos)
+	arg2 := ToGdInt(zindex)
+	CallExtCreatePureSprite(arg0, arg1, arg2)
 }
 func (pself *inputMgr) GetMousePos() Vec2 {
 	retValue := CallInputGetMousePos()

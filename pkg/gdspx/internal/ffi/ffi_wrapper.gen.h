@@ -144,6 +144,9 @@ void cgo_callfn_GDExtensionSpxExtDebugDrawCircle(const GDExtensionSpxExtDebugDra
 void cgo_callfn_GDExtensionSpxExtDebugDrawRect(const GDExtensionSpxExtDebugDrawRect fn, GdVec2 pos, GdVec2 size, GdColor color) {
 	fn(pos, size, color);
 }
+void cgo_callfn_GDExtensionSpxExtOpenDrawTilesWithSize(const GDExtensionSpxExtOpenDrawTilesWithSize fn, GdInt tile_size) {
+	fn(tile_size);
+}
 void cgo_callfn_GDExtensionSpxExtOpenDrawTiles(const GDExtensionSpxExtOpenDrawTiles fn) {
 	fn();
 }
@@ -152,6 +155,12 @@ void cgo_callfn_GDExtensionSpxExtSetLayerIndex(const GDExtensionSpxExtSetLayerIn
 }
 void cgo_callfn_GDExtensionSpxExtSetTile(const GDExtensionSpxExtSetTile fn, GdString texture_path, GdBool with_collision) {
 	fn(texture_path, with_collision);
+}
+void cgo_callfn_GDExtensionSpxExtSetLayerOffset(const GDExtensionSpxExtSetLayerOffset fn, GdInt index, GdVec2 offset) {
+	fn(index, offset);
+}
+void cgo_callfn_GDExtensionSpxExtGetLayerOffset(const GDExtensionSpxExtGetLayerOffset fn, GdInt index, GdVec2* ret_val) {
+	fn(index,ret_val);
 }
 void cgo_callfn_GDExtensionSpxExtPlaceTiles(const GDExtensionSpxExtPlaceTiles fn, GdArray positions) {
 	fn(positions);
@@ -167,6 +176,15 @@ void cgo_callfn_GDExtensionSpxExtCloseDrawTiles(const GDExtensionSpxExtCloseDraw
 }
 void cgo_callfn_GDExtensionSpxExtGetLayerPointPath(const GDExtensionSpxExtGetLayerPointPath fn, GdVec2 p_from, GdVec2 p_to, GdArray* ret_val) {
 	fn(p_from, p_to,ret_val);
+}
+void cgo_callfn_GDExtensionSpxExtExitTilemapEditorMode(const GDExtensionSpxExtExitTilemapEditorMode fn) {
+	fn();
+}
+void cgo_callfn_GDExtensionSpxExtClearPureSprites(const GDExtensionSpxExtClearPureSprites fn) {
+	fn();
+}
+void cgo_callfn_GDExtensionSpxExtCreatePureSprite(const GDExtensionSpxExtCreatePureSprite fn, GdString texture_path, GdVec2 pos, GdInt zindex) {
+	fn(texture_path, pos, zindex);
 }
 void cgo_callfn_GDExtensionSpxInputGetMousePos(const GDExtensionSpxInputGetMousePos fn, GdVec2* ret_val) {
 	fn(ret_val);
