@@ -381,6 +381,13 @@ func (pself *extMgrImpl) CloseDrawTiles() {
 		gdx.ExtMgr.CloseDrawTiles()
 	})
 }
+func (pself *extMgrImpl) GetLayerPointPath(p_from Vec2, p_to Vec2) gdx.Array {
+	var _ret1 gdx.Array
+	callInMainThread(func() {
+		_ret1 = gdx.ExtMgr.GetLayerPointPath(p_from, p_to)
+	})
+	return _ret1
+}
 
 // IInputMgr
 func (pself *inputMgrImpl) GetMousePos() Vec2 {

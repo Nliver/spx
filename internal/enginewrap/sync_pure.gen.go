@@ -190,6 +190,10 @@ func (pself *extMgrImpl) PlaceTiles(positions gdx.Array)                        
 func (pself *extMgrImpl) PlaceTile(pos Vec2)                                         {}
 func (pself *extMgrImpl) EraseTile(pos Vec2)                                         {}
 func (pself *extMgrImpl) CloseDrawTiles()                                            {}
+func (pself *extMgrImpl) GetLayerPointPath(p_from Vec2, p_to Vec2) gdx.Array {
+	var _ret1 gdx.Array
+	return _ret1
+}
 
 // IInputMgr
 func (pself *inputMgrImpl) GetMousePos() Vec2 {

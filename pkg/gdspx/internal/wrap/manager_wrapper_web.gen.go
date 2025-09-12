@@ -332,6 +332,12 @@ func (pself *extMgr) EraseTile(pos Vec2) {
 func (pself *extMgr) CloseDrawTiles() {
 	API.SpxExtCloseDrawTiles.Invoke()
 }
+func (pself *extMgr) GetLayerPointPath(p_from Vec2, p_to Vec2) Array {
+	arg0 := JsFromGdVec2(p_from)
+	arg1 := JsFromGdVec2(p_to)
+	_retValue := API.SpxExtGetLayerPointPath.Invoke(arg0, arg1)
+	return JsToGdArray(_retValue)
+}
 func (pself *inputMgr) GetMousePos() Vec2 {
 	_retValue := API.SpxInputGetMousePos.Invoke()
 	return JsToGdVec2(_retValue)

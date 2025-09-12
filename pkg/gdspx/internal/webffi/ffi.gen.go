@@ -73,6 +73,7 @@ type GDExtensionInterface struct {
 	SpxExtPlaceTile                          js.Value
 	SpxExtEraseTile                          js.Value
 	SpxExtCloseDrawTiles                     js.Value
+	SpxExtGetLayerPointPath                  js.Value
 	SpxInputGetMousePos                      js.Value
 	SpxInputGetKey                           js.Value
 	SpxInputGetMouseState                    js.Value
@@ -337,6 +338,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtPlaceTile = dlsymGD("gdspx_ext_place_tile")
 	x.SpxExtEraseTile = dlsymGD("gdspx_ext_erase_tile")
 	x.SpxExtCloseDrawTiles = dlsymGD("gdspx_ext_close_draw_tiles")
+	x.SpxExtGetLayerPointPath = dlsymGD("gdspx_ext_get_layer_point_path")
 	x.SpxInputGetMousePos = dlsymGD("gdspx_input_get_mouse_pos")
 	x.SpxInputGetKey = dlsymGD("gdspx_input_get_key")
 	x.SpxInputGetMouseState = dlsymGD("gdspx_input_get_mouse_state")

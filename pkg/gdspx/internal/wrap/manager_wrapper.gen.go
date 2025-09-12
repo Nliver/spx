@@ -345,6 +345,12 @@ func (pself *extMgr) EraseTile(pos Vec2) {
 func (pself *extMgr) CloseDrawTiles() {
 	CallExtCloseDrawTiles()
 }
+func (pself *extMgr) GetLayerPointPath(p_from Vec2, p_to Vec2) Array {
+	arg0 := ToGdVec2(p_from)
+	arg1 := ToGdVec2(p_to)
+	retValue := CallExtGetLayerPointPath(arg0, arg1)
+	return ToArray(retValue)
+}
 func (pself *inputMgr) GetMousePos() Vec2 {
 	retValue := CallInputGetMousePos()
 	return ToVec2(retValue)

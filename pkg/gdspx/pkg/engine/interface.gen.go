@@ -85,6 +85,7 @@ type IExtMgr interface {
 	PlaceTile(pos Vec2)
 	EraseTile(pos Vec2)
 	CloseDrawTiles()
+	GetLayerPointPath(p_from Vec2, p_to Vec2) Array
 }
 
 type IInputMgr interface {

@@ -165,6 +165,9 @@ void cgo_callfn_GDExtensionSpxExtEraseTile(const GDExtensionSpxExtEraseTile fn, 
 void cgo_callfn_GDExtensionSpxExtCloseDrawTiles(const GDExtensionSpxExtCloseDrawTiles fn) {
 	fn();
 }
+void cgo_callfn_GDExtensionSpxExtGetLayerPointPath(const GDExtensionSpxExtGetLayerPointPath fn, GdVec2 p_from, GdVec2 p_to, GdArray* ret_val) {
+	fn(p_from, p_to,ret_val);
+}
 void cgo_callfn_GDExtensionSpxInputGetMousePos(const GDExtensionSpxInputGetMousePos fn, GdVec2* ret_val) {
 	fn(ret_val);
 }
