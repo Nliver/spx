@@ -19,32 +19,6 @@ done
 source $SCRIPT_DIR/common/setup_env.sh
 
 cd $PROJ_DIR
-# old
-OLD_COMMON_ARGS='
-            optimize=size 
-            use_volk=no 
-            deprecated=no 
-            openxr=false 
-            vulkan=false 
-            graphite=false 
-            disable_3d_physics=true 
-            disable_navigation=true 
-            module_msdfgen_enabled=false 
-            module_text_server_adv_enabled=false 
-            module_text_server_fb_enabled=true 
-            module_gdscript_enabled=true 
-            module_freetype_enabled=true 
-            module_minimp3_enabled=true 
-            module_svg_enabled=true 
-            module_jpg_enabled=true 
-            module_ogg_enabled=true 
-            module_zip_enabled=true 
-            module_mobile_vr_enabled=false
-            module_openxr_enabled=false
-            module_webxr_enabled=false
-            module_text_server_adv_enabled=false
-            module_webrtc_enabled=false
-            module_godot_physics_2d_enabled=true '
 
 COMMON_ARGS='
             optimize=size
@@ -55,7 +29,6 @@ COMMON_ARGS='
             vulkan=false 
             graphite=false 
             disable_3d_physics=true 
-            disable_navigation=true 
             module_msdfgen_enabled=false 
             module_text_server_adv_enabled=false 
             module_text_server_fb_enabled=true 
