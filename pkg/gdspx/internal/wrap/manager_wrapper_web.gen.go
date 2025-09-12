@@ -312,9 +312,10 @@ func (pself *extMgr) SetLayerIndex(index int64) {
 	arg0 := JsFromGdInt(index)
 	API.SpxExtSetLayerIndex.Invoke(arg0)
 }
-func (pself *extMgr) SetTile(texture_path string) {
+func (pself *extMgr) SetTile(texture_path string, with_collision bool) {
 	arg0 := JsFromGdString(texture_path)
-	API.SpxExtSetTile.Invoke(arg0)
+	arg1 := JsFromGdBool(with_collision)
+	API.SpxExtSetTile.Invoke(arg0, arg1)
 }
 func (pself *extMgr) PlaceTiles(positions Array) {
 	arg0 := JsFromGdArray(positions)
@@ -330,6 +331,12 @@ func (pself *extMgr) EraseTile(pos Vec2) {
 }
 func (pself *extMgr) CloseDrawTiles() {
 	API.SpxExtCloseDrawTiles.Invoke()
+}
+func (pself *extMgr) GetLayerPointPath(p_from Vec2, p_to Vec2) Array {
+	arg0 := JsFromGdVec2(p_from)
+	arg1 := JsFromGdVec2(p_to)
+	_retValue := API.SpxExtGetLayerPointPath.Invoke(arg0, arg1)
+	return JsToGdArray(_retValue)
 }
 func (pself *inputMgr) GetMousePos() Vec2 {
 	_retValue := API.SpxInputGetMousePos.Invoke()

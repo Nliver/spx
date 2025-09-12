@@ -80,11 +80,12 @@ type IExtMgr interface {
 	DebugDrawRect(pos Vec2, size Vec2, color Color)
 	OpenDrawTiles()
 	SetLayerIndex(index int64)
-	SetTile(texture_path string)
+	SetTile(texture_path string, with_collision bool)
 	PlaceTiles(positions Array)
 	PlaceTile(pos Vec2)
 	EraseTile(pos Vec2)
 	CloseDrawTiles()
+	GetLayerPointPath(p_from Vec2, p_to Vec2) Array
 }
 
 type IInputMgr interface {

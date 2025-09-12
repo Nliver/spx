@@ -356,9 +356,9 @@ func (pself *extMgrImpl) SetLayerIndex(index int64) {
 		gdx.ExtMgr.SetLayerIndex(index)
 	})
 }
-func (pself *extMgrImpl) SetTile(texture_path string) {
+func (pself *extMgrImpl) SetTile(texture_path string, with_collision bool) {
 	callInMainThread(func() {
-		gdx.ExtMgr.SetTile(texture_path)
+		gdx.ExtMgr.SetTile(texture_path, with_collision)
 	})
 }
 func (pself *extMgrImpl) PlaceTiles(positions gdx.Array) {
@@ -380,6 +380,13 @@ func (pself *extMgrImpl) CloseDrawTiles() {
 	callInMainThread(func() {
 		gdx.ExtMgr.CloseDrawTiles()
 	})
+}
+func (pself *extMgrImpl) GetLayerPointPath(p_from Vec2, p_to Vec2) gdx.Array {
+	var _ret1 gdx.Array
+	callInMainThread(func() {
+		_ret1 = gdx.ExtMgr.GetLayerPointPath(p_from, p_to)
+	})
+	return _ret1
 }
 
 // IInputMgr

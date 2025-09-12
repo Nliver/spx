@@ -1805,8 +1805,12 @@ func (p *Game) SetTileMapLayerIndex(index int64) {
 }
 
 func (p *Game) SetTileTexture(costumePath string) {
+	p.setTileTexture(costumePath, true)
+}
+
+func (p *Game) setTileTexture(costumePath string, withCollision bool) {
 	path := engine.ToAssetPath(costumePath)
-	extMgr.SetTile(path)
+	extMgr.SetTile(path, withCollision)
 }
 
 func (p *Game) PlaceTiles(positions []float32) {

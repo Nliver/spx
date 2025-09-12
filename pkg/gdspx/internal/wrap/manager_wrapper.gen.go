@@ -323,11 +323,12 @@ func (pself *extMgr) SetLayerIndex(index int64) {
 	arg0 := ToGdInt(index)
 	CallExtSetLayerIndex(arg0)
 }
-func (pself *extMgr) SetTile(texture_path string) {
+func (pself *extMgr) SetTile(texture_path string, with_collision bool) {
 	arg0Str := C.CString(texture_path)
 	arg0 := (GdString)(arg0Str)
 	defer C.free(unsafe.Pointer(arg0Str))
-	CallExtSetTile(arg0)
+	arg1 := ToGdBool(with_collision)
+	CallExtSetTile(arg0, arg1)
 }
 func (pself *extMgr) PlaceTiles(positions Array) {
 	arg0 := ToGdArray(positions)
@@ -343,6 +344,12 @@ func (pself *extMgr) EraseTile(pos Vec2) {
 }
 func (pself *extMgr) CloseDrawTiles() {
 	CallExtCloseDrawTiles()
+}
+func (pself *extMgr) GetLayerPointPath(p_from Vec2, p_to Vec2) Array {
+	arg0 := ToGdVec2(p_from)
+	arg1 := ToGdVec2(p_to)
+	retValue := CallExtGetLayerPointPath(arg0, arg1)
+	return ToArray(retValue)
 }
 func (pself *inputMgr) GetMousePos() Vec2 {
 	retValue := CallInputGetMousePos()
