@@ -84,8 +84,10 @@ type IExtMgr interface {
 	SetTile(texture_path string, with_collision bool)
 	SetLayerOffset(index int64, offset Vec2)
 	GetLayerOffset(index int64) Vec2
-	PlaceTiles(positions Array)
-	PlaceTile(pos Vec2)
+	PlaceTiles(positions Array, texture_path string)
+	PlaceTilesWithLayer(positions Array, texture_path string, layer_index int64)
+	PlaceTile(pos Vec2, texture_path string)
+	PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64)
 	EraseTile(pos Vec2)
 	CloseDrawTiles()
 	GetLayerPointPath(p_from Vec2, p_to Vec2) Array

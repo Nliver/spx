@@ -192,10 +192,13 @@ func (pself *extMgrImpl) GetLayerOffset(index int64) Vec2 {
 	var _ret1 Vec2
 	return _ret1
 }
-func (pself *extMgrImpl) PlaceTiles(positions gdx.Array) {}
-func (pself *extMgrImpl) PlaceTile(pos Vec2)             {}
-func (pself *extMgrImpl) EraseTile(pos Vec2)             {}
-func (pself *extMgrImpl) CloseDrawTiles()                {}
+func (pself *extMgrImpl) PlaceTiles(positions gdx.Array, texture_path string) {}
+func (pself *extMgrImpl) PlaceTilesWithLayer(positions gdx.Array, texture_path string, layer_index int64) {
+}
+func (pself *extMgrImpl) PlaceTile(pos Vec2, texture_path string)                             {}
+func (pself *extMgrImpl) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64) {}
+func (pself *extMgrImpl) EraseTile(pos Vec2)                                                  {}
+func (pself *extMgrImpl) CloseDrawTiles()                                                     {}
 func (pself *extMgrImpl) GetLayerPointPath(p_from Vec2, p_to Vec2) gdx.Array {
 	var _ret1 gdx.Array
 	return _ret1

@@ -69,7 +69,9 @@ type GDExtensionInterface struct {
 	SpxExtSetLayerOffset                     GDExtensionSpxExtSetLayerOffset
 	SpxExtGetLayerOffset                     GDExtensionSpxExtGetLayerOffset
 	SpxExtPlaceTiles                         GDExtensionSpxExtPlaceTiles
+	SpxExtPlaceTilesWithLayer                GDExtensionSpxExtPlaceTilesWithLayer
 	SpxExtPlaceTile                          GDExtensionSpxExtPlaceTile
+	SpxExtPlaceTileWithLayer                 GDExtensionSpxExtPlaceTileWithLayer
 	SpxExtEraseTile                          GDExtensionSpxExtEraseTile
 	SpxExtCloseDrawTiles                     GDExtensionSpxExtCloseDrawTiles
 	SpxExtGetLayerPointPath                  GDExtensionSpxExtGetLayerPointPath
@@ -340,7 +342,9 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtSetLayerOffset = (GDExtensionSpxExtSetLayerOffset)(dlsymGD("spx_ext_set_layer_offset"))
 	x.SpxExtGetLayerOffset = (GDExtensionSpxExtGetLayerOffset)(dlsymGD("spx_ext_get_layer_offset"))
 	x.SpxExtPlaceTiles = (GDExtensionSpxExtPlaceTiles)(dlsymGD("spx_ext_place_tiles"))
+	x.SpxExtPlaceTilesWithLayer = (GDExtensionSpxExtPlaceTilesWithLayer)(dlsymGD("spx_ext_place_tiles_with_layer"))
 	x.SpxExtPlaceTile = (GDExtensionSpxExtPlaceTile)(dlsymGD("spx_ext_place_tile"))
+	x.SpxExtPlaceTileWithLayer = (GDExtensionSpxExtPlaceTileWithLayer)(dlsymGD("spx_ext_place_tile_with_layer"))
 	x.SpxExtEraseTile = (GDExtensionSpxExtEraseTile)(dlsymGD("spx_ext_erase_tile"))
 	x.SpxExtCloseDrawTiles = (GDExtensionSpxExtCloseDrawTiles)(dlsymGD("spx_ext_close_draw_tiles"))
 	x.SpxExtGetLayerPointPath = (GDExtensionSpxExtGetLayerPointPath)(dlsymGD("spx_ext_get_layer_point_path"))

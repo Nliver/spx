@@ -135,7 +135,9 @@ type GDExtensionSpxExtSetTile C.GDExtensionSpxExtSetTile
 type GDExtensionSpxExtSetLayerOffset C.GDExtensionSpxExtSetLayerOffset
 type GDExtensionSpxExtGetLayerOffset C.GDExtensionSpxExtGetLayerOffset
 type GDExtensionSpxExtPlaceTiles C.GDExtensionSpxExtPlaceTiles
+type GDExtensionSpxExtPlaceTilesWithLayer C.GDExtensionSpxExtPlaceTilesWithLayer
 type GDExtensionSpxExtPlaceTile C.GDExtensionSpxExtPlaceTile
+type GDExtensionSpxExtPlaceTileWithLayer C.GDExtensionSpxExtPlaceTileWithLayer
 type GDExtensionSpxExtEraseTile C.GDExtensionSpxExtEraseTile
 type GDExtensionSpxExtCloseDrawTiles C.GDExtensionSpxExtCloseDrawTiles
 type GDExtensionSpxExtGetLayerPointPath C.GDExtensionSpxExtGetLayerPointPath
@@ -816,20 +818,50 @@ func CallExtGetLayerOffset(
 }
 func CallExtPlaceTiles(
 	positions GdArray,
+	texture_path GdString,
 ) {
 	arg0 := (C.GDExtensionSpxExtPlaceTiles)(api.SpxExtPlaceTiles)
 	arg1GdArray := (C.GdArray)(positions)
+	arg2GdString := (C.GdString)(texture_path)
 
-	C.cgo_callfn_GDExtensionSpxExtPlaceTiles(arg0, arg1GdArray)
+	C.cgo_callfn_GDExtensionSpxExtPlaceTiles(arg0, arg1GdArray, arg2GdString)
+
+}
+func CallExtPlaceTilesWithLayer(
+	positions GdArray,
+	texture_path GdString,
+	layer_index GdInt,
+) {
+	arg0 := (C.GDExtensionSpxExtPlaceTilesWithLayer)(api.SpxExtPlaceTilesWithLayer)
+	arg1GdArray := (C.GdArray)(positions)
+	arg2GdString := (C.GdString)(texture_path)
+	arg3GdInt := (C.GdInt)(layer_index)
+
+	C.cgo_callfn_GDExtensionSpxExtPlaceTilesWithLayer(arg0, arg1GdArray, arg2GdString, arg3GdInt)
 
 }
 func CallExtPlaceTile(
 	pos GdVec2,
+	texture_path GdString,
 ) {
 	arg0 := (C.GDExtensionSpxExtPlaceTile)(api.SpxExtPlaceTile)
 	arg1GdVec2 := (C.GdVec2)(pos)
+	arg2GdString := (C.GdString)(texture_path)
 
-	C.cgo_callfn_GDExtensionSpxExtPlaceTile(arg0, arg1GdVec2)
+	C.cgo_callfn_GDExtensionSpxExtPlaceTile(arg0, arg1GdVec2, arg2GdString)
+
+}
+func CallExtPlaceTileWithLayer(
+	pos GdVec2,
+	texture_path GdString,
+	layer_index GdInt,
+) {
+	arg0 := (C.GDExtensionSpxExtPlaceTileWithLayer)(api.SpxExtPlaceTileWithLayer)
+	arg1GdVec2 := (C.GdVec2)(pos)
+	arg2GdString := (C.GdString)(texture_path)
+	arg3GdInt := (C.GdInt)(layer_index)
+
+	C.cgo_callfn_GDExtensionSpxExtPlaceTileWithLayer(arg0, arg1GdVec2, arg2GdString, arg3GdInt)
 
 }
 func CallExtEraseTile(

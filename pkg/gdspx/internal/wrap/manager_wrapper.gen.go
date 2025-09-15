@@ -344,13 +344,35 @@ func (pself *extMgr) GetLayerOffset(index int64) Vec2 {
 	retValue := CallExtGetLayerOffset(arg0)
 	return ToVec2(retValue)
 }
-func (pself *extMgr) PlaceTiles(positions Array) {
+func (pself *extMgr) PlaceTiles(positions Array, texture_path string) {
 	arg0 := ToGdArray(positions)
-	CallExtPlaceTiles(arg0)
+	arg1Str := C.CString(texture_path)
+	arg1 := (GdString)(arg1Str)
+	defer C.free(unsafe.Pointer(arg1Str))
+	CallExtPlaceTiles(arg0, arg1)
 }
-func (pself *extMgr) PlaceTile(pos Vec2) {
+func (pself *extMgr) PlaceTilesWithLayer(positions Array, texture_path string, layer_index int64) {
+	arg0 := ToGdArray(positions)
+	arg1Str := C.CString(texture_path)
+	arg1 := (GdString)(arg1Str)
+	defer C.free(unsafe.Pointer(arg1Str))
+	arg2 := ToGdInt(layer_index)
+	CallExtPlaceTilesWithLayer(arg0, arg1, arg2)
+}
+func (pself *extMgr) PlaceTile(pos Vec2, texture_path string) {
 	arg0 := ToGdVec2(pos)
-	CallExtPlaceTile(arg0)
+	arg1Str := C.CString(texture_path)
+	arg1 := (GdString)(arg1Str)
+	defer C.free(unsafe.Pointer(arg1Str))
+	CallExtPlaceTile(arg0, arg1)
+}
+func (pself *extMgr) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64) {
+	arg0 := ToGdVec2(pos)
+	arg1Str := C.CString(texture_path)
+	arg1 := (GdString)(arg1Str)
+	defer C.free(unsafe.Pointer(arg1Str))
+	arg2 := ToGdInt(layer_index)
+	CallExtPlaceTileWithLayer(arg0, arg1, arg2)
 }
 func (pself *extMgr) EraseTile(pos Vec2) {
 	arg0 := ToGdVec2(pos)
