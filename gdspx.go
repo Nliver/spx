@@ -102,7 +102,7 @@ func (p *Game) syncEnginePositions() error {
 	for _, item := range items {
 		sprite, ok := item.(*SpriteImpl)
 		if ok && sprite.syncSprite != nil {
-			if sprite.physicMode != NoPhysic {
+			if sprite.physicsMode != NoPhysics {
 				sprite.x, sprite.y = sprite.syncGetEnginePosition(true)
 			}
 		}
@@ -305,7 +305,7 @@ func syncInitSpritePhysicInfo(sprite *SpriteImpl, syncProxy *engine.Sprite) {
 		syncProxy.SetTriggerEnabled(false)
 	}
 	syncProxy.SetGravityScale(sprite.gravity)
-	syncProxy.SetPhysicsMode(sprite.physicMode)
+	syncProxy.SetPhysicsMode(sprite.physicsMode)
 }
 func syncGetCostumeBoundByAlpha(p *SpriteImpl, pscale float64) (mathf.Vec2, mathf.Vec2) {
 	return getCostumeBoundByAlpha(p, pscale, true)
