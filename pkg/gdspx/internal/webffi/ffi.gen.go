@@ -73,7 +73,9 @@ type GDExtensionInterface struct {
 	SpxExtSetLayerOffset                     js.Value
 	SpxExtGetLayerOffset                     js.Value
 	SpxExtPlaceTiles                         js.Value
+	SpxExtPlaceTilesWithLayer                js.Value
 	SpxExtPlaceTile                          js.Value
+	SpxExtPlaceTileWithLayer                 js.Value
 	SpxExtEraseTile                          js.Value
 	SpxExtCloseDrawTiles                     js.Value
 	SpxExtGetLayerPointPath                  js.Value
@@ -344,7 +346,9 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtSetLayerOffset = dlsymGD("gdspx_ext_set_layer_offset")
 	x.SpxExtGetLayerOffset = dlsymGD("gdspx_ext_get_layer_offset")
 	x.SpxExtPlaceTiles = dlsymGD("gdspx_ext_place_tiles")
+	x.SpxExtPlaceTilesWithLayer = dlsymGD("gdspx_ext_place_tiles_with_layer")
 	x.SpxExtPlaceTile = dlsymGD("gdspx_ext_place_tile")
+	x.SpxExtPlaceTileWithLayer = dlsymGD("gdspx_ext_place_tile_with_layer")
 	x.SpxExtEraseTile = dlsymGD("gdspx_ext_erase_tile")
 	x.SpxExtCloseDrawTiles = dlsymGD("gdspx_ext_close_draw_tiles")
 	x.SpxExtGetLayerPointPath = dlsymGD("gdspx_ext_get_layer_point_path")

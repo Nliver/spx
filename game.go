@@ -1804,21 +1804,19 @@ func (p *Game) SetTileMapLayerIndex(index int64) {
 	extMgr.SetLayerIndex(index)
 }
 
-func (p *Game) SetTileTexture(costumePath string) {
-	p.setTileTexture(costumePath, true)
+func (p *Game) PlaceTiles__0(positions []float64, texturePath string) {
+	path := engine.ToAssetPath(texturePath)
+	extMgr.PlaceTiles(f64Tof32(positions), path)
 }
 
-func (p *Game) setTileTexture(costumePath string, withCollision bool) {
-	path := engine.ToAssetPath(costumePath)
-	extMgr.SetTile(path, withCollision)
+func (p *Game) PlaceTiles__1(positions []float64, texturePath string, layerIndex int64) {
+	path := engine.ToAssetPath(texturePath)
+	extMgr.PlaceTilesWithLayer(f64Tof32(positions), path, layerIndex)
 }
 
-func (p *Game) PlaceTiles(positions []float32) {
-	extMgr.PlaceTiles(positions)
-}
-
-func (p *Game) PlaceTile(x, y float64) {
-	extMgr.PlaceTile(mathf.NewVec2(x, y))
+func (p *Game) PlaceTile(x, y float64, texturePath string) {
+	path := engine.ToAssetPath(texturePath)
+	extMgr.PlaceTile(mathf.NewVec2(x, y), path)
 }
 
 func (p *Game) EraseTile(x, y float64) {
@@ -1827,6 +1825,12 @@ func (p *Game) EraseTile(x, y float64) {
 
 func (p *Game) ExitTilemapEditMode() {
 	extMgr.ExitTilemapEditorMode()
+}
+
+func (p *Game) GetLayerPointPath(x_from, y_from, x_to, y_to float64) []float64 {
+	arr := extMgr.GetLayerPointPath(mathf.NewVec2(x_from, y_from), mathf.NewVec2(x_to, y_to))
+	result := arr.([]float32)
+	return f32Tof64(result)
 }
 
 func (p *Game) CreatePureSprite(texture_path string, x, y float64, zindex int64) {

@@ -331,13 +331,27 @@ func (pself *extMgr) GetLayerOffset(index int64) Vec2 {
 	_retValue := API.SpxExtGetLayerOffset.Invoke(arg0)
 	return JsToGdVec2(_retValue)
 }
-func (pself *extMgr) PlaceTiles(positions Array) {
+func (pself *extMgr) PlaceTiles(positions Array, texture_path string) {
 	arg0 := JsFromGdArray(positions)
-	API.SpxExtPlaceTiles.Invoke(arg0)
+	arg1 := JsFromGdString(texture_path)
+	API.SpxExtPlaceTiles.Invoke(arg0, arg1)
 }
-func (pself *extMgr) PlaceTile(pos Vec2) {
+func (pself *extMgr) PlaceTilesWithLayer(positions Array, texture_path string, layer_index int64) {
+	arg0 := JsFromGdArray(positions)
+	arg1 := JsFromGdString(texture_path)
+	arg2 := JsFromGdInt(layer_index)
+	API.SpxExtPlaceTilesWithLayer.Invoke(arg0, arg1, arg2)
+}
+func (pself *extMgr) PlaceTile(pos Vec2, texture_path string) {
 	arg0 := JsFromGdVec2(pos)
-	API.SpxExtPlaceTile.Invoke(arg0)
+	arg1 := JsFromGdString(texture_path)
+	API.SpxExtPlaceTile.Invoke(arg0, arg1)
+}
+func (pself *extMgr) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64) {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdString(texture_path)
+	arg2 := JsFromGdInt(layer_index)
+	API.SpxExtPlaceTileWithLayer.Invoke(arg0, arg1, arg2)
 }
 func (pself *extMgr) EraseTile(pos Vec2) {
 	arg0 := JsFromGdVec2(pos)

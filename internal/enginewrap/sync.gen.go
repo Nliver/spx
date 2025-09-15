@@ -378,14 +378,24 @@ func (pself *extMgrImpl) GetLayerOffset(index int64) Vec2 {
 	})
 	return _ret1
 }
-func (pself *extMgrImpl) PlaceTiles(positions gdx.Array) {
+func (pself *extMgrImpl) PlaceTiles(positions gdx.Array, texture_path string) {
 	callInMainThread(func() {
-		gdx.ExtMgr.PlaceTiles(positions)
+		gdx.ExtMgr.PlaceTiles(positions, texture_path)
 	})
 }
-func (pself *extMgrImpl) PlaceTile(pos Vec2) {
+func (pself *extMgrImpl) PlaceTilesWithLayer(positions gdx.Array, texture_path string, layer_index int64) {
 	callInMainThread(func() {
-		gdx.ExtMgr.PlaceTile(pos)
+		gdx.ExtMgr.PlaceTilesWithLayer(positions, texture_path, layer_index)
+	})
+}
+func (pself *extMgrImpl) PlaceTile(pos Vec2, texture_path string) {
+	callInMainThread(func() {
+		gdx.ExtMgr.PlaceTile(pos, texture_path)
+	})
+}
+func (pself *extMgrImpl) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64) {
+	callInMainThread(func() {
+		gdx.ExtMgr.PlaceTileWithLayer(pos, texture_path, layer_index)
 	})
 }
 func (pself *extMgrImpl) EraseTile(pos Vec2) {

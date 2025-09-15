@@ -162,11 +162,17 @@ void cgo_callfn_GDExtensionSpxExtSetLayerOffset(const GDExtensionSpxExtSetLayerO
 void cgo_callfn_GDExtensionSpxExtGetLayerOffset(const GDExtensionSpxExtGetLayerOffset fn, GdInt index, GdVec2* ret_val) {
 	fn(index,ret_val);
 }
-void cgo_callfn_GDExtensionSpxExtPlaceTiles(const GDExtensionSpxExtPlaceTiles fn, GdArray positions) {
-	fn(positions);
+void cgo_callfn_GDExtensionSpxExtPlaceTiles(const GDExtensionSpxExtPlaceTiles fn, GdArray positions, GdString texture_path) {
+	fn(positions, texture_path);
 }
-void cgo_callfn_GDExtensionSpxExtPlaceTile(const GDExtensionSpxExtPlaceTile fn, GdVec2 pos) {
-	fn(pos);
+void cgo_callfn_GDExtensionSpxExtPlaceTilesWithLayer(const GDExtensionSpxExtPlaceTilesWithLayer fn, GdArray positions, GdString texture_path, GdInt layer_index) {
+	fn(positions, texture_path, layer_index);
+}
+void cgo_callfn_GDExtensionSpxExtPlaceTile(const GDExtensionSpxExtPlaceTile fn, GdVec2 pos, GdString texture_path) {
+	fn(pos, texture_path);
+}
+void cgo_callfn_GDExtensionSpxExtPlaceTileWithLayer(const GDExtensionSpxExtPlaceTileWithLayer fn, GdVec2 pos, GdString texture_path, GdInt layer_index) {
+	fn(pos, texture_path, layer_index);
 }
 void cgo_callfn_GDExtensionSpxExtEraseTile(const GDExtensionSpxExtEraseTile fn, GdVec2 pos) {
 	fn(pos);
