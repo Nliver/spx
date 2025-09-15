@@ -62,6 +62,7 @@ type GDExtensionInterface struct {
 	SpxExtSetPenStampTexture                 GDExtensionSpxExtSetPenStampTexture
 	SpxExtDebugDrawCircle                    GDExtensionSpxExtDebugDrawCircle
 	SpxExtDebugDrawRect                      GDExtensionSpxExtDebugDrawRect
+	SpxExtDebugDrawLine                      GDExtensionSpxExtDebugDrawLine
 	SpxExtOpenDrawTilesWithSize              GDExtensionSpxExtOpenDrawTilesWithSize
 	SpxExtOpenDrawTiles                      GDExtensionSpxExtOpenDrawTiles
 	SpxExtSetLayerIndex                      GDExtensionSpxExtSetLayerIndex
@@ -99,6 +100,7 @@ type GDExtensionInterface struct {
 	SpxPhysicGetGlobalAirDrag                GDExtensionSpxPhysicGetGlobalAirDrag
 	SpxPhysicCheckCollisionRect              GDExtensionSpxPhysicCheckCollisionRect
 	SpxPhysicCheckCollisionCircle            GDExtensionSpxPhysicCheckCollisionCircle
+	SpxPhysicRaycastWithDetails              GDExtensionSpxPhysicRaycastWithDetails
 	SpxPlatformSetStretchMode                GDExtensionSpxPlatformSetStretchMode
 	SpxPlatformSetWindowPosition             GDExtensionSpxPlatformSetWindowPosition
 	SpxPlatformGetWindowPosition             GDExtensionSpxPlatformGetWindowPosition
@@ -335,6 +337,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtSetPenStampTexture = (GDExtensionSpxExtSetPenStampTexture)(dlsymGD("spx_ext_set_pen_stamp_texture"))
 	x.SpxExtDebugDrawCircle = (GDExtensionSpxExtDebugDrawCircle)(dlsymGD("spx_ext_debug_draw_circle"))
 	x.SpxExtDebugDrawRect = (GDExtensionSpxExtDebugDrawRect)(dlsymGD("spx_ext_debug_draw_rect"))
+	x.SpxExtDebugDrawLine = (GDExtensionSpxExtDebugDrawLine)(dlsymGD("spx_ext_debug_draw_line"))
 	x.SpxExtOpenDrawTilesWithSize = (GDExtensionSpxExtOpenDrawTilesWithSize)(dlsymGD("spx_ext_open_draw_tiles_with_size"))
 	x.SpxExtOpenDrawTiles = (GDExtensionSpxExtOpenDrawTiles)(dlsymGD("spx_ext_open_draw_tiles"))
 	x.SpxExtSetLayerIndex = (GDExtensionSpxExtSetLayerIndex)(dlsymGD("spx_ext_set_layer_index"))
@@ -372,6 +375,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxPhysicGetGlobalAirDrag = (GDExtensionSpxPhysicGetGlobalAirDrag)(dlsymGD("spx_physic_get_global_air_drag"))
 	x.SpxPhysicCheckCollisionRect = (GDExtensionSpxPhysicCheckCollisionRect)(dlsymGD("spx_physic_check_collision_rect"))
 	x.SpxPhysicCheckCollisionCircle = (GDExtensionSpxPhysicCheckCollisionCircle)(dlsymGD("spx_physic_check_collision_circle"))
+	x.SpxPhysicRaycastWithDetails = (GDExtensionSpxPhysicRaycastWithDetails)(dlsymGD("spx_physic_raycast_with_details"))
 	x.SpxPlatformSetStretchMode = (GDExtensionSpxPlatformSetStretchMode)(dlsymGD("spx_platform_set_stretch_mode"))
 	x.SpxPlatformSetWindowPosition = (GDExtensionSpxPlatformSetWindowPosition)(dlsymGD("spx_platform_set_window_position"))
 	x.SpxPlatformGetWindowPosition = (GDExtensionSpxPlatformGetWindowPosition)(dlsymGD("spx_platform_get_window_position"))

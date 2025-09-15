@@ -183,6 +183,7 @@ func (pself *extMgrImpl) SetPenSizeTo(obj gdx.Object, size float64)             
 func (pself *extMgrImpl) SetPenStampTexture(obj gdx.Object, texture_path string)     {}
 func (pself *extMgrImpl) DebugDrawCircle(pos Vec2, radius float64, color Color)      {}
 func (pself *extMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color)             {}
+func (pself *extMgrImpl) DebugDrawLine(from Vec2, to Vec2, color Color)              {}
 func (pself *extMgrImpl) OpenDrawTilesWithSize(tile_size int64)                      {}
 func (pself *extMgrImpl) OpenDrawTiles()                                             {}
 func (pself *extMgrImpl) SetLayerIndex(index int64)                                  {}
@@ -279,6 +280,10 @@ func (pself *physicMgrImpl) CheckCollisionRect(pos Vec2, size Vec2, collision_ma
 	return _ret1
 }
 func (pself *physicMgrImpl) CheckCollisionCircle(pos Vec2, radius float64, collision_mask int64) gdx.Array {
+	var _ret1 gdx.Array
+	return _ret1
+}
+func (pself *physicMgrImpl) RaycastWithDetails(from Vec2, to Vec2, ignore_sprites gdx.Array, collision_mask int64, collide_with_areas bool, collide_with_bodies bool) gdx.Array {
 	var _ret1 gdx.Array
 	return _ret1
 }

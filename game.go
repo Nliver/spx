@@ -1789,6 +1789,43 @@ func (p *Game) CheckCollision__1(posX, posY, radius float64) []Sprite {
 	ary := physicMgr.CheckCollisionCircle(mathf.NewVec2(posX, posY), radius, -1)
 	return p.checkCollision(ary)
 }
+func (p *Game) Raycast__0(fromX, fromY, toX, toY float64, ignoreSprites []Sprite) (hit bool, sprite Sprite, hitX, hitY float64) {
+	from := mathf.NewVec2(fromX, fromY)
+	to := mathf.NewVec2(toX, toY)
+	ignoreSpritesIds := make([]int64, 0)
+	for _, item := range ignoreSprites {
+		if item == nil {
+			continue
+		}
+		impl := spriteOf(item)
+		if impl != nil {
+			ignoreSpritesIds = append(ignoreSpritesIds, impl.getSpriteId())
+		}
+	}
+	result := raycast(from, to, ignoreSpritesIds, -1)
+	if result == nil {
+		return false, nil, 0, 0
+	}
+	var target Sprite = nil
+	if result.Hited {
+		sprite := engine.GetSprite(result.SpriteId)
+		if sprite != nil {
+			impl := sprite.Target.(*SpriteImpl)
+			if impl != nil {
+				target = impl.sprite
+			}
+		}
+	}
+	return result.Hited, target, result.PosX, result.PosY
+}
+
+func (p *Game) Raycast__1(fromX, fromY, toX, toY float64, ignoreSprite Sprite) (hit bool, sprite Sprite, hitX, hitY float64) {
+	return p.Raycast__0(fromX, fromY, toX, toY, []Sprite{ignoreSprite})
+}
+
+func (p *Game) Raycast__2(fromX, fromY, toX, toY float64) (hit bool, sprite Sprite, hitX, hitY float64) {
+	return p.Raycast__0(fromX, fromY, toX, toY, []Sprite{})
+}
 
 func (p *Game) DebugDrawRect(posX, posY, width, height float64, color Color) {
 	extMgr.DebugDrawRect(mathf.NewVec2(posX, posY), mathf.NewVec2(width, height), toMathfColor(color))
@@ -1796,6 +1833,10 @@ func (p *Game) DebugDrawRect(posX, posY, width, height float64, color Color) {
 
 func (p *Game) DebugDrawCircle(posX, posY, radius float64, color Color) {
 	extMgr.DebugDrawCircle(mathf.NewVec2(posX, posY), radius, toMathfColor(color))
+}
+
+func (p *Game) DebugDrawLine(fromX, fromY, toX, toY float64, color Color) {
+	extMgr.DebugDrawLine(mathf.NewVec2(fromX, fromY), mathf.NewVec2(toX, toY), toMathfColor(color))
 }
 
 // -----------------------------------------------------------------------------

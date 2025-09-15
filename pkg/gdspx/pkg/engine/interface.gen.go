@@ -78,6 +78,7 @@ type IExtMgr interface {
 	SetPenStampTexture(obj Object, texture_path string)
 	DebugDrawCircle(pos Vec2, radius float64, color Color)
 	DebugDrawRect(pos Vec2, size Vec2, color Color)
+	DebugDrawLine(from Vec2, to Vec2, color Color)
 	OpenDrawTilesWithSize(tile_size int64)
 	OpenDrawTiles()
 	SetLayerIndex(index int64)
@@ -121,6 +122,7 @@ type IPhysicMgr interface {
 	GetGlobalAirDrag() float64
 	CheckCollisionRect(pos Vec2, size Vec2, collision_mask int64) Array
 	CheckCollisionCircle(pos Vec2, radius float64, collision_mask int64) Array
+	RaycastWithDetails(from Vec2, to Vec2, ignore_sprites Array, collision_mask int64, collide_with_areas bool, collide_with_bodies bool) Array
 }
 
 type IPlatformMgr interface {

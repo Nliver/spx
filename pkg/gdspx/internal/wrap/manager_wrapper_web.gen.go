@@ -305,6 +305,12 @@ func (pself *extMgr) DebugDrawRect(pos Vec2, size Vec2, color Color) {
 	arg2 := JsFromGdColor(color)
 	API.SpxExtDebugDrawRect.Invoke(arg0, arg1, arg2)
 }
+func (pself *extMgr) DebugDrawLine(from Vec2, to Vec2, color Color) {
+	arg0 := JsFromGdVec2(from)
+	arg1 := JsFromGdVec2(to)
+	arg2 := JsFromGdColor(color)
+	API.SpxExtDebugDrawLine.Invoke(arg0, arg1, arg2)
+}
 func (pself *extMgr) OpenDrawTilesWithSize(tile_size int64) {
 	arg0 := JsFromGdInt(tile_size)
 	API.SpxExtOpenDrawTilesWithSize.Invoke(arg0)
@@ -485,6 +491,16 @@ func (pself *physicMgr) CheckCollisionCircle(pos Vec2, radius float64, collision
 	arg1 := JsFromGdFloat(radius)
 	arg2 := JsFromGdInt(collision_mask)
 	_retValue := API.SpxPhysicCheckCollisionCircle.Invoke(arg0, arg1, arg2)
+	return JsToGdArray(_retValue)
+}
+func (pself *physicMgr) RaycastWithDetails(from Vec2, to Vec2, ignore_sprites Array, collision_mask int64, collide_with_areas bool, collide_with_bodies bool) Array {
+	arg0 := JsFromGdVec2(from)
+	arg1 := JsFromGdVec2(to)
+	arg2 := JsFromGdArray(ignore_sprites)
+	arg3 := JsFromGdInt(collision_mask)
+	arg4 := JsFromGdBool(collide_with_areas)
+	arg5 := JsFromGdBool(collide_with_bodies)
+	_retValue := API.SpxPhysicRaycastWithDetails.Invoke(arg0, arg1, arg2, arg3, arg4, arg5)
 	return JsToGdArray(_retValue)
 }
 func (pself *platformMgr) SetStretchMode(enable bool) {

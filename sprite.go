@@ -2024,24 +2024,7 @@ func (p *SpriteImpl) setPosition(posX, posY float64) {
 func (p *SpriteImpl) IsOnFloor() bool {
 	return spriteMgr.IsOnFloor(p.getSpriteId())
 }
-func (p *SpriteImpl) Raycast(fromX, fromY, toX, toY float64) (hit bool, hitX, hitY float64, sprite Sprite) {
-	from := mathf.NewVec2(fromX, fromY)
-	to := mathf.NewVec2(toX, toY)
-	// TODO update c++ api
-	hitObj := physicMgr.Raycast(from, to, p.collisionMask)
-	if hitObj != 0 {
-		sprite := engine.GetSprite(hitObj)
-		if sprite != nil {
-			impl := sprite.Target.(*SpriteImpl)
-			if impl != nil {
-				return true, toX, toY, impl.sprite
-			}
-		}
-	}
-	return false, 0, 0, nil
-}
 
-// 碰撞器设置函数
 func (p *SpriteImpl) SetColliderRect(width, height float64) {
 	p.colliderType = physicColliderRect
 	p.colliderSize = mathf.NewVec2(width, height)

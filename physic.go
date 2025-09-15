@@ -16,6 +16,14 @@
 
 package spx
 
+import (
+	"errors"
+	"fmt"
+
+	"github.com/goplus/spbase/mathf"
+	"github.com/goplus/spx/v2/internal/engine"
+)
+
 const (
 	physicColliderNone    = 0x00
 	physicColliderAuto    = 0x01
@@ -59,4 +67,52 @@ func paserColliderType(typeName string, defaultValue int64) int64 {
 		return physicColliderPolygon
 	}
 	return defaultValue
+}
+
+type rayCastResult struct {
+	Hited    bool
+	SpriteId int64
+	PosX     float64
+	PosY     float64
+	NormalX  float64
+	NormalY  float64
+}
+
+func (p *rayCastResult) ToArray() engine.Array {
+	ary := make([]int64, 6)
+	if p.Hited {
+		ary[0] = 1
+	}
+	ary[1] = p.SpriteId
+	ary[2] = engine.ConvertToInt64(p.PosX)
+	ary[3] = engine.ConvertToInt64(p.PosY)
+	ary[4] = engine.ConvertToInt64(p.NormalX)
+	ary[5] = engine.ConvertToInt64(p.NormalY)
+	return ary
+}
+func tryRaycastResult(ary engine.Array) (*rayCastResult, error) {
+	dataAry, succ := ary.([]int64)
+	if !succ {
+		return nil, errors.New("array type error" + fmt.Sprintf("%v", ary))
+	}
+	p := &rayCastResult{}
+	p.Hited = false
+	if len(dataAry) != 6 {
+		return nil, errors.New("array len error")
+	}
+	p.Hited = dataAry[0] != 0
+	p.SpriteId = dataAry[1]
+	p.PosX = engine.ConvertToFloat64(dataAry[2])
+	p.PosY = engine.ConvertToFloat64(dataAry[3])
+	p.NormalX = engine.ConvertToFloat64(dataAry[4])
+	p.NormalY = engine.ConvertToFloat64(dataAry[5])
+	return p, nil
+}
+func raycast(from, to mathf.Vec2, ignoreSprites []int64, mask int64) *rayCastResult {
+	ary := physicMgr.RaycastWithDetails(from, to, ignoreSprites, -1, true, true)
+	result, err := tryRaycastResult(ary)
+	if err != nil {
+		println("raycast error:", err.Error())
+	}
+	return result
 }
