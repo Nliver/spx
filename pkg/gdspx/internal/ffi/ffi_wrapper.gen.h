@@ -144,6 +144,9 @@ void cgo_callfn_GDExtensionSpxExtDebugDrawCircle(const GDExtensionSpxExtDebugDra
 void cgo_callfn_GDExtensionSpxExtDebugDrawRect(const GDExtensionSpxExtDebugDrawRect fn, GdVec2 pos, GdVec2 size, GdColor color) {
 	fn(pos, size, color);
 }
+void cgo_callfn_GDExtensionSpxExtDebugDrawLine(const GDExtensionSpxExtDebugDrawLine fn, GdVec2 from, GdVec2 to, GdColor color) {
+	fn(from, to, color);
+}
 void cgo_callfn_GDExtensionSpxExtOpenDrawTilesWithSize(const GDExtensionSpxExtOpenDrawTilesWithSize fn, GdInt tile_size) {
 	fn(tile_size);
 }
@@ -254,6 +257,9 @@ void cgo_callfn_GDExtensionSpxPhysicCheckCollisionRect(const GDExtensionSpxPhysi
 }
 void cgo_callfn_GDExtensionSpxPhysicCheckCollisionCircle(const GDExtensionSpxPhysicCheckCollisionCircle fn, GdVec2 pos, GdFloat radius, GdInt collision_mask, GdArray* ret_val) {
 	fn(pos, radius, collision_mask,ret_val);
+}
+void cgo_callfn_GDExtensionSpxPhysicRaycastWithDetails(const GDExtensionSpxPhysicRaycastWithDetails fn, GdVec2 from, GdVec2 to, GdArray ignore_sprites, GdInt collision_mask, GdBool collide_with_areas, GdBool collide_with_bodies, GdArray* ret_val) {
+	fn(from, to, ignore_sprites, collision_mask, collide_with_areas, collide_with_bodies,ret_val);
 }
 void cgo_callfn_GDExtensionSpxPlatformSetStretchMode(const GDExtensionSpxPlatformSetStretchMode fn, GdBool enable) {
 	fn(enable);

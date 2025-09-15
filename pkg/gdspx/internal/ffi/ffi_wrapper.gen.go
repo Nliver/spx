@@ -128,6 +128,7 @@ type GDExtensionSpxExtSetPenSizeTo C.GDExtensionSpxExtSetPenSizeTo
 type GDExtensionSpxExtSetPenStampTexture C.GDExtensionSpxExtSetPenStampTexture
 type GDExtensionSpxExtDebugDrawCircle C.GDExtensionSpxExtDebugDrawCircle
 type GDExtensionSpxExtDebugDrawRect C.GDExtensionSpxExtDebugDrawRect
+type GDExtensionSpxExtDebugDrawLine C.GDExtensionSpxExtDebugDrawLine
 type GDExtensionSpxExtOpenDrawTilesWithSize C.GDExtensionSpxExtOpenDrawTilesWithSize
 type GDExtensionSpxExtOpenDrawTiles C.GDExtensionSpxExtOpenDrawTiles
 type GDExtensionSpxExtSetLayerIndex C.GDExtensionSpxExtSetLayerIndex
@@ -165,6 +166,7 @@ type GDExtensionSpxPhysicSetGlobalAirDrag C.GDExtensionSpxPhysicSetGlobalAirDrag
 type GDExtensionSpxPhysicGetGlobalAirDrag C.GDExtensionSpxPhysicGetGlobalAirDrag
 type GDExtensionSpxPhysicCheckCollisionRect C.GDExtensionSpxPhysicCheckCollisionRect
 type GDExtensionSpxPhysicCheckCollisionCircle C.GDExtensionSpxPhysicCheckCollisionCircle
+type GDExtensionSpxPhysicRaycastWithDetails C.GDExtensionSpxPhysicRaycastWithDetails
 type GDExtensionSpxPlatformSetStretchMode C.GDExtensionSpxPlatformSetStretchMode
 type GDExtensionSpxPlatformSetWindowPosition C.GDExtensionSpxPlatformSetWindowPosition
 type GDExtensionSpxPlatformGetWindowPosition C.GDExtensionSpxPlatformGetWindowPosition
@@ -761,6 +763,19 @@ func CallExtDebugDrawRect(
 	C.cgo_callfn_GDExtensionSpxExtDebugDrawRect(arg0, arg1GdVec2, arg2GdVec2, arg3GdColor)
 
 }
+func CallExtDebugDrawLine(
+	from GdVec2,
+	to GdVec2,
+	color GdColor,
+) {
+	arg0 := (C.GDExtensionSpxExtDebugDrawLine)(api.SpxExtDebugDrawLine)
+	arg1GdVec2 := (C.GdVec2)(from)
+	arg2GdVec2 := (C.GdVec2)(to)
+	arg3GdColor := (C.GdColor)(color)
+
+	C.cgo_callfn_GDExtensionSpxExtDebugDrawLine(arg0, arg1GdVec2, arg2GdVec2, arg3GdColor)
+
+}
 func CallExtOpenDrawTilesWithSize(
 	tile_size GdInt,
 ) {
@@ -1124,6 +1139,26 @@ func CallPhysicCheckCollisionCircle(
 	arg3GdInt := (C.GdInt)(collision_mask)
 	var ret_val C.GdArray
 	C.cgo_callfn_GDExtensionSpxPhysicCheckCollisionCircle(arg0, arg1GdVec2, arg2GdFloat, arg3GdInt, &ret_val)
+
+	return GdArray(ret_val)
+}
+func CallPhysicRaycastWithDetails(
+	from GdVec2,
+	to GdVec2,
+	ignore_sprites GdArray,
+	collision_mask GdInt,
+	collide_with_areas GdBool,
+	collide_with_bodies GdBool,
+) GdArray {
+	arg0 := (C.GDExtensionSpxPhysicRaycastWithDetails)(api.SpxPhysicRaycastWithDetails)
+	arg1GdVec2 := (C.GdVec2)(from)
+	arg2GdVec2 := (C.GdVec2)(to)
+	arg3GdArray := (C.GdArray)(ignore_sprites)
+	arg4GdInt := (C.GdInt)(collision_mask)
+	arg5GdBool := (C.GdBool)(collide_with_areas)
+	arg6GdBool := (C.GdBool)(collide_with_bodies)
+	var ret_val C.GdArray
+	C.cgo_callfn_GDExtensionSpxPhysicRaycastWithDetails(arg0, arg1GdVec2, arg2GdVec2, arg3GdArray, arg4GdInt, arg5GdBool, arg6GdBool, &ret_val)
 
 	return GdArray(ret_val)
 }

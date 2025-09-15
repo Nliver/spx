@@ -8,6 +8,7 @@ import (
 	"github.com/goplus/spx/v2/internal/engine/profiler"
 	"github.com/goplus/spx/v2/internal/enginewrap"
 	"github.com/goplus/spx/v2/internal/time"
+	"github.com/goplus/spx/v2/pkg/gdspx/pkg/engine"
 	gdx "github.com/goplus/spx/v2/pkg/gdspx/pkg/engine"
 	gde "github.com/goplus/spx/v2/pkg/gdspx/pkg/gdspx"
 )
@@ -27,6 +28,17 @@ var (
 )
 
 type Object = gdx.Object
+type Array = gdx.Array
+
+const Float2IntFactor = gdx.Float2IntFactor
+
+func ConvertToFloat64(val int64) float64 {
+	return float64(val) / engine.Float2IntFactor
+}
+func ConvertToInt64(val float64) int64 {
+	return int64(val * engine.Float2IntFactor)
+}
+
 type TriggerEvent struct {
 	Src *Sprite
 	Dst *Sprite

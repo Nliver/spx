@@ -346,6 +346,11 @@ func (pself *extMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color) {
 		gdx.ExtMgr.DebugDrawRect(pos, size, color)
 	})
 }
+func (pself *extMgrImpl) DebugDrawLine(from Vec2, to Vec2, color Color) {
+	callInMainThread(func() {
+		gdx.ExtMgr.DebugDrawLine(from, to, color)
+	})
+}
 func (pself *extMgrImpl) OpenDrawTilesWithSize(tile_size int64) {
 	callInMainThread(func() {
 		gdx.ExtMgr.OpenDrawTilesWithSize(tile_size)
@@ -570,6 +575,13 @@ func (pself *physicMgrImpl) CheckCollisionCircle(pos Vec2, radius float64, colli
 	var _ret1 gdx.Array
 	callInMainThread(func() {
 		_ret1 = gdx.PhysicMgr.CheckCollisionCircle(pos, radius, collision_mask)
+	})
+	return _ret1
+}
+func (pself *physicMgrImpl) RaycastWithDetails(from Vec2, to Vec2, ignore_sprites gdx.Array, collision_mask int64, collide_with_areas bool, collide_with_bodies bool) gdx.Array {
+	var _ret1 gdx.Array
+	callInMainThread(func() {
+		_ret1 = gdx.PhysicMgr.RaycastWithDetails(from, to, ignore_sprites, collision_mask, collide_with_areas, collide_with_bodies)
 	})
 	return _ret1
 }

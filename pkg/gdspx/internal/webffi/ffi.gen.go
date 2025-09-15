@@ -66,6 +66,7 @@ type GDExtensionInterface struct {
 	SpxExtSetPenStampTexture                 js.Value
 	SpxExtDebugDrawCircle                    js.Value
 	SpxExtDebugDrawRect                      js.Value
+	SpxExtDebugDrawLine                      js.Value
 	SpxExtOpenDrawTilesWithSize              js.Value
 	SpxExtOpenDrawTiles                      js.Value
 	SpxExtSetLayerIndex                      js.Value
@@ -103,6 +104,7 @@ type GDExtensionInterface struct {
 	SpxPhysicGetGlobalAirDrag                js.Value
 	SpxPhysicCheckCollisionRect              js.Value
 	SpxPhysicCheckCollisionCircle            js.Value
+	SpxPhysicRaycastWithDetails              js.Value
 	SpxPlatformSetStretchMode                js.Value
 	SpxPlatformSetWindowPosition             js.Value
 	SpxPlatformGetWindowPosition             js.Value
@@ -339,6 +341,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtSetPenStampTexture = dlsymGD("gdspx_ext_set_pen_stamp_texture")
 	x.SpxExtDebugDrawCircle = dlsymGD("gdspx_ext_debug_draw_circle")
 	x.SpxExtDebugDrawRect = dlsymGD("gdspx_ext_debug_draw_rect")
+	x.SpxExtDebugDrawLine = dlsymGD("gdspx_ext_debug_draw_line")
 	x.SpxExtOpenDrawTilesWithSize = dlsymGD("gdspx_ext_open_draw_tiles_with_size")
 	x.SpxExtOpenDrawTiles = dlsymGD("gdspx_ext_open_draw_tiles")
 	x.SpxExtSetLayerIndex = dlsymGD("gdspx_ext_set_layer_index")
@@ -376,6 +379,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxPhysicGetGlobalAirDrag = dlsymGD("gdspx_physic_get_global_air_drag")
 	x.SpxPhysicCheckCollisionRect = dlsymGD("gdspx_physic_check_collision_rect")
 	x.SpxPhysicCheckCollisionCircle = dlsymGD("gdspx_physic_check_collision_circle")
+	x.SpxPhysicRaycastWithDetails = dlsymGD("gdspx_physic_raycast_with_details")
 	x.SpxPlatformSetStretchMode = dlsymGD("gdspx_platform_set_stretch_mode")
 	x.SpxPlatformSetWindowPosition = dlsymGD("gdspx_platform_set_window_position")
 	x.SpxPlatformGetWindowPosition = dlsymGD("gdspx_platform_get_window_position")
