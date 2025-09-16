@@ -196,17 +196,19 @@ func (pself *extMgrImpl) GetLayerOffset(index int64) Vec2 {
 func (pself *extMgrImpl) PlaceTiles(positions gdx.Array, texture_path string) {}
 func (pself *extMgrImpl) PlaceTilesWithLayer(positions gdx.Array, texture_path string, layer_index int64) {
 }
-func (pself *extMgrImpl) PlaceTile(pos Vec2, texture_path string)                             {}
-func (pself *extMgrImpl) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64) {}
-func (pself *extMgrImpl) EraseTile(pos Vec2)                                                  {}
-func (pself *extMgrImpl) CloseDrawTiles()                                                     {}
-func (pself *extMgrImpl) GetLayerPointPath(p_from Vec2, p_to Vec2) gdx.Array {
+func (pself *extMgrImpl) PlaceTile(pos Vec2, texture_path string)                                 {}
+func (pself *extMgrImpl) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64)     {}
+func (pself *extMgrImpl) EraseTile(pos Vec2)                                                      {}
+func (pself *extMgrImpl) CloseDrawTiles()                                                         {}
+func (pself *extMgrImpl) ExitTilemapEditorMode()                                                  {}
+func (pself *extMgrImpl) ClearPureSprites()                                                       {}
+func (pself *extMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex int64)            {}
+func (pself *extMgrImpl) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_debug bool) {}
+func (pself *extMgrImpl) SetupPathFinder()                                                        {}
+func (pself *extMgrImpl) FindPath(p_from Vec2, p_to Vec2) gdx.Array {
 	var _ret1 gdx.Array
 	return _ret1
 }
-func (pself *extMgrImpl) ExitTilemapEditorMode()                                       {}
-func (pself *extMgrImpl) ClearPureSprites()                                            {}
-func (pself *extMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {}
 
 // IInputMgr
 func (pself *inputMgrImpl) GetMousePos() Vec2 {

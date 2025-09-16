@@ -141,10 +141,12 @@ type GDExtensionSpxExtPlaceTile C.GDExtensionSpxExtPlaceTile
 type GDExtensionSpxExtPlaceTileWithLayer C.GDExtensionSpxExtPlaceTileWithLayer
 type GDExtensionSpxExtEraseTile C.GDExtensionSpxExtEraseTile
 type GDExtensionSpxExtCloseDrawTiles C.GDExtensionSpxExtCloseDrawTiles
-type GDExtensionSpxExtGetLayerPointPath C.GDExtensionSpxExtGetLayerPointPath
 type GDExtensionSpxExtExitTilemapEditorMode C.GDExtensionSpxExtExitTilemapEditorMode
 type GDExtensionSpxExtClearPureSprites C.GDExtensionSpxExtClearPureSprites
 type GDExtensionSpxExtCreatePureSprite C.GDExtensionSpxExtCreatePureSprite
+type GDExtensionSpxExtSetupPathFinderWithSize C.GDExtensionSpxExtSetupPathFinderWithSize
+type GDExtensionSpxExtSetupPathFinder C.GDExtensionSpxExtSetupPathFinder
+type GDExtensionSpxExtFindPath C.GDExtensionSpxExtFindPath
 type GDExtensionSpxInputGetMousePos C.GDExtensionSpxInputGetMousePos
 type GDExtensionSpxInputGetKey C.GDExtensionSpxInputGetKey
 type GDExtensionSpxInputGetMouseState C.GDExtensionSpxInputGetMouseState
@@ -893,18 +895,6 @@ func CallExtCloseDrawTiles() {
 
 	C.cgo_callfn_GDExtensionSpxExtCloseDrawTiles(arg0)
 }
-func CallExtGetLayerPointPath(
-	p_from GdVec2,
-	p_to GdVec2,
-) GdArray {
-	arg0 := (C.GDExtensionSpxExtGetLayerPointPath)(api.SpxExtGetLayerPointPath)
-	arg1GdVec2 := (C.GdVec2)(p_from)
-	arg2GdVec2 := (C.GdVec2)(p_to)
-	var ret_val C.GdArray
-	C.cgo_callfn_GDExtensionSpxExtGetLayerPointPath(arg0, arg1GdVec2, arg2GdVec2, &ret_val)
-
-	return GdArray(ret_val)
-}
 func CallExtExitTilemapEditorMode() {
 	arg0 := (C.GDExtensionSpxExtExitTilemapEditorMode)(api.SpxExtExitTilemapEditorMode)
 
@@ -927,6 +917,36 @@ func CallExtCreatePureSprite(
 
 	C.cgo_callfn_GDExtensionSpxExtCreatePureSprite(arg0, arg1GdString, arg2GdVec2, arg3GdInt)
 
+}
+func CallExtSetupPathFinderWithSize(
+	grid_size GdVec2,
+	cell_size GdVec2,
+	with_debug GdBool,
+) {
+	arg0 := (C.GDExtensionSpxExtSetupPathFinderWithSize)(api.SpxExtSetupPathFinderWithSize)
+	arg1GdVec2 := (C.GdVec2)(grid_size)
+	arg2GdVec2 := (C.GdVec2)(cell_size)
+	arg3GdBool := (C.GdBool)(with_debug)
+
+	C.cgo_callfn_GDExtensionSpxExtSetupPathFinderWithSize(arg0, arg1GdVec2, arg2GdVec2, arg3GdBool)
+
+}
+func CallExtSetupPathFinder() {
+	arg0 := (C.GDExtensionSpxExtSetupPathFinder)(api.SpxExtSetupPathFinder)
+
+	C.cgo_callfn_GDExtensionSpxExtSetupPathFinder(arg0)
+}
+func CallExtFindPath(
+	p_from GdVec2,
+	p_to GdVec2,
+) GdArray {
+	arg0 := (C.GDExtensionSpxExtFindPath)(api.SpxExtFindPath)
+	arg1GdVec2 := (C.GdVec2)(p_from)
+	arg2GdVec2 := (C.GdVec2)(p_to)
+	var ret_val C.GdArray
+	C.cgo_callfn_GDExtensionSpxExtFindPath(arg0, arg1GdVec2, arg2GdVec2, &ret_val)
+
+	return GdArray(ret_val)
 }
 func CallInputGetMousePos() GdVec2 {
 	arg0 := (C.GDExtensionSpxInputGetMousePos)(api.SpxInputGetMousePos)

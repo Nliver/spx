@@ -1867,12 +1867,6 @@ func (p *Game) ExitTilemapEditMode() {
 	extMgr.ExitTilemapEditorMode()
 }
 
-func (p *Game) GetLayerPointPath(x_from, y_from, x_to, y_to float64) []float64 {
-	arr := extMgr.GetLayerPointPath(mathf.NewVec2(x_from, y_from), mathf.NewVec2(x_to, y_to))
-	result := arr.([]float32)
-	return f32Tof64(result)
-}
-
 func (p *Game) CreatePureSprite(texture_path string, x, y float64, zindex int64) {
 	extMgr.CreatePureSprite(engine.ToAssetPath(texture_path), mathf.NewVec2(x, y), zindex)
 }
@@ -1880,6 +1874,20 @@ func (p *Game) CreatePureSprite(texture_path string, x, y float64, zindex int64)
 func (p *Game) SetTileMapOffset(index int64, x, y float64) {
 	extMgr.SetLayerOffset(index, mathf.NewVec2(x, y))
 
+}
+
+func (p *Game) SetupPathFinder__0() {
+	extMgr.SetupPathFinder()
+}
+
+func (p *Game) SetupPathFinder__1(x_grid_size, y_grid_size, x_cell_size, y_cell_size float64, with_debug bool) {
+	extMgr.SetupPathFinderWithSize(mathf.NewVec2(x_grid_size, y_grid_size), mathf.NewVec2(x_cell_size, y_cell_size), with_debug)
+}
+
+func (p *Game) FindPath(x_from, y_from, x_to, y_to float64) []float64 {
+	arr := extMgr.FindPath(mathf.NewVec2(x_from, y_from), mathf.NewVec2(x_to, y_to))
+	result := arr.([]float32)
+	return f32Tof64(result)
 }
 
 // -----------------------------------------------------------------------------

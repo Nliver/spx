@@ -75,10 +75,12 @@ type GDExtensionInterface struct {
 	SpxExtPlaceTileWithLayer                 GDExtensionSpxExtPlaceTileWithLayer
 	SpxExtEraseTile                          GDExtensionSpxExtEraseTile
 	SpxExtCloseDrawTiles                     GDExtensionSpxExtCloseDrawTiles
-	SpxExtGetLayerPointPath                  GDExtensionSpxExtGetLayerPointPath
 	SpxExtExitTilemapEditorMode              GDExtensionSpxExtExitTilemapEditorMode
 	SpxExtClearPureSprites                   GDExtensionSpxExtClearPureSprites
 	SpxExtCreatePureSprite                   GDExtensionSpxExtCreatePureSprite
+	SpxExtSetupPathFinderWithSize            GDExtensionSpxExtSetupPathFinderWithSize
+	SpxExtSetupPathFinder                    GDExtensionSpxExtSetupPathFinder
+	SpxExtFindPath                           GDExtensionSpxExtFindPath
 	SpxInputGetMousePos                      GDExtensionSpxInputGetMousePos
 	SpxInputGetKey                           GDExtensionSpxInputGetKey
 	SpxInputGetMouseState                    GDExtensionSpxInputGetMouseState
@@ -350,10 +352,12 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtPlaceTileWithLayer = (GDExtensionSpxExtPlaceTileWithLayer)(dlsymGD("spx_ext_place_tile_with_layer"))
 	x.SpxExtEraseTile = (GDExtensionSpxExtEraseTile)(dlsymGD("spx_ext_erase_tile"))
 	x.SpxExtCloseDrawTiles = (GDExtensionSpxExtCloseDrawTiles)(dlsymGD("spx_ext_close_draw_tiles"))
-	x.SpxExtGetLayerPointPath = (GDExtensionSpxExtGetLayerPointPath)(dlsymGD("spx_ext_get_layer_point_path"))
 	x.SpxExtExitTilemapEditorMode = (GDExtensionSpxExtExitTilemapEditorMode)(dlsymGD("spx_ext_exit_tilemap_editor_mode"))
 	x.SpxExtClearPureSprites = (GDExtensionSpxExtClearPureSprites)(dlsymGD("spx_ext_clear_pure_sprites"))
 	x.SpxExtCreatePureSprite = (GDExtensionSpxExtCreatePureSprite)(dlsymGD("spx_ext_create_pure_sprite"))
+	x.SpxExtSetupPathFinderWithSize = (GDExtensionSpxExtSetupPathFinderWithSize)(dlsymGD("spx_ext_setup_path_finder_with_size"))
+	x.SpxExtSetupPathFinder = (GDExtensionSpxExtSetupPathFinder)(dlsymGD("spx_ext_setup_path_finder"))
+	x.SpxExtFindPath = (GDExtensionSpxExtFindPath)(dlsymGD("spx_ext_find_path"))
 	x.SpxInputGetMousePos = (GDExtensionSpxInputGetMousePos)(dlsymGD("spx_input_get_mouse_pos"))
 	x.SpxInputGetKey = (GDExtensionSpxInputGetKey)(dlsymGD("spx_input_get_key"))
 	x.SpxInputGetMouseState = (GDExtensionSpxInputGetMouseState)(dlsymGD("spx_input_get_mouse_state"))

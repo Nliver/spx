@@ -183,9 +183,6 @@ void cgo_callfn_GDExtensionSpxExtEraseTile(const GDExtensionSpxExtEraseTile fn, 
 void cgo_callfn_GDExtensionSpxExtCloseDrawTiles(const GDExtensionSpxExtCloseDrawTiles fn) {
 	fn();
 }
-void cgo_callfn_GDExtensionSpxExtGetLayerPointPath(const GDExtensionSpxExtGetLayerPointPath fn, GdVec2 p_from, GdVec2 p_to, GdArray* ret_val) {
-	fn(p_from, p_to,ret_val);
-}
 void cgo_callfn_GDExtensionSpxExtExitTilemapEditorMode(const GDExtensionSpxExtExitTilemapEditorMode fn) {
 	fn();
 }
@@ -194,6 +191,15 @@ void cgo_callfn_GDExtensionSpxExtClearPureSprites(const GDExtensionSpxExtClearPu
 }
 void cgo_callfn_GDExtensionSpxExtCreatePureSprite(const GDExtensionSpxExtCreatePureSprite fn, GdString texture_path, GdVec2 pos, GdInt zindex) {
 	fn(texture_path, pos, zindex);
+}
+void cgo_callfn_GDExtensionSpxExtSetupPathFinderWithSize(const GDExtensionSpxExtSetupPathFinderWithSize fn, GdVec2 grid_size, GdVec2 cell_size, GdBool with_debug) {
+	fn(grid_size, cell_size, with_debug);
+}
+void cgo_callfn_GDExtensionSpxExtSetupPathFinder(const GDExtensionSpxExtSetupPathFinder fn) {
+	fn();
+}
+void cgo_callfn_GDExtensionSpxExtFindPath(const GDExtensionSpxExtFindPath fn, GdVec2 p_from, GdVec2 p_to, GdArray* ret_val) {
+	fn(p_from, p_to,ret_val);
 }
 void cgo_callfn_GDExtensionSpxInputGetMousePos(const GDExtensionSpxInputGetMousePos fn, GdVec2* ret_val) {
 	fn(ret_val);

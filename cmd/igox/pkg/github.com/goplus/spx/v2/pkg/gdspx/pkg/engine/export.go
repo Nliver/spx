@@ -285,6 +285,8 @@ func init() {
 			"KeyYen":          {reflect.TypeOf(q.KeyYen), constant.MakeInt64(int64(q.KeyYen))},
 			"KeyZ":            {reflect.TypeOf(q.KeyZ), constant.MakeInt64(int64(q.KeyZ))},
 		},
-		UntypedConsts: map[string]ixgo.UntypedConst{},
+		UntypedConsts: map[string]ixgo.UntypedConst{
+			"Float2IntFactor": {"untyped int", constant.MakeInt64(int64(q.Float2IntFactor))},
+		},
 	})
 }
