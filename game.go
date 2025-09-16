@@ -1841,7 +1841,6 @@ func (p *Game) DebugDrawLine(fromX, fromY, toX, toY float64, color Color) {
 
 // -----------------------------------------------------------------------------
 func (p *Game) SetTileMapLayerIndex(index int64) {
-	extMgr.OpenDrawTiles()
 	extMgr.SetLayerIndex(index)
 }
 
