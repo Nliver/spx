@@ -291,11 +291,11 @@ type spriteConfig struct {
 	ApplyCustumeOffset2Animation bool `json:"applyCustumeOffset2Animation"`
 
 	// physic
-	PhysicMode string   `json:"physicMode"`
-	Mass       *float64 `json:"mass"`
-	Friction   *float64 `json:"friction"`
-	AirDrag    *float64 `json:"airDrag"`
-	Gravity    *float64 `json:"gravity"`
+	PhysicsMode string   `json:"physicsMode"`
+	Mass        *float64 `json:"mass"`
+	Friction    *float64 `json:"friction"`
+	AirDrag     *float64 `json:"airDrag"`
+	Gravity     *float64 `json:"gravity"`
 }
 
 func (p *spriteConfig) getCostumeIndex() int {
