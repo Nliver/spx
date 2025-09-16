@@ -27,6 +27,7 @@ type GDExtensionInterface struct {
 	SpxAudioGetPan                           GDExtensionSpxAudioGetPan
 	SpxAudioSetVolume                        GDExtensionSpxAudioSetVolume
 	SpxAudioGetVolume                        GDExtensionSpxAudioGetVolume
+	SpxAudioPlayWithAttenuation              GDExtensionSpxAudioPlayWithAttenuation
 	SpxAudioPlay                             GDExtensionSpxAudioPlay
 	SpxAudioPause                            GDExtensionSpxAudioPause
 	SpxAudioResume                           GDExtensionSpxAudioResume
@@ -304,6 +305,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxAudioGetPan = (GDExtensionSpxAudioGetPan)(dlsymGD("spx_audio_get_pan"))
 	x.SpxAudioSetVolume = (GDExtensionSpxAudioSetVolume)(dlsymGD("spx_audio_set_volume"))
 	x.SpxAudioGetVolume = (GDExtensionSpxAudioGetVolume)(dlsymGD("spx_audio_get_volume"))
+	x.SpxAudioPlayWithAttenuation = (GDExtensionSpxAudioPlayWithAttenuation)(dlsymGD("spx_audio_play_with_attenuation"))
 	x.SpxAudioPlay = (GDExtensionSpxAudioPlay)(dlsymGD("spx_audio_play"))
 	x.SpxAudioPause = (GDExtensionSpxAudioPause)(dlsymGD("spx_audio_pause"))
 	x.SpxAudioResume = (GDExtensionSpxAudioResume)(dlsymGD("spx_audio_resume"))

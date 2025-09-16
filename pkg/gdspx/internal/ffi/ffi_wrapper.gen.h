@@ -39,6 +39,9 @@ void cgo_callfn_GDExtensionSpxAudioSetVolume(const GDExtensionSpxAudioSetVolume 
 void cgo_callfn_GDExtensionSpxAudioGetVolume(const GDExtensionSpxAudioGetVolume fn, GdObj obj, GdFloat* ret_val) {
 	fn(obj,ret_val);
 }
+void cgo_callfn_GDExtensionSpxAudioPlayWithAttenuation(const GDExtensionSpxAudioPlayWithAttenuation fn, GdObj obj, GdString path, GdObj owner_id, GdFloat attenuation, GdFloat max_distance, GdInt* ret_val) {
+	fn(obj, path, owner_id, attenuation, max_distance,ret_val);
+}
 void cgo_callfn_GDExtensionSpxAudioPlay(const GDExtensionSpxAudioPlay fn, GdObj obj, GdString path, GdInt* ret_val) {
 	fn(obj, path,ret_val);
 }

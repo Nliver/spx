@@ -67,9 +67,9 @@ func (p *soundMgr) stopInstance(audioId soundId) {
 	audioMgr.Stop(audioId)
 }
 
-func (p *soundMgr) play(audioId engine.Object, media sound, isLoop, isWait bool) soundId {
+func (p *soundMgr) play(audioId engine.Object, media sound, isLoop, isWait bool, owner engine.Object, attenuation, maxDistance float64) soundId {
 	var curId soundId = 0
-	curId = audioMgr.Play(audioId, engine.ToAssetPath(media.Path))
+	curId = audioMgr.PlayWithAttenuation(audioId, engine.ToAssetPath(media.Path), owner, attenuation, maxDistance)
 	p.path2ids[media.Path] = append(p.path2ids[media.Path], curId)
 	if isLoop {
 		for _, id := range p.path2ids[media.Path] {

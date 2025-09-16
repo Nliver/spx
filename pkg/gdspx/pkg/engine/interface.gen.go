@@ -37,6 +37,7 @@ type IAudioMgr interface {
 	GetPan(obj Object) float64
 	SetVolume(obj Object, volume float64)
 	GetVolume(obj Object) float64
+	PlayWithAttenuation(obj Object, path string, owner_id Object, attenuation float64, max_distance float64) int64
 	Play(obj Object, path string) int64
 	Pause(aid int64)
 	Resume(aid int64)

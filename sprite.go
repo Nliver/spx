@@ -1919,12 +1919,12 @@ const (
 
 func (p *SpriteImpl) playAudio(name SoundName, loop bool) soundId {
 	p.checkAudioId()
-	return p.g.playSound(p.audioId, name, loop)
+	return p.g.playSound(p.syncSprite, p.audioId, name, loop, p.g.audioAttenuation, p.g.audioMaxDistance)
 }
 
 func (p *SpriteImpl) Play__0(name SoundName, loop bool) {
 	p.checkAudioId()
-	p.g.playSound(p.audioId, name, loop)
+	p.g.playSound(p.syncSprite, p.audioId, name, loop, p.g.audioAttenuation, p.g.audioMaxDistance)
 }
 
 func (p *SpriteImpl) Play__1(name SoundName) {
@@ -1933,7 +1933,7 @@ func (p *SpriteImpl) Play__1(name SoundName) {
 
 func (p *SpriteImpl) PlayAndWait(name SoundName) {
 	p.checkAudioId()
-	p.g.playSoundAndWait(p.audioId, name)
+	p.g.playSoundAndWait(p.syncSprite, p.audioId, name, p.g.audioAttenuation, p.g.audioMaxDistance)
 }
 
 func (p *SpriteImpl) PausePlaying(name SoundName) {

@@ -141,6 +141,9 @@ type projConfig struct {
 
 	PathCellSizeX *int `json:"pathCellSizeX"` // Path finding cell width, default 16
 	PathCellSizeY *int `json:"pathCellSizeY"` // Path finding cell height, default 16
+	// audio volume scale = Math::pow(1.0f - dist / audioMaxDistance, audioAttenuation);
+	AudioMaxDistance *float64 `json:"audioMaxDistance"` // default 2000
+	AudioAttenuation *float64 `json:"audioAttenuation"` // default 0 indicates no attenuation will occur
 }
 
 func (p *projConfig) getBackdrops() []*backdropConfig {

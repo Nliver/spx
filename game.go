@@ -145,6 +145,10 @@ type Game struct {
 	sprCollisionInfos       map[string]*spriteCollisionInfo
 	isCollisionByPixel      bool
 	isAutoSetCollisionLayer bool
+
+	//
+	audioAttenuation float64
+	audioMaxDistance float64
 }
 
 const maxCollisionLayerIdx = 32 // engine limit support 32 layers
@@ -339,6 +343,8 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 	g.pathCellSizeX = parseDefaultNumber(proj.PathCellSizeX, 16)
 	g.pathCellSizeY = parseDefaultNumber(proj.PathCellSizeY, 16)
 
+	g.audioAttenuation = parseDefaultFloatValue(proj.AudioAttenuation, 0) // 0 indicates no attenuation will occur, to compatibility with previous behavior.
+	g.audioMaxDistance = parseDefaultFloatValue(proj.AudioMaxDistance, 2000)
 	if debugLoad {
 		log.Println("==> isCollisionByPixel", g.isCollisionByPixel)
 		log.Println("==> isAutoSetCollisionLayer", g.isAutoSetCollisionLayer)
@@ -1563,19 +1569,19 @@ func (p *Game) loadSound(name SoundName) (media sound, err error) {
 	return
 }
 
-func (p *Game) playSound(audioId engine.Object, name SoundName, isLoop bool) soundId {
+func (p *Game) playSound(sprite *engine.Sprite, audioId engine.Object, name SoundName, isLoop bool, attenuation, maxDistance float64) soundId {
 	m, err := p.loadSound(name)
 	if err != nil {
 		return invalidSoundId
 	}
-	return p.sounds.play(audioId, m, isLoop, false)
+	return p.sounds.play(audioId, m, isLoop, false, sprite.Id, attenuation, maxDistance)
 }
-func (p *Game) playSoundAndWait(audioId engine.Object, name SoundName) {
+func (p *Game) playSoundAndWait(sprite *engine.Sprite, audioId engine.Object, name SoundName, attenuation, maxDistance float64) {
 	m, err := p.loadSound(name)
 	if err != nil {
 		return
 	}
-	p.sounds.play(audioId, m, false, true)
+	p.sounds.play(audioId, m, false, true, sprite.Id, attenuation, maxDistance)
 }
 func (p *Game) pauseSound(audioId engine.Object, name SoundName) {
 	m, err := p.loadSound(name)
@@ -1604,7 +1610,7 @@ func (p *Game) Volume() float64 {
 }
 func (p *Game) Play__0(name SoundName, loop bool) {
 	p.checkAudioId()
-	p.playSound(p.audioId, name, loop)
+	p.playSound(p.syncSprite, p.audioId, name, loop, 0, 2000)
 }
 
 func (p *Game) Play__1(name SoundName) {
@@ -1612,7 +1618,7 @@ func (p *Game) Play__1(name SoundName) {
 }
 func (p *Game) PlayAndWait(name SoundName) {
 	p.checkAudioId()
-	p.playSoundAndWait(p.audioId, name)
+	p.playSoundAndWait(p.syncSprite, p.audioId, name, 0, 2000)
 }
 
 func (p *Game) PausePlaying(name SoundName) {
