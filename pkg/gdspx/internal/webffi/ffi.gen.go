@@ -79,10 +79,12 @@ type GDExtensionInterface struct {
 	SpxExtPlaceTileWithLayer                 js.Value
 	SpxExtEraseTile                          js.Value
 	SpxExtCloseDrawTiles                     js.Value
-	SpxExtGetLayerPointPath                  js.Value
 	SpxExtExitTilemapEditorMode              js.Value
 	SpxExtClearPureSprites                   js.Value
 	SpxExtCreatePureSprite                   js.Value
+	SpxExtSetupPathFinderWithSize            js.Value
+	SpxExtSetupPathFinder                    js.Value
+	SpxExtFindPath                           js.Value
 	SpxInputGetMousePos                      js.Value
 	SpxInputGetKey                           js.Value
 	SpxInputGetMouseState                    js.Value
@@ -354,10 +356,12 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtPlaceTileWithLayer = dlsymGD("gdspx_ext_place_tile_with_layer")
 	x.SpxExtEraseTile = dlsymGD("gdspx_ext_erase_tile")
 	x.SpxExtCloseDrawTiles = dlsymGD("gdspx_ext_close_draw_tiles")
-	x.SpxExtGetLayerPointPath = dlsymGD("gdspx_ext_get_layer_point_path")
 	x.SpxExtExitTilemapEditorMode = dlsymGD("gdspx_ext_exit_tilemap_editor_mode")
 	x.SpxExtClearPureSprites = dlsymGD("gdspx_ext_clear_pure_sprites")
 	x.SpxExtCreatePureSprite = dlsymGD("gdspx_ext_create_pure_sprite")
+	x.SpxExtSetupPathFinderWithSize = dlsymGD("gdspx_ext_setup_path_finder_with_size")
+	x.SpxExtSetupPathFinder = dlsymGD("gdspx_ext_setup_path_finder")
+	x.SpxExtFindPath = dlsymGD("gdspx_ext_find_path")
 	x.SpxInputGetMousePos = dlsymGD("gdspx_input_get_mouse_pos")
 	x.SpxInputGetKey = dlsymGD("gdspx_input_get_key")
 	x.SpxInputGetMouseState = dlsymGD("gdspx_input_get_mouse_state")

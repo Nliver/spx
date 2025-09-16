@@ -91,10 +91,12 @@ type IExtMgr interface {
 	PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64)
 	EraseTile(pos Vec2)
 	CloseDrawTiles()
-	GetLayerPointPath(p_from Vec2, p_to Vec2) Array
 	ExitTilemapEditorMode()
 	ClearPureSprites()
 	CreatePureSprite(texture_path string, pos Vec2, zindex int64)
+	SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_debug bool)
+	SetupPathFinder()
+	FindPath(p_from Vec2, p_to Vec2) Array
 }
 
 type IInputMgr interface {

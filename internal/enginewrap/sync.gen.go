@@ -413,13 +413,6 @@ func (pself *extMgrImpl) CloseDrawTiles() {
 		gdx.ExtMgr.CloseDrawTiles()
 	})
 }
-func (pself *extMgrImpl) GetLayerPointPath(p_from Vec2, p_to Vec2) gdx.Array {
-	var _ret1 gdx.Array
-	callInMainThread(func() {
-		_ret1 = gdx.ExtMgr.GetLayerPointPath(p_from, p_to)
-	})
-	return _ret1
-}
 func (pself *extMgrImpl) ExitTilemapEditorMode() {
 	callInMainThread(func() {
 		gdx.ExtMgr.ExitTilemapEditorMode()
@@ -434,6 +427,23 @@ func (pself *extMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex 
 	callInMainThread(func() {
 		gdx.ExtMgr.CreatePureSprite(texture_path, pos, zindex)
 	})
+}
+func (pself *extMgrImpl) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_debug bool) {
+	callInMainThread(func() {
+		gdx.ExtMgr.SetupPathFinderWithSize(grid_size, cell_size, with_debug)
+	})
+}
+func (pself *extMgrImpl) SetupPathFinder() {
+	callInMainThread(func() {
+		gdx.ExtMgr.SetupPathFinder()
+	})
+}
+func (pself *extMgrImpl) FindPath(p_from Vec2, p_to Vec2) gdx.Array {
+	var _ret1 gdx.Array
+	callInMainThread(func() {
+		_ret1 = gdx.ExtMgr.FindPath(p_from, p_to)
+	})
+	return _ret1
 }
 
 // IInputMgr

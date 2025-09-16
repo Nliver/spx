@@ -387,12 +387,6 @@ func (pself *extMgr) EraseTile(pos Vec2) {
 func (pself *extMgr) CloseDrawTiles() {
 	CallExtCloseDrawTiles()
 }
-func (pself *extMgr) GetLayerPointPath(p_from Vec2, p_to Vec2) Array {
-	arg0 := ToGdVec2(p_from)
-	arg1 := ToGdVec2(p_to)
-	retValue := CallExtGetLayerPointPath(arg0, arg1)
-	return ToArray(retValue)
-}
 func (pself *extMgr) ExitTilemapEditorMode() {
 	CallExtExitTilemapEditorMode()
 }
@@ -406,6 +400,21 @@ func (pself *extMgr) CreatePureSprite(texture_path string, pos Vec2, zindex int6
 	arg1 := ToGdVec2(pos)
 	arg2 := ToGdInt(zindex)
 	CallExtCreatePureSprite(arg0, arg1, arg2)
+}
+func (pself *extMgr) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_debug bool) {
+	arg0 := ToGdVec2(grid_size)
+	arg1 := ToGdVec2(cell_size)
+	arg2 := ToGdBool(with_debug)
+	CallExtSetupPathFinderWithSize(arg0, arg1, arg2)
+}
+func (pself *extMgr) SetupPathFinder() {
+	CallExtSetupPathFinder()
+}
+func (pself *extMgr) FindPath(p_from Vec2, p_to Vec2) Array {
+	arg0 := ToGdVec2(p_from)
+	arg1 := ToGdVec2(p_to)
+	retValue := CallExtFindPath(arg0, arg1)
+	return ToArray(retValue)
 }
 func (pself *inputMgr) GetMousePos() Vec2 {
 	retValue := CallInputGetMousePos()
