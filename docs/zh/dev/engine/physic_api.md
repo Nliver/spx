@@ -1097,359 +1097,300 @@ func (e *ChaseEnemy) Update() {
 }
 ```
 
-### 用户故事9: 制作塔防游戏地图系统
+### 用户故事9: 制作扫雷游戏
 
-**需求**: *"我要做一个俯视角塔防游戏，需要可编辑的地图、敌人寻路、塔的建造和障碍物系统"*
+**需求**: *"我要做一个经典的扫雷游戏，点击翻开格子，右键标记地雷，简单易懂的俯视角游戏"*
 
 ```go
-type TowerDefenseMap struct {
+type MinesweeperGame struct {
     game *Game
     mapWidth, mapHeight int
     tileSize int
-    enemySpawnPoint Position
-    playerBase Position
-    towers []*Tower
-    enemies []*Enemy
+    mineCount int
+    gameState string // "playing", "won", "lost"
+    minePositions map[string]bool // 存储地雷位置
+    revealedCount int
 }
 
-type Tower struct {
-    sprite *SpriteImpl
-    posX, posY float64
-    attackRange float64
-    damage int
-    attackCooldown float64
-    lastAttackTime float64
-}
-
-type Enemy struct {
-    sprite *SpriteImpl
-    health int
-    speed float64
-    currentPath []float64
-    pathIndex int
-    gold int
-}
-
-func createTowerDefenseMap(game *Game) *TowerDefenseMap {
-    tdMap := &TowerDefenseMap{
+func createMinesweeperGame(game *Game, width, height, mines int) *MinesweeperGame {
+    mg := &MinesweeperGame{
         game: game,
-        mapWidth: 25,    // 25个瓦片宽
-        mapHeight: 20,   // 20个瓦片高
+        mapWidth: width,
+        mapHeight: height,
         tileSize: 32,
-        enemySpawnPoint: Position{X: 32, Y: 32},
-        playerBase: Position{X: 768, Y: 608},
-        towers: make([]*Tower, 0),
-        enemies: make([]*Enemy, 0),
+        mineCount: mines,
+        gameState: "playing",
+        minePositions: make(map[string]bool),
+        revealedCount: 0,
     }
     
-    // 生成基础地图
-    tdMap.generateBaseMap()
+    // 初始化游戏
+    mg.initializeGame()
     
-    return tdMap
+    return mg
 }
 
-func (tdm *TowerDefenseMap) generateBaseMap() {
-    // 批量生成草地背景
-    grassPositions := make([]float64, 0)
-    for x := 0; x < tdm.mapWidth; x++ {
-        for y := 0; y < tdm.mapHeight; y++ {
-            grassPositions = append(grassPositions, 
-                float64(x*tdm.tileSize), float64(y*tdm.tileSize))
+func (mg *MinesweeperGame) initializeGame() {
+    // 批量生成隐藏的格子
+    hiddenPositions := make([]float64, 0)
+    for x := 0; x < mg.mapWidth; x++ {
+        for y := 0; y < mg.mapHeight; y++ {
+            hiddenPositions = append(hiddenPositions, 
+                float64(x*mg.tileSize), float64(y*mg.tileSize))
         }
     }
     
-    // 放置草地背景层 (layer 0)
-    tdm.game.PlaceTiles(grassPositions, "grass", 0)
+    // 放置隐藏格子 (layer 0 - 所有格子都是隐藏状态)
+    mg.game.PlaceTiles(hiddenPositions, "hidden", 0)
     
-    // 生成预设的道路路径
-    tdm.generateRoadPath()
-    
-    // 放置敌人出生点和玩家基地
-    tdm.game.PlaceTile(tdm.enemySpawnPoint.X, tdm.enemySpawnPoint.Y, "spawn_point", 2)
-    tdm.game.PlaceTile(tdm.playerBase.X, tdm.playerBase.Y, "player_base", 2)
+    // 随机生成地雷位置
+    mg.generateMines()
 }
 
-func (tdm *TowerDefenseMap) generateRoadPath() {
-    // 创建一条从左上到右下的弯曲道路
-    roadPositions := make([]float64, 0)
-    
-    // 水平段 - 从出生点向右
-    for x := 1; x <= 8; x++ {
-        roadPositions = append(roadPositions, float64(x*tdm.tileSize), 32)
+func (mg *MinesweeperGame) generateMines() {
+    minesPlaced := 0
+    for minesPlaced < mg.mineCount {
+        // 随机选择位置
+        x := rand.Intn(mg.mapWidth)
+        y := rand.Intn(mg.mapHeight)
+        
+        key := fmt.Sprintf("%d,%d", x, y)
+        
+        // 如果该位置还没有地雷，放置地雷
+        if !mg.minePositions[key] {
+            mg.minePositions[key] = true
+            minesPlaced++
+        }
     }
-    
-    // 垂直段 - 向下
-    for y := 2; y <= 10; y++ {
-        roadPositions = append(roadPositions, float64(8*tdm.tileSize), float64(y*tdm.tileSize))
-    }
-    
-    // 水平段 - 向右
-    for x := 9; x <= 16; x++ {
-        roadPositions = append(roadPositions, float64(x*tdm.tileSize), float64(10*tdm.tileSize))
-    }
-    
-    // 垂直段 - 向下到基地
-    for y := 11; y <= 19; y++ {
-        roadPositions = append(roadPositions, float64(16*tdm.tileSize), float64(y*tdm.tileSize))
-    }
-    
-    // 最后连接到基地
-    roadPositions = append(roadPositions, tdm.playerBase.X, tdm.playerBase.Y)
-    
-    // 批量放置道路瓦片 (layer 1)
-    tdm.game.PlaceTiles(roadPositions, "road", 1)
 }
 
-func (tdm *TowerDefenseMap) handlePlayerInput(input GameInput) {
+func (mg *MinesweeperGame) handlePlayerInput(input GameInput) {
+    if mg.gameState != "playing" {
+        return // 游戏已结束
+    }
+    
+    mouseX, mouseY := input.GetMouseWorldPos()
+    
+    // 转换为网格坐标
+    gridX := int(mouseX / float64(mg.tileSize))
+    gridY := int(mouseY / float64(mg.tileSize))
+    
+    // 检查边界
+    if gridX < 0 || gridX >= mg.mapWidth || gridY < 0 || gridY >= mg.mapHeight {
+        return
+    }
+    
+    tileX := float64(gridX * mg.tileSize)
+    tileY := float64(gridY * mg.tileSize)
+    
     if input.LeftClick {
-        mouseX, mouseY := input.GetMouseWorldPos()
-        tdm.tryBuildTower(mouseX, mouseY)
+        // 左键翻开格子
+        mg.revealTile(gridX, gridY, tileX, tileY)
     } else if input.RightClick {
-        mouseX, mouseY := input.GetMouseWorldPos()
-        tdm.tryRemoveTower(mouseX, mouseY)
+        // 右键标记/取消标记
+        mg.toggleFlag(gridX, gridY, tileX, tileY)
     }
 }
 
-func (tdm *TowerDefenseMap) tryBuildTower(posX, posY float64) {
-    // 对齐到网格
-    gridX := float64(int(posX/float64(tdm.tileSize)) * tdm.tileSize)
-    gridY := float64(int(posY/float64(tdm.tileSize)) * tdm.tileSize)
+func (mg *MinesweeperGame) revealTile(gridX, gridY int, tileX, tileY float64) {
+    // 检查当前格子状态
+    currentTile := mg.game.GetTile(tileX, tileY, 0)
     
-    // 检查该位置是否可以建造
-    if !tdm.canBuildAt(gridX, gridY) {
-        fmt.Println("无法在此位置建造塔")
+    // 如果已经翻开或被标记，不能翻开
+    if currentTile != "hidden" {
         return
     }
     
-    // 建造塔
-    tower := tdm.createTower(gridX, gridY)
-    if tower != nil {
-        tdm.towers = append(tdm.towers, tower)
-        
-        // 在地图上放置塔的瓦片 (layer 3)
-        tdm.game.PlaceTile(gridX, gridY, "tower_base", 3)
-        
-        fmt.Printf("在位置 (%.0f, %.0f) 建造了塔\n", gridX, gridY)
-    }
-}
-
-func (tdm *TowerDefenseMap) canBuildAt(posX, posY float64) bool {
-    // 检查是否在道路上
-    roadTile := tdm.game.GetTile(posX, posY, 1)
-    if roadTile == "road" {
-        return false // 不能在道路上建造
-    }
+    key := fmt.Sprintf("%d,%d", gridX, gridY)
     
-    // 检查是否已经有塔
-    towerTile := tdm.game.GetTile(posX, posY, 3)
-    if towerTile == "tower_base" {
-        return false // 已经有塔了
-    }
-    
-    // 检查是否在特殊建筑上
-    specialTile := tdm.game.GetTile(posX, posY, 2)
-    if specialTile == "spawn_point" || specialTile == "player_base" {
-        return false // 不能在出生点或基地建造
-    }
-    
-    // 检查建造后是否会阻断敌人路径
-    return tdm.checkPathNotBlocked(posX, posY)
-}
-
-func (tdm *TowerDefenseMap) checkPathNotBlocked(newTowerX, newTowerY float64) bool {
-    // 临时放置塔来测试路径
-    tdm.game.PlaceTile(newTowerX, newTowerY, "temp_tower", 3)
-    
-    // 测试从出生点到基地的路径
-    path := tdm.game.FindPath(
-        tdm.enemySpawnPoint.X, tdm.enemySpawnPoint.Y,
-        tdm.playerBase.X, tdm.playerBase.Y,
-        -1, // 考虑所有图层
-    )
-    
-    // 移除临时塔
-    tdm.game.EraseTile(newTowerX, newTowerY, 3)
-    
-    // 如果找不到路径，说明会被阻断
-    return len(path) > 0
-}
-
-func (tdm *TowerDefenseMap) createTower(posX, posY float64) *Tower {
-    tower := &Tower{
-        sprite: NewSpriteImpl(),
-        posX: posX,
-        posY: posY,
-        attackRange: 100,
-        damage: 25,
-        attackCooldown: 1.0, // 1秒攻击间隔
-        lastAttackTime: 0,
-    }
-    
-    // 设置塔的物理属性
-    tower.sprite.SetPhysicsMode(StaticPhysics)
-    tower.sprite.SetColliderRect(28, 28)
-    tower.sprite.setPosition(posX, posY)
-    
-    return tower
-}
-
-func (tdm *TowerDefenseMap) tryRemoveTower(posX, posY float64) {
-    // 对齐到网格
-    gridX := float64(int(posX/float64(tdm.tileSize)) * tdm.tileSize)
-    gridY := float64(int(posY/float64(tdm.tileSize)) * tdm.tileSize)
-    
-    // 检查是否有塔
-    towerTile := tdm.game.GetTile(gridX, gridY, 3)
-    if towerTile != "tower_base" {
+    // 检查是否是地雷
+    if mg.minePositions[key] {
+        // 踩到地雷 - 游戏失败
+        mg.game.PlaceTile(tileX, tileY, "mine", 0)
+        mg.gameState = "lost"
+        mg.revealAllMines()
+        fmt.Println("游戏失败！踩到地雷了！")
         return
     }
     
-    // 移除塔
-    for i, tower := range tdm.towers {
-        if tower.posX == gridX && tower.posY == gridY {
-            // 移除塔精灵和瓦片
-            tower.sprite.Destroy()
-            tdm.game.EraseTile(gridX, gridY, 3)
+    // 计算周围地雷数量
+    mineCount := mg.countAdjacentMines(gridX, gridY)
+    
+    if mineCount == 0 {
+        // 周围无地雷，显示空格并自动展开
+        mg.game.PlaceTile(tileX, tileY, "empty", 0)
+        mg.revealedCount++
+        
+        // 自动展开相邻的空格子
+        mg.autoRevealAdjacent(gridX, gridY)
+    } else {
+        // 显示数字
+        numberTexture := fmt.Sprintf("number_%d", mineCount)
+        mg.game.PlaceTile(tileX, tileY, numberTexture, 0)
+        mg.revealedCount++
+    }
+    
+    // 检查是否获胜
+    mg.checkWinCondition()
+}
+
+func (mg *MinesweeperGame) toggleFlag(gridX, gridY int, tileX, tileY float64) {
+    currentTile := mg.game.GetTile(tileX, tileY, 0)
+    
+    if currentTile == "hidden" {
+        // 标记为地雷
+        mg.game.PlaceTile(tileX, tileY, "flag", 0)
+    } else if currentTile == "flag" {
+        // 取消标记
+        mg.game.PlaceTile(tileX, tileY, "hidden", 0)
+    }
+    // 已翻开的格子不能标记
+}
+
+func (mg *MinesweeperGame) countAdjacentMines(centerX, centerY int) int {
+    count := 0
+    
+    // 检查周围8个方向
+    for dx := -1; dx <= 1; dx++ {
+        for dy := -1; dy <= 1; dy++ {
+            if dx == 0 && dy == 0 {
+                continue // 跳过中心点
+            }
             
-            // 从数组中移除
-            tdm.towers = append(tdm.towers[:i], tdm.towers[i+1:]...)
+            x := centerX + dx
+            y := centerY + dy
             
-            fmt.Printf("移除了位置 (%.0f, %.0f) 的塔\n", gridX, gridY)
-            break
-        }
-    }
-}
-
-func (tdm *TowerDefenseMap) spawnEnemy() *Enemy {
-    enemy := &Enemy{
-        sprite: NewSpriteImpl(),
-        health: 100,
-        speed: 50,
-        gold: 10,
-    }
-    
-    // 设置敌人物理属性
-    enemy.sprite.SetPhysicsMode(KinematicPhysics)
-    enemy.sprite.SetColliderRect(24, 24)
-    enemy.sprite.setPosition(tdm.enemySpawnPoint.X, tdm.enemySpawnPoint.Y)
-    
-    // 计算到基地的路径
-    enemy.currentPath = tdm.game.FindPath(
-        tdm.enemySpawnPoint.X, tdm.enemySpawnPoint.Y,
-        tdm.playerBase.X, tdm.playerBase.Y,
-        1, // 只考虑道路层，避开塔
-    )
-    
-    if len(enemy.currentPath) == 0 {
-        // 如果找不到路径，敌人无法生成
-        enemy.sprite.Destroy()
-        return nil
-    }
-    
-    enemy.pathIndex = 0
-    tdm.enemies = append(tdm.enemies, enemy)
-    
-    return enemy
-}
-
-func (tdm *TowerDefenseMap) updateEnemies(deltaTime float64) {
-    for i := len(tdm.enemies) - 1; i >= 0; i-- {
-        enemy := tdm.enemies[i]
-        
-        if enemy.health <= 0 {
-            // 敌人死亡
-            enemy.sprite.Destroy()
-            tdm.enemies = append(tdm.enemies[:i], tdm.enemies[i+1:]...)
-            continue
-        }
-        
-        // 移动敌人沿路径
-        tdm.moveEnemyAlongPath(enemy, deltaTime)
-    }
-}
-
-func (tdm *TowerDefenseMap) moveEnemyAlongPath(enemy *Enemy, deltaTime float64) {
-    if enemy.pathIndex >= len(enemy.currentPath) {
-        // 到达基地
-        fmt.Println("敌人到达基地!")
-        enemy.sprite.Destroy()
-        return
-    }
-    
-    // 获取目标点
-    targetX := enemy.currentPath[enemy.pathIndex]
-    targetY := enemy.currentPath[enemy.pathIndex+1]
-    
-    currentPos := enemy.sprite.GetPosition()
-    
-    // 计算距离
-    dx := targetX - currentPos.X
-    dy := targetY - currentPos.Y
-    distance := math.Sqrt(float64(dx*dx + dy*dy))
-    
-    if distance < 8 {
-        // 到达当前路径点，移动到下一个
-        enemy.pathIndex += 2
-        return
-    }
-    
-    // 向目标移动
-    if distance > 0 {
-        directionX := float64(dx) / float64(distance)
-        directionY := float64(dy) / float64(distance)
-        
-        enemy.sprite.SetVelocity(
-            directionX * enemy.speed,
-            directionY * enemy.speed,
-        )
-    }
-}
-
-func (tdm *TowerDefenseMap) updateTowers(deltaTime float64, currentTime float64) {
-    for _, tower := range tdm.towers {
-        // 检查攻击冷却
-        if currentTime - tower.lastAttackTime < tower.attackCooldown {
-            continue
-        }
-        
-        // 寻找范围内的敌人
-        nearbyEnemies := tdm.game.IntersectCircle(
-            tower.posX, tower.posY,
-            tower.attackRange,
-        )
-        
-        // 攻击第一个敌人
-        for _, sprite := range nearbyEnemies {
-            // 检查是否为敌人（这里简化处理）
-            for _, enemy := range tdm.enemies {
-                if enemy.sprite == sprite {
-                    // 攻击敌人
-                    enemy.health -= tower.damage
-                    tower.lastAttackTime = currentTime
-                    
-                    fmt.Printf("塔攻击敌人，造成%d伤害\n", tower.damage)
-                    break
+            // 检查边界
+            if x >= 0 && x < mg.mapWidth && y >= 0 && y < mg.mapHeight {
+                key := fmt.Sprintf("%d,%d", x, y)
+                if mg.minePositions[key] {
+                    count++
                 }
             }
-            break // 只攻击一个敌人
         }
     }
+    
+    return count
+}
+
+func (mg *MinesweeperGame) autoRevealAdjacent(centerX, centerY int) {
+    // 自动翻开相邻的格子（仅当中心格子为空时）
+    for dx := -1; dx <= 1; dx++ {
+        for dy := -1; dy <= 1; dy++ {
+            if dx == 0 && dy == 0 {
+                continue
+            }
+            
+            x := centerX + dx
+            y := centerY + dy
+            
+            // 检查边界
+            if x >= 0 && x < mg.mapWidth && y >= 0 && y < mg.mapHeight {
+                tileX := float64(x * mg.tileSize)
+                tileY := float64(y * mg.tileSize)
+                
+                currentTile := mg.game.GetTile(tileX, tileY, 0)
+                
+                // 只翻开隐藏的格子
+                if currentTile == "hidden" {
+                    mg.revealTile(x, y, tileX, tileY)
+                }
+            }
+        }
+    }
+}
+
+func (mg *MinesweeperGame) revealAllMines() {
+    // 游戏失败时显示所有地雷
+    for key := range mg.minePositions {
+        coords := strings.Split(key, ",")
+        x, _ := strconv.Atoi(coords[0])
+        y, _ := strconv.Atoi(coords[1])
+        
+        tileX := float64(x * mg.tileSize)
+        tileY := float64(y * mg.tileSize)
+        
+        currentTile := mg.game.GetTile(tileX, tileY, 0)
+        
+        // 只显示未标记的地雷
+        if currentTile == "hidden" {
+            mg.game.PlaceTile(tileX, tileY, "mine", 0)
+        }
+    }
+}
+
+func (mg *MinesweeperGame) checkWinCondition() {
+    totalTiles := mg.mapWidth * mg.mapHeight
+    tilesWithoutMines := totalTiles - mg.mineCount
+    
+    if mg.revealedCount == tilesWithoutMines {
+        mg.gameState = "won"
+        fmt.Println("恭喜！你赢了！")
+        
+        // 自动标记所有地雷
+        mg.markAllMines()
+    }
+}
+
+func (mg *MinesweeperGame) markAllMines() {
+    // 获胜时自动标记所有地雷
+    for key := range mg.minePositions {
+        coords := strings.Split(key, ",")
+        x, _ := strconv.Atoi(coords[0])
+        y, _ := strconv.Atoi(coords[1])
+        
+        tileX := float64(x * mg.tileSize)
+        tileY := float64(y * mg.tileSize)
+        
+        mg.game.PlaceTile(tileX, tileY, "flag", 0)
+    }
+}
+
+func (mg *MinesweeperGame) restartGame() {
+    // 重置游戏状态
+    mg.gameState = "playing"
+    mg.minePositions = make(map[string]bool)
+    mg.revealedCount = 0
+    
+    // 清空所有瓦片
+    for x := 0; x < mg.mapWidth; x++ {
+        for y := 0; y < mg.mapHeight; y++ {
+            tileX := float64(x * mg.tileSize)
+            tileY := float64(y * mg.tileSize)
+            mg.game.EraseTile(tileX, tileY, 0)
+        }
+    }
+    
+    // 重新初始化
+    mg.initializeGame()
+    fmt.Println("游戏重新开始！")
 }
 
 // 主更新函数
-func (tdm *TowerDefenseMap) Update(deltaTime float64, currentTime float64, input GameInput) {
+func (mg *MinesweeperGame) Update(input GameInput) {
     // 处理玩家输入
-    tdm.handlePlayerInput(input)
+    mg.handlePlayerInput(input)
     
-    // 更新敌人
-    tdm.updateEnemies(deltaTime)
+    // 检查重新开始（按R键）
+    if input.KeyPressed("R") {
+        mg.restartGame()
+    }
+}
+
+// 使用示例
+func main() {
+    game := NewGame()
     
-    // 更新塔
-    tdm.updateTowers(deltaTime, currentTime)
+    // 创建一个 10x10 的扫雷游戏，包含15个地雷
+    minesweeper := createMinesweeperGame(game, 10, 10, 15)
     
-    // 定期生成敌人（简化实现）
-    if int(currentTime) % 3 == 0 { // 每3秒生成一个敌人
-        tdm.spawnEnemy()
+    // 游戏循环
+    for {
+        input := game.GetInput()
+        minesweeper.Update(input)
+        
+        game.Render()
+        game.WaitNextFrame()
     }
 }
 ```
