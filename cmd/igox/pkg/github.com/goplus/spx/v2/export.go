@@ -57,6 +57,7 @@ func init() {
 			"unsafe":        "unsafe",
 		},
 		Interfaces: map[string]reflect.Type{
+			"Camera":      reflect.TypeOf((*q.Camera)(nil)).Elem(),
 			"Gamer":       reflect.TypeOf((*q.Gamer)(nil)).Elem(),
 			"IEventSinks": reflect.TypeOf((*q.IEventSinks)(nil)).Elem(),
 			"Shape":       reflect.TypeOf((*q.Shape)(nil)).Elem(),
@@ -65,7 +66,6 @@ func init() {
 			"Widget":      reflect.TypeOf((*q.Widget)(nil)).Elem(),
 		},
 		NamedTypes: map[string]reflect.Type{
-			"Camera":          reflect.TypeOf((*q.Camera)(nil)).Elem(),
 			"Color":           reflect.TypeOf((*q.Color)(nil)).Elem(),
 			"Config":          reflect.TypeOf((*q.Config)(nil)).Elem(),
 			"EffectKind":      reflect.TypeOf((*q.EffectKind)(nil)).Elem(),
