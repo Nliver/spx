@@ -94,7 +94,8 @@ type Shape any
 type Game struct {
 	baseObj
 	eventSinks
-	Camera
+	Camera Camera
+	camera *cameraImpl
 
 	fs spxfs.Dir
 
@@ -538,7 +539,9 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 	}
 
 	platformMgr.SetWindowSize(int64(float64(p.windowWidth_)*p.windowScale), int64(float64(p.windowHeight_)*p.windowScale))
-	p.Camera.init(p)
+	p.camera = &cameraImpl{}
+	p.Camera = p.camera
+	p.camera.init(p)
 	engine.SetWindowScale(p.windowScale)
 	ui.SetWindowScale(p.windowScale)
 
@@ -902,7 +905,7 @@ func (p *Game) logicLoop(me coroutine.Thread) int {
 	tempAudios := []string{}
 	tempAnimations := []string{}
 	for {
-		p.Camera.onUpdate(gtime.DeltaTime())
+		p.camera.onUpdate(gtime.DeltaTime())
 		tempItems := p.getTempShapes()
 		for _, item := range tempItems {
 			if result, ok := item.(interface{ onUpdate(float64) }); ok {
