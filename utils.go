@@ -93,6 +93,13 @@ func f32Tof64(slice []float32) []float64 {
 	return out
 }
 
+func parseDefaultNumber[T any](pval *T, defaultValue T) T {
+	if pval == nil {
+		return defaultValue
+	}
+	return *pval
+}
+
 // -----------------------------------------------------------------------------
 
 func Exit__0(code int) {
