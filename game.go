@@ -133,6 +133,10 @@ type Game struct {
 	askPanel  *ui.UiAsk
 	answerVal string
 
+	oncePathFinder sync.Once
+	pathCellSizeX  int
+	pathCellSizeY  int
+
 	// debug
 	debug      bool
 	debugPanel *ui.UiDebug
@@ -206,6 +210,7 @@ func (p *Game) reset() {
 	p.askPanel = nil
 	p.destroyItems = nil
 	p.isLoaded = false
+	p.oncePathFinder = sync.Once{}
 	p.sprs = make(map[string]Sprite)
 	timer.OnReload()
 }
@@ -329,6 +334,9 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 	g.isCollisionByPixel = !proj.CollisionByShape
 	// auto set collision layer by default
 	g.isAutoSetCollisionLayer = proj.AutoSetCollisionLayer == nil || *proj.AutoSetCollisionLayer
+
+	g.pathCellSizeX = parseDefaultNumber(proj.PathCellSizeX, 16)
+	g.pathCellSizeY = parseDefaultNumber(proj.PathCellSizeY, 16)
 
 	if debugLoad {
 		log.Println("==> isCollisionByPixel", g.isCollisionByPixel)
@@ -1876,15 +1884,26 @@ func (p *Game) SetTileMapOffset(index int64, x, y float64) {
 
 }
 
+// Path Finding
 func (p *Game) SetupPathFinder__0() {
-	extMgr.SetupPathFinder()
+	p.setupPathFinder()
 }
 
 func (p *Game) SetupPathFinder__1(x_grid_size, y_grid_size, x_cell_size, y_cell_size float64, with_debug bool) {
 	extMgr.SetupPathFinderWithSize(mathf.NewVec2(x_grid_size, y_grid_size), mathf.NewVec2(x_cell_size, y_cell_size), with_debug)
 }
 
+func (p *Game) setupPathFinder() {
+	cellSize := mathf.NewVec2(float64(p.pathCellSizeX), float64(p.pathCellSizeY))
+	gridSize := mathf.NewVec2(float64(p.worldWidth_), float64(p.worldHeight_)).Div(cellSize)
+	extMgr.SetupPathFinderWithSize(gridSize, cellSize, true)
+}
+
 func (p *Game) FindPath(x_from, y_from, x_to, y_to float64) []float64 {
+	p.oncePathFinder.Do(func() {
+		p.setupPathFinder()
+	})
+
 	arr := extMgr.FindPath(mathf.NewVec2(x_from, y_from), mathf.NewVec2(x_to, y_to))
 	result := arr.([]float32)
 	return f32Tof64(result)

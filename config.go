@@ -138,6 +138,9 @@ type projConfig struct {
 	GlobalGravity  *float64 `json:"globalGravity"`  // Global gravity scaling factor, default 1
 	GlobalFriction *float64 `json:"globalFriction"` // Global friction scaling factor, default 1
 	GlobalAirDrag  *float64 `json:"globalAirDrag"`  // Global air drag scaling factor, default 1
+
+	PathCellSizeX *int `json:"pathCellSizeX"` // Path finding cell width, default 16
+	PathCellSizeY *int `json:"pathCellSizeY"` // Path finding cell height, default 16
 }
 
 func (p *projConfig) getBackdrops() []*backdropConfig {
