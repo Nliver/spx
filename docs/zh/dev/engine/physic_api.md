@@ -22,7 +22,7 @@ const (
 // Static 模式不支持 SetVelocity ,SetGravity,AddImpulse 方法，调用了等于没有调用，IsOnFloor 方法返回 false
 // NoPhysics 模式不支持 SetVelocity ,SetGravity,AddImpulse 方法，调用了等于没有调用，IsOnFloor 方法返回 false
 
-type ColliderType = int
+type ColliderShapeType = int
 
 const (
     // 参数:
@@ -36,7 +36,7 @@ const (
     //   - 大部分角色和物体（箱子、平台等）
     //   - 建筑物和墙壁
     //   - 规则形状的游戏对象
-	RectCollider    ColliderType = 0 
+	RectCollider    ColliderShapeType = 0 
 
     // 参数:
     //   radius: 圆形半径，单位：像素
@@ -51,7 +51,7 @@ const (
     //   - 圆形敌人或角色
     //   - 需要平滑滚动的物体
     //   - 爆炸范围检测
-	CircleCollider  ColliderType = 1
+	CircleCollider  ColliderShapeType = 1
 
     // 参数:
     //   radius: 胶囊半径，单位：像素
@@ -66,7 +66,7 @@ const (
     //   - 人形角色（玩家、NPC）
     //   - 需要在斜坡上平滑移动的对象
     //   - 高瘦形状的物体
-	CapsuleCollider ColliderType = 2
+	CapsuleCollider ColliderShapeType = 2
 
     // 参数:
     //   vertices: 顶点坐标数组，格式：[x1, y1, x2, y2, ...]
@@ -84,7 +84,7 @@ const (
     // 注意事项:
     //   - 顶点需要按逆时针顺序排列
     //   - 建议控制顶点数量以保证性能
-	PolygonCollider ColliderType = 3
+	PolygonCollider ColliderShapeType = 3
 )
 
 
@@ -99,8 +99,10 @@ func (p *SpriteImpl) AddImpulse(impulseX, impulseY float64)
 // Circle(radius float64) 
 // Capsure(radius, height float64) 
 // Polygon(params []float64) 
-func (p *SpriteImpl) SetColliderParams(type ColliderType, params []float64) 
+func (p *SpriteImpl) SetColliderShape(ctype ColliderShapeType, params []float64) 
 func (p *SpriteImpl) SetColliderPivot(offsetX, offsetY float64) 
+func (p *SpriteImpl) ColliderShapes() (ColliderShapeType,[]float64)
+func (p *SpriteImpl) ColliderPivot() (offsetX, offsetY float64)
 
 // 查询方法（4个实用）
 func (p *SpriteImpl) IsOnFloor() bool
@@ -112,8 +114,6 @@ func (p *Game) IntersectCircle(posX, posY, radius float64) (sprites []Sprite) //
 func (p *SpriteImpl) Velocity() (velocityX, velocityY float64)
 func (p *SpriteImpl) Gravity() float64
 func (p *SpriteImpl) PhysicsMode() PhysicsMode
-func (p *SpriteImpl) ColliderParams() (ColliderType,[]float64)
-func (p *SpriteImpl) ColliderPivot() (offsetX, offsetY float64)
 
 // tilemap // -1 表示任意layer
 func (p *Game) PlaceTiles(posXYs []float64, texture string, layer int64 = 0)
@@ -141,7 +141,7 @@ func (p *SpriteImpl) IsOnFloor() bool
 
 ### 二期
 ```go
-func (p *SpriteImpl) SetColliderParams(type ColliderType, params []float64) 
+func (p *SpriteImpl) SetColliderShape(type ColliderShapeType, params []float64) 
 func (p *SpriteImpl) SetColliderPivot(offsetX, offsetY float64) 
 func (p *SpriteImpl) AddImpulse(impulseX, impulseY float64) 
 func (p *Game) Raycast(fromX, fromY, toX, toY float64, ignoresSprites []Sprite = nil) (hit bool, hitX, hitY float64, sprite Sprite)
@@ -264,7 +264,7 @@ func (p *SpriteImpl) AddImpulse(impulseX, impulseY float64)
 ### 2. 碰撞器接口（2个碰撞器方法）
 
 ```go
-// SetColliderParams 设置碰撞器参数
+// SetColliderShape 设置碰撞器参数
 //
 // 参数:
 //   type: 碰撞器类型
@@ -290,17 +290,17 @@ func (p *SpriteImpl) AddImpulse(impulseX, impulseY float64)
 //   - 车辆形态变化时切换碰撞器类型
 //
 // 示例:
-//   - 设置矩形碰撞器：SetColliderParams(RectCollider, []float64{32, 48})
-//   - 设置圆形碰撞器：SetColliderParams(CircleCollider, []float64{16})
-//   - 设置胶囊碰撞器：SetColliderParams(CapsuleCollider, []float64{12, 32})
-//   - 设置三角形碰撞器：SetColliderParams(PolygonCollider, []float64{0, -16, -16, 16, 16, 16})
+//   - 设置矩形碰撞器：SetColliderShape(RectCollider, []float64{32, 48})
+//   - 设置圆形碰撞器：SetColliderShape(CircleCollider, []float64{16})
+//   - 设置胶囊碰撞器：SetColliderShape(CapsuleCollider, []float64{12, 32})
+//   - 设置三角形碰撞器：SetColliderShape(PolygonCollider, []float64{0, -16, -16, 16, 16, 16})
 //
 // 注意事项:
 //   - 参数数组长度错误会导致设置失败
 //   - PolygonCollider的顶点需要按逆时针顺序排列
 //   - 碰撞器尺寸建议比显示图像略小，避免视觉上的穿透感
 //   - 频繁切换碰撞器类型可能影响性能
-func (p *SpriteImpl) SetColliderParams(type ColliderType, params []float64)
+func (p *SpriteImpl) SetColliderShape(type ColliderShapeType, params []float64)
 ```
 
 ```go

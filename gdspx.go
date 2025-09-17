@@ -19,7 +19,6 @@ package spx
 import (
 	"fmt"
 	"log"
-	"math"
 	"strings"
 
 	"github.com/goplus/spx/v2/internal/engine"
@@ -256,54 +255,18 @@ func (*Game) syncUpdatePhysic() {
 			}
 
 		} else {
-			panic("unexpected trigger pair ")
+			fmt.Printf("Physics error: unexpected trigger pair - invalid sprite types\n")
 		}
 	}
 }
 
 func syncInitSpritePhysicInfo(sprite *SpriteImpl, syncProxy *engine.Sprite) {
 	sprite.initCollisionParams()
-	// update collision layers
-	syncProxy.SetTriggerLayer(sprite.triggerLayer)
-	syncProxy.SetTriggerMask(sprite.triggerMask)
-	syncProxy.SetCollisionLayer(sprite.collisionLayer)
-	syncProxy.SetCollisionMask(sprite.collisionMask)
-
-	// set trigger & collider
-	switch sprite.colliderType {
-	case physicColliderCircle:
-		syncProxy.SetCollisionEnabled(true)
-		syncProxy.SetColliderCircle(sprite.colliderCenter, math.Max(sprite.colliderRadius, 0.01))
-	case physicColliderRect:
-		syncProxy.SetCollisionEnabled(true)
-		syncProxy.SetColliderRect(sprite.colliderCenter, sprite.colliderSize)
-	case physicColliderAuto:
-		center, size := syncGetCostumeBoundByAlpha(sprite, sprite.scale)
-		syncProxy.SetCollisionEnabled(true)
-		syncProxy.SetColliderRect(center, size)
-	case physicColliderNone:
-		syncProxy.SetCollisionEnabled(false)
-	}
-	// trigger's default size should be larger than the collision bounding box
+	
+	// sync collision and trigger configurations using unified method
 	const extraPixelSize = 2
-
-	switch sprite.triggerType {
-	case physicColliderCircle:
-		syncProxy.SetTriggerEnabled(true)
-		syncProxy.SetTriggerCircle(sprite.triggerCenter, math.Max(sprite.triggerRadius, 0.01))
-		sprite.triggerSize = mathf.NewVec2(sprite.triggerRadius, sprite.triggerRadius)
-	case physicColliderRect:
-		syncProxy.SetTriggerEnabled(true)
-		syncProxy.SetTriggerRect(sprite.triggerCenter, sprite.triggerSize)
-	case physicColliderAuto:
-		sprite.triggerCenter, sprite.triggerSize = syncGetCostumeBoundByAlpha(sprite, sprite.scale)
-		sprite.triggerSize.X += extraPixelSize
-		sprite.triggerSize.Y += extraPixelSize
-		syncProxy.SetTriggerEnabled(true)
-		syncProxy.SetTriggerRect(sprite.triggerCenter, sprite.triggerSize)
-	case physicColliderNone:
-		syncProxy.SetTriggerEnabled(false)
-	}
+	sprite.collisionInfo.syncToProxy(syncProxy, false, sprite, 0)
+	sprite.triggerInfo.syncToProxy(syncProxy, true, sprite, extraPixelSize)
 	syncProxy.SetGravityScale(sprite.gravity)
 	syncProxy.SetPhysicsMode(sprite.physicsMode)
 }
