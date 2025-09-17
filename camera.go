@@ -22,16 +22,28 @@ import (
 	"github.com/goplus/spbase/mathf"
 )
 
-type Camera struct {
+type Camera interface {
+	ViewportRect() (float64, float64, float64, float64)
+	SetZoom(scale float64)
+	Zoom() float64
+	Xpos() float64
+	Ypos() float64
+	SetXYpos(x float64, y float64)
+	ChangeXYpos(x float64, y float64)
+	Follow__0(sprite Sprite)
+	Follow__1(sprite SpriteName)
+}
+
+type cameraImpl struct {
 	g   *Game
 	on_ any
 }
 
-func (c *Camera) init(g *Game) {
+func (c *cameraImpl) init(g *Game) {
 	c.g = g
 	c.SetZoom(1)
 }
-func (c *Camera) onUpdate(delta float64) {
+func (c *cameraImpl) onUpdate(delta float64) {
 	if c.on_ == nil {
 		return
 	}
@@ -41,7 +53,7 @@ func (c *Camera) onUpdate(delta float64) {
 	}
 }
 
-func (c *Camera) ViewportRect() (float64, float64, float64, float64) {
+func (c *cameraImpl) ViewportRect() (float64, float64, float64, float64) {
 	cameraRect := cameraMgr.GetViewportRect()
 	zoom := cameraMgr.GetCameraZoom()
 	size := cameraRect.Size.Div(zoom)
@@ -49,37 +61,37 @@ func (c *Camera) ViewportRect() (float64, float64, float64, float64) {
 	cameraBottomBound := cameraMgr.GetCameraPosition().Y - size.Y/2
 	return cameraLeftBound, cameraBottomBound, size.X, size.Y
 }
-func (c *Camera) SetZoom(scale float64) {
+func (c *cameraImpl) SetZoom(scale float64) {
 	scale *= c.g.windowScale
 	cameraMgr.SetCameraZoom(mathf.NewVec2(scale, scale))
 }
 
-func (c *Camera) Zoom() float64 {
+func (c *cameraImpl) Zoom() float64 {
 	scale := cameraMgr.GetCameraZoom().X
 	scale /= c.g.windowScale
 	return scale
 }
-func (c *Camera) Xpos() float64 {
+func (c *cameraImpl) Xpos() float64 {
 	pos := cameraMgr.GetPosition()
 	return pos.X
 }
 
-func (c *Camera) Ypos() float64 {
+func (c *cameraImpl) Ypos() float64 {
 	pos := cameraMgr.GetPosition()
 	return pos.Y
 }
 
-func (c *Camera) SetXYpos(x float64, y float64) {
+func (c *cameraImpl) SetXYpos(x float64, y float64) {
 	cameraMgr.SetPosition(mathf.NewVec2(x, y))
 }
 
-func (c *Camera) ChangeXYpos(x float64, y float64) {
+func (c *cameraImpl) ChangeXYpos(x float64, y float64) {
 	c.on_ = nil
 	posX, posY := c.Xpos(), c.Ypos()
 	c.SetXYpos(posX+x, posY+y)
 }
 
-func (c *Camera) getFollowPos() (bool, mathf.Vec2) {
+func (c *cameraImpl) getFollowPos() (bool, mathf.Vec2) {
 	if c.on_ != nil {
 		switch v := c.on_.(type) {
 		case *SpriteImpl:
@@ -92,7 +104,7 @@ func (c *Camera) getFollowPos() (bool, mathf.Vec2) {
 	}
 	return false, mathf.NewVec2(0, 0)
 }
-func (c *Camera) on(obj any) {
+func (c *cameraImpl) on(obj any) {
 	switch v := obj.(type) {
 	case SpriteName:
 		sp := c.g.findSprite(v)
@@ -118,10 +130,10 @@ func (c *Camera) on(obj any) {
 	c.on_ = obj
 }
 
-func (c *Camera) Follow__0(sprite Sprite) {
+func (c *cameraImpl) Follow__0(sprite Sprite) {
 	c.on(sprite)
 }
 
-func (c *Camera) Follow__1(sprite SpriteName) {
+func (c *cameraImpl) Follow__1(sprite SpriteName) {
 	c.on(sprite)
 }

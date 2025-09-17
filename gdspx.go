@@ -111,7 +111,7 @@ func (p *Game) syncEnginePositions() error {
 }
 
 func (p *Game) syncUpdateCamera() {
-	isOn, pos := p.Camera.getFollowPos()
+	isOn, pos := p.camera.getFollowPos()
 	if isOn {
 		engine.SyncSetCameraPosition(pos)
 	}
