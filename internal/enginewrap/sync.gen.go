@@ -149,6 +149,13 @@ func (pself *audioMgrImpl) GetVolume(obj gdx.Object) float64 {
 	})
 	return _ret1
 }
+func (pself *audioMgrImpl) PlayWithAttenuation(obj gdx.Object, path string, owner_id gdx.Object, attenuation float64, max_distance float64) int64 {
+	var _ret1 int64
+	callInMainThread(func() {
+		_ret1 = gdx.AudioMgr.PlayWithAttenuation(obj, path, owner_id, attenuation, max_distance)
+	})
+	return _ret1
+}
 func (pself *audioMgrImpl) Play(obj gdx.Object, path string) int64 {
 	var _ret1 int64
 	callInMainThread(func() {

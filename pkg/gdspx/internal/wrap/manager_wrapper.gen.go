@@ -153,6 +153,17 @@ func (pself *audioMgr) GetVolume(obj Object) float64 {
 	retValue := CallAudioGetVolume(arg0)
 	return ToFloat64(retValue)
 }
+func (pself *audioMgr) PlayWithAttenuation(obj Object, path string, owner_id Object, attenuation float64, max_distance float64) int64 {
+	arg0 := ToGdObj(obj)
+	arg1Str := C.CString(path)
+	arg1 := (GdString)(arg1Str)
+	defer C.free(unsafe.Pointer(arg1Str))
+	arg2 := ToGdObj(owner_id)
+	arg3 := ToGdFloat(attenuation)
+	arg4 := ToGdFloat(max_distance)
+	retValue := CallAudioPlayWithAttenuation(arg0, arg1, arg2, arg3, arg4)
+	return ToInt64(retValue)
+}
 func (pself *audioMgr) Play(obj Object, path string) int64 {
 	arg0 := ToGdObj(obj)
 	arg1Str := C.CString(path)

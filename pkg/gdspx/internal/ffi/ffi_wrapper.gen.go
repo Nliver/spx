@@ -93,6 +93,7 @@ type GDExtensionSpxAudioSetPan C.GDExtensionSpxAudioSetPan
 type GDExtensionSpxAudioGetPan C.GDExtensionSpxAudioGetPan
 type GDExtensionSpxAudioSetVolume C.GDExtensionSpxAudioSetVolume
 type GDExtensionSpxAudioGetVolume C.GDExtensionSpxAudioGetVolume
+type GDExtensionSpxAudioPlayWithAttenuation C.GDExtensionSpxAudioPlayWithAttenuation
 type GDExtensionSpxAudioPlay C.GDExtensionSpxAudioPlay
 type GDExtensionSpxAudioPause C.GDExtensionSpxAudioPause
 type GDExtensionSpxAudioResume C.GDExtensionSpxAudioResume
@@ -442,6 +443,24 @@ func CallAudioGetVolume(
 	C.cgo_callfn_GDExtensionSpxAudioGetVolume(arg0, arg1GdObj, &ret_val)
 
 	return (GdFloat)(ret_val)
+}
+func CallAudioPlayWithAttenuation(
+	obj GdObj,
+	path GdString,
+	owner_id GdObj,
+	attenuation GdFloat,
+	max_distance GdFloat,
+) GdInt {
+	arg0 := (C.GDExtensionSpxAudioPlayWithAttenuation)(api.SpxAudioPlayWithAttenuation)
+	arg1GdObj := (C.GdObj)(obj)
+	arg2GdString := (C.GdString)(path)
+	arg3GdObj := (C.GdObj)(owner_id)
+	arg4GdFloat := (C.GdFloat)(attenuation)
+	arg5GdFloat := (C.GdFloat)(max_distance)
+	var ret_val C.GdInt
+	C.cgo_callfn_GDExtensionSpxAudioPlayWithAttenuation(arg0, arg1GdObj, arg2GdString, arg3GdObj, arg4GdFloat, arg5GdFloat, &ret_val)
+
+	return (GdInt)(ret_val)
 }
 func CallAudioPlay(
 	obj GdObj,

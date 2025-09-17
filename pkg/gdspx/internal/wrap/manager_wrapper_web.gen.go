@@ -148,6 +148,15 @@ func (pself *audioMgr) GetVolume(obj Object) float64 {
 	_retValue := API.SpxAudioGetVolume.Invoke(arg0)
 	return JsToGdFloat(_retValue)
 }
+func (pself *audioMgr) PlayWithAttenuation(obj Object, path string, owner_id Object, attenuation float64, max_distance float64) int64 {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdString(path)
+	arg2 := JsFromGdObj(owner_id)
+	arg3 := JsFromGdFloat(attenuation)
+	arg4 := JsFromGdFloat(max_distance)
+	_retValue := API.SpxAudioPlayWithAttenuation.Invoke(arg0, arg1, arg2, arg3, arg4)
+	return JsToGdInt(_retValue)
+}
 func (pself *audioMgr) Play(obj Object, path string) int64 {
 	arg0 := JsFromGdObj(obj)
 	arg1 := JsFromGdString(path)
