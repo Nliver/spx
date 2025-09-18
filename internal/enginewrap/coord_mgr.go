@@ -7,6 +7,7 @@ import (
 // --------------- camera ------------------
 func (pself *cameraMgrImpl) GetLocalPosition(pos Vec2) Vec2 {
 	camPos := pself.GetCameraPosition()
+	camPos.Y = -camPos.Y
 	return pos.Sub(camPos)
 }
 func (pself *cameraMgrImpl) GetPosition() Vec2 {
