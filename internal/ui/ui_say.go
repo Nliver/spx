@@ -55,11 +55,13 @@ func (pself *UiSay) SetText(winSize mathf.Vec2, pos mathf.Vec2, size mathf.Vec2,
 	if !hasNextLine {
 		finalMsg = text.SplitLines(msg, sayMsgSpliteWidth)
 	}
-	lineCount := strings.Count(finalMsg, "\n")
-	uiHeight := sayMsgDefaultHeight + float64(lineCount)*sayMsgLineHeight
-	maxYPos := winSize.Y/2 - uiHeight
-	yPos = math.Max(-winSize.Y/2, math.Min(yPos, maxYPos))
-	xPos = math.Max(-winSize.X/2, math.Min(x, winSize.X/2))
+	if clampUIPositionInScreen {
+		lineCount := strings.Count(finalMsg, "\n")
+		uiHeight := sayMsgDefaultHeight + float64(lineCount)*sayMsgLineHeight
+		maxYPos := winSize.Y/2 - uiHeight
+		yPos = math.Max(-winSize.Y/2, math.Min(yPos, maxYPos))
+		xPos = math.Max(-winSize.X/2, math.Min(x, winSize.X/2))
+	}
 
 	uiMgr.SetVisible(pself.vboxL.GetId(), isLeft)
 	uiMgr.SetVisible(pself.vboxR.GetId(), !isLeft)
