@@ -26,18 +26,22 @@ func OnReload() {
 
 func RegisterTimer(timer float64) {
 	timeStamp := int64(timer * TIME_PERCISION)
-	// TODO(tanjp): use binary search
-	for i, v := range timestamps {
-		if v == timeStamp {
+
+	low, high := 0, len(timestamps)
+	for low < high {
+		mid := (low + high) / 2
+		if timestamps[mid] == timeStamp {
 			return
-		}
-		if v > timeStamp {
-			timestamps = append(timestamps[:i], timestamps[i:]...)
-			timestamps = append(timestamps, timeStamp)
-			return
+		} else if timestamps[mid] < timeStamp {
+			low = mid + 1
+		} else {
+			high = mid
 		}
 	}
-	timestamps = append(timestamps, timeStamp)
+
+	timestamps = append(timestamps, 0)
+	copy(timestamps[low+1:], timestamps[low:])
+	timestamps[low] = timeStamp
 }
 
 func CheckTimerEvent() float64 {
