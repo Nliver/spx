@@ -21,7 +21,8 @@ var (
 	uiMgr       enginewrap.UiMgrImpl
 )
 var (
-	windowScale float64
+	windowScale             float64
+	clampUIPositionInScreen bool
 )
 
 type UiNode struct {
@@ -31,7 +32,9 @@ type UiNode struct {
 func SetWindowScale(scale float64) {
 	windowScale = scale
 }
-
+func ClampUIPositionInScreen(isClamp bool) {
+	clampUIPositionInScreen = isClamp
+}
 func SyncBindUI[T any](parentNode gdx.Object, path string) *T {
 	return engine.SyncBindUI[T](parentNode, path)
 }

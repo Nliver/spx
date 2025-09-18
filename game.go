@@ -556,8 +556,10 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 	p.camera = &cameraImpl{}
 	p.Camera = p.camera
 	p.camera.init(p)
+	isWindowMapSizeEqual := p.worldHeight_ == p.windowHeight_ && p.worldWidth_ == p.windowWidth_
 	engine.SetWindowScale(p.windowScale)
 	ui.SetWindowScale(p.windowScale)
+	ui.ClampUIPositionInScreen(isWindowMapSizeEqual)
 
 	platformMgr.SetStretchMode(p.stretchMode)
 	// setup syncSprite's property
