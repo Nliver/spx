@@ -69,6 +69,10 @@ func (p *soundMgr) stopInstance(audioId soundId) {
 
 func (p *soundMgr) play(audioId engine.Object, media sound, isLoop, isWait bool, owner engine.Object, attenuation, maxDistance float64) soundId {
 	var curId soundId = 0
+	// Avoid attaching the audio directly to the sprite if it is not using a sound attenuation mode
+	if attenuation == 0 {
+		owner = 0
+	}
 	curId = audioMgr.PlayWithAttenuation(audioId, engine.ToAssetPath(media.Path), owner, attenuation, maxDistance)
 	p.path2ids[media.Path] = append(p.path2ids[media.Path], curId)
 	if isLoop {
