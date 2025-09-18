@@ -1799,12 +1799,12 @@ func (p *Game) checkCollision(ary any) []Sprite {
 	return sprites
 }
 
-func (p *Game) CheckCollision__0(posX, posY, width, height float64) []Sprite {
+func (p *Game) IntersectRect(posX, posY, width, height float64) []Sprite {
 	ary := physicMgr.CheckCollisionRect(mathf.NewVec2(posX, posY), mathf.NewVec2(width, height), -1)
 	return p.checkCollision(ary)
 }
 
-func (p *Game) CheckCollision__1(posX, posY, radius float64) []Sprite {
+func (p *Game) IntersectCircle(posX, posY, radius float64) []Sprite {
 	ary := physicMgr.CheckCollisionCircle(mathf.NewVec2(posX, posY), radius, -1)
 	return p.checkCollision(ary)
 }
@@ -1882,14 +1882,6 @@ func (p *Game) EraseTile(x, y float64) {
 	extMgr.EraseTile(mathf.NewVec2(x, y))
 }
 
-func (p *Game) ExitTilemapEditMode() {
-	extMgr.ExitTilemapEditorMode()
-}
-
-func (p *Game) CreatePureSprite(texture_path string, x, y float64, zindex int64) {
-	extMgr.CreatePureSprite(engine.ToAssetPath(texture_path), mathf.NewVec2(x, y), zindex)
-}
-
 func (p *Game) SetTileMapOffset(index int64, x, y float64) {
 	extMgr.SetLayerOffset(index, mathf.NewVec2(x, y))
 
@@ -1918,6 +1910,10 @@ func (p *Game) FindPath(x_from, y_from, x_to, y_to float64) []float64 {
 	arr := extMgr.FindPath(mathf.NewVec2(x_from, y_from), mathf.NewVec2(x_to, y_to))
 	result := arr.([]float32)
 	return f32Tof64(result)
+}
+
+func (p *Game) CreatePureSprite(texture_path string, x, y float64, zindex int64) {
+	extMgr.CreatePureSprite(engine.ToAssetPath(texture_path), mathf.NewVec2(x, y), zindex)
 }
 
 // -----------------------------------------------------------------------------

@@ -13,32 +13,37 @@ type Sprite struct {
 // Override coordinate system-related functions to accommodate the
 // difference between SPX and Godot coordinate systems (Y-axis inverted)
 
-func (pself *Sprite) SetTriggerRect(center Vec2, size Vec2) {
+func (pself *Sprite) SetColliderShapeRect(isTrigger bool, center Vec2, size Vec2) {
 	center.Y = -center.Y
-	pself.Sprite.SetTriggerRect(center, size)
+	if isTrigger {
+		pself.Sprite.SetTriggerRect(center, size)
+	} else {
+		pself.Sprite.SetColliderRect(center, size)
+	}
 }
 
-func (pself *Sprite) SetTriggerCapsule(center Vec2, size Vec2) {
+func (pself *Sprite) SetColliderShapeCircle(isTrigger bool, center Vec2, radius float64) {
 	center.Y = -center.Y
-	pself.Sprite.SetTriggerCapsule(center, size)
+	if isTrigger {
+		pself.Sprite.SetTriggerCircle(center, radius)
+	} else {
+		pself.Sprite.SetColliderCircle(center, radius)
+	}
 }
 
-func (pself *Sprite) SetTriggerCircle(center Vec2, radius float64) {
+func (pself *Sprite) SetColliderShapeCapsule(isTrigger bool, center Vec2, size Vec2) {
 	center.Y = -center.Y
-	pself.Sprite.SetTriggerCircle(center, radius)
+	if isTrigger {
+		pself.Sprite.SetTriggerCapsule(center, size)
+	} else {
+		pself.Sprite.SetColliderCapsule(center, size)
+	}
 }
 
-func (pself *Sprite) SetColliderRect(center Vec2, size Vec2) {
-	center.Y = -center.Y
-	pself.Sprite.SetColliderRect(center, size)
-}
-
-func (pself *Sprite) SetColliderCapsule(center Vec2, size Vec2) {
-	center.Y = -center.Y
-	pself.Sprite.SetColliderCapsule(center, size)
-}
-
-func (pself *Sprite) SetColliderCircle(center Vec2, radius float64) {
-	center.Y = -center.Y
-	pself.Sprite.SetColliderCircle(center, radius)
+func (pself *Sprite) SetColliderEnabled(isTrigger bool, enabled bool) {
+	if isTrigger {
+		pself.Sprite.SetTriggerEnabled(enabled)
+	} else {
+		pself.Sprite.SetCollisionEnabled(enabled)
+	}
 }

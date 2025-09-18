@@ -283,16 +283,24 @@ type spriteConfig struct {
 	AnimBindings        map[string]string     `json:"animBindings"`
 	CollisionMask       *int64                `json:"collisionMask"`
 	CollisionLayer      *int64                `json:"collisionLayer"`
-	TriggerMask         *int64                `json:"triggerMask"`
-	TriggerLayer        *int64                `json:"triggerLayer"`
-	ColliderType        string                `json:"colliderType"`
-	ColliderCenter      mathf.Vec2            `json:"colliderCenter"`
-	ColliderSize        mathf.Vec2            `json:"colliderSize"`
-	ColliderRadius      float64               `json:"colliderRadius"`
-	TriggerType         string                `json:"triggerType"`
-	TriggerCenter       mathf.Vec2            `json:"triggerCenter"`
-	TriggerSize         mathf.Vec2            `json:"triggerSize"`
-	TriggerRadius       float64               `json:"triggerRadius"`
+	ColliderShapeType   string                `json:"colliderShapeType"`
+	ColliderPivot       mathf.Vec2            `json:"colliderPivot"`
+	// ColliderShapeParams defines the shape parameters based on ColliderShapeType:
+	// - "Rect": [width, height] - Rectangle with specified width and height
+	// - "Circle": [radius] - Circle with specified radius
+	// - "Capsule": [radius, height] - Capsule with specified radius and height
+	// - "Polygon": [x1, y1, x2, y2, ...] - Polygon with vertex coordinates in pairs
+	ColliderShapeParams []float64  `json:"colliderShapeParams"`
+	TriggerMask         *int64     `json:"triggerMask"`
+	TriggerLayer        *int64     `json:"triggerLayer"`
+	TriggerShapeType    string     `json:"triggerShapeType"`
+	TriggerPivot        mathf.Vec2 `json:"triggerPivot"`
+	// TriggerShapeParams defines the shape parameters based on TriggerShapeType:
+	// - "Rect": [width, height] - Rectangle with specified width and height
+	// - "Circle": [radius] - Circle with specified radius
+	// - "Capsule": [radius, height] - Capsule with specified radius and height
+	// - "Polygon": [x1, y1, x2, y2, ...] - Polygon with vertex coordinates in pairs
+	TriggerShapeParams []float64 `json:"triggerShapeParams"`
 
 	ApplyCustumeOffset2Animation bool `json:"applyCustumeOffset2Animation"`
 
