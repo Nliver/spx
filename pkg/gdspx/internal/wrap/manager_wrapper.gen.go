@@ -395,6 +395,22 @@ func (pself *extMgr) EraseTile(pos Vec2) {
 	arg0 := ToGdVec2(pos)
 	CallExtEraseTile(arg0)
 }
+func (pself *extMgr) EraseTileWithLayer(pos Vec2, layer_index int64) {
+	arg0 := ToGdVec2(pos)
+	arg1 := ToGdInt(layer_index)
+	CallExtEraseTileWithLayer(arg0, arg1)
+}
+func (pself *extMgr) GetTile(pos Vec2) string {
+	arg0 := ToGdVec2(pos)
+	retValue := CallExtGetTile(arg0)
+	return ToString(retValue)
+}
+func (pself *extMgr) GetTileWithLayer(pos Vec2, layer_index int64) string {
+	arg0 := ToGdVec2(pos)
+	arg1 := ToGdInt(layer_index)
+	retValue := CallExtGetTileWithLayer(arg0, arg1)
+	return ToString(retValue)
+}
 func (pself *extMgr) CloseDrawTiles() {
 	CallExtCloseDrawTiles()
 }

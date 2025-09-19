@@ -91,6 +91,9 @@ type IExtMgr interface {
 	PlaceTile(pos Vec2, texture_path string)
 	PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64)
 	EraseTile(pos Vec2)
+	EraseTileWithLayer(pos Vec2, layer_index int64)
+	GetTile(pos Vec2) string
+	GetTileWithLayer(pos Vec2, layer_index int64) string
 	CloseDrawTiles()
 	ExitTilemapEditorMode()
 	ClearPureSprites()
