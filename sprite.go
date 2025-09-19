@@ -301,9 +301,9 @@ func (p *SpriteImpl) init(
 	p.collisionInfo.Mask = parseLayerMaskValue(spriteCfg.CollisionMask)
 	p.collisionInfo.Layer = parseLayerMaskValue(spriteCfg.CollisionLayer)
 	// collider is disable by default
-	var defaultCollsionType int64 = physicColliderNone
+	var defaultCollsionType int64 = physicsColliderNone
 	if enabledPhysics {
-		defaultCollsionType = physicColliderAuto
+		defaultCollsionType = physicsColliderAuto
 	}
 	p.collisionInfo.Type = paserColliderShapeType(spriteCfg.ColliderShapeType, defaultCollsionType)
 	p.collisionInfo.Pivot = spriteCfg.ColliderPivot
@@ -311,19 +311,19 @@ func (p *SpriteImpl) init(
 	// Validate colliderShapeType and colliderShape length matching
 	if !p.collisionInfo.validateShape() {
 		fmt.Printf("Warning: Invalid collider configuration for sprite %s, using default values\n", p.name)
-		p.collisionInfo.Type = physicColliderNone
+		p.collisionInfo.Type = physicsColliderNone
 		p.collisionInfo.Params = nil
 	}
 
 	p.triggerInfo.Mask = parseLayerMaskValue(spriteCfg.TriggerMask)
 	p.triggerInfo.Layer = parseLayerMaskValue(spriteCfg.TriggerLayer)
-	p.triggerInfo.Type = paserColliderShapeType(spriteCfg.TriggerShapeType, physicColliderAuto)
+	p.triggerInfo.Type = paserColliderShapeType(spriteCfg.TriggerShapeType, physicsColliderAuto)
 	p.triggerInfo.Pivot = spriteCfg.TriggerPivot
 	p.triggerInfo.Params = spriteCfg.TriggerShapeParams
 	// Validate triggerType and triggerShape length matching
 	if !p.triggerInfo.validateShape() {
 		fmt.Printf("Warning: Invalid trigger configuration for sprite %s, using default values\n", p.name)
-		p.triggerInfo.Type = physicColliderAuto
+		p.triggerInfo.Type = physicsColliderAuto
 		p.triggerInfo.Params = nil
 	}
 
@@ -1835,8 +1835,8 @@ func (p *SpriteImpl) bounds() *mathf.Rect2 {
 	x, y = p.x, p.y
 	applyRenderOffset(p, &x, &y)
 
-	if p.triggerInfo.Type != physicColliderNone {
-		if p.triggerInfo.Type == physicColliderAuto && p.syncSprite == nil {
+	if p.triggerInfo.Type != physicsColliderNone {
+		if p.triggerInfo.Type == physicsColliderAuto && p.syncSprite == nil {
 			// if sprite's proxy is not created, use the sync version to get the bound
 			center, size := getCostumeBoundByAlpha(p, p.scale, false)
 			// Update sprite state atomically to prevent race conditions
@@ -1991,10 +1991,10 @@ const (
 type ColliderShapeType = int64
 
 const (
-	RectCollider    ColliderShapeType = 0
-	CircleCollider  ColliderShapeType = 1
-	CapsuleCollider ColliderShapeType = 2
-	PolygonCollider ColliderShapeType = 3
+	RectCollider    ColliderShapeType = ColliderShapeType(physicsColliderRect)
+	CircleCollider  ColliderShapeType = ColliderShapeType(physicsColliderCircle)
+	CapsuleCollider ColliderShapeType = ColliderShapeType(physicsColliderCapsule)
+	PolygonCollider ColliderShapeType = ColliderShapeType(physicsColliderPolygon)
 )
 
 // physicConfig common structure for physics configuration
@@ -2008,7 +2008,7 @@ type physicConfig struct {
 
 // validateShape validates if shape parameters match the type
 func (cfg *physicConfig) validateShape() bool {
-	if cfg.Type == physicColliderNone || cfg.Type == physicColliderAuto {
+	if cfg.Type == physicsColliderNone || cfg.Type == physicsColliderAuto {
 		return true
 	}
 
@@ -2016,16 +2016,16 @@ func (cfg *physicConfig) validateShape() bool {
 	var typeName string
 
 	switch cfg.Type {
-	case physicColliderRect:
+	case physicsColliderRect:
 		expectedLen = 2
 		typeName = "RectTrigger"
-	case physicColliderCircle:
+	case physicsColliderCircle:
 		expectedLen = 1
 		typeName = "CircleTrigger"
-	case physicColliderCapsule:
+	case physicsColliderCapsule:
 		expectedLen = 2
 		typeName = "CapsuleTrigger"
-	case physicColliderPolygon:
+	case physicsColliderPolygon:
 		if len(cfg.Params) < 6 || len(cfg.Params)%2 != 0 {
 			fmt.Printf("Shape validation error: PolygonTrigger requires at least 6 parameters (3 vertices) and even count, got %d\n", len(cfg.Params))
 			return false
@@ -2053,16 +2053,16 @@ func (cfg *physicConfig) setShape(ctype ColliderShapeType, params []float64) {
 // getDimensions calculates width and height based on type and shape parameters
 func (cfg *physicConfig) getDimensions() (float64, float64) {
 	switch cfg.Type {
-	case physicColliderRect:
+	case physicsColliderRect:
 		if len(cfg.Params) >= 2 {
 			return math.Max(cfg.Params[0], 0), math.Max(cfg.Params[1], 0)
 		}
-	case physicColliderCircle:
+	case physicsColliderCircle:
 		if len(cfg.Params) >= 1 {
 			radius := math.Max(cfg.Params[0], 0)
 			return radius * 2, radius * 2
 		}
-	case physicColliderCapsule:
+	case physicsColliderCapsule:
 		if len(cfg.Params) >= 2 {
 			radius := math.Max(cfg.Params[0], 0)
 			height := math.Max(cfg.Params[1], 0)
@@ -2092,22 +2092,22 @@ func (cfg *physicConfig) syncToProxy(syncProxy *engine.Sprite, isTrigger bool, s
 // syncShape synchronizes shape to engine proxy
 func (cfg *physicConfig) syncShape(syncProxy *engine.Sprite, isTrigger bool, sprite *SpriteImpl, extraPixelSize float64) {
 	switch cfg.Type {
-	case physicColliderCircle:
+	case physicsColliderCircle:
 		syncProxy.SetColliderEnabled(isTrigger, true)
 		if len(cfg.Params) >= 1 {
 			syncProxy.SetColliderShapeCircle(isTrigger, cfg.Pivot, math.Max(cfg.Params[0], 0.01))
 		}
-	case physicColliderRect:
+	case physicsColliderRect:
 		syncProxy.SetColliderEnabled(isTrigger, true)
 		if len(cfg.Params) >= 2 {
 			syncProxy.SetColliderShapeRect(isTrigger, cfg.Pivot, mathf.NewVec2(cfg.Params[0], cfg.Params[1]))
 		}
-	case physicColliderCapsule:
+	case physicsColliderCapsule:
 		syncProxy.SetColliderEnabled(isTrigger, true)
 		if len(cfg.Params) >= 2 {
 			syncProxy.SetColliderShapeCapsule(isTrigger, cfg.Pivot, mathf.NewVec2(cfg.Params[0]*2, cfg.Params[1]))
 		}
-	case physicColliderAuto:
+	case physicsColliderAuto:
 		center, autoSize := syncGetCostumeBoundByAlpha(sprite, sprite.scale)
 		if isTrigger {
 			autoSize.X += extraPixelSize
@@ -2121,7 +2121,7 @@ func (cfg *physicConfig) syncShape(syncProxy *engine.Sprite, isTrigger bool, spr
 			syncProxy.SetColliderEnabled(isTrigger, true)
 			syncProxy.SetColliderShapeRect(isTrigger, center, autoSize)
 		}
-	case physicColliderNone:
+	case physicsColliderNone:
 		syncProxy.SetColliderEnabled(isTrigger, false)
 	}
 }
