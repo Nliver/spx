@@ -25,12 +25,12 @@ import (
 )
 
 const (
-	physicColliderNone    = 0x00
-	physicColliderAuto    = 0x01
-	physicColliderCircle  = 0x02
-	physicColliderRect    = 0x03
-	physicColliderCapsule = 0x04
-	physicColliderPolygon = 0x05
+	physicsColliderNone    = 0x00
+	physicsColliderAuto    = 0x01
+	physicsColliderCircle  = 0x02
+	physicsColliderRect    = 0x03
+	physicsColliderCapsule = 0x04
+	physicsColliderPolygon = 0x05
 )
 
 func parseDefaultValue(pval *int64, defaultValue int64) int64 {
@@ -54,17 +54,17 @@ func parseLayerMaskValue(pval *int64) int64 {
 func paserColliderShapeType(typeName string, defaultValue int64) int64 {
 	switch typeName {
 	case "none":
-		return physicColliderNone
+		return physicsColliderNone
 	case "auto":
-		return physicColliderAuto
+		return physicsColliderAuto
 	case "circle":
-		return physicColliderCircle
+		return physicsColliderCircle
 	case "rect":
-		return physicColliderRect
+		return physicsColliderRect
 	case "capsule":
-		return physicColliderCapsule
+		return physicsColliderCapsule
 	case "polygon":
-		return physicColliderPolygon
+		return physicsColliderPolygon
 	}
 	return defaultValue
 }

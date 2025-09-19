@@ -262,7 +262,7 @@ func (*Game) syncUpdatePhysic() {
 
 func syncInitSpritePhysicInfo(sprite *SpriteImpl, syncProxy *engine.Sprite) {
 	sprite.initCollisionParams()
-	
+
 	// sync collision and trigger configurations using unified method
 	const extraPixelSize = 2
 	sprite.collisionInfo.syncToProxy(syncProxy, false, sprite, 0)
