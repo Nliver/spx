@@ -144,6 +144,9 @@ type projConfig struct {
 	// audio volume scale = Math::pow(1.0f - dist / audioMaxDistance, audioAttenuation);
 	AudioMaxDistance *float64 `json:"audioMaxDistance"` // default 2000
 	AudioAttenuation *float64 `json:"audioAttenuation"` // default 0 indicates no attenuation will occur
+
+	TilemapPath   string `json:"tilemapPath"`
+	LayerSortMode string `json:"layerSortMode"` // layer sort method, default "" , options: "vertical"
 }
 
 func (p *projConfig) getBackdrops() []*backdropConfig {
