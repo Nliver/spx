@@ -336,7 +336,7 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 		log.Println("==> StartLoad", resource)
 	}
 
-	g.isCollisionByPixel = !proj.CollisionByShape
+	g.isCollisionByPixel = !proj.CollisionByShape && !proj.Physics
 	// auto set collision layer by default
 	g.isAutoSetCollisionLayer = proj.AutoSetCollisionLayer == nil || *proj.AutoSetCollisionLayer
 
