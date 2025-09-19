@@ -372,6 +372,22 @@ func (pself *extMgr) EraseTile(pos Vec2) {
 	arg0 := JsFromGdVec2(pos)
 	API.SpxExtEraseTile.Invoke(arg0)
 }
+func (pself *extMgr) EraseTileWithLayer(pos Vec2, layer_index int64) {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdInt(layer_index)
+	API.SpxExtEraseTileWithLayer.Invoke(arg0, arg1)
+}
+func (pself *extMgr) GetTile(pos Vec2) string {
+	arg0 := JsFromGdVec2(pos)
+	_retValue := API.SpxExtGetTile.Invoke(arg0)
+	return JsToGdString(_retValue)
+}
+func (pself *extMgr) GetTileWithLayer(pos Vec2, layer_index int64) string {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdInt(layer_index)
+	_retValue := API.SpxExtGetTileWithLayer.Invoke(arg0, arg1)
+	return JsToGdString(_retValue)
+}
 func (pself *extMgr) CloseDrawTiles() {
 	API.SpxExtCloseDrawTiles.Invoke()
 }

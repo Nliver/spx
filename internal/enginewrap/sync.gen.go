@@ -415,6 +415,25 @@ func (pself *extMgrImpl) EraseTile(pos Vec2) {
 		gdx.ExtMgr.EraseTile(pos)
 	})
 }
+func (pself *extMgrImpl) EraseTileWithLayer(pos Vec2, layer_index int64) {
+	callInMainThread(func() {
+		gdx.ExtMgr.EraseTileWithLayer(pos, layer_index)
+	})
+}
+func (pself *extMgrImpl) GetTile(pos Vec2) string {
+	var _ret1 string
+	callInMainThread(func() {
+		_ret1 = gdx.ExtMgr.GetTile(pos)
+	})
+	return _ret1
+}
+func (pself *extMgrImpl) GetTileWithLayer(pos Vec2, layer_index int64) string {
+	var _ret1 string
+	callInMainThread(func() {
+		_ret1 = gdx.ExtMgr.GetTileWithLayer(pos, layer_index)
+	})
+	return _ret1
+}
 func (pself *extMgrImpl) CloseDrawTiles() {
 	callInMainThread(func() {
 		gdx.ExtMgr.CloseDrawTiles()

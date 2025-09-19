@@ -141,6 +141,9 @@ type GDExtensionSpxExtPlaceTilesWithLayer C.GDExtensionSpxExtPlaceTilesWithLayer
 type GDExtensionSpxExtPlaceTile C.GDExtensionSpxExtPlaceTile
 type GDExtensionSpxExtPlaceTileWithLayer C.GDExtensionSpxExtPlaceTileWithLayer
 type GDExtensionSpxExtEraseTile C.GDExtensionSpxExtEraseTile
+type GDExtensionSpxExtEraseTileWithLayer C.GDExtensionSpxExtEraseTileWithLayer
+type GDExtensionSpxExtGetTile C.GDExtensionSpxExtGetTile
+type GDExtensionSpxExtGetTileWithLayer C.GDExtensionSpxExtGetTileWithLayer
 type GDExtensionSpxExtCloseDrawTiles C.GDExtensionSpxExtCloseDrawTiles
 type GDExtensionSpxExtExitTilemapEditorMode C.GDExtensionSpxExtExitTilemapEditorMode
 type GDExtensionSpxExtClearPureSprites C.GDExtensionSpxExtClearPureSprites
@@ -908,6 +911,39 @@ func CallExtEraseTile(
 
 	C.cgo_callfn_GDExtensionSpxExtEraseTile(arg0, arg1GdVec2)
 
+}
+func CallExtEraseTileWithLayer(
+	pos GdVec2,
+	layer_index GdInt,
+) {
+	arg0 := (C.GDExtensionSpxExtEraseTileWithLayer)(api.SpxExtEraseTileWithLayer)
+	arg1GdVec2 := (C.GdVec2)(pos)
+	arg2GdInt := (C.GdInt)(layer_index)
+
+	C.cgo_callfn_GDExtensionSpxExtEraseTileWithLayer(arg0, arg1GdVec2, arg2GdInt)
+
+}
+func CallExtGetTile(
+	pos GdVec2,
+) GdString {
+	arg0 := (C.GDExtensionSpxExtGetTile)(api.SpxExtGetTile)
+	arg1GdVec2 := (C.GdVec2)(pos)
+	var ret_val C.GdString
+	C.cgo_callfn_GDExtensionSpxExtGetTile(arg0, arg1GdVec2, &ret_val)
+
+	return (GdString)(ret_val)
+}
+func CallExtGetTileWithLayer(
+	pos GdVec2,
+	layer_index GdInt,
+) GdString {
+	arg0 := (C.GDExtensionSpxExtGetTileWithLayer)(api.SpxExtGetTileWithLayer)
+	arg1GdVec2 := (C.GdVec2)(pos)
+	arg2GdInt := (C.GdInt)(layer_index)
+	var ret_val C.GdString
+	C.cgo_callfn_GDExtensionSpxExtGetTileWithLayer(arg0, arg1GdVec2, arg2GdInt, &ret_val)
+
+	return (GdString)(ret_val)
 }
 func CallExtCloseDrawTiles() {
 	arg0 := (C.GDExtensionSpxExtCloseDrawTiles)(api.SpxExtCloseDrawTiles)

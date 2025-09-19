@@ -1878,13 +1878,32 @@ func (p *Game) PlaceTile(x, y float64, texturePath string) {
 	extMgr.PlaceTile(mathf.NewVec2(x, y), path)
 }
 
-func (p *Game) EraseTile(x, y float64) {
+func (p *Game) EraseTile__0(x, y float64) {
 	extMgr.EraseTile(mathf.NewVec2(x, y))
+}
+
+func (p *Game) EraseTile__1(x, y float64, layerIndex int64) {
+	extMgr.EraseTileWithLayer(mathf.NewVec2(x, y), layerIndex)
+}
+
+func (p *Game) GetTile__0(x, y float64) string {
+	return extMgr.GetTile(mathf.NewVec2(x, y))
+}
+func (p *Game) GetTile__1(x, y float64, layerIndex int64) string {
+	return extMgr.GetTileWithLayer(mathf.NewVec2(x, y), layerIndex)
+}
+
+func (p *Game) ExitTilemapEditMode() {
+	extMgr.ExitTilemapEditorMode()
 }
 
 func (p *Game) SetTileMapOffset(index int64, x, y float64) {
 	extMgr.SetLayerOffset(index, mathf.NewVec2(x, y))
 
+}
+
+func (p *Game) CreatePureSprite(texture_path string, x, y float64, zindex int64) {
+	extMgr.CreatePureSprite(engine.ToAssetPath(texture_path), mathf.NewVec2(x, y), zindex)
 }
 
 // Path Finding
@@ -1899,7 +1918,7 @@ func (p *Game) SetupPathFinder__1(x_grid_size, y_grid_size, x_cell_size, y_cell_
 func (p *Game) setupPathFinder() {
 	cellSize := mathf.NewVec2(float64(p.pathCellSizeX), float64(p.pathCellSizeY))
 	gridSize := mathf.NewVec2(float64(p.worldWidth_), float64(p.worldHeight_)).Div(cellSize)
-	extMgr.SetupPathFinderWithSize(gridSize, cellSize, true)
+	extMgr.SetupPathFinderWithSize(gridSize, cellSize, false)
 }
 
 func (p *Game) FindPath(x_from, y_from, x_to, y_to float64) []float64 {
@@ -1910,10 +1929,6 @@ func (p *Game) FindPath(x_from, y_from, x_to, y_to float64) []float64 {
 	arr := extMgr.FindPath(mathf.NewVec2(x_from, y_from), mathf.NewVec2(x_to, y_to))
 	result := arr.([]float32)
 	return f32Tof64(result)
-}
-
-func (p *Game) CreatePureSprite(texture_path string, x, y float64, zindex int64) {
-	extMgr.CreatePureSprite(engine.ToAssetPath(texture_path), mathf.NewVec2(x, y), zindex)
 }
 
 // -----------------------------------------------------------------------------

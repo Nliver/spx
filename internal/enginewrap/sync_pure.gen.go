@@ -200,9 +200,18 @@ func (pself *extMgrImpl) GetLayerOffset(index int64) Vec2 {
 func (pself *extMgrImpl) PlaceTiles(positions gdx.Array, texture_path string) {}
 func (pself *extMgrImpl) PlaceTilesWithLayer(positions gdx.Array, texture_path string, layer_index int64) {
 }
-func (pself *extMgrImpl) PlaceTile(pos Vec2, texture_path string)                                 {}
-func (pself *extMgrImpl) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64)     {}
-func (pself *extMgrImpl) EraseTile(pos Vec2)                                                      {}
+func (pself *extMgrImpl) PlaceTile(pos Vec2, texture_path string)                             {}
+func (pself *extMgrImpl) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64) {}
+func (pself *extMgrImpl) EraseTile(pos Vec2)                                                  {}
+func (pself *extMgrImpl) EraseTileWithLayer(pos Vec2, layer_index int64)                      {}
+func (pself *extMgrImpl) GetTile(pos Vec2) string {
+	var _ret1 string
+	return _ret1
+}
+func (pself *extMgrImpl) GetTileWithLayer(pos Vec2, layer_index int64) string {
+	var _ret1 string
+	return _ret1
+}
 func (pself *extMgrImpl) CloseDrawTiles()                                                         {}
 func (pself *extMgrImpl) ExitTilemapEditorMode()                                                  {}
 func (pself *extMgrImpl) ClearPureSprites()                                                       {}

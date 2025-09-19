@@ -79,6 +79,9 @@ type GDExtensionInterface struct {
 	SpxExtPlaceTile                          js.Value
 	SpxExtPlaceTileWithLayer                 js.Value
 	SpxExtEraseTile                          js.Value
+	SpxExtEraseTileWithLayer                 js.Value
+	SpxExtGetTile                            js.Value
+	SpxExtGetTileWithLayer                   js.Value
 	SpxExtCloseDrawTiles                     js.Value
 	SpxExtExitTilemapEditorMode              js.Value
 	SpxExtClearPureSprites                   js.Value
@@ -357,6 +360,9 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtPlaceTile = dlsymGD("gdspx_ext_place_tile")
 	x.SpxExtPlaceTileWithLayer = dlsymGD("gdspx_ext_place_tile_with_layer")
 	x.SpxExtEraseTile = dlsymGD("gdspx_ext_erase_tile")
+	x.SpxExtEraseTileWithLayer = dlsymGD("gdspx_ext_erase_tile_with_layer")
+	x.SpxExtGetTile = dlsymGD("gdspx_ext_get_tile")
+	x.SpxExtGetTileWithLayer = dlsymGD("gdspx_ext_get_tile_with_layer")
 	x.SpxExtCloseDrawTiles = dlsymGD("gdspx_ext_close_draw_tiles")
 	x.SpxExtExitTilemapEditorMode = dlsymGD("gdspx_ext_exit_tilemap_editor_mode")
 	x.SpxExtClearPureSprites = dlsymGD("gdspx_ext_clear_pure_sprites")

@@ -183,6 +183,15 @@ void cgo_callfn_GDExtensionSpxExtPlaceTileWithLayer(const GDExtensionSpxExtPlace
 void cgo_callfn_GDExtensionSpxExtEraseTile(const GDExtensionSpxExtEraseTile fn, GdVec2 pos) {
 	fn(pos);
 }
+void cgo_callfn_GDExtensionSpxExtEraseTileWithLayer(const GDExtensionSpxExtEraseTileWithLayer fn, GdVec2 pos, GdInt layer_index) {
+	fn(pos, layer_index);
+}
+void cgo_callfn_GDExtensionSpxExtGetTile(const GDExtensionSpxExtGetTile fn, GdVec2 pos, GdString* ret_val) {
+	fn(pos,ret_val);
+}
+void cgo_callfn_GDExtensionSpxExtGetTileWithLayer(const GDExtensionSpxExtGetTileWithLayer fn, GdVec2 pos, GdInt layer_index, GdString* ret_val) {
+	fn(pos, layer_index,ret_val);
+}
 void cgo_callfn_GDExtensionSpxExtCloseDrawTiles(const GDExtensionSpxExtCloseDrawTiles fn) {
 	fn();
 }
