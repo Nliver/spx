@@ -1910,8 +1910,8 @@ func (p *Game) setTileMapOffset(index int64, x, y float64) {
 
 }
 
-func (p *Game) createDecorators(texture_path string, x, y float64, zindex int64) {
-	extMgr.CreatePureSprite(engine.ToAssetPath(texture_path), mathf.NewVec2(x, y), zindex)
+func (p *Game) createDecorators(texturePath string, x, y float64, zindex int64) {
+	extMgr.CreatePureSprite(engine.ToAssetPath(texturePath), mathf.NewVec2(x, y), zindex)
 }
 
 // Path Finding
