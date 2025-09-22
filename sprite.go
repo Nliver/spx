@@ -888,8 +888,15 @@ func (p *SpriteImpl) doTween(name SpriteAnimationName, ani *aniConfig) {
 			src, _ := tools.GetVec2(ani.From)
 			dst, _ := tools.GetVec2(ani.To)
 			diff := dst.Sub(src)
-			val := diff.Mulf(deltaPercent)
-			p.ChangeXYpos(val.X, val.Y)
+			if enabledPhysics && p.physicsMode != NoPhysics && p.physicsMode != StaticPhysics {
+				speed := diff.Length() / duration
+				dir := diff.Normalize()
+				vel := dir.Mulf(speed)
+				p.SetVelocity(vel.X, vel.Y)
+			} else {
+				val := diff.Mulf(deltaPercent)
+				p.ChangeXYpos(val.X, val.Y)
+			}
 		case aniTypeGlide:
 			src, _ := tools.GetVec2(ani.From)
 			dst, _ := tools.GetVec2(ani.To)
@@ -904,6 +911,12 @@ func (p *SpriteImpl) doTween(name SpriteAnimationName, ani *aniConfig) {
 			p.ChangeHeading(val)
 		}
 		engine.WaitNextFrame()
+	}
+	switch ani.AniType {
+	case aniTypeMove:
+		if enabledPhysics && p.physicsMode != NoPhysics && p.physicsMode != StaticPhysics {
+			p.SetVelocity(0, 0)
+		}
 	}
 	p.stopAnimState(info)
 	p.curTweenState = nil
