@@ -976,30 +976,38 @@ func CallExtCreatePureSprite(
 func CallExtSetupPathFinderWithSize(
 	grid_size GdVec2,
 	cell_size GdVec2,
+	with_jump GdBool,
 	with_debug GdBool,
 ) {
 	arg0 := (C.GDExtensionSpxExtSetupPathFinderWithSize)(api.SpxExtSetupPathFinderWithSize)
 	arg1GdVec2 := (C.GdVec2)(grid_size)
 	arg2GdVec2 := (C.GdVec2)(cell_size)
-	arg3GdBool := (C.GdBool)(with_debug)
+	arg3GdBool := (C.GdBool)(with_jump)
+	arg4GdBool := (C.GdBool)(with_debug)
 
-	C.cgo_callfn_GDExtensionSpxExtSetupPathFinderWithSize(arg0, arg1GdVec2, arg2GdVec2, arg3GdBool)
+	C.cgo_callfn_GDExtensionSpxExtSetupPathFinderWithSize(arg0, arg1GdVec2, arg2GdVec2, arg3GdBool, arg4GdBool)
 
 }
-func CallExtSetupPathFinder() {
+func CallExtSetupPathFinder(
+	with_jump GdBool,
+) {
 	arg0 := (C.GDExtensionSpxExtSetupPathFinder)(api.SpxExtSetupPathFinder)
+	arg1GdBool := (C.GdBool)(with_jump)
 
-	C.cgo_callfn_GDExtensionSpxExtSetupPathFinder(arg0)
+	C.cgo_callfn_GDExtensionSpxExtSetupPathFinder(arg0, arg1GdBool)
+
 }
 func CallExtFindPath(
 	p_from GdVec2,
 	p_to GdVec2,
+	with_jump GdBool,
 ) GdArray {
 	arg0 := (C.GDExtensionSpxExtFindPath)(api.SpxExtFindPath)
 	arg1GdVec2 := (C.GdVec2)(p_from)
 	arg2GdVec2 := (C.GdVec2)(p_to)
+	arg3GdBool := (C.GdBool)(with_jump)
 	var ret_val C.GdArray
-	C.cgo_callfn_GDExtensionSpxExtFindPath(arg0, arg1GdVec2, arg2GdVec2, &ret_val)
+	C.cgo_callfn_GDExtensionSpxExtFindPath(arg0, arg1GdVec2, arg2GdVec2, arg3GdBool, &ret_val)
 
 	return GdArray(ret_val)
 }

@@ -1916,25 +1916,29 @@ func (p *Game) createDecorators(texture_path string, x, y float64, zindex int64)
 
 // Path Finding
 func (p *Game) SetupPathFinder__0() {
-	p.setupPathFinder()
+	p.setupPathFinder(true)
 }
 
-func (p *Game) SetupPathFinder__1(x_grid_size, y_grid_size, x_cell_size, y_cell_size float64, with_debug bool) {
-	extMgr.SetupPathFinderWithSize(mathf.NewVec2(x_grid_size, y_grid_size), mathf.NewVec2(x_cell_size, y_cell_size), with_debug)
+func (p *Game) SetupPathFinder__1(x_grid_size, y_grid_size, x_cell_size, y_cell_size float64, with_jump, with_debug bool) {
+	extMgr.SetupPathFinderWithSize(mathf.NewVec2(x_grid_size, y_grid_size), mathf.NewVec2(x_cell_size, y_cell_size), with_jump, with_debug)
 }
 
-func (p *Game) setupPathFinder() {
+func (p *Game) setupPathFinder(with_jump bool) {
 	cellSize := mathf.NewVec2(float64(p.pathCellSizeX), float64(p.pathCellSizeY))
 	gridSize := mathf.NewVec2(float64(p.worldWidth_), float64(p.worldHeight_)).Div(cellSize)
-	extMgr.SetupPathFinderWithSize(gridSize, cellSize, false)
+	extMgr.SetupPathFinderWithSize(gridSize, cellSize, with_jump, false)
 }
 
-func (p *Game) FindPath(x_from, y_from, x_to, y_to float64) []float64 {
+func (p *Game) FindPath__0(x_from, y_from, x_to, y_to float64) []float64 {
+	return p.FindPath__1(x_from, y_from, x_to, y_to, true)
+}
+
+func (p *Game) FindPath__1(x_from, y_from, x_to, y_to float64, with_jump bool) []float64 {
 	p.oncePathFinder.Do(func() {
-		p.setupPathFinder()
+		p.setupPathFinder(with_jump)
 	})
 
-	arr := extMgr.FindPath(mathf.NewVec2(x_from, y_from), mathf.NewVec2(x_to, y_to))
+	arr := extMgr.FindPath(mathf.NewVec2(x_from, y_from), mathf.NewVec2(x_to, y_to), with_jump)
 	result := arr.([]float32)
 	return f32Tof64(result)
 }
