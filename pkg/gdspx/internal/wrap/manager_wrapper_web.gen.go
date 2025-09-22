@@ -403,19 +403,22 @@ func (pself *extMgr) CreatePureSprite(texture_path string, pos Vec2, zindex int6
 	arg2 := JsFromGdInt(zindex)
 	API.SpxExtCreatePureSprite.Invoke(arg0, arg1, arg2)
 }
-func (pself *extMgr) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_debug bool) {
+func (pself *extMgr) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
 	arg0 := JsFromGdVec2(grid_size)
 	arg1 := JsFromGdVec2(cell_size)
-	arg2 := JsFromGdBool(with_debug)
-	API.SpxExtSetupPathFinderWithSize.Invoke(arg0, arg1, arg2)
+	arg2 := JsFromGdBool(with_jump)
+	arg3 := JsFromGdBool(with_debug)
+	API.SpxExtSetupPathFinderWithSize.Invoke(arg0, arg1, arg2, arg3)
 }
-func (pself *extMgr) SetupPathFinder() {
-	API.SpxExtSetupPathFinder.Invoke()
+func (pself *extMgr) SetupPathFinder(with_jump bool) {
+	arg0 := JsFromGdBool(with_jump)
+	API.SpxExtSetupPathFinder.Invoke(arg0)
 }
-func (pself *extMgr) FindPath(p_from Vec2, p_to Vec2) Array {
+func (pself *extMgr) FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array {
 	arg0 := JsFromGdVec2(p_from)
 	arg1 := JsFromGdVec2(p_to)
-	_retValue := API.SpxExtFindPath.Invoke(arg0, arg1)
+	arg2 := JsFromGdBool(with_jump)
+	_retValue := API.SpxExtFindPath.Invoke(arg0, arg1, arg2)
 	return JsToGdArray(_retValue)
 }
 func (pself *inputMgr) GetMousePos() Vec2 {

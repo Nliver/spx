@@ -454,20 +454,20 @@ func (pself *extMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex 
 		gdx.ExtMgr.CreatePureSprite(texture_path, pos, zindex)
 	})
 }
-func (pself *extMgrImpl) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_debug bool) {
+func (pself *extMgrImpl) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
 	callInMainThread(func() {
-		gdx.ExtMgr.SetupPathFinderWithSize(grid_size, cell_size, with_debug)
+		gdx.ExtMgr.SetupPathFinderWithSize(grid_size, cell_size, with_jump, with_debug)
 	})
 }
-func (pself *extMgrImpl) SetupPathFinder() {
+func (pself *extMgrImpl) SetupPathFinder(with_jump bool) {
 	callInMainThread(func() {
-		gdx.ExtMgr.SetupPathFinder()
+		gdx.ExtMgr.SetupPathFinder(with_jump)
 	})
 }
-func (pself *extMgrImpl) FindPath(p_from Vec2, p_to Vec2) gdx.Array {
+func (pself *extMgrImpl) FindPath(p_from Vec2, p_to Vec2, with_jump bool) gdx.Array {
 	var _ret1 gdx.Array
 	callInMainThread(func() {
-		_ret1 = gdx.ExtMgr.FindPath(p_from, p_to)
+		_ret1 = gdx.ExtMgr.FindPath(p_from, p_to, with_jump)
 	})
 	return _ret1
 }

@@ -212,13 +212,14 @@ func (pself *extMgrImpl) GetTileWithLayer(pos Vec2, layer_index int64) string {
 	var _ret1 string
 	return _ret1
 }
-func (pself *extMgrImpl) CloseDrawTiles()                                                         {}
-func (pself *extMgrImpl) ExitTilemapEditorMode()                                                  {}
-func (pself *extMgrImpl) ClearPureSprites()                                                       {}
-func (pself *extMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex int64)            {}
-func (pself *extMgrImpl) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_debug bool) {}
-func (pself *extMgrImpl) SetupPathFinder()                                                        {}
-func (pself *extMgrImpl) FindPath(p_from Vec2, p_to Vec2) gdx.Array {
+func (pself *extMgrImpl) CloseDrawTiles()                                              {}
+func (pself *extMgrImpl) ExitTilemapEditorMode()                                       {}
+func (pself *extMgrImpl) ClearPureSprites()                                            {}
+func (pself *extMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {}
+func (pself *extMgrImpl) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
+}
+func (pself *extMgrImpl) SetupPathFinder(with_jump bool) {}
+func (pself *extMgrImpl) FindPath(p_from Vec2, p_to Vec2, with_jump bool) gdx.Array {
 	var _ret1 gdx.Array
 	return _ret1
 }
