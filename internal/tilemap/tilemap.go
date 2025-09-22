@@ -1,7 +1,9 @@
 package tilemap
 
 import (
+	"path"
 	"sort"
+	"strings"
 )
 
 type vec2i struct {
@@ -49,7 +51,6 @@ type tileSet struct {
 // tileInstance represents a placed tile in the map
 type tileInstance struct {
 	TileCoords  vec2i `json:"tile_coords"`
-	WorldCoords vec2  `json:"world_coords"`
 	SourceID    int32 `json:"source_id"`
 	AtlasCoords vec2i `json:"atlas_coords"`
 }
@@ -71,11 +72,11 @@ type tileMapData struct {
 
 // decoratorNode represents a Sprite2D node in the scene
 type decoratorNode struct {
-	Name        string `json:"name"`
-	Parent      string `json:"parent"`
-	Position    vec2   `json:"position"`
-	TexturePath string `json:"texture_path"`
-	ZIndex      int32  `json:"z_index,omitempty"`
+	Name     string `json:"name"`
+	Parent   string `json:"parent"`
+	Position vec2   `json:"position"`
+	Path     string `json:"path"`
+	ZIndex   int32  `json:"z_index,omitempty"`
 }
 
 // spriteNode represents an instantiated prefab node in the scene
@@ -83,7 +84,7 @@ type spriteNode struct {
 	Name       string                 `json:"name"`
 	Parent     string                 `json:"parent"`
 	Position   vec2                   `json:"position"`
-	PrefabPath string                 `json:"prefab_path"`
+	Path       string                 `json:"path"`
 	Properties map[string]interface{} `json:"properties,omitempty"`
 }
 
@@ -91,26 +92,41 @@ type spriteNode struct {
 type TscnMapData struct {
 	TileMap    tileMapData     `json:"tilemap"`
 	Decorators []decoratorNode `json:"decorators"`
-	Sprites    []spriteNode    `json:"prefabs"`
+	Sprites    []spriteNode    `json:"sprites"`
+}
+
+const tilemapRelDir = "tilemaps"
+
+func toTilemapPath(p string) string {
+	if strings.HasPrefix(p, tilemapRelDir) {
+		return p
+	}
+	return path.Join(tilemapRelDir, p)
 }
 
 // Runtime utilities for parsing tile data
+func ConvertData(data *TscnMapData) {
+	for _, item := range data.Decorators {
+		item.Path = toTilemapPath(item.Path)
+	}
+}
 func LoadTilemaps(datas *TscnMapData, funcSetTile func(texturePath string, isCollision bool), funcSetLayer func(layerIndex int64),
 	funcPlaceTiles func(positions []float64, texturePath string, layerIndex int64)) {
 	paths := make(map[int32]string)
 	for _, item := range datas.TileMap.TileSet.Sources {
-		paths[item.ID] = item.TexturePath
+		paths[item.ID] = toTilemapPath(item.TexturePath)
 		hasCollision := false
 		for _, tile := range item.Tiles {
 			hasCollision = hasCollision || tile.Physics.CollisionPoints != nil
 		}
-		funcSetTile(item.TexturePath, hasCollision)
+		funcSetTile(paths[item.ID], hasCollision)
 	}
 	for idx, layer := range datas.TileMap.Layers {
 		layerId := int64(idx)
 		funcSetLayer(layerId)
 		tileData := layer.TileData
-		tiles := parseTileData(tileData, datas.TileMap.TileSize)
+		tileSizeX, tileSizeY := datas.TileMap.TileSize.Width, datas.TileMap.TileSize.Height
+		tiles := parseTileData(tileData)
 		sort.Slice(tiles, func(i, j int) bool {
 			return tiles[i].SourceID < tiles[j].SourceID
 		})
@@ -126,8 +142,8 @@ func LoadTilemaps(datas *TscnMapData, funcSetTile func(texturePath string, isCol
 				lastId = tile.SourceID
 				path = paths[tile.SourceID]
 			}
-			y, x := tile.WorldCoords.Y, tile.WorldCoords.X
-			positions = append(positions, x, -y)
+			x, y := tile.TileCoords.X*tileSizeX, tile.TileCoords.Y*tileSizeY
+			positions = append(positions, float64(x), float64(y))
 		}
 		if len(positions) > 0 {
 			funcPlaceTiles(positions, path, layerId)
@@ -137,40 +153,27 @@ func LoadTilemaps(datas *TscnMapData, funcSetTile func(texturePath string, isCol
 
 // TileMapParser provides utilities for parsing compact tile data
 // ParseTileData converts compact tile data array to tile instances
-// The tile_data format is: [x, source_id, atlas_coords_encoded, x2, source_id2, atlas_coords_encoded2, ...]
-// Where atlas_coords_encoded combines atlas X and Y coordinates
-func parseTileData(tileData []int32, tileSize tileSize) []tileInstance {
-	var tiles []tileInstance
+// New format: [source_id, tile_x, tile_y, atlas_x, atlas_y] (5 elements per tile)
+// Where source_id is the ID of the tileset source,
+// tile_x and tile_y are the tile coordinates in the map,
+// and atlas_x and atlas_y are the coordinates in the tileset texture.
+func parseTileData(tileData []int32) []tileInstance {
+	tileCount := len(tileData) / 5
+	tiles := make([]tileInstance, 0, tileCount)
 
-	for i := 0; i < len(tileData); i += 3 {
-		if i+2 >= len(tileData) {
+	for i := 0; i < len(tileData); i += 5 {
+		if i+4 >= len(tileData) {
 			break
 		}
 
-		tilePos := tileData[i]
-		sourceID := tileData[i+1]
-		atlasEncoded := tileData[i+2]
-
-		// Decode tile position (Godot uses a specific encoding)
-		tileX := tilePos & 0xFFFF
-		if tileX >= 0x8000 {
-			tileX -= 0x10000 // Handle negative coordinates
-		}
-		tileY := (tilePos >> 16) & 0xFFFF
-		if tileY >= 0x8000 {
-			tileY -= 0x10000 // Handle negative coordinates
-		}
-
-		// Decode atlas coordinates (usually just X and Y)
-		atlasX := atlasEncoded & 0xFFFF
-		atlasY := (atlasEncoded >> 16) & 0xFFFF
+		sourceID := tileData[i]
+		tileX := tileData[i+1]
+		tileY := tileData[i+2]
+		atlasX := tileData[i+3]
+		atlasY := tileData[i+4]
 
 		tile := tileInstance{
-			TileCoords: vec2i{X: tileX, Y: tileY},
-			WorldCoords: vec2{
-				X: float64(tileX * tileSize.Width),
-				Y: float64(tileY * tileSize.Height),
-			},
+			TileCoords:  vec2i{X: tileX, Y: tileY},
 			SourceID:    sourceID,
 			AtlasCoords: vec2i{X: atlasX, Y: atlasY},
 		}

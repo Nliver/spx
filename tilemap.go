@@ -39,6 +39,7 @@ func (p *tilemapMgr) init(g *Game, fs spxfs.Dir, path string) {
 		panic(fmt.Sprintf("Failed to load tilemap JSON file %s: %v", path, err))
 	}
 	p.datas = &data
+	tm.ConvertData(&data)
 }
 
 func (p *tilemapMgr) loadTilemaps(datas *tm.TscnMapData) {
@@ -47,15 +48,15 @@ func (p *tilemapMgr) loadTilemaps(datas *tm.TscnMapData) {
 }
 func (p *tilemapMgr) loadDecorators(datas *tm.TscnMapData) {
 	for _, item := range datas.Decorators {
-		p.g.createDecorators(item.TexturePath, item.Position.X, -item.Position.Y, int64(item.ZIndex))
+		p.g.createDecorators(item.Path, item.Position.X, item.Position.Y, int64(item.ZIndex))
 	}
 }
 
 func (p *tilemapMgr) loadSprites(datas *tm.TscnMapData) {
 	for _, item := range datas.Sprites {
-		sp, ok := p.g.sprs[item.PrefabPath]
+		sp, ok := p.g.sprs[item.Path]
 		if ok {
-			x, y := item.Position.X, -item.Position.Y
+			x, y := item.Position.X, item.Position.Y
 			doClone(sp, nil, true, func(sprite *SpriteImpl) {
 				sprite.SetXYpos(x, y)
 			})
