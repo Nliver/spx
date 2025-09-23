@@ -537,6 +537,7 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 
 	p.doWindowSize() // set window size
 
+	engine.SetDebugMode(p.debug)
 	if debugLoad {
 		log.Println("==> SetWindowSize", p.windowWidth_, p.windowHeight_)
 	}
