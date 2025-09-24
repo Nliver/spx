@@ -284,26 +284,27 @@ type spriteConfig struct {
 	Pivot               mathf.Vec2            `json:"pivot"`
 	DefaultAnimation    string                `json:"defaultAnimation"`
 	AnimBindings        map[string]string     `json:"animBindings"`
-	CollisionMask       *int64                `json:"collisionMask"`
-	CollisionLayer      *int64                `json:"collisionLayer"`
-	ColliderShapeType   string                `json:"colliderShapeType"`
-	ColliderPivot       mathf.Vec2            `json:"colliderPivot"`
 	// ColliderShapeParams defines the shape parameters based on ColliderShapeType:
 	// - "Rect": [width, height] - Rectangle with specified width and height
 	// - "Circle": [radius] - Circle with specified radius
 	// - "Capsule": [radius, height] - Capsule with specified radius and height
 	// - "Polygon": [x1, y1, x2, y2, ...] - Polygon with vertex coordinates in pairs
-	ColliderShapeParams []float64  `json:"colliderShapeParams"`
-	TriggerMask         *int64     `json:"triggerMask"`
-	TriggerLayer        *int64     `json:"triggerLayer"`
-	TriggerShapeType    string     `json:"triggerShapeType"`
-	TriggerPivot        mathf.Vec2 `json:"triggerPivot"`
+	CollisionShapeParams []float64  `json:"collisionShapeParams"`
+	CollisionMask        *int64     `json:"collisionMask"`
+	CollisionLayer       *int64     `json:"collisionLayer"`
+	CollisionShapeType   string     `json:"collisionShapeType"`
+	CollisionPivot       mathf.Vec2 `json:"collisionPivot"`
+
 	// TriggerShapeParams defines the shape parameters based on TriggerShapeType:
 	// - "Rect": [width, height] - Rectangle with specified width and height
 	// - "Circle": [radius] - Circle with specified radius
 	// - "Capsule": [radius, height] - Capsule with specified radius and height
 	// - "Polygon": [x1, y1, x2, y2, ...] - Polygon with vertex coordinates in pairs
-	TriggerShapeParams []float64 `json:"triggerShapeParams"`
+	TriggerShapeParams []float64  `json:"triggerShapeParams"`
+	TriggerMask        *int64     `json:"triggerMask"`
+	TriggerLayer       *int64     `json:"triggerLayer"`
+	TriggerShapeType   string     `json:"triggerShapeType"`
+	TriggerPivot       mathf.Vec2 `json:"triggerPivot"`
 
 	ApplyCustumeOffset2Animation bool `json:"applyCustumeOffset2Animation"`
 
