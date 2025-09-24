@@ -114,6 +114,8 @@ type Game struct {
 	// map world
 	worldWidth_  int
 	worldHeight_ int
+	minWorldX_   int
+	minWorldY_   int
 	mapMode      int
 
 	// window
@@ -524,10 +526,14 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 		p.baseObj.initBackdrops("", backdrops, proj.getBackdropIndex())
 		p.worldWidth_ = proj.Map.Width
 		p.worldHeight_ = proj.Map.Height
+		p.minWorldX_ = -p.worldWidth_ / 2 // Default world center at (0,0)
+		p.minWorldY_ = -p.worldHeight_ / 2
 		p.doWorldSize() // set world size
 	} else {
 		p.worldWidth_ = proj.Map.Width
 		p.worldHeight_ = proj.Map.Height
+		p.minWorldX_ = -p.worldWidth_ / 2 // Default world center at (0,0)
+		p.minWorldY_ = -p.worldHeight_ / 2
 		p.baseObj.initWithSize(p.worldWidth_, p.worldHeight_)
 	}
 	if debugLoad {
@@ -930,6 +936,7 @@ func (p *Game) logicLoop(me coroutine.Thread) int {
 	tempAnimations := []string{}
 	for {
 		p.camera.onUpdate(gtime.DeltaTime())
+
 		tempItems := p.getTempShapes()
 		for _, item := range tempItems {
 			if result, ok := item.(interface{ onUpdate(float64) }); ok {
