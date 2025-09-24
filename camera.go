@@ -43,6 +43,8 @@ func (c *cameraImpl) init(g *Game) {
 	c.g = g
 	c.SetZoom(1)
 }
+
+// Restrict camera position to prevent camera from seeing areas outside the world
 func (c *cameraImpl) onUpdate(delta float64) {
 	if c.on_ == nil {
 		return
@@ -50,6 +52,55 @@ func (c *cameraImpl) onUpdate(delta float64) {
 	val, pos := c.getFollowPos()
 	if val {
 		c.SetXYpos(pos.X, pos.Y)
+	}
+}
+
+// constrainPos restricts camera position to prevent camera from seeing areas outside the world
+func (c *cameraImpl) constrainPos(cpos mathf.Vec2) {
+	p := c.g
+	if p.worldWidth_ <= 0 || p.worldHeight_ <= 0 {
+		return // Skip constraint if world size is not set
+	}
+
+	// Calculate current camera center position
+	cameraRect := cameraMgr.GetViewportRect()
+	csize := cameraRect.Size.Div(cameraMgr.GetCameraZoom())
+
+	viewportWidth, viewportHeight := csize.X, csize.Y
+	currentX, currentY := cpos.X, cpos.Y
+
+	// Calculate actual world boundaries (based on minWorld coordinates and world size)
+	worldLeft := float64(p.minWorldX_)
+	worldRight := float64(p.minWorldX_ + p.worldWidth_)
+	worldBottom := float64(p.minWorldY_)
+	worldTop := float64(p.minWorldY_ + p.worldHeight_)
+
+	// Calculate camera boundary constraints
+	minX := worldLeft + viewportWidth/2
+	maxX := worldRight - viewportWidth/2
+	minY := worldBottom + viewportHeight/2
+	maxY := worldTop - viewportHeight/2
+
+	// Constrain camera position
+	constrainedX := currentX
+	constrainedY := currentY
+
+	if constrainedX < minX {
+		constrainedX = minX
+	} else if constrainedX > maxX {
+		constrainedX = maxX
+	}
+
+	if constrainedY < minY {
+		constrainedY = minY
+	} else if constrainedY > maxY {
+		constrainedY = maxY
+	}
+
+	if constrainedX != currentX || constrainedY != currentY {
+		cameraMgr.SetPosition(mathf.NewVec2(constrainedX, constrainedY))
+	} else {
+		cameraMgr.SetPosition(cpos)
 	}
 }
 
@@ -82,7 +133,7 @@ func (c *cameraImpl) Ypos() float64 {
 }
 
 func (c *cameraImpl) SetXYpos(x float64, y float64) {
-	cameraMgr.SetPosition(mathf.NewVec2(x, y))
+	c.constrainPos(mathf.NewVec2(x, y))
 }
 
 func (c *cameraImpl) ChangeXYpos(x float64, y float64) {

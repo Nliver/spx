@@ -21,6 +21,8 @@ import (
 
 	spxfs "github.com/goplus/spx/v2/fs"
 	tm "github.com/goplus/spx/v2/internal/tilemap"
+
+	"github.com/goplus/spbase/mathf"
 )
 
 type tilemapMgr struct {
@@ -71,4 +73,89 @@ func (p *tilemapMgr) parseTilemap() {
 	p.loadTilemaps(p.datas)
 	p.loadDecorators(p.datas)
 	p.loadSprites(p.datas)
+
+	// Update world size based on actual tilemap content
+	p.calcWorldSize()
+}
+
+// calcWorldSize calculates and updates world size based on actual tile distribution in tilemap
+func (p *tilemapMgr) calcWorldSize() {
+	if p.datas == nil || len(p.datas.TileMap.Layers) == 0 {
+		fmt.Println("[TILEMAP DEBUG] No tilemap data or layers, skipping world size update")
+		return
+	}
+
+	tileSizeX := int(p.datas.TileMap.TileSize.Width)
+	tileSizeY := int(p.datas.TileMap.TileSize.Height)
+
+	var minX, maxX, minY, maxY int32 = 0, 0, 0, 0
+	hasAnyTiles := false
+	totalTiles := 0
+
+	for _, layer := range p.datas.TileMap.Layers {
+		tiles := p.parseTileDataForBounds(layer.TileData)
+		totalTiles += len(tiles)
+		for _, tile := range tiles {
+			if !hasAnyTiles {
+				minX, maxX = tile.X, tile.X
+				minY, maxY = tile.Y, tile.Y
+				hasAnyTiles = true
+			} else {
+				if tile.X < minX {
+					minX = tile.X
+				}
+				if tile.X > maxX {
+					maxX = tile.X
+				}
+				if tile.Y < minY {
+					minY = tile.Y
+				}
+				if tile.Y > maxY {
+					maxY = tile.Y
+				}
+			}
+		}
+	}
+
+	if hasAnyTiles {
+		minWorldX := int((minX) * int32(tileSizeX))
+		maxWorldX := int((maxX + 1) * int32(tileSizeX)) // +1 to include the full size of the last tile
+		minWorldY := int((minY - 1) * int32(tileSizeY)) // -1 to include the full size of the last tile
+		maxWorldY := int((maxY) * int32(tileSizeY))
+
+		worldWidth := maxWorldX - minWorldX
+		worldHeight := maxWorldY - minWorldY
+
+		p.g.minWorldX_ = minWorldX
+		p.g.minWorldY_ = minWorldY
+		p.g.worldWidth_ = worldWidth
+		p.g.worldHeight_ = worldHeight
+
+	} else {
+		fmt.Println("[TILEMAP DEBUG] No tiles found in any layer")
+	}
+}
+
+// parseTileDataForBounds parses tile data for boundary calculation (copied logic from internal/tilemap package)
+func (p *tilemapMgr) parseTileDataForBounds(tileData []int32) []mathf.Vec2i {
+	tileCount := len(tileData) / 5
+	tiles := make([]mathf.Vec2i, 0, tileCount)
+
+	for i := 0; i < len(tileData); i += 5 {
+		if i+4 >= len(tileData) {
+			break
+		}
+
+		tileX := tileData[i+1]
+		tileY := tileData[i+2]
+
+		tile := mathf.Vec2i{
+			X: tileX,
+			Y: tileY,
+		}
+
+		tiles = append(tiles, tile)
+	}
+
+	return tiles
 }
