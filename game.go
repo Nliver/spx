@@ -1878,9 +1878,13 @@ func (p *Game) setTileMapLayerIndex(index int64) {
 	extMgr.SetLayerIndex(index)
 }
 
-func (p *Game) setTileInfo(texturePath string, isCollision bool) {
+func (p *Game) setTileInfo__0(texturePath string, isCollision bool) {
 	path := engine.ToAssetPath(texturePath)
 	extMgr.SetTile(path, isCollision)
+}
+func (p *Game) setTileInfo__1(texturePath string, collisionPoints []float64) {
+	path := engine.ToAssetPath(texturePath)
+	extMgr.SetTileWithCollisionInfo(path, f64Tof32(collisionPoints))
 }
 
 func (p *Game) PlaceTiles__0(positions []float64, texturePath string) {

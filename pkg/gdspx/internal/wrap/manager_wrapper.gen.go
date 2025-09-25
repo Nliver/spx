@@ -351,6 +351,13 @@ func (pself *extMgr) SetTile(texture_path string, with_collision bool) {
 	arg1 := ToGdBool(with_collision)
 	CallExtSetTile(arg0, arg1)
 }
+func (pself *extMgr) SetTileWithCollisionInfo(texture_path string, collision_points Array) {
+	arg0Str := C.CString(texture_path)
+	arg0 := (GdString)(arg0Str)
+	defer C.free(unsafe.Pointer(arg0Str))
+	arg1 := ToGdArray(collision_points)
+	CallExtSetTileWithCollisionInfo(arg0, arg1)
+}
 func (pself *extMgr) SetLayerOffset(index int64, offset Vec2) {
 	arg0 := ToGdInt(index)
 	arg1 := ToGdVec2(offset)

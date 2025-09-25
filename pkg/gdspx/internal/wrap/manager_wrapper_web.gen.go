@@ -336,6 +336,11 @@ func (pself *extMgr) SetTile(texture_path string, with_collision bool) {
 	arg1 := JsFromGdBool(with_collision)
 	API.SpxExtSetTile.Invoke(arg0, arg1)
 }
+func (pself *extMgr) SetTileWithCollisionInfo(texture_path string, collision_points Array) {
+	arg0 := JsFromGdString(texture_path)
+	arg1 := JsFromGdArray(collision_points)
+	API.SpxExtSetTileWithCollisionInfo.Invoke(arg0, arg1)
+}
 func (pself *extMgr) SetLayerOffset(index int64, offset Vec2) {
 	arg0 := JsFromGdInt(index)
 	arg1 := JsFromGdVec2(offset)

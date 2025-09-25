@@ -755,6 +755,12 @@ func ToGdArray(slice interface{}) GdArray {
 		info = createGdArrayFromInt64s(v)
 	case []float32:
 		info = createGdArrayFromFloats(v)
+	case []float64:
+		floats := make([]float32, len(v))
+		for i, f := range v {
+			floats[i] = float32(f)
+		}
+		info = createGdArrayFromFloats(floats)
 	case []bool:
 		info = createGdArrayFromBools(v)
 	case []string:

@@ -134,6 +134,7 @@ type GDExtensionSpxExtOpenDrawTilesWithSize C.GDExtensionSpxExtOpenDrawTilesWith
 type GDExtensionSpxExtOpenDrawTiles C.GDExtensionSpxExtOpenDrawTiles
 type GDExtensionSpxExtSetLayerIndex C.GDExtensionSpxExtSetLayerIndex
 type GDExtensionSpxExtSetTile C.GDExtensionSpxExtSetTile
+type GDExtensionSpxExtSetTileWithCollisionInfo C.GDExtensionSpxExtSetTileWithCollisionInfo
 type GDExtensionSpxExtSetLayerOffset C.GDExtensionSpxExtSetLayerOffset
 type GDExtensionSpxExtGetLayerOffset C.GDExtensionSpxExtGetLayerOffset
 type GDExtensionSpxExtPlaceTiles C.GDExtensionSpxExtPlaceTiles
@@ -832,6 +833,17 @@ func CallExtSetTile(
 	arg2GdBool := (C.GdBool)(with_collision)
 
 	C.cgo_callfn_GDExtensionSpxExtSetTile(arg0, arg1GdString, arg2GdBool)
+
+}
+func CallExtSetTileWithCollisionInfo(
+	texture_path GdString,
+	collision_points GdArray,
+) {
+	arg0 := (C.GDExtensionSpxExtSetTileWithCollisionInfo)(api.SpxExtSetTileWithCollisionInfo)
+	arg1GdString := (C.GdString)(texture_path)
+	arg2GdArray := (C.GdArray)(collision_points)
+
+	C.cgo_callfn_GDExtensionSpxExtSetTileWithCollisionInfo(arg0, arg1GdString, arg2GdArray)
 
 }
 func CallExtSetLayerOffset(

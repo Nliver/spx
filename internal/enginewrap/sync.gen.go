@@ -378,6 +378,11 @@ func (pself *extMgrImpl) SetTile(texture_path string, with_collision bool) {
 		gdx.ExtMgr.SetTile(texture_path, with_collision)
 	})
 }
+func (pself *extMgrImpl) SetTileWithCollisionInfo(texture_path string, collision_points gdx.Array) {
+	callInMainThread(func() {
+		gdx.ExtMgr.SetTileWithCollisionInfo(texture_path, collision_points)
+	})
+}
 func (pself *extMgrImpl) SetLayerOffset(index int64, offset Vec2) {
 	callInMainThread(func() {
 		gdx.ExtMgr.SetLayerOffset(index, offset)

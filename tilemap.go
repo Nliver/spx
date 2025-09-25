@@ -45,8 +45,7 @@ func (p *tilemapMgr) init(g *Game, fs spxfs.Dir, path string) {
 }
 
 func (p *tilemapMgr) loadTilemaps(datas *tm.TscnMapData) {
-	tm.LoadTilemaps(datas, p.g.setTileInfo, p.g.setTileMapLayerIndex, p.g.PlaceTiles__1)
-
+	tm.LoadTilemaps(datas, p.g.setTileInfo__1, p.g.setTileMapLayerIndex, p.g.PlaceTiles__1)
 }
 func (p *tilemapMgr) loadDecorators(datas *tm.TscnMapData) {
 	for _, item := range datas.Decorators {

@@ -174,25 +174,26 @@ func (pself *extMgrImpl) CreatePen() gdx.Object {
 	var _ret1 gdx.Object
 	return _ret1
 }
-func (pself *extMgrImpl) DestroyPen(obj gdx.Object)                                  {}
-func (pself *extMgrImpl) PenStamp(obj gdx.Object)                                    {}
-func (pself *extMgrImpl) MovePenTo(obj gdx.Object, position Vec2)                    {}
-func (pself *extMgrImpl) PenDown(obj gdx.Object, move_by_mouse bool)                 {}
-func (pself *extMgrImpl) PenUp(obj gdx.Object)                                       {}
-func (pself *extMgrImpl) SetPenColorTo(obj gdx.Object, color Color)                  {}
-func (pself *extMgrImpl) ChangePenBy(obj gdx.Object, property int64, amount float64) {}
-func (pself *extMgrImpl) SetPenTo(obj gdx.Object, property int64, value float64)     {}
-func (pself *extMgrImpl) ChangePenSizeBy(obj gdx.Object, amount float64)             {}
-func (pself *extMgrImpl) SetPenSizeTo(obj gdx.Object, size float64)                  {}
-func (pself *extMgrImpl) SetPenStampTexture(obj gdx.Object, texture_path string)     {}
-func (pself *extMgrImpl) DebugDrawCircle(pos Vec2, radius float64, color Color)      {}
-func (pself *extMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color)             {}
-func (pself *extMgrImpl) DebugDrawLine(from Vec2, to Vec2, color Color)              {}
-func (pself *extMgrImpl) OpenDrawTilesWithSize(tile_size int64)                      {}
-func (pself *extMgrImpl) OpenDrawTiles()                                             {}
-func (pself *extMgrImpl) SetLayerIndex(index int64)                                  {}
-func (pself *extMgrImpl) SetTile(texture_path string, with_collision bool)           {}
-func (pself *extMgrImpl) SetLayerOffset(index int64, offset Vec2)                    {}
+func (pself *extMgrImpl) DestroyPen(obj gdx.Object)                                                {}
+func (pself *extMgrImpl) PenStamp(obj gdx.Object)                                                  {}
+func (pself *extMgrImpl) MovePenTo(obj gdx.Object, position Vec2)                                  {}
+func (pself *extMgrImpl) PenDown(obj gdx.Object, move_by_mouse bool)                               {}
+func (pself *extMgrImpl) PenUp(obj gdx.Object)                                                     {}
+func (pself *extMgrImpl) SetPenColorTo(obj gdx.Object, color Color)                                {}
+func (pself *extMgrImpl) ChangePenBy(obj gdx.Object, property int64, amount float64)               {}
+func (pself *extMgrImpl) SetPenTo(obj gdx.Object, property int64, value float64)                   {}
+func (pself *extMgrImpl) ChangePenSizeBy(obj gdx.Object, amount float64)                           {}
+func (pself *extMgrImpl) SetPenSizeTo(obj gdx.Object, size float64)                                {}
+func (pself *extMgrImpl) SetPenStampTexture(obj gdx.Object, texture_path string)                   {}
+func (pself *extMgrImpl) DebugDrawCircle(pos Vec2, radius float64, color Color)                    {}
+func (pself *extMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color)                           {}
+func (pself *extMgrImpl) DebugDrawLine(from Vec2, to Vec2, color Color)                            {}
+func (pself *extMgrImpl) OpenDrawTilesWithSize(tile_size int64)                                    {}
+func (pself *extMgrImpl) OpenDrawTiles()                                                           {}
+func (pself *extMgrImpl) SetLayerIndex(index int64)                                                {}
+func (pself *extMgrImpl) SetTile(texture_path string, with_collision bool)                         {}
+func (pself *extMgrImpl) SetTileWithCollisionInfo(texture_path string, collision_points gdx.Array) {}
+func (pself *extMgrImpl) SetLayerOffset(index int64, offset Vec2)                                  {}
 func (pself *extMgrImpl) GetLayerOffset(index int64) Vec2 {
 	var _ret1 Vec2
 	return _ret1

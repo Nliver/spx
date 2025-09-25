@@ -162,6 +162,9 @@ void cgo_callfn_GDExtensionSpxExtSetLayerIndex(const GDExtensionSpxExtSetLayerIn
 void cgo_callfn_GDExtensionSpxExtSetTile(const GDExtensionSpxExtSetTile fn, GdString texture_path, GdBool with_collision) {
 	fn(texture_path, with_collision);
 }
+void cgo_callfn_GDExtensionSpxExtSetTileWithCollisionInfo(const GDExtensionSpxExtSetTileWithCollisionInfo fn, GdString texture_path, GdArray collision_points) {
+	fn(texture_path, collision_points);
+}
 void cgo_callfn_GDExtensionSpxExtSetLayerOffset(const GDExtensionSpxExtSetLayerOffset fn, GdInt index, GdVec2 offset) {
 	fn(index, offset);
 }

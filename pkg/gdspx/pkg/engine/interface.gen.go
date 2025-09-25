@@ -84,6 +84,7 @@ type IExtMgr interface {
 	OpenDrawTiles()
 	SetLayerIndex(index int64)
 	SetTile(texture_path string, with_collision bool)
+	SetTileWithCollisionInfo(texture_path string, collision_points Array)
 	SetLayerOffset(index int64, offset Vec2)
 	GetLayerOffset(index int64) Vec2
 	PlaceTiles(positions Array, texture_path string)

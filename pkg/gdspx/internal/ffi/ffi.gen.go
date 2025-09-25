@@ -68,6 +68,7 @@ type GDExtensionInterface struct {
 	SpxExtOpenDrawTiles                      GDExtensionSpxExtOpenDrawTiles
 	SpxExtSetLayerIndex                      GDExtensionSpxExtSetLayerIndex
 	SpxExtSetTile                            GDExtensionSpxExtSetTile
+	SpxExtSetTileWithCollisionInfo           GDExtensionSpxExtSetTileWithCollisionInfo
 	SpxExtSetLayerOffset                     GDExtensionSpxExtSetLayerOffset
 	SpxExtGetLayerOffset                     GDExtensionSpxExtGetLayerOffset
 	SpxExtPlaceTiles                         GDExtensionSpxExtPlaceTiles
@@ -349,6 +350,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtOpenDrawTiles = (GDExtensionSpxExtOpenDrawTiles)(dlsymGD("spx_ext_open_draw_tiles"))
 	x.SpxExtSetLayerIndex = (GDExtensionSpxExtSetLayerIndex)(dlsymGD("spx_ext_set_layer_index"))
 	x.SpxExtSetTile = (GDExtensionSpxExtSetTile)(dlsymGD("spx_ext_set_tile"))
+	x.SpxExtSetTileWithCollisionInfo = (GDExtensionSpxExtSetTileWithCollisionInfo)(dlsymGD("spx_ext_set_tile_with_collision_info"))
 	x.SpxExtSetLayerOffset = (GDExtensionSpxExtSetLayerOffset)(dlsymGD("spx_ext_set_layer_offset"))
 	x.SpxExtGetLayerOffset = (GDExtensionSpxExtGetLayerOffset)(dlsymGD("spx_ext_get_layer_offset"))
 	x.SpxExtPlaceTiles = (GDExtensionSpxExtPlaceTiles)(dlsymGD("spx_ext_place_tiles"))
