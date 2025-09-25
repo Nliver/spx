@@ -110,16 +110,19 @@ func ConvertData(data *TscnMapData) {
 		item.Path = toTilemapPath(item.Path)
 	}
 }
-func LoadTilemaps(datas *TscnMapData, funcSetTile func(texturePath string, isCollision bool), funcSetLayer func(layerIndex int64),
+func LoadTilemaps(datas *TscnMapData, funcSetTile func(texturePath string, points []float64), funcSetLayer func(layerIndex int64),
 	funcPlaceTiles func(positions []float64, texturePath string, layerIndex int64)) {
 	paths := make(map[int32]string)
 	for _, item := range datas.TileMap.TileSet.Sources {
 		paths[item.ID] = toTilemapPath(item.TexturePath)
-		hasCollision := false
+		points := make([]float64, 0)
 		for _, tile := range item.Tiles {
-			hasCollision = hasCollision || tile.Physics.CollisionPoints != nil
+			pts := tile.Physics.CollisionPoints
+			for _, p := range pts {
+				points = append(points, p.X, p.Y)
+			}
 		}
-		funcSetTile(paths[item.ID], hasCollision)
+		funcSetTile(paths[item.ID], points)
 	}
 	for idx, layer := range datas.TileMap.Layers {
 		layerId := int64(idx)
