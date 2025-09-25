@@ -59,6 +59,7 @@ type tileInstance struct {
 type tilemapLayer struct {
 	ID       int32   `json:"id"`
 	Name     string  `json:"name"`
+	ZIndex   int     `json:"z_index"`
 	TileData []int32 `json:"tile_data"`
 }
 
@@ -124,8 +125,8 @@ func LoadTilemaps(datas *TscnMapData, funcSetTile func(texturePath string, point
 		}
 		funcSetTile(paths[item.ID], points)
 	}
-	for idx, layer := range datas.TileMap.Layers {
-		layerId := int64(idx)
+	for _, layer := range datas.TileMap.Layers {
+		layerId := int64(layer.ZIndex)
 		funcSetLayer(layerId)
 		tileData := layer.TileData
 		tileSizeX, tileSizeY := datas.TileMap.TileSize.Width, datas.TileMap.TileSize.Height
