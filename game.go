@@ -1873,6 +1873,18 @@ func (p *Game) DebugDrawLine(fromX, fromY, toX, toY float64, color Color) {
 	extMgr.DebugDrawLine(mathf.NewVec2(fromX, fromY), mathf.NewVec2(toX, toY), toMathfColor(color))
 }
 
+func (p *Game) DebugDrawLines(points []float64, color Color) {
+	if len(points) < 4 || len(points)%2 != 0 {
+		return
+	}
+
+	for i := 0; i < len(points)-2; i += 2 {
+		from := mathf.NewVec2(points[i], points[i+1])
+		to := mathf.NewVec2(points[i+2], points[i+3])
+		extMgr.DebugDrawLine(from, to, toMathfColor(color))
+	}
+}
+
 // -----------------------------------------------------------------------------
 func (p *Game) setTileMapLayerIndex(index int64) {
 	extMgr.SetLayerIndex(index)
