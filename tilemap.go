@@ -18,6 +18,7 @@ package spx
 
 import (
 	"fmt"
+	"sort"
 
 	spxfs "github.com/goplus/spx/v2/fs"
 	tm "github.com/goplus/spx/v2/internal/tilemap"
@@ -57,12 +58,18 @@ func (p *tilemapMgr) loadDecorators(datas *tm.TscnMapData) {
 }
 
 func (p *tilemapMgr) loadSprites(datas *tm.TscnMapData) {
+	return
+	sort.Slice(datas.Sprites, func(i, j int) bool {
+		return datas.Sprites[i].Path < datas.Sprites[j].Path
+	})
+
 	for _, item := range datas.Sprites {
 		sp, ok := p.g.sprs[item.Path]
 		if ok {
 			x, y := item.Position.X, item.Position.Y
 			doClone(sp, nil, true, func(sprite *SpriteImpl) {
 				sprite.SetXYpos(x, y)
+				sprite.Show()
 			})
 		}
 	}
