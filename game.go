@@ -522,7 +522,20 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 	p.windowScale = windowScale
 	p.stretchMode = proj.StretchMode
 	p.debug = proj.Debug
-	if backdrops := proj.getBackdrops(); len(backdrops) > 0 {
+
+	// when use tilemap , disable backdrop
+	backdrops := proj.getBackdrops()
+	if p.tilemapMgr.hasData() {
+		backdrops = make([]*backdropConfig, 0)
+		if proj.Map.Width == 0 {
+			proj.Map.Width = 480
+		}
+		if proj.Map.Height == 0 {
+			proj.Map.Height = 360
+		}
+	}
+
+	if len(backdrops) > 0 {
 		p.baseObj.initBackdrops("", backdrops, proj.getBackdropIndex())
 		p.worldWidth_ = proj.Map.Width
 		p.worldHeight_ = proj.Map.Height
