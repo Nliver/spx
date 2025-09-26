@@ -93,13 +93,7 @@ func init() {
 			"SpriteName":          reflect.TypeOf((*q.SpriteName)(nil)).Elem(),
 			"WidgetName":          reflect.TypeOf((*q.WidgetName)(nil)).Elem(),
 		},
-		Vars: map[string]reflect.Value{
-			"ColorBlack": reflect.ValueOf(&q.ColorBlack),
-			"ColorBlue":  reflect.ValueOf(&q.ColorBlue),
-			"ColorGreen": reflect.ValueOf(&q.ColorGreen),
-			"ColorRed":   reflect.ValueOf(&q.ColorRed),
-			"ColorWhite": reflect.ValueOf(&q.ColorWhite),
-		},
+		Vars: map[string]reflect.Value{},
 		Funcs: map[string]reflect.Value{
 			"Exit__0":                  reflect.ValueOf(q.Exit__0),
 			"Exit__1":                  reflect.ValueOf(q.Exit__1),
@@ -113,7 +107,6 @@ func init() {
 			"HSB":                      reflect.ValueOf(q.HSB),
 			"HSBA":                     reflect.ValueOf(q.HSBA),
 			"Iround":                   reflect.ValueOf(q.Iround),
-			"NewColor":                 reflect.ValueOf(q.NewColor),
 			"Rand__0":                  reflect.ValueOf(q.Rand__0),
 			"Rand__1":                  reflect.ValueOf(q.Rand__1),
 			"Repeat":                   reflect.ValueOf(q.Repeat),
