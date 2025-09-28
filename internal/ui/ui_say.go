@@ -38,7 +38,7 @@ func (pself *UiSay) OnStart() {
 
 func (pself *UiSay) SetText(winSize mathf.Vec2, pos mathf.Vec2, size mathf.Vec2, msg string) {
 	zoom := cameraMgr.GetCameraZoom()
-	finalScale := zoom.Mul(mathf.NewVec2(windowScale, windowScale))
+	finalScale := zoom.Div(mathf.NewVec2(windowScale, windowScale))
 	uiMgr.SetScale(pself.GetId(), finalScale)
 	camPos := cameraMgr.GetLocalPosition(pos)
 	camPos = camPos.Mul(zoom.Divf(windowScale))
