@@ -446,6 +446,11 @@ func (pself *extMgr) SetupPathFinder(with_jump bool) {
 	arg0 := ToGdBool(with_jump)
 	CallExtSetupPathFinder(arg0)
 }
+func (pself *extMgr) SetObstacle(obj Object, enabled bool) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdBool(enabled)
+	CallExtSetObstacle(arg0, arg1)
+}
 func (pself *extMgr) FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array {
 	arg0 := ToGdVec2(p_from)
 	arg1 := ToGdVec2(p_to)

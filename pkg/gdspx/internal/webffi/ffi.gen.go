@@ -89,6 +89,7 @@ type GDExtensionInterface struct {
 	SpxExtCreatePureSprite                   js.Value
 	SpxExtSetupPathFinderWithSize            js.Value
 	SpxExtSetupPathFinder                    js.Value
+	SpxExtSetObstacle                        js.Value
 	SpxExtFindPath                           js.Value
 	SpxInputGetMousePos                      js.Value
 	SpxInputGetKey                           js.Value
@@ -371,6 +372,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtCreatePureSprite = dlsymGD("gdspx_ext_create_pure_sprite")
 	x.SpxExtSetupPathFinderWithSize = dlsymGD("gdspx_ext_setup_path_finder_with_size")
 	x.SpxExtSetupPathFinder = dlsymGD("gdspx_ext_setup_path_finder")
+	x.SpxExtSetObstacle = dlsymGD("gdspx_ext_set_obstacle")
 	x.SpxExtFindPath = dlsymGD("gdspx_ext_find_path")
 	x.SpxInputGetMousePos = dlsymGD("gdspx_input_get_mouse_pos")
 	x.SpxInputGetKey = dlsymGD("gdspx_input_get_key")

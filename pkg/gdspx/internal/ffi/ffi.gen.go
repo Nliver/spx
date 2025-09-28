@@ -85,6 +85,7 @@ type GDExtensionInterface struct {
 	SpxExtCreatePureSprite                   GDExtensionSpxExtCreatePureSprite
 	SpxExtSetupPathFinderWithSize            GDExtensionSpxExtSetupPathFinderWithSize
 	SpxExtSetupPathFinder                    GDExtensionSpxExtSetupPathFinder
+	SpxExtSetObstacle                        GDExtensionSpxExtSetObstacle
 	SpxExtFindPath                           GDExtensionSpxExtFindPath
 	SpxInputGetMousePos                      GDExtensionSpxInputGetMousePos
 	SpxInputGetKey                           GDExtensionSpxInputGetKey
@@ -367,6 +368,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtCreatePureSprite = (GDExtensionSpxExtCreatePureSprite)(dlsymGD("spx_ext_create_pure_sprite"))
 	x.SpxExtSetupPathFinderWithSize = (GDExtensionSpxExtSetupPathFinderWithSize)(dlsymGD("spx_ext_setup_path_finder_with_size"))
 	x.SpxExtSetupPathFinder = (GDExtensionSpxExtSetupPathFinder)(dlsymGD("spx_ext_setup_path_finder"))
+	x.SpxExtSetObstacle = (GDExtensionSpxExtSetObstacle)(dlsymGD("spx_ext_set_obstacle"))
 	x.SpxExtFindPath = (GDExtensionSpxExtFindPath)(dlsymGD("spx_ext_find_path"))
 	x.SpxInputGetMousePos = (GDExtensionSpxInputGetMousePos)(dlsymGD("spx_input_get_mouse_pos"))
 	x.SpxInputGetKey = (GDExtensionSpxInputGetKey)(dlsymGD("spx_input_get_key"))

@@ -151,6 +151,7 @@ type GDExtensionSpxExtClearPureSprites C.GDExtensionSpxExtClearPureSprites
 type GDExtensionSpxExtCreatePureSprite C.GDExtensionSpxExtCreatePureSprite
 type GDExtensionSpxExtSetupPathFinderWithSize C.GDExtensionSpxExtSetupPathFinderWithSize
 type GDExtensionSpxExtSetupPathFinder C.GDExtensionSpxExtSetupPathFinder
+type GDExtensionSpxExtSetObstacle C.GDExtensionSpxExtSetObstacle
 type GDExtensionSpxExtFindPath C.GDExtensionSpxExtFindPath
 type GDExtensionSpxInputGetMousePos C.GDExtensionSpxInputGetMousePos
 type GDExtensionSpxInputGetKey C.GDExtensionSpxInputGetKey
@@ -1007,6 +1008,17 @@ func CallExtSetupPathFinder(
 	arg1GdBool := (C.GdBool)(with_jump)
 
 	C.cgo_callfn_GDExtensionSpxExtSetupPathFinder(arg0, arg1GdBool)
+
+}
+func CallExtSetObstacle(
+	obj GdObj,
+	enabled GdBool,
+) {
+	arg0 := (C.GDExtensionSpxExtSetObstacle)(api.SpxExtSetObstacle)
+	arg1GdObj := (C.GdObj)(obj)
+	arg2GdBool := (C.GdBool)(enabled)
+
+	C.cgo_callfn_GDExtensionSpxExtSetObstacle(arg0, arg1GdObj, arg2GdBool)
 
 }
 func CallExtFindPath(

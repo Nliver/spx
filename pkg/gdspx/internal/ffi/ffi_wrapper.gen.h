@@ -213,6 +213,9 @@ void cgo_callfn_GDExtensionSpxExtSetupPathFinderWithSize(const GDExtensionSpxExt
 void cgo_callfn_GDExtensionSpxExtSetupPathFinder(const GDExtensionSpxExtSetupPathFinder fn, GdBool with_jump) {
 	fn(with_jump);
 }
+void cgo_callfn_GDExtensionSpxExtSetObstacle(const GDExtensionSpxExtSetObstacle fn, GdObj obj, GdBool enabled) {
+	fn(obj, enabled);
+}
 void cgo_callfn_GDExtensionSpxExtFindPath(const GDExtensionSpxExtFindPath fn, GdVec2 p_from, GdVec2 p_to, GdBool with_jump, GdArray* ret_val) {
 	fn(p_from, p_to, with_jump,ret_val);
 }
