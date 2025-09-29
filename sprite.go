@@ -139,13 +139,16 @@ type Sprite interface {
 	Step__2(step float64, speed float64, animation SpriteAnimationName)
 	StepTo__0(sprite Sprite)
 	StepTo__1(sprite SpriteName)
-	StepTo__2(obj specialObj)
-	StepTo__3(sprite Sprite, speed float64)
-	StepTo__4(sprite SpriteName, speed float64)
-	StepTo__5(obj specialObj, speed float64)
-	StepTo__6(sprite Sprite, speed float64, animation SpriteAnimationName)
-	StepTo__7(sprite SpriteName, speed float64, animation SpriteAnimationName)
-	StepTo__8(obj specialObj, speed float64, animation SpriteAnimationName)
+	StepTo__2(x, y float64)
+	StepTo__3(obj specialObj)
+	StepTo__4(sprite Sprite, speed float64)
+	StepTo__5(sprite SpriteName, speed float64)
+	StepTo__6(x, y, speed float64)
+	StepTo__7(obj specialObj, speed float64)
+	StepTo__8(sprite Sprite, speed float64, animation SpriteAnimationName)
+	StepTo__9(sprite SpriteName, speed float64, animation SpriteAnimationName)
+	StepTo__a(x, y, speed float64, animation SpriteAnimationName)
+	StepTo__b(obj specialObj, speed float64, animation SpriteAnimationName)
 	Think__0(msg any)
 	Think__1(msg any, secs float64)
 	TimeSinceLevelLoad() float64
@@ -1134,7 +1137,7 @@ func (p *SpriteImpl) Step__2(step float64, speed float64, animation SpriteAnimat
 	p.doStep(step, speed, animation)
 }
 
-func (p *SpriteImpl) doStepToPos(x, y float64, speed float64, animation SpriteAnimationName) {
+func (p *SpriteImpl) doStepToPos(x, y, speed float64, animation SpriteAnimationName) {
 	if animation == "" {
 		animation = p.getStateAnimName(StateStep)
 	}
@@ -1214,33 +1217,46 @@ func (p *SpriteImpl) StepTo__1(sprite SpriteName) {
 	p.doStepTo(sprite, 1, "")
 }
 
-func (p *SpriteImpl) StepTo__2(obj specialObj) {
+func (p *SpriteImpl) StepTo__2(x, y float64) {
+	p.doStepToPos(x, y, 1, "")
+}
+
+func (p *SpriteImpl) StepTo__3(obj specialObj) {
 	p.doStepTo(obj, 1, "")
 }
 
-func (p *SpriteImpl) StepTo__3(sprite Sprite, speed float64) {
+func (p *SpriteImpl) StepTo__4(sprite Sprite, speed float64) {
 	p.doStepTo(sprite, speed, "")
 }
 
-func (p *SpriteImpl) StepTo__4(sprite SpriteName, speed float64) {
+func (p *SpriteImpl) StepTo__5(sprite SpriteName, speed float64) {
 	p.doStepTo(sprite, speed, "")
 }
 
-func (p *SpriteImpl) StepTo__5(obj specialObj, speed float64) {
+func (p *SpriteImpl) StepTo__6(x, y, speed float64) {
+	p.doStepToPos(x, y, speed, "")
+}
+
+func (p *SpriteImpl) StepTo__7(obj specialObj, speed float64) {
 	p.doStepTo(obj, speed, "")
 }
 
-func (p *SpriteImpl) StepTo__6(sprite Sprite, speed float64, animation SpriteAnimationName) {
+func (p *SpriteImpl) StepTo__8(sprite Sprite, speed float64, animation SpriteAnimationName) {
 	p.doStepTo(sprite, speed, animation)
 }
 
-func (p *SpriteImpl) StepTo__7(sprite SpriteName, speed float64, animation SpriteAnimationName) {
+func (p *SpriteImpl) StepTo__9(sprite SpriteName, speed float64, animation SpriteAnimationName) {
 	p.doStepTo(sprite, speed, animation)
 }
 
-func (p *SpriteImpl) StepTo__8(obj specialObj, speed float64, animation SpriteAnimationName) {
+func (p *SpriteImpl) StepTo__a(x, y, speed float64, animation SpriteAnimationName) {
+	p.doStepToPos(x, y, speed, animation)
+}
+
+func (p *SpriteImpl) StepTo__b(obj specialObj, speed float64, animation SpriteAnimationName) {
 	p.doStepTo(obj, speed, animation)
 }
+
 func (p *SpriteImpl) doGlideTo(obj any, secs float64) {
 	if debugInstr {
 		log.Println("Glide", obj, secs)
