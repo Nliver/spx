@@ -469,6 +469,11 @@ func (pself *extMgrImpl) SetupPathFinder(with_jump bool) {
 		gdx.ExtMgr.SetupPathFinder(with_jump)
 	})
 }
+func (pself *extMgrImpl) SetObstacle(obj gdx.Object, enabled bool) {
+	callInMainThread(func() {
+		gdx.ExtMgr.SetObstacle(obj, enabled)
+	})
+}
 func (pself *extMgrImpl) FindPath(p_from Vec2, p_to Vec2, with_jump bool) gdx.Array {
 	var _ret1 gdx.Array
 	callInMainThread(func() {

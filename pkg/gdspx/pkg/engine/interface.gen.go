@@ -101,6 +101,7 @@ type IExtMgr interface {
 	CreatePureSprite(texture_path string, pos Vec2, zindex int64)
 	SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool)
 	SetupPathFinder(with_jump bool)
+	SetObstacle(obj Object, enabled bool)
 	FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array
 }
 

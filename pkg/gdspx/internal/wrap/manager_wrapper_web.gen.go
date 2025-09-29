@@ -419,6 +419,11 @@ func (pself *extMgr) SetupPathFinder(with_jump bool) {
 	arg0 := JsFromGdBool(with_jump)
 	API.SpxExtSetupPathFinder.Invoke(arg0)
 }
+func (pself *extMgr) SetObstacle(obj Object, enabled bool) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdBool(enabled)
+	API.SpxExtSetObstacle.Invoke(arg0, arg1)
+}
 func (pself *extMgr) FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array {
 	arg0 := JsFromGdVec2(p_from)
 	arg1 := JsFromGdVec2(p_to)

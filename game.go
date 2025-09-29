@@ -1966,6 +1966,13 @@ func (p *Game) setupPathFinder(with_jump bool) {
 	extMgr.SetupPathFinderWithSize(gridSize, cellSize, with_jump, false)
 }
 
+func (p *Game) setObstacle(sprite Sprite, enabled bool) {
+	impl := spriteOf(sprite)
+	if impl != nil {
+		extMgr.SetObstacle(impl.getSpriteId(), enabled)
+	}
+}
+
 func (p *Game) FindPath__0(x_from, y_from, x_to, y_to float64) []float64 {
 	return p.FindPath__1(x_from, y_from, x_to, y_to, true)
 }
