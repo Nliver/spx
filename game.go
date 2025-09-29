@@ -1953,17 +1953,17 @@ func (p *Game) createDecorators(texturePath string, x, y float64, zindex int64) 
 
 // Path Finding
 func (p *Game) SetupPathFinder__0() {
-	p.setupPathFinder(true)
+	p.setupPathFinder(true, false)
 }
 
 func (p *Game) SetupPathFinder__1(x_grid_size, y_grid_size, x_cell_size, y_cell_size float64, with_jump, with_debug bool) {
 	extMgr.SetupPathFinderWithSize(mathf.NewVec2(x_grid_size, y_grid_size), mathf.NewVec2(x_cell_size, y_cell_size), with_jump, with_debug)
 }
 
-func (p *Game) setupPathFinder(with_jump bool) {
+func (p *Game) setupPathFinder(with_jump, with_debug bool) {
 	cellSize := mathf.NewVec2(float64(p.pathCellSizeX), float64(p.pathCellSizeY))
 	gridSize := mathf.NewVec2(float64(p.worldWidth_), float64(p.worldHeight_)).Div(cellSize)
-	extMgr.SetupPathFinderWithSize(gridSize, cellSize, with_jump, false)
+	extMgr.SetupPathFinderWithSize(gridSize, cellSize, with_jump, with_debug)
 }
 
 func (p *Game) setObstacle(sprite Sprite, enabled bool) {
@@ -1974,12 +1974,16 @@ func (p *Game) setObstacle(sprite Sprite, enabled bool) {
 }
 
 func (p *Game) FindPath__0(x_from, y_from, x_to, y_to float64) []float64 {
-	return p.FindPath__1(x_from, y_from, x_to, y_to, true)
+	return p.FindPath__2(x_from, y_from, x_to, y_to, false, true)
 }
 
-func (p *Game) FindPath__1(x_from, y_from, x_to, y_to float64, with_jump bool) []float64 {
+func (p *Game) FindPath__1(x_from, y_from, x_to, y_to float64, with_debug bool) []float64 {
+	return p.FindPath__2(x_from, y_from, x_to, y_to, with_debug, true)
+}
+
+func (p *Game) FindPath__2(x_from, y_from, x_to, y_to float64, with_debug, with_jump bool) []float64 {
 	p.oncePathFinder.Do(func() {
-		p.setupPathFinder(with_jump)
+		p.setupPathFinder(with_jump, with_debug)
 	})
 
 	arr := extMgr.FindPath(mathf.NewVec2(x_from, y_from), mathf.NewVec2(x_to, y_to), with_jump)
