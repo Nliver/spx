@@ -431,6 +431,10 @@ func (pself *extMgr) FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array {
 	_retValue := API.SpxExtFindPath.Invoke(arg0, arg1, arg2)
 	return JsToGdArray(_retValue)
 }
+func (pself *extMgr) SetLayerSorterMode(mode int64) {
+	arg0 := JsFromGdInt(mode)
+	API.SpxExtSetLayerSorterMode.Invoke(arg0)
+}
 func (pself *inputMgr) GetMousePos() Vec2 {
 	_retValue := API.SpxInputGetMousePos.Invoke()
 	return JsToGdVec2(_retValue)

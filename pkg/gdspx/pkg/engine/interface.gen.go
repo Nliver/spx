@@ -103,6 +103,7 @@ type IExtMgr interface {
 	SetupPathFinder(with_jump bool)
 	SetObstacle(obj Object, enabled bool)
 	FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array
+	SetLayerSorterMode(mode int64)
 }
 
 type IInputMgr interface {

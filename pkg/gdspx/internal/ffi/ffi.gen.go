@@ -87,6 +87,7 @@ type GDExtensionInterface struct {
 	SpxExtSetupPathFinder                    GDExtensionSpxExtSetupPathFinder
 	SpxExtSetObstacle                        GDExtensionSpxExtSetObstacle
 	SpxExtFindPath                           GDExtensionSpxExtFindPath
+	SpxExtSetLayerSorterMode                 GDExtensionSpxExtSetLayerSorterMode
 	SpxInputGetMousePos                      GDExtensionSpxInputGetMousePos
 	SpxInputGetKey                           GDExtensionSpxInputGetKey
 	SpxInputGetMouseState                    GDExtensionSpxInputGetMouseState
@@ -370,6 +371,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtSetupPathFinder = (GDExtensionSpxExtSetupPathFinder)(dlsymGD("spx_ext_setup_path_finder"))
 	x.SpxExtSetObstacle = (GDExtensionSpxExtSetObstacle)(dlsymGD("spx_ext_set_obstacle"))
 	x.SpxExtFindPath = (GDExtensionSpxExtFindPath)(dlsymGD("spx_ext_find_path"))
+	x.SpxExtSetLayerSorterMode = (GDExtensionSpxExtSetLayerSorterMode)(dlsymGD("spx_ext_set_layer_sorter_mode"))
 	x.SpxInputGetMousePos = (GDExtensionSpxInputGetMousePos)(dlsymGD("spx_input_get_mouse_pos"))
 	x.SpxInputGetKey = (GDExtensionSpxInputGetKey)(dlsymGD("spx_input_get_key"))
 	x.SpxInputGetMouseState = (GDExtensionSpxInputGetMouseState)(dlsymGD("spx_input_get_mouse_state"))

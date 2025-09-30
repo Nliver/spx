@@ -2,7 +2,6 @@ package engine
 
 import (
 	"fmt"
-	"sort"
 	"sync"
 
 	stime "time"
@@ -62,30 +61,13 @@ func SetLayerSortMode(s string) error {
 	default:
 		return fmt.Errorf("unknown layer sort mode: %s", s)
 	}
+
+	extMgr.SetLayerSorterMode(int64(curLayerSortMode))
 	return nil
 }
 
 func HasLayerSortMethod() bool {
 	return curLayerSortMode != layerSortModeNone
-}
-func SortLayers(infos []LayerSortInfo) {
-	if curLayerSortMode == layerSortModeNone {
-		return
-	}
-	if curLayerSortMode == layerSortModeVertical {
-		// Sort sprites primarily by Y-coordinate in descending order.
-		// For sprites with the same Y-coordinate, sort by X-coordinate in descending order.
-		// This ensures that sprites lower on the screen (and further to the left in case of a tie) are drawn on top.
-		sort.Slice(infos, func(i, j int) bool {
-			if infos[i].Y == infos[j].Y {
-				return infos[i].X > infos[j].X
-			}
-			return infos[i].Y > infos[j].Y
-		})
-		for idx, info := range infos {
-			info.Sprite.SetZIndex(int64(1 + idx))
-		}
-	}
 }
 
 const Float2IntFactor = gdx.Float2IntFactor
