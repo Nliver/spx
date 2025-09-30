@@ -99,8 +99,9 @@ type IExtMgr interface {
 	ExitTilemapEditorMode()
 	ClearPureSprites()
 	CreatePureSprite(texture_path string, pos Vec2, zindex int64)
-	CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64)
-	CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, collider_type int64, collider_pivot Vec2, collider_params Array)
+	CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2) Object
+	CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2, collider_type int64, collider_pivot Vec2, collider_params Array) Object
+	DestroyPureSprite(id Object)
 	SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool)
 	SetupPathFinder(with_jump bool)
 	SetObstacle(obj Object, enabled bool)
@@ -180,6 +181,8 @@ type ISpriteMgr interface {
 	SetProcess(obj Object, is_on bool)
 	SetPhysicProcess(obj Object, is_on bool)
 	SetTypeName(obj Object, type_name string)
+	SetPivot(obj Object, pivot Vec2)
+	GetPivot(obj Object) Vec2
 	SetChildPosition(obj Object, path string, pos Vec2)
 	GetChildPosition(obj Object, path string) Vec2
 	SetChildRotation(obj Object, path string, rot float64)

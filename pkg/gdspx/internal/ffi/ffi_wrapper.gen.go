@@ -151,6 +151,7 @@ type GDExtensionSpxExtClearPureSprites C.GDExtensionSpxExtClearPureSprites
 type GDExtensionSpxExtCreatePureSprite C.GDExtensionSpxExtCreatePureSprite
 type GDExtensionSpxExtCreateRenderSprite C.GDExtensionSpxExtCreateRenderSprite
 type GDExtensionSpxExtCreateStaticSprite C.GDExtensionSpxExtCreateStaticSprite
+type GDExtensionSpxExtDestroyPureSprite C.GDExtensionSpxExtDestroyPureSprite
 type GDExtensionSpxExtSetupPathFinderWithSize C.GDExtensionSpxExtSetupPathFinderWithSize
 type GDExtensionSpxExtSetupPathFinder C.GDExtensionSpxExtSetupPathFinder
 type GDExtensionSpxExtSetObstacle C.GDExtensionSpxExtSetObstacle
@@ -212,6 +213,8 @@ type GDExtensionSpxSpriteSetDontDestroyOnLoad C.GDExtensionSpxSpriteSetDontDestr
 type GDExtensionSpxSpriteSetProcess C.GDExtensionSpxSpriteSetProcess
 type GDExtensionSpxSpriteSetPhysicProcess C.GDExtensionSpxSpriteSetPhysicProcess
 type GDExtensionSpxSpriteSetTypeName C.GDExtensionSpxSpriteSetTypeName
+type GDExtensionSpxSpriteSetPivot C.GDExtensionSpxSpriteSetPivot
+type GDExtensionSpxSpriteGetPivot C.GDExtensionSpxSpriteGetPivot
 type GDExtensionSpxSpriteSetChildPosition C.GDExtensionSpxSpriteSetChildPosition
 type GDExtensionSpxSpriteGetChildPosition C.GDExtensionSpxSpriteGetChildPosition
 type GDExtensionSpxSpriteSetChildRotation C.GDExtensionSpxSpriteSetChildRotation
@@ -995,16 +998,19 @@ func CallExtCreateRenderSprite(
 	degree GdFloat,
 	scale GdVec2,
 	zindex GdInt,
-) {
+	pivot GdVec2,
+) GdObj {
 	arg0 := (C.GDExtensionSpxExtCreateRenderSprite)(api.SpxExtCreateRenderSprite)
 	arg1GdString := (C.GdString)(texture_path)
 	arg2GdVec2 := (C.GdVec2)(pos)
 	arg3GdFloat := (C.GdFloat)(degree)
 	arg4GdVec2 := (C.GdVec2)(scale)
 	arg5GdInt := (C.GdInt)(zindex)
+	arg6GdVec2 := (C.GdVec2)(pivot)
+	var ret_val C.GdObj
+	C.cgo_callfn_GDExtensionSpxExtCreateRenderSprite(arg0, arg1GdString, arg2GdVec2, arg3GdFloat, arg4GdVec2, arg5GdInt, arg6GdVec2, &ret_val)
 
-	C.cgo_callfn_GDExtensionSpxExtCreateRenderSprite(arg0, arg1GdString, arg2GdVec2, arg3GdFloat, arg4GdVec2, arg5GdInt)
-
+	return (GdObj)(ret_val)
 }
 func CallExtCreateStaticSprite(
 	texture_path GdString,
@@ -1012,21 +1018,33 @@ func CallExtCreateStaticSprite(
 	degree GdFloat,
 	scale GdVec2,
 	zindex GdInt,
+	pivot GdVec2,
 	collider_type GdInt,
 	collider_pivot GdVec2,
 	collider_params GdArray,
-) {
+) GdObj {
 	arg0 := (C.GDExtensionSpxExtCreateStaticSprite)(api.SpxExtCreateStaticSprite)
 	arg1GdString := (C.GdString)(texture_path)
 	arg2GdVec2 := (C.GdVec2)(pos)
 	arg3GdFloat := (C.GdFloat)(degree)
 	arg4GdVec2 := (C.GdVec2)(scale)
 	arg5GdInt := (C.GdInt)(zindex)
-	arg6GdInt := (C.GdInt)(collider_type)
-	arg7GdVec2 := (C.GdVec2)(collider_pivot)
-	arg8GdArray := (C.GdArray)(collider_params)
+	arg6GdVec2 := (C.GdVec2)(pivot)
+	arg7GdInt := (C.GdInt)(collider_type)
+	arg8GdVec2 := (C.GdVec2)(collider_pivot)
+	arg9GdArray := (C.GdArray)(collider_params)
+	var ret_val C.GdObj
+	C.cgo_callfn_GDExtensionSpxExtCreateStaticSprite(arg0, arg1GdString, arg2GdVec2, arg3GdFloat, arg4GdVec2, arg5GdInt, arg6GdVec2, arg7GdInt, arg8GdVec2, arg9GdArray, &ret_val)
 
-	C.cgo_callfn_GDExtensionSpxExtCreateStaticSprite(arg0, arg1GdString, arg2GdVec2, arg3GdFloat, arg4GdVec2, arg5GdInt, arg6GdInt, arg7GdVec2, arg8GdArray)
+	return (GdObj)(ret_val)
+}
+func CallExtDestroyPureSprite(
+	id GdObj,
+) {
+	arg0 := (C.GDExtensionSpxExtDestroyPureSprite)(api.SpxExtDestroyPureSprite)
+	arg1GdObj := (C.GdObj)(id)
+
+	C.cgo_callfn_GDExtensionSpxExtDestroyPureSprite(arg0, arg1GdObj)
 
 }
 func CallExtSetupPathFinderWithSize(
@@ -1612,6 +1630,27 @@ func CallSpriteSetTypeName(
 
 	C.cgo_callfn_GDExtensionSpxSpriteSetTypeName(arg0, arg1GdObj, arg2GdString)
 
+}
+func CallSpriteSetPivot(
+	obj GdObj,
+	pivot GdVec2,
+) {
+	arg0 := (C.GDExtensionSpxSpriteSetPivot)(api.SpxSpriteSetPivot)
+	arg1GdObj := (C.GdObj)(obj)
+	arg2GdVec2 := (C.GdVec2)(pivot)
+
+	C.cgo_callfn_GDExtensionSpxSpriteSetPivot(arg0, arg1GdObj, arg2GdVec2)
+
+}
+func CallSpriteGetPivot(
+	obj GdObj,
+) GdVec2 {
+	arg0 := (C.GDExtensionSpxSpriteGetPivot)(api.SpxSpriteGetPivot)
+	arg1GdObj := (C.GdObj)(obj)
+	var ret_val C.GdVec2
+	C.cgo_callfn_GDExtensionSpxSpriteGetPivot(arg0, arg1GdObj, &ret_val)
+
+	return (GdVec2)(ret_val)
 }
 func CallSpriteSetChildPosition(
 	obj GdObj,

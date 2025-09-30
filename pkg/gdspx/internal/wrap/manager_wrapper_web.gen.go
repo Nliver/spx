@@ -408,24 +408,32 @@ func (pself *extMgr) CreatePureSprite(texture_path string, pos Vec2, zindex int6
 	arg2 := JsFromGdInt(zindex)
 	API.SpxExtCreatePureSprite.Invoke(arg0, arg1, arg2)
 }
-func (pself *extMgr) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64) {
+func (pself *extMgr) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2) Object {
 	arg0 := JsFromGdString(texture_path)
 	arg1 := JsFromGdVec2(pos)
 	arg2 := JsFromGdFloat(degree)
 	arg3 := JsFromGdVec2(scale)
 	arg4 := JsFromGdInt(zindex)
-	API.SpxExtCreateRenderSprite.Invoke(arg0, arg1, arg2, arg3, arg4)
+	arg5 := JsFromGdVec2(pivot)
+	_retValue := API.SpxExtCreateRenderSprite.Invoke(arg0, arg1, arg2, arg3, arg4, arg5)
+	return JsToGdObject(_retValue)
 }
-func (pself *extMgr) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, collider_type int64, collider_pivot Vec2, collider_params Array) {
+func (pself *extMgr) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2, collider_type int64, collider_pivot Vec2, collider_params Array) Object {
 	arg0 := JsFromGdString(texture_path)
 	arg1 := JsFromGdVec2(pos)
 	arg2 := JsFromGdFloat(degree)
 	arg3 := JsFromGdVec2(scale)
 	arg4 := JsFromGdInt(zindex)
-	arg5 := JsFromGdInt(collider_type)
-	arg6 := JsFromGdVec2(collider_pivot)
-	arg7 := JsFromGdArray(collider_params)
-	API.SpxExtCreateStaticSprite.Invoke(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+	arg5 := JsFromGdVec2(pivot)
+	arg6 := JsFromGdInt(collider_type)
+	arg7 := JsFromGdVec2(collider_pivot)
+	arg8 := JsFromGdArray(collider_params)
+	_retValue := API.SpxExtCreateStaticSprite.Invoke(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
+	return JsToGdObject(_retValue)
+}
+func (pself *extMgr) DestroyPureSprite(id Object) {
+	arg0 := JsFromGdObj(id)
+	API.SpxExtDestroyPureSprite.Invoke(arg0)
 }
 func (pself *extMgr) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
 	arg0 := JsFromGdVec2(grid_size)
@@ -719,6 +727,16 @@ func (pself *spriteMgr) SetTypeName(obj Object, type_name string) {
 	arg0 := JsFromGdObj(obj)
 	arg1 := JsFromGdString(type_name)
 	API.SpxSpriteSetTypeName.Invoke(arg0, arg1)
+}
+func (pself *spriteMgr) SetPivot(obj Object, pivot Vec2) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdVec2(pivot)
+	API.SpxSpriteSetPivot.Invoke(arg0, arg1)
+}
+func (pself *spriteMgr) GetPivot(obj Object) Vec2 {
+	arg0 := JsFromGdObj(obj)
+	_retValue := API.SpxSpriteGetPivot.Invoke(arg0)
+	return JsToGdVec2(_retValue)
 }
 func (pself *spriteMgr) SetChildPosition(obj Object, path string, pos Vec2) {
 	arg0 := JsFromGdObj(obj)

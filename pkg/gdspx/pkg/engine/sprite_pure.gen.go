@@ -187,6 +187,11 @@ func (pself *Sprite) GetPhysicsMode() int64 {
 	return _val
 }
 
+func (pself *Sprite) GetPivot() Vec2 {
+	var _val Vec2
+	return _val
+}
+
 func (pself *Sprite) GetPosition() Vec2 {
 	var _val Vec2
 	return _val
@@ -422,6 +427,9 @@ func (pself *Sprite) SetPhysicProcess(is_on bool) {
 }
 
 func (pself *Sprite) SetPhysicsMode(mode int64) {
+}
+
+func (pself *Sprite) SetPivot(pivot Vec2) {
 }
 
 func (pself *Sprite) SetPosition(pos Vec2) {

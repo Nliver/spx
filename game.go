@@ -1956,13 +1956,13 @@ func (p *Game) setTileMapOffset(index int64, x, y float64) {
 
 }
 
-func (p *Game) createDecorators(texturePath string, pos mathf.Vec2, rot float64, scale mathf.Vec2, zindex int64) {
-	extMgr.CreateStaticSprite(engine.ToAssetPath(texturePath), pos, rot, scale, zindex, 0, mathf.NewVec2(0, 0), nil)
+func (p *Game) createDecorators(texturePath string, pos mathf.Vec2, rot float64, scale mathf.Vec2, zindex int64, pivot mathf.Vec2) {
+	extMgr.CreateStaticSprite(engine.ToAssetPath(texturePath), pos, rot, scale, zindex, pivot, 0, mathf.NewVec2(0, 0), nil)
 }
 
-func (p *Game) createStaticSprite(texturePath string, pos mathf.Vec2, rot float64, scale mathf.Vec2, zindex int64, colliderType string, colliderPivot mathf.Vec2, colliderParams []float64) {
+func (p *Game) createStaticSprite(texturePath string, pos mathf.Vec2, rot float64, scale mathf.Vec2, zindex int64, pivot mathf.Vec2, colliderType string, colliderPivot mathf.Vec2, colliderParams []float64) {
 	colliderTypeInt := paserColliderShapeType(colliderType, 0)
-	extMgr.CreateStaticSprite(engine.ToAssetPath(texturePath), pos, rot, scale, zindex, colliderTypeInt, colliderPivot, colliderParams)
+	extMgr.CreateStaticSprite(engine.ToAssetPath(texturePath), pos, rot, scale, zindex, pivot, colliderTypeInt, colliderPivot, colliderParams)
 }
 
 // Path Finding
