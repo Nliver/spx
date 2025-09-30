@@ -435,6 +435,29 @@ func (pself *extMgr) CreatePureSprite(texture_path string, pos Vec2, zindex int6
 	arg2 := ToGdInt(zindex)
 	CallExtCreatePureSprite(arg0, arg1, arg2)
 }
+func (pself *extMgr) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64) {
+	arg0Str := C.CString(texture_path)
+	arg0 := (GdString)(arg0Str)
+	defer C.free(unsafe.Pointer(arg0Str))
+	arg1 := ToGdVec2(pos)
+	arg2 := ToGdFloat(degree)
+	arg3 := ToGdVec2(scale)
+	arg4 := ToGdInt(zindex)
+	CallExtCreateRenderSprite(arg0, arg1, arg2, arg3, arg4)
+}
+func (pself *extMgr) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, collider_type int64, collider_pivot Vec2, collider_params Array) {
+	arg0Str := C.CString(texture_path)
+	arg0 := (GdString)(arg0Str)
+	defer C.free(unsafe.Pointer(arg0Str))
+	arg1 := ToGdVec2(pos)
+	arg2 := ToGdFloat(degree)
+	arg3 := ToGdVec2(scale)
+	arg4 := ToGdInt(zindex)
+	arg5 := ToGdInt(collider_type)
+	arg6 := ToGdVec2(collider_pivot)
+	arg7 := ToGdArray(collider_params)
+	CallExtCreateStaticSprite(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+}
 func (pself *extMgr) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
 	arg0 := ToGdVec2(grid_size)
 	arg1 := ToGdVec2(cell_size)

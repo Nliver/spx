@@ -217,6 +217,10 @@ func (pself *extMgrImpl) CloseDrawTiles()                                       
 func (pself *extMgrImpl) ExitTilemapEditorMode()                                       {}
 func (pself *extMgrImpl) ClearPureSprites()                                            {}
 func (pself *extMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {}
+func (pself *extMgrImpl) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64) {
+}
+func (pself *extMgrImpl) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, collider_type int64, collider_pivot Vec2, collider_params gdx.Array) {
+}
 func (pself *extMgrImpl) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
 }
 func (pself *extMgrImpl) SetupPathFinder(with_jump bool)           {}

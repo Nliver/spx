@@ -149,6 +149,8 @@ type GDExtensionSpxExtCloseDrawTiles C.GDExtensionSpxExtCloseDrawTiles
 type GDExtensionSpxExtExitTilemapEditorMode C.GDExtensionSpxExtExitTilemapEditorMode
 type GDExtensionSpxExtClearPureSprites C.GDExtensionSpxExtClearPureSprites
 type GDExtensionSpxExtCreatePureSprite C.GDExtensionSpxExtCreatePureSprite
+type GDExtensionSpxExtCreateRenderSprite C.GDExtensionSpxExtCreateRenderSprite
+type GDExtensionSpxExtCreateStaticSprite C.GDExtensionSpxExtCreateStaticSprite
 type GDExtensionSpxExtSetupPathFinderWithSize C.GDExtensionSpxExtSetupPathFinderWithSize
 type GDExtensionSpxExtSetupPathFinder C.GDExtensionSpxExtSetupPathFinder
 type GDExtensionSpxExtSetObstacle C.GDExtensionSpxExtSetObstacle
@@ -985,6 +987,46 @@ func CallExtCreatePureSprite(
 	arg3GdInt := (C.GdInt)(zindex)
 
 	C.cgo_callfn_GDExtensionSpxExtCreatePureSprite(arg0, arg1GdString, arg2GdVec2, arg3GdInt)
+
+}
+func CallExtCreateRenderSprite(
+	texture_path GdString,
+	pos GdVec2,
+	degree GdFloat,
+	scale GdVec2,
+	zindex GdInt,
+) {
+	arg0 := (C.GDExtensionSpxExtCreateRenderSprite)(api.SpxExtCreateRenderSprite)
+	arg1GdString := (C.GdString)(texture_path)
+	arg2GdVec2 := (C.GdVec2)(pos)
+	arg3GdFloat := (C.GdFloat)(degree)
+	arg4GdVec2 := (C.GdVec2)(scale)
+	arg5GdInt := (C.GdInt)(zindex)
+
+	C.cgo_callfn_GDExtensionSpxExtCreateRenderSprite(arg0, arg1GdString, arg2GdVec2, arg3GdFloat, arg4GdVec2, arg5GdInt)
+
+}
+func CallExtCreateStaticSprite(
+	texture_path GdString,
+	pos GdVec2,
+	degree GdFloat,
+	scale GdVec2,
+	zindex GdInt,
+	collider_type GdInt,
+	collider_pivot GdVec2,
+	collider_params GdArray,
+) {
+	arg0 := (C.GDExtensionSpxExtCreateStaticSprite)(api.SpxExtCreateStaticSprite)
+	arg1GdString := (C.GdString)(texture_path)
+	arg2GdVec2 := (C.GdVec2)(pos)
+	arg3GdFloat := (C.GdFloat)(degree)
+	arg4GdVec2 := (C.GdVec2)(scale)
+	arg5GdInt := (C.GdInt)(zindex)
+	arg6GdInt := (C.GdInt)(collider_type)
+	arg7GdVec2 := (C.GdVec2)(collider_pivot)
+	arg8GdArray := (C.GdArray)(collider_params)
+
+	C.cgo_callfn_GDExtensionSpxExtCreateStaticSprite(arg0, arg1GdString, arg2GdVec2, arg3GdFloat, arg4GdVec2, arg5GdInt, arg6GdInt, arg7GdVec2, arg8GdArray)
 
 }
 func CallExtSetupPathFinderWithSize(

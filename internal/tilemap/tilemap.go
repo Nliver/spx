@@ -4,6 +4,8 @@ import (
 	"path"
 	"sort"
 	"strings"
+
+	"github.com/goplus/spbase/mathf"
 )
 
 type vec2i struct {
@@ -15,6 +17,16 @@ type vec2i struct {
 type vec2 struct {
 	X float64 `json:"x"`
 	Y float64 `json:"y"`
+}
+
+func (v vec2) ToVec2() mathf.Vec2 {
+	return mathf.NewVec2(v.X, v.Y)
+}
+func (v vec2) Add(other vec2) vec2 {
+	return vec2{X: v.X + other.X, Y: v.Y + other.Y}
+}
+func (v vec2) Sub(other vec2) vec2 {
+	return vec2{X: v.X - other.X, Y: v.Y - other.Y}
 }
 
 // tileSize represents the dimensions of a tile
@@ -73,20 +85,33 @@ type tileMapData struct {
 
 // decoratorNode represents a Sprite2D node in the scene
 type decoratorNode struct {
-	Name     string `json:"name"`
-	Parent   string `json:"parent"`
-	Position vec2   `json:"position"`
-	Path     string `json:"path"`
-	ZIndex   int32  `json:"z_index,omitempty"`
+	Name           string    `json:"name"`
+	Path           string    `json:"path"`
+	Parent         string    `json:"parent"`
+	Position       vec2      `json:"position"`
+	Scale          vec2      `json:"scale,omitempty"`
+	Ratation       float64   `json:"rotation,omitempty"`
+	Pivot          vec2      `json:"pivot,omitempty"`
+	ZIndex         int32     `json:"z_index,omitempty"`
+	ColliderType   string    `json:"collider_type,omitempty"` //"none","auto","circle","rect","capsule","polygon",
+	ColliderPivot  vec2      `json:"collider_pivot,omitempty"`
+	ColliderParams []float64 `json:"collider_params,omitempty"`
 }
 
 // spriteNode represents an instantiated prefab node in the scene
 type spriteNode struct {
-	Name       string                 `json:"name"`
-	Parent     string                 `json:"parent"`
-	Position   vec2                   `json:"position"`
-	Path       string                 `json:"path"`
-	Properties map[string]interface{} `json:"properties,omitempty"`
+	Name           string                 `json:"name"`
+	Path           string                 `json:"path"`
+	Parent         string                 `json:"parent"`
+	Position       vec2                   `json:"position"`
+	Scale          vec2                   `json:"scale,omitempty"`
+	Ratation       float64                `json:"rotation,omitempty"`
+	ZIndex         int32                  `json:"z_index,omitempty"`
+	Pivot          vec2                   `json:"pivot,omitempty"`
+	ColliderType   string                 `json:"collider_type,omitempty"` //"none","auto","circle","rect","capsule","polygon",
+	ColliderPivot  vec2                   `json:"collider_pivot,omitempty"`
+	ColliderParams []float64              `json:"collider_params,omitempty"`
+	Properties     map[string]interface{} `json:"properties,omitempty"`
 }
 
 // TscnMapData represents the root structure for JSON output

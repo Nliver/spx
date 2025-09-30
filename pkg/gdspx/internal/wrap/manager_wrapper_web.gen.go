@@ -408,6 +408,25 @@ func (pself *extMgr) CreatePureSprite(texture_path string, pos Vec2, zindex int6
 	arg2 := JsFromGdInt(zindex)
 	API.SpxExtCreatePureSprite.Invoke(arg0, arg1, arg2)
 }
+func (pself *extMgr) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64) {
+	arg0 := JsFromGdString(texture_path)
+	arg1 := JsFromGdVec2(pos)
+	arg2 := JsFromGdFloat(degree)
+	arg3 := JsFromGdVec2(scale)
+	arg4 := JsFromGdInt(zindex)
+	API.SpxExtCreateRenderSprite.Invoke(arg0, arg1, arg2, arg3, arg4)
+}
+func (pself *extMgr) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, collider_type int64, collider_pivot Vec2, collider_params Array) {
+	arg0 := JsFromGdString(texture_path)
+	arg1 := JsFromGdVec2(pos)
+	arg2 := JsFromGdFloat(degree)
+	arg3 := JsFromGdVec2(scale)
+	arg4 := JsFromGdInt(zindex)
+	arg5 := JsFromGdInt(collider_type)
+	arg6 := JsFromGdVec2(collider_pivot)
+	arg7 := JsFromGdArray(collider_params)
+	API.SpxExtCreateStaticSprite.Invoke(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+}
 func (pself *extMgr) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
 	arg0 := JsFromGdVec2(grid_size)
 	arg1 := JsFromGdVec2(cell_size)
