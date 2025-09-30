@@ -153,6 +153,7 @@ type GDExtensionSpxExtSetupPathFinderWithSize C.GDExtensionSpxExtSetupPathFinder
 type GDExtensionSpxExtSetupPathFinder C.GDExtensionSpxExtSetupPathFinder
 type GDExtensionSpxExtSetObstacle C.GDExtensionSpxExtSetObstacle
 type GDExtensionSpxExtFindPath C.GDExtensionSpxExtFindPath
+type GDExtensionSpxExtSetLayerSorterMode C.GDExtensionSpxExtSetLayerSorterMode
 type GDExtensionSpxInputGetMousePos C.GDExtensionSpxInputGetMousePos
 type GDExtensionSpxInputGetKey C.GDExtensionSpxInputGetKey
 type GDExtensionSpxInputGetMouseState C.GDExtensionSpxInputGetMouseState
@@ -1034,6 +1035,15 @@ func CallExtFindPath(
 	C.cgo_callfn_GDExtensionSpxExtFindPath(arg0, arg1GdVec2, arg2GdVec2, arg3GdBool, &ret_val)
 
 	return GdArray(ret_val)
+}
+func CallExtSetLayerSorterMode(
+	mode GdInt,
+) {
+	arg0 := (C.GDExtensionSpxExtSetLayerSorterMode)(api.SpxExtSetLayerSorterMode)
+	arg1GdInt := (C.GdInt)(mode)
+
+	C.cgo_callfn_GDExtensionSpxExtSetLayerSorterMode(arg0, arg1GdInt)
+
 }
 func CallInputGetMousePos() GdVec2 {
 	arg0 := (C.GDExtensionSpxInputGetMousePos)(api.SpxInputGetMousePos)

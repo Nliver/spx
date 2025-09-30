@@ -458,6 +458,10 @@ func (pself *extMgr) FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array {
 	retValue := CallExtFindPath(arg0, arg1, arg2)
 	return ToArray(retValue)
 }
+func (pself *extMgr) SetLayerSorterMode(mode int64) {
+	arg0 := ToGdInt(mode)
+	CallExtSetLayerSorterMode(arg0)
+}
 func (pself *inputMgr) GetMousePos() Vec2 {
 	retValue := CallInputGetMousePos()
 	return ToVec2(retValue)

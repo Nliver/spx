@@ -286,6 +286,7 @@ typedef void (*GDExtensionSpxExtSetupPathFinderWithSize)(GdVec2 grid_size, GdVec
 typedef void (*GDExtensionSpxExtSetupPathFinder)(GdBool with_jump);
 typedef void (*GDExtensionSpxExtSetObstacle)(GdObj obj, GdBool enabled);
 typedef void (*GDExtensionSpxExtFindPath)(GdVec2 p_from, GdVec2 p_to, GdBool with_jump, GdArray* ret_value);
+typedef void (*GDExtensionSpxExtSetLayerSorterMode)(GdInt mode);
 // SpxInput
 typedef void (*GDExtensionSpxInputGetMousePos)(GdVec2* ret_value);
 typedef void (*GDExtensionSpxInputGetKey)(GdInt key, GdBool* ret_value);

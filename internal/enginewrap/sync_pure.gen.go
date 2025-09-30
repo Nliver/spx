@@ -225,6 +225,7 @@ func (pself *extMgrImpl) FindPath(p_from Vec2, p_to Vec2, with_jump bool) gdx.Ar
 	var _ret1 gdx.Array
 	return _ret1
 }
+func (pself *extMgrImpl) SetLayerSorterMode(mode int64) {}
 
 // IInputMgr
 func (pself *inputMgrImpl) GetMousePos() Vec2 {
