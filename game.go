@@ -1962,6 +1962,9 @@ func (p *Game) createDecorators(texturePath string, pos mathf.Vec2, rot float64,
 
 func (p *Game) createStaticSprite(texturePath string, pos mathf.Vec2, rot float64, scale mathf.Vec2, zindex int64, pivot mathf.Vec2, colliderType string, colliderPivot mathf.Vec2, colliderParams []float64) {
 	colliderTypeInt := paserColliderShapeType(colliderType, 0)
+	if colliderParams == nil {
+		colliderParams = []float64{}
+	}
 	extMgr.CreateStaticSprite(engine.ToAssetPath(texturePath), pos, rot, scale, zindex, pivot, colliderTypeInt, colliderPivot, colliderParams)
 }
 

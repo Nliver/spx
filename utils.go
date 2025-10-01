@@ -78,6 +78,9 @@ func HSBA(h, s, b, a float64) Color {
 }
 
 func f64Tof32(slice []float64) []float32 {
+	if slice == nil {
+		return []float32{}
+	}
 	out := make([]float32, len(slice))
 	for i, v := range slice {
 		out[i] = float32(v)
@@ -86,6 +89,9 @@ func f64Tof32(slice []float64) []float32 {
 }
 
 func f32Tof64(slice []float32) []float64 {
+	if slice == nil {
+		return []float64{}
+	}
 	out := make([]float64, len(slice))
 	for i, v := range slice {
 		out[i] = float64(v)

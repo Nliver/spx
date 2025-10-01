@@ -111,10 +111,21 @@ func serializeDataByType(arrayType int32, data interface{}) ([]byte, error) {
 		}
 		return serializeInt64Array(data.([]int64))
 	case GD_ARRAY_TYPE_FLOAT:
-		if arr := data.([]float32); len(arr) == 0 {
+		val, ok := data.([]float32)
+		if !ok {
+			slice, ok := data.([]float64)
+			if !ok {
+				return []byte{}, fmt.Errorf("array type is not supported: %T", data)
+			}
+			val := make([]float32, len(slice))
+			for i, v := range slice {
+				val[i] = float32(v)
+			}
+		}
+		if arr := val; len(arr) == 0 {
 			return []byte{}, nil
 		}
-		return serializeFloatArray(data.([]float32))
+		return serializeFloatArray(val)
 	case GD_ARRAY_TYPE_BOOL:
 		if arr := data.([]bool); len(arr) == 0 {
 			return []byte{}, nil
@@ -311,6 +322,8 @@ func arrayToGdArrayInfo(arrayPtr Array) *GdArrayInfo {
 	case []int64:
 		return &GdArrayInfo{Size: int32(len(data)), Type: GD_ARRAY_TYPE_INT64, Data: data}
 	case []float32:
+		return &GdArrayInfo{Size: int32(len(data)), Type: GD_ARRAY_TYPE_FLOAT, Data: data}
+	case []float64:
 		return &GdArrayInfo{Size: int32(len(data)), Type: GD_ARRAY_TYPE_FLOAT, Data: data}
 	case []bool:
 		return &GdArrayInfo{Size: int32(len(data)), Type: GD_ARRAY_TYPE_BOOL, Data: data}
