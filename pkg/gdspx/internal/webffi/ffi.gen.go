@@ -89,6 +89,7 @@ type GDExtensionInterface struct {
 	SpxExtCreatePureSprite                   js.Value
 	SpxExtCreateRenderSprite                 js.Value
 	SpxExtCreateStaticSprite                 js.Value
+	SpxExtDestroyPureSprite                  js.Value
 	SpxExtSetupPathFinderWithSize            js.Value
 	SpxExtSetupPathFinder                    js.Value
 	SpxExtSetObstacle                        js.Value
@@ -150,6 +151,8 @@ type GDExtensionInterface struct {
 	SpxSpriteSetProcess                      js.Value
 	SpxSpriteSetPhysicProcess                js.Value
 	SpxSpriteSetTypeName                     js.Value
+	SpxSpriteSetPivot                        js.Value
+	SpxSpriteGetPivot                        js.Value
 	SpxSpriteSetChildPosition                js.Value
 	SpxSpriteGetChildPosition                js.Value
 	SpxSpriteSetChildRotation                js.Value
@@ -375,6 +378,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtCreatePureSprite = dlsymGD("gdspx_ext_create_pure_sprite")
 	x.SpxExtCreateRenderSprite = dlsymGD("gdspx_ext_create_render_sprite")
 	x.SpxExtCreateStaticSprite = dlsymGD("gdspx_ext_create_static_sprite")
+	x.SpxExtDestroyPureSprite = dlsymGD("gdspx_ext_destroy_pure_sprite")
 	x.SpxExtSetupPathFinderWithSize = dlsymGD("gdspx_ext_setup_path_finder_with_size")
 	x.SpxExtSetupPathFinder = dlsymGD("gdspx_ext_setup_path_finder")
 	x.SpxExtSetObstacle = dlsymGD("gdspx_ext_set_obstacle")
@@ -436,6 +440,8 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxSpriteSetProcess = dlsymGD("gdspx_sprite_set_process")
 	x.SpxSpriteSetPhysicProcess = dlsymGD("gdspx_sprite_set_physic_process")
 	x.SpxSpriteSetTypeName = dlsymGD("gdspx_sprite_set_type_name")
+	x.SpxSpriteSetPivot = dlsymGD("gdspx_sprite_set_pivot")
+	x.SpxSpriteGetPivot = dlsymGD("gdspx_sprite_get_pivot")
 	x.SpxSpriteSetChildPosition = dlsymGD("gdspx_sprite_set_child_position")
 	x.SpxSpriteGetChildPosition = dlsymGD("gdspx_sprite_get_child_position")
 	x.SpxSpriteSetChildRotation = dlsymGD("gdspx_sprite_set_child_rotation")

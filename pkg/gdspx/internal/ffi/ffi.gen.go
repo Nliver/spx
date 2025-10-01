@@ -85,6 +85,7 @@ type GDExtensionInterface struct {
 	SpxExtCreatePureSprite                   GDExtensionSpxExtCreatePureSprite
 	SpxExtCreateRenderSprite                 GDExtensionSpxExtCreateRenderSprite
 	SpxExtCreateStaticSprite                 GDExtensionSpxExtCreateStaticSprite
+	SpxExtDestroyPureSprite                  GDExtensionSpxExtDestroyPureSprite
 	SpxExtSetupPathFinderWithSize            GDExtensionSpxExtSetupPathFinderWithSize
 	SpxExtSetupPathFinder                    GDExtensionSpxExtSetupPathFinder
 	SpxExtSetObstacle                        GDExtensionSpxExtSetObstacle
@@ -146,6 +147,8 @@ type GDExtensionInterface struct {
 	SpxSpriteSetProcess                      GDExtensionSpxSpriteSetProcess
 	SpxSpriteSetPhysicProcess                GDExtensionSpxSpriteSetPhysicProcess
 	SpxSpriteSetTypeName                     GDExtensionSpxSpriteSetTypeName
+	SpxSpriteSetPivot                        GDExtensionSpxSpriteSetPivot
+	SpxSpriteGetPivot                        GDExtensionSpxSpriteGetPivot
 	SpxSpriteSetChildPosition                GDExtensionSpxSpriteSetChildPosition
 	SpxSpriteGetChildPosition                GDExtensionSpxSpriteGetChildPosition
 	SpxSpriteSetChildRotation                GDExtensionSpxSpriteSetChildRotation
@@ -371,6 +374,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtCreatePureSprite = (GDExtensionSpxExtCreatePureSprite)(dlsymGD("spx_ext_create_pure_sprite"))
 	x.SpxExtCreateRenderSprite = (GDExtensionSpxExtCreateRenderSprite)(dlsymGD("spx_ext_create_render_sprite"))
 	x.SpxExtCreateStaticSprite = (GDExtensionSpxExtCreateStaticSprite)(dlsymGD("spx_ext_create_static_sprite"))
+	x.SpxExtDestroyPureSprite = (GDExtensionSpxExtDestroyPureSprite)(dlsymGD("spx_ext_destroy_pure_sprite"))
 	x.SpxExtSetupPathFinderWithSize = (GDExtensionSpxExtSetupPathFinderWithSize)(dlsymGD("spx_ext_setup_path_finder_with_size"))
 	x.SpxExtSetupPathFinder = (GDExtensionSpxExtSetupPathFinder)(dlsymGD("spx_ext_setup_path_finder"))
 	x.SpxExtSetObstacle = (GDExtensionSpxExtSetObstacle)(dlsymGD("spx_ext_set_obstacle"))
@@ -432,6 +436,8 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxSpriteSetProcess = (GDExtensionSpxSpriteSetProcess)(dlsymGD("spx_sprite_set_process"))
 	x.SpxSpriteSetPhysicProcess = (GDExtensionSpxSpriteSetPhysicProcess)(dlsymGD("spx_sprite_set_physic_process"))
 	x.SpxSpriteSetTypeName = (GDExtensionSpxSpriteSetTypeName)(dlsymGD("spx_sprite_set_type_name"))
+	x.SpxSpriteSetPivot = (GDExtensionSpxSpriteSetPivot)(dlsymGD("spx_sprite_set_pivot"))
+	x.SpxSpriteGetPivot = (GDExtensionSpxSpriteGetPivot)(dlsymGD("spx_sprite_get_pivot"))
 	x.SpxSpriteSetChildPosition = (GDExtensionSpxSpriteSetChildPosition)(dlsymGD("spx_sprite_set_child_position"))
 	x.SpxSpriteGetChildPosition = (GDExtensionSpxSpriteGetChildPosition)(dlsymGD("spx_sprite_get_child_position"))
 	x.SpxSpriteSetChildRotation = (GDExtensionSpxSpriteSetChildRotation)(dlsymGD("spx_sprite_set_child_rotation"))

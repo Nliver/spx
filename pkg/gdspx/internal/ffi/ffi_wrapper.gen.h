@@ -207,11 +207,14 @@ void cgo_callfn_GDExtensionSpxExtClearPureSprites(const GDExtensionSpxExtClearPu
 void cgo_callfn_GDExtensionSpxExtCreatePureSprite(const GDExtensionSpxExtCreatePureSprite fn, GdString texture_path, GdVec2 pos, GdInt zindex) {
 	fn(texture_path, pos, zindex);
 }
-void cgo_callfn_GDExtensionSpxExtCreateRenderSprite(const GDExtensionSpxExtCreateRenderSprite fn, GdString texture_path, GdVec2 pos, GdFloat degree, GdVec2 scale, GdInt zindex) {
-	fn(texture_path, pos, degree, scale, zindex);
+void cgo_callfn_GDExtensionSpxExtCreateRenderSprite(const GDExtensionSpxExtCreateRenderSprite fn, GdString texture_path, GdVec2 pos, GdFloat degree, GdVec2 scale, GdInt zindex, GdVec2 pivot, GdObj* ret_val) {
+	fn(texture_path, pos, degree, scale, zindex, pivot,ret_val);
 }
-void cgo_callfn_GDExtensionSpxExtCreateStaticSprite(const GDExtensionSpxExtCreateStaticSprite fn, GdString texture_path, GdVec2 pos, GdFloat degree, GdVec2 scale, GdInt zindex, GdInt collider_type, GdVec2 collider_pivot, GdArray collider_params) {
-	fn(texture_path, pos, degree, scale, zindex, collider_type, collider_pivot, collider_params);
+void cgo_callfn_GDExtensionSpxExtCreateStaticSprite(const GDExtensionSpxExtCreateStaticSprite fn, GdString texture_path, GdVec2 pos, GdFloat degree, GdVec2 scale, GdInt zindex, GdVec2 pivot, GdInt collider_type, GdVec2 collider_pivot, GdArray collider_params, GdObj* ret_val) {
+	fn(texture_path, pos, degree, scale, zindex, pivot, collider_type, collider_pivot, collider_params,ret_val);
+}
+void cgo_callfn_GDExtensionSpxExtDestroyPureSprite(const GDExtensionSpxExtDestroyPureSprite fn, GdObj id) {
+	fn(id);
 }
 void cgo_callfn_GDExtensionSpxExtSetupPathFinderWithSize(const GDExtensionSpxExtSetupPathFinderWithSize fn, GdVec2 grid_size, GdVec2 cell_size, GdBool with_jump, GdBool with_debug) {
 	fn(grid_size, cell_size, with_jump, with_debug);
@@ -395,6 +398,12 @@ void cgo_callfn_GDExtensionSpxSpriteSetPhysicProcess(const GDExtensionSpxSpriteS
 }
 void cgo_callfn_GDExtensionSpxSpriteSetTypeName(const GDExtensionSpxSpriteSetTypeName fn, GdObj obj, GdString type_name) {
 	fn(obj, type_name);
+}
+void cgo_callfn_GDExtensionSpxSpriteSetPivot(const GDExtensionSpxSpriteSetPivot fn, GdObj obj, GdVec2 pivot) {
+	fn(obj, pivot);
+}
+void cgo_callfn_GDExtensionSpxSpriteGetPivot(const GDExtensionSpxSpriteGetPivot fn, GdObj obj, GdVec2* ret_val) {
+	fn(obj,ret_val);
 }
 void cgo_callfn_GDExtensionSpxSpriteSetChildPosition(const GDExtensionSpxSpriteSetChildPosition fn, GdObj obj, GdString path, GdVec2 pos) {
 	fn(obj, path, pos);

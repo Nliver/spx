@@ -55,7 +55,7 @@ func (p *tilemapMgr) loadDecorators(datas *tm.TscnMapData) {
 	for _, item := range datas.Decorators {
 		item.ColliderPivot.Y = -item.ColliderPivot.Y
 		p.g.createStaticSprite("tilemaps/"+item.Path, item.Position.Sub(item.Pivot).ToVec2(), item.Ratation,
-			item.Scale.ToVec2(), int64(item.ZIndex), item.ColliderType, item.ColliderPivot.ToVec2(), item.ColliderParams)
+			item.Scale.ToVec2(), int64(item.ZIndex), item.Pivot.ToVec2(), item.ColliderType, item.ColliderPivot.ToVec2(), item.ColliderParams)
 	}
 }
 

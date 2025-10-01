@@ -435,7 +435,7 @@ func (pself *extMgr) CreatePureSprite(texture_path string, pos Vec2, zindex int6
 	arg2 := ToGdInt(zindex)
 	CallExtCreatePureSprite(arg0, arg1, arg2)
 }
-func (pself *extMgr) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64) {
+func (pself *extMgr) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2) Object {
 	arg0Str := C.CString(texture_path)
 	arg0 := (GdString)(arg0Str)
 	defer C.free(unsafe.Pointer(arg0Str))
@@ -443,9 +443,11 @@ func (pself *extMgr) CreateRenderSprite(texture_path string, pos Vec2, degree fl
 	arg2 := ToGdFloat(degree)
 	arg3 := ToGdVec2(scale)
 	arg4 := ToGdInt(zindex)
-	CallExtCreateRenderSprite(arg0, arg1, arg2, arg3, arg4)
+	arg5 := ToGdVec2(pivot)
+	retValue := CallExtCreateRenderSprite(arg0, arg1, arg2, arg3, arg4, arg5)
+	return ToObject(retValue)
 }
-func (pself *extMgr) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, collider_type int64, collider_pivot Vec2, collider_params Array) {
+func (pself *extMgr) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2, collider_type int64, collider_pivot Vec2, collider_params Array) Object {
 	arg0Str := C.CString(texture_path)
 	arg0 := (GdString)(arg0Str)
 	defer C.free(unsafe.Pointer(arg0Str))
@@ -453,10 +455,16 @@ func (pself *extMgr) CreateStaticSprite(texture_path string, pos Vec2, degree fl
 	arg2 := ToGdFloat(degree)
 	arg3 := ToGdVec2(scale)
 	arg4 := ToGdInt(zindex)
-	arg5 := ToGdInt(collider_type)
-	arg6 := ToGdVec2(collider_pivot)
-	arg7 := ToGdArray(collider_params)
-	CallExtCreateStaticSprite(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+	arg5 := ToGdVec2(pivot)
+	arg6 := ToGdInt(collider_type)
+	arg7 := ToGdVec2(collider_pivot)
+	arg8 := ToGdArray(collider_params)
+	retValue := CallExtCreateStaticSprite(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
+	return ToObject(retValue)
+}
+func (pself *extMgr) DestroyPureSprite(id Object) {
+	arg0 := ToGdObj(id)
+	CallExtDestroyPureSprite(arg0)
 }
 func (pself *extMgr) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
 	arg0 := ToGdVec2(grid_size)
@@ -790,6 +798,16 @@ func (pself *spriteMgr) SetTypeName(obj Object, type_name string) {
 	arg1 := (GdString)(arg1Str)
 	defer C.free(unsafe.Pointer(arg1Str))
 	CallSpriteSetTypeName(arg0, arg1)
+}
+func (pself *spriteMgr) SetPivot(obj Object, pivot Vec2) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdVec2(pivot)
+	CallSpriteSetPivot(arg0, arg1)
+}
+func (pself *spriteMgr) GetPivot(obj Object) Vec2 {
+	arg0 := ToGdObj(obj)
+	retValue := CallSpriteGetPivot(arg0)
+	return ToVec2(retValue)
 }
 func (pself *spriteMgr) SetChildPosition(obj Object, path string, pos Vec2) {
 	arg0 := ToGdObj(obj)

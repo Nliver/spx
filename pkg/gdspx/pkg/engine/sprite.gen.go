@@ -156,6 +156,10 @@ func (pself *Sprite) GetPhysicsMode() int64 {
 	return SpriteMgr.GetPhysicsMode(pself.Id)
 }
 
+func (pself *Sprite) GetPivot() Vec2 {
+	return SpriteMgr.GetPivot(pself.Id)
+}
+
 func (pself *Sprite) GetPosition() Vec2 {
 	return SpriteMgr.GetPosition(pself.Id)
 }
@@ -398,6 +402,10 @@ func (pself *Sprite) SetPhysicProcess(is_on bool) {
 
 func (pself *Sprite) SetPhysicsMode(mode int64) {
 	SpriteMgr.SetPhysicsMode(pself.Id, mode)
+}
+
+func (pself *Sprite) SetPivot(pivot Vec2) {
+	SpriteMgr.SetPivot(pself.Id, pivot)
 }
 
 func (pself *Sprite) SetPosition(pos Vec2) {

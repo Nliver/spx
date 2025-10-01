@@ -459,14 +459,23 @@ func (pself *extMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex 
 		gdx.ExtMgr.CreatePureSprite(texture_path, pos, zindex)
 	})
 }
-func (pself *extMgrImpl) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64) {
+func (pself *extMgrImpl) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2) gdx.Object {
+	var _ret1 gdx.Object
 	callInMainThread(func() {
-		gdx.ExtMgr.CreateRenderSprite(texture_path, pos, degree, scale, zindex)
+		_ret1 = gdx.ExtMgr.CreateRenderSprite(texture_path, pos, degree, scale, zindex, pivot)
 	})
+	return _ret1
 }
-func (pself *extMgrImpl) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, collider_type int64, collider_pivot Vec2, collider_params gdx.Array) {
+func (pself *extMgrImpl) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2, collider_type int64, collider_pivot Vec2, collider_params gdx.Array) gdx.Object {
+	var _ret1 gdx.Object
 	callInMainThread(func() {
-		gdx.ExtMgr.CreateStaticSprite(texture_path, pos, degree, scale, zindex, collider_type, collider_pivot, collider_params)
+		_ret1 = gdx.ExtMgr.CreateStaticSprite(texture_path, pos, degree, scale, zindex, pivot, collider_type, collider_pivot, collider_params)
+	})
+	return _ret1
+}
+func (pself *extMgrImpl) DestroyPureSprite(id gdx.Object) {
+	callInMainThread(func() {
+		gdx.ExtMgr.DestroyPureSprite(id)
 	})
 }
 func (pself *extMgrImpl) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
@@ -851,6 +860,18 @@ func (pself *spriteMgrImpl) SetTypeName(obj gdx.Object, type_name string) {
 	callInMainThread(func() {
 		gdx.SpriteMgr.SetTypeName(obj, type_name)
 	})
+}
+func (pself *spriteMgrImpl) SetPivot(obj gdx.Object, pivot Vec2) {
+	callInMainThread(func() {
+		gdx.SpriteMgr.SetPivot(obj, pivot)
+	})
+}
+func (pself *spriteMgrImpl) GetPivot(obj gdx.Object) Vec2 {
+	var _ret1 Vec2
+	callInMainThread(func() {
+		_ret1 = gdx.SpriteMgr.GetPivot(obj)
+	})
+	return _ret1
 }
 func (pself *spriteMgrImpl) SetChildPosition(obj gdx.Object, path string, pos Vec2) {
 	callInMainThread(func() {
