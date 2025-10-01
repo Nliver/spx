@@ -282,6 +282,8 @@ typedef void (*GDExtensionSpxExtCloseDrawTiles)();
 typedef void (*GDExtensionSpxExtExitTilemapEditorMode)();
 typedef void (*GDExtensionSpxExtClearPureSprites)();
 typedef void (*GDExtensionSpxExtCreatePureSprite)(GdString texture_path, GdVec2 pos, GdInt zindex);
+typedef void (*GDExtensionSpxExtCreateRenderSprite)(GdString texture_path, GdVec2 pos, GdFloat degree, GdVec2 scale, GdInt zindex);
+typedef void (*GDExtensionSpxExtCreateStaticSprite)(GdString texture_path, GdVec2 pos, GdFloat degree, GdVec2 scale, GdInt zindex, GdInt collider_type, GdVec2 collider_pivot, GdArray collider_params);
 typedef void (*GDExtensionSpxExtSetupPathFinderWithSize)(GdVec2 grid_size, GdVec2 cell_size, GdBool with_jump, GdBool with_debug);
 typedef void (*GDExtensionSpxExtSetupPathFinder)(GdBool with_jump);
 typedef void (*GDExtensionSpxExtSetObstacle)(GdObj obj, GdBool enabled);

@@ -53,12 +53,14 @@ func (p *tilemapMgr) loadTilemaps(datas *tm.TscnMapData) {
 }
 func (p *tilemapMgr) loadDecorators(datas *tm.TscnMapData) {
 	for _, item := range datas.Decorators {
-		p.g.createDecorators(item.Path, item.Position.X, item.Position.Y, int64(item.ZIndex))
+		item.ColliderPivot.Y = -item.ColliderPivot.Y
+		p.g.createStaticSprite("tilemaps/"+item.Path, item.Position.Sub(item.Pivot).ToVec2(), item.Ratation,
+			item.Scale.ToVec2(), int64(item.ZIndex), item.ColliderType, item.ColliderPivot.ToVec2(), item.ColliderParams)
 	}
 }
 
 func (p *tilemapMgr) loadSprites(datas *tm.TscnMapData) {
-	return
+
 	sort.Slice(datas.Sprites, func(i, j int) bool {
 		return datas.Sprites[i].Path < datas.Sprites[j].Path
 	})
@@ -81,7 +83,7 @@ func (p *tilemapMgr) parseTilemap() {
 	}
 	p.loadTilemaps(p.datas)
 	p.loadDecorators(p.datas)
-	p.loadSprites(p.datas)
+	//p.loadSprites(p.datas)
 
 	// Update world size based on actual tilemap content
 	p.calcWorldSize()

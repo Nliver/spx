@@ -83,6 +83,8 @@ type GDExtensionInterface struct {
 	SpxExtExitTilemapEditorMode              GDExtensionSpxExtExitTilemapEditorMode
 	SpxExtClearPureSprites                   GDExtensionSpxExtClearPureSprites
 	SpxExtCreatePureSprite                   GDExtensionSpxExtCreatePureSprite
+	SpxExtCreateRenderSprite                 GDExtensionSpxExtCreateRenderSprite
+	SpxExtCreateStaticSprite                 GDExtensionSpxExtCreateStaticSprite
 	SpxExtSetupPathFinderWithSize            GDExtensionSpxExtSetupPathFinderWithSize
 	SpxExtSetupPathFinder                    GDExtensionSpxExtSetupPathFinder
 	SpxExtSetObstacle                        GDExtensionSpxExtSetObstacle
@@ -367,6 +369,8 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtExitTilemapEditorMode = (GDExtensionSpxExtExitTilemapEditorMode)(dlsymGD("spx_ext_exit_tilemap_editor_mode"))
 	x.SpxExtClearPureSprites = (GDExtensionSpxExtClearPureSprites)(dlsymGD("spx_ext_clear_pure_sprites"))
 	x.SpxExtCreatePureSprite = (GDExtensionSpxExtCreatePureSprite)(dlsymGD("spx_ext_create_pure_sprite"))
+	x.SpxExtCreateRenderSprite = (GDExtensionSpxExtCreateRenderSprite)(dlsymGD("spx_ext_create_render_sprite"))
+	x.SpxExtCreateStaticSprite = (GDExtensionSpxExtCreateStaticSprite)(dlsymGD("spx_ext_create_static_sprite"))
 	x.SpxExtSetupPathFinderWithSize = (GDExtensionSpxExtSetupPathFinderWithSize)(dlsymGD("spx_ext_setup_path_finder_with_size"))
 	x.SpxExtSetupPathFinder = (GDExtensionSpxExtSetupPathFinder)(dlsymGD("spx_ext_setup_path_finder"))
 	x.SpxExtSetObstacle = (GDExtensionSpxExtSetObstacle)(dlsymGD("spx_ext_set_obstacle"))

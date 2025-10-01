@@ -99,6 +99,8 @@ type IExtMgr interface {
 	ExitTilemapEditorMode()
 	ClearPureSprites()
 	CreatePureSprite(texture_path string, pos Vec2, zindex int64)
+	CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64)
+	CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, collider_type int64, collider_pivot Vec2, collider_params Array)
 	SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool)
 	SetupPathFinder(with_jump bool)
 	SetObstacle(obj Object, enabled bool)

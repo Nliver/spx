@@ -459,6 +459,16 @@ func (pself *extMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex 
 		gdx.ExtMgr.CreatePureSprite(texture_path, pos, zindex)
 	})
 }
+func (pself *extMgrImpl) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64) {
+	callInMainThread(func() {
+		gdx.ExtMgr.CreateRenderSprite(texture_path, pos, degree, scale, zindex)
+	})
+}
+func (pself *extMgrImpl) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, collider_type int64, collider_pivot Vec2, collider_params gdx.Array) {
+	callInMainThread(func() {
+		gdx.ExtMgr.CreateStaticSprite(texture_path, pos, degree, scale, zindex, collider_type, collider_pivot, collider_params)
+	})
+}
 func (pself *extMgrImpl) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
 	callInMainThread(func() {
 		gdx.ExtMgr.SetupPathFinderWithSize(grid_size, cell_size, with_jump, with_debug)

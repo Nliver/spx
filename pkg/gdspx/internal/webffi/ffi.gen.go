@@ -87,6 +87,8 @@ type GDExtensionInterface struct {
 	SpxExtExitTilemapEditorMode              js.Value
 	SpxExtClearPureSprites                   js.Value
 	SpxExtCreatePureSprite                   js.Value
+	SpxExtCreateRenderSprite                 js.Value
+	SpxExtCreateStaticSprite                 js.Value
 	SpxExtSetupPathFinderWithSize            js.Value
 	SpxExtSetupPathFinder                    js.Value
 	SpxExtSetObstacle                        js.Value
@@ -371,6 +373,8 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtExitTilemapEditorMode = dlsymGD("gdspx_ext_exit_tilemap_editor_mode")
 	x.SpxExtClearPureSprites = dlsymGD("gdspx_ext_clear_pure_sprites")
 	x.SpxExtCreatePureSprite = dlsymGD("gdspx_ext_create_pure_sprite")
+	x.SpxExtCreateRenderSprite = dlsymGD("gdspx_ext_create_render_sprite")
+	x.SpxExtCreateStaticSprite = dlsymGD("gdspx_ext_create_static_sprite")
 	x.SpxExtSetupPathFinderWithSize = dlsymGD("gdspx_ext_setup_path_finder_with_size")
 	x.SpxExtSetupPathFinder = dlsymGD("gdspx_ext_setup_path_finder")
 	x.SpxExtSetObstacle = dlsymGD("gdspx_ext_set_obstacle")
