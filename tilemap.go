@@ -21,6 +21,7 @@ import (
 	"sort"
 
 	spxfs "github.com/goplus/spx/v2/fs"
+	"github.com/goplus/spx/v2/internal/engine"
 	tm "github.com/goplus/spx/v2/internal/tilemap"
 
 	"github.com/goplus/spbase/mathf"
@@ -52,10 +53,16 @@ func (p *tilemapMgr) loadTilemaps(datas *tm.TscnMapData) {
 	tm.LoadTilemaps(datas, p.g.setTileInfo__1, p.g.setTileMapLayerIndex, p.g.PlaceTiles__1)
 }
 func (p *tilemapMgr) loadDecorators(datas *tm.TscnMapData) {
+	const headingOffset = -90.0
 	for _, item := range datas.Decorators {
-		item.ColliderPivot.Y = -item.ColliderPivot.Y
-		p.g.createStaticSprite("tilemaps/"+item.Path, item.Position.Sub(item.Pivot).ToVec2(), item.Ratation,
-			item.Scale.ToVec2(), int64(item.ZIndex), item.Pivot.ToVec2(), item.ColliderType, item.ColliderPivot.ToVec2(), item.ColliderParams)
+		position := item.Position.ToVec2()
+		pivot := item.Pivot.ToVec2()
+		assetPath := engine.ToAssetPath("tilemaps/" + item.Path)
+		texSize := resMgr.GetImageSize(assetPath)
+		colliderPivot := item.ColliderPivot.ToVec2().Add(pivot)
+		pivot = pivot.Sub(texSize.Divf(2))
+		p.g.createStaticSprite("tilemaps/"+item.Path, position, item.Ratation+headingOffset,
+			item.Scale.ToVec2(), int64(item.ZIndex), pivot, item.ColliderType, colliderPivot, item.ColliderParams)
 	}
 }
 

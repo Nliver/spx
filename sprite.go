@@ -2273,7 +2273,7 @@ func (p *SpriteImpl) setPhysicShape(isTrigger bool, ctype ColliderShapeType, par
 	}
 
 	// Apply shape-specific settings
-	p.applyPhysicShape(isTrigger, ctype, params)
+	p.applyPhysicShape(isTrigger)
 	return nil
 }
 
@@ -2292,7 +2292,7 @@ func (p *SpriteImpl) setPhysicPivot(isTrigger bool, offsetX, offsetY float64) {
 
 	// Re-apply current shape with new pivot if needed
 	if p.syncSprite != nil {
-		p.applyPhysicShape(isTrigger, config.Type, config.Params)
+		p.applyPhysicShape(isTrigger)
 	}
 }
 
@@ -2303,9 +2303,10 @@ func (p *SpriteImpl) getPhysicPivot(isTrigger bool) (offsetX, offsetY float64) {
 }
 
 // applyPhysicShape applies the shape settings to the engine
-func (p *SpriteImpl) applyPhysicShape(isTrigger bool, ctype ColliderShapeType, params []float64) {
+func (p *SpriteImpl) applyPhysicShape(isTrigger bool) {
 	config := p.getPhysicConfig(isTrigger)
-	config.Type = ctype
+	ctype := config.Type
+	params := config.Params
 
 	if p.syncSprite != nil {
 		switch ctype {
