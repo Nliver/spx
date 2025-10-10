@@ -98,10 +98,11 @@ func (c *cameraImpl) constrainPos(cpos mathf.Vec2) {
 	}
 
 	if constrainedX != currentX || constrainedY != currentY {
-		cameraMgr.SetPosition(mathf.NewVec2(constrainedX, constrainedY))
-	} else {
-		cameraMgr.SetPosition(cpos)
+		cpos = mathf.NewVec2(constrainedX, constrainedY)
 	}
+	curPos := cameraMgr.GetPosition()
+	targetPos := mathf.Vec2.Lerp(curPos, cpos, 0.1)
+	cameraMgr.SetPosition(targetPos)
 }
 
 func (c *cameraImpl) ViewportRect() (float64, float64, float64, float64) {
