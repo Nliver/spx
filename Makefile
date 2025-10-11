@@ -84,7 +84,14 @@ install: ## Install spx command
 	$(INSTALL_CMD)
 
 download: ## Download engines
-	make install && ./pkg/gdspx/tools/build_engine.sh -e -d 
+	make install && ./pkg/gdspx/tools/build_engine.sh -e -d
+
+download-engine: ## Download engine templates for specific platform (android/ios). Usage: make download-engine PLATFORM=android
+ifndef PLATFORM
+	$(error PLATFORM is not set! Usage: make download-engine PLATFORM=android or PLATFORM=ios)
+endif
+	@echo "Downloading engine templates for platform: $(PLATFORM)"
+	./pkg/gdspx/tools/build_engine.sh -p $(PLATFORM) -g 
 
 
 # ============================================

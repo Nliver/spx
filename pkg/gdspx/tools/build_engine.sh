@@ -6,14 +6,16 @@ cp -f $SCRIPT_DIR/../../../cmd/gox/template/version $SCRIPT_DIR
 EDITOR_ONLY=false
 PLATFORM=""
 DOWNLOAD=false
+DOWNLOAD_ENGINE=false
 MODE=""
-while getopts "p:m:ed" opt; do
+while getopts "p:m:edg" opt; do
     case "$opt" in
         d) DOWNLOAD=true ;;
+        g) DOWNLOAD_ENGINE=true ;;
         p) PLATFORM="$OPTARG" ;;
         e) EDITOR_ONLY=true ;;
         m) MODE="$OPTARG" ;;
-        *) echo "Usage: $0 [-p platform] [-e]"; exit 1 ;;
+        *) echo "Usage: $0 [-p platform] [-e] [-d] [-g] [-m mode]"; exit 1 ;;
     esac
 done
 source $SCRIPT_DIR/common/setup_env.sh
@@ -268,12 +270,95 @@ download_editor() {
     [ -f "$dst_dir/$zip_name" ] && rm -f "$dst_dir/$zip_name"
     [ -f "$tmp_dir/$zip_name" ] && rm -f "$tmp_dir/$zip_name"
     [ -d "$tmp_dir" ] && rm -rf "$tmp_dir"
-    
+
     # List final files
     echo "Files in $dst_dir:"
     ls -l "$dst_dir"
     echo "Files in $template_dir:"
     ls -l "$template_dir"
+}
+
+download_engine() {
+    setup_global_variables
+    local platform=$PLATFORM
+    local template_dir="$TEMPLATE_DIR"
+    local url_prefix="https://github.com/goplus/godot/releases/download/spx$VERSION/"
+
+    mkdir -p "$template_dir"
+    echo "Downloading engine templates for platform: $platform"
+    echo "Template directory: $template_dir"
+    echo "URL prefix: $url_prefix"
+
+    if [ "$platform" = "android" ]; then
+        local android_zip="$template_dir/android.zip"
+        local tmp_dir=$(mktemp -d)
+
+        echo "===> Downloading Android engine templates..."
+        if [ -f "$android_zip" ]; then
+            echo "Android template archive already exists, removing old version..."
+            rm -f "$android_zip"
+        fi
+
+        echo "Downloading from: ${url_prefix}android.zip"
+        if curl -L -o "$android_zip" "${url_prefix}android.zip"; then
+            echo "Download successful, extracting Android templates..."
+
+            # Extract android templates to template directory
+            unzip -o "$android_zip" -d "$tmp_dir" > /dev/null 2>&1
+
+            # Copy all APK files and android_source.zip to template directory
+            if [ -f "$tmp_dir/android_debug.apk" ]; then
+                cp -f "$tmp_dir/android_debug.apk" "$template_dir/"
+                echo "Copied android_debug.apk"
+            fi
+
+            if [ -f "$tmp_dir/android_release.apk" ]; then
+                cp -f "$tmp_dir/android_release.apk" "$template_dir/"
+                echo "Copied android_release.apk"
+            fi
+
+            if [ -f "$tmp_dir/android_source.zip" ]; then
+                cp -f "$tmp_dir/android_source.zip" "$template_dir/"
+                echo "Copied android_source.zip"
+            fi
+
+            # Clean up
+            rm -rf "$tmp_dir"
+            rm -f "$android_zip"
+
+            echo "Android engine templates downloaded and extracted successfully!"
+        else
+            echo "Error: Failed to download Android templates from ${url_prefix}android.zip"
+            rm -rf "$tmp_dir"
+            exit 1
+        fi
+
+    elif [ "$platform" = "ios" ]; then
+        local ios_zip="$template_dir/ios.zip"
+
+        echo "===> Downloading iOS engine templates..."
+        if [ -f "$ios_zip" ]; then
+            echo "iOS template already exists, removing old version..."
+            rm -f "$ios_zip"
+        fi
+
+        echo "Downloading from: ${url_prefix}ios.zip"
+        if curl -L -o "$ios_zip" "${url_prefix}ios.zip"; then
+            echo "iOS engine templates downloaded successfully!"
+        else
+            echo "Error: Failed to download iOS templates from ${url_prefix}ios.zip"
+            exit 1
+        fi
+
+    else
+        echo "Error: Unsupported platform for download_engine: $platform"
+        echo "Supported platforms: android, ios"
+        exit 1
+    fi
+
+    echo "===> Download engine completed!"
+    echo "Files in $template_dir:"
+    ls -la "$template_dir"
 }
 
 build_editor(){
@@ -334,13 +419,16 @@ exportweb() {
 if [ "$DOWNLOAD" = true ]; then
     # download editor
     download_editor || exit
+elif [ "$DOWNLOAD_ENGINE" = true ]; then
+    # download engine templates (android/ios)
+    download_engine || exit
 elif [ "$EDITOR_ONLY" = true ]; then
     # build editor
     build_editor || exit
-else 
+else
     # build template
     build_template || exit
-fi 
+fi
 cd $PROJ_DIR
 
 echo "Environment initialized successfully!"
