@@ -264,7 +264,20 @@ func Gopt_Player_Gopx_OnCmd[T any](p *Player, handler func(cmd T) error) {
 		logErrorAndExit(fmt.Errorf("Failed to build XGo source: %w", err))
 	}
 
-	code, err := ctx.RunFile("main.go", source, nil)
+	pkg, err := ctx.LoadFile("main.go", source)
+	if err != nil {
+		logErrorAndExit(fmt.Errorf("Failed to load XGo source: %w", err))
+	}
+
+	interp, err := ctx.NewInterp(pkg)
+	if err != nil {
+		logErrorAndExit(fmt.Errorf("Failed to create interp: %w", err))
+	}
+
+	capacity, allocate, available := ixgo.IcallStat()
+	fmt.Printf("Icall Capacity: %d, Allocate: %d, Available: %d\n", capacity, allocate, available)
+
+	code, err := ctx.RunInterp(interp, "main.go", nil)
 	if err != nil {
 		logErrorAndExit(fmt.Errorf("Failed to run XGo source (code %d): %w", code, err))
 	}
