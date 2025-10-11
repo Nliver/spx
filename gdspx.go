@@ -160,8 +160,9 @@ func (sprite *SpriteImpl) updateProxyTransform(isSync bool) {
 	}
 	x, y := sprite.getXY()
 	applyRenderOffset(sprite, &x, &y)
+	offsetX, offsetY := getRenderOffset(sprite)
 	rot, scale := calcRenderRotation(sprite)
-	sprite.syncSprite.UpdateTransform(x, y, rot, scale, isSync)
+	sprite.syncSprite.UpdateTransform(x, y, rot, scale, offsetX, offsetY, isSync)
 }
 
 func (sprite *SpriteImpl) syncGetEnginePosition(isSync bool) (float64, float64) {
