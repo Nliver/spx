@@ -263,9 +263,11 @@ func (pself *CmdTool) Export() error {
 }
 
 func (pself *CmdTool) ExportIos() error {
-	pself.prepareExport()
+	fmt.Println("===> Starting iOS IPA export process...")
 
+	pself.prepareExport()
 	pself.BuildDll()
+
 	// include ios files to build
 	files, _ := filepath.Glob(filepath.Join(pself.ProjectDir, "go", "ios*"))
 	for _, file := range files {
@@ -276,39 +278,90 @@ func (pself *CmdTool) ExportIos() error {
 	}
 
 	// First build the iOS libraries
+	fmt.Println("===> Building iOS libraries...")
 	if err := pself.buildIosLibraries(); err != nil {
 		return fmt.Errorf("failed to build iOS libraries: %w", err)
 	}
+	fmt.Println("===> iOS libraries build completed successfully!")
 
 	// Set up paths
 	ipaPath := filepath.Join(pself.ProjectDir, ".builds", "ios", "Game.ipa")
 	buildDir := filepath.Dir(ipaPath)
+	fmt.Printf("===> IPA output path: %s\n", ipaPath)
 
 	// Create builds directory if it doesn't exist
 	if err := os.MkdirAll(buildDir, os.ModePerm); err != nil {
 		return fmt.Errorf("failed to create build directory: %w", err)
 	}
+	fmt.Printf("===> Build directory created: %s\n", buildDir)
 
 	// Check if Godot binary exists
 	if _, err := os.Stat(pself.CmdPath); os.IsNotExist(err) {
 		return fmt.Errorf("Godot binary not found at %s", pself.CmdPath)
 	}
+	fmt.Printf("===> Godot binary found at: %s\n", pself.CmdPath)
 
 	// Check if project file exists
 	projectFilePath := filepath.Join(pself.ProjectDir, "project.godot")
 	if _, err := os.Stat(projectFilePath); os.IsNotExist(err) {
 		return fmt.Errorf("Godot project file not found at %s", projectFilePath)
 	}
+	fmt.Printf("===> Godot project file found at: %s\n", projectFilePath)
+
+	// Check for export templates
+	homeDir, err := os.UserHomeDir()
+	if err == nil {
+		var templateDir string
+		if runtime.GOOS == "darwin" {
+			templateDir = filepath.Join(homeDir, "Library/Application Support/Godot/export_templates")
+		} else if runtime.GOOS == "linux" {
+			templateDir = filepath.Join(homeDir, ".local/share/godot/export_templates")
+		} else if runtime.GOOS == "windows" {
+			templateDir = filepath.Join(os.Getenv("APPDATA"), "Godot/export_templates")
+		}
+
+		if templateDir != "" {
+			fmt.Printf("===> Checking export templates at: %s\n", templateDir)
+			if entries, err := os.ReadDir(templateDir); err == nil {
+				fmt.Println("===> Available export template versions:")
+				for _, entry := range entries {
+					if entry.IsDir() {
+						versionDir := filepath.Join(templateDir, entry.Name())
+						fmt.Printf("     - %s\n", entry.Name())
+						// Check for iOS templates
+						if files, err := os.ReadDir(versionDir); err == nil {
+							iosFiles := []string{}
+							for _, f := range files {
+								if strings.Contains(f.Name(), "ios") {
+									iosFiles = append(iosFiles, f.Name())
+								}
+							}
+							if len(iosFiles) > 0 {
+								fmt.Printf("       iOS templates: %v\n", iosFiles)
+							}
+						}
+					}
+				}
+			} else {
+				fmt.Printf("===> Warning: Could not read template directory: %v\n", err)
+			}
+		}
+	}
 
 	// Import project to ensure resources are up to date
-	fmt.Println("Importing project resources...")
+	fmt.Println("===> Importing project resources...")
 	cmd := exec.Command(pself.CmdPath, "--headless", "--path", pself.ProjectDir, "--editor", "--quit")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
-		fmt.Println("Warning: project import may have issues:", err)
+		fmt.Printf("===> Warning: Project import had issues: %v\n", err)
 	}
 
 	// Export the project to IPA
-	fmt.Println("Exporting Godot project to IPA...")
+	fmt.Println("===> Exporting Godot project to IPA...")
+	fmt.Printf("===> Export command: %s --headless --path %s --export-debug iOS %s\n",
+		pself.CmdPath, pself.ProjectDir, ipaPath)
+
 	cmd = exec.Command(pself.CmdPath, "--headless", "--path", pself.ProjectDir, "--export-debug", "iOS", ipaPath)
 
 	// Capture standard output and error
@@ -324,7 +377,7 @@ func (pself *CmdTool) ExportIos() error {
 		return fmt.Errorf("IPA export failed: file not created at %s", ipaPath)
 	}
 
-	log.Println("IPA export completed successfully!", ipaPath)
+	log.Println("===> IPA export completed successfully!", ipaPath)
 	if *pself.Args.Install {
 		log.Println("Try to install ipa to devices...")
 		// install ipa to device
