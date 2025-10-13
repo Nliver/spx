@@ -19,29 +19,37 @@ import (
 var(
 audioMgr enginewrap.AudioMgrImpl
 cameraMgr enginewrap.CameraMgrImpl
+debugMgr enginewrap.DebugMgrImpl
 extMgr enginewrap.ExtMgrImpl
 inputMgr enginewrap.InputMgrImpl
+navigationMgr enginewrap.NavigationMgrImpl
+penMgr enginewrap.PenMgrImpl
 physicMgr enginewrap.PhysicMgrImpl
 platformMgr enginewrap.PlatformMgrImpl
 resMgr enginewrap.ResMgrImpl
 sceneMgr enginewrap.SceneMgrImpl
 spriteMgr enginewrap.SpriteMgrImpl
+tilemapMgr enginewrap.TilemapMgrImpl
 uiMgr enginewrap.UiMgrImpl
 
 )
 */
 
 var (
-	audioMgr    AudioMgrImpl
-	cameraMgr   CameraMgrImpl
-	extMgr      ExtMgrImpl
-	inputMgr    InputMgrImpl
-	physicMgr   PhysicMgrImpl
-	platformMgr PlatformMgrImpl
-	resMgr      ResMgrImpl
-	sceneMgr    SceneMgrImpl
-	spriteMgr   SpriteMgrImpl
-	uiMgr       UiMgrImpl
+	audioMgr      AudioMgrImpl
+	cameraMgr     CameraMgrImpl
+	debugMgr      DebugMgrImpl
+	extMgr        ExtMgrImpl
+	inputMgr      InputMgrImpl
+	navigationMgr NavigationMgrImpl
+	penMgr        PenMgrImpl
+	physicMgr     PhysicMgrImpl
+	platformMgr   PlatformMgrImpl
+	resMgr        ResMgrImpl
+	sceneMgr      SceneMgrImpl
+	spriteMgr     SpriteMgrImpl
+	tilemapMgr    TilemapMgrImpl
+	uiMgr         UiMgrImpl
 )
 
 type audioMgrImpl struct {
@@ -54,6 +62,11 @@ type cameraMgrImpl struct {
 type CameraMgrImpl struct {
 	cameraMgrImpl
 }
+type debugMgrImpl struct {
+}
+type DebugMgrImpl struct {
+	debugMgrImpl
+}
 type extMgrImpl struct {
 }
 type ExtMgrImpl struct {
@@ -63,6 +76,16 @@ type inputMgrImpl struct {
 }
 type InputMgrImpl struct {
 	inputMgrImpl
+}
+type navigationMgrImpl struct {
+}
+type NavigationMgrImpl struct {
+	navigationMgrImpl
+}
+type penMgrImpl struct {
+}
+type PenMgrImpl struct {
+	penMgrImpl
 }
 type physicMgrImpl struct {
 }
@@ -88,6 +111,11 @@ type spriteMgrImpl struct {
 }
 type SpriteMgrImpl struct {
 	spriteMgrImpl
+}
+type tilemapMgrImpl struct {
+}
+type TilemapMgrImpl struct {
+	tilemapMgrImpl
 }
 type uiMgrImpl struct {
 }
@@ -159,6 +187,11 @@ func (pself *cameraMgrImpl) GetViewportRect() Rect2 {
 	return _ret1
 }
 
+// IDebugMgr
+func (pself *debugMgrImpl) DebugDrawCircle(pos Vec2, radius float64, color Color) {}
+func (pself *debugMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color)        {}
+func (pself *debugMgrImpl) DebugDrawLine(from Vec2, to Vec2, color Color)         {}
+
 // IExtMgr
 func (pself *extMgrImpl) RequestExit(exit_code int64) {}
 func (pself *extMgrImpl) OnRuntimePanic(msg string)   {}
@@ -168,72 +201,7 @@ func (pself *extMgrImpl) IsPaused() bool {
 	var _ret1 bool
 	return _ret1
 }
-func (pself *extMgrImpl) NextFrame()      {}
-func (pself *extMgrImpl) DestroyAllPens() {}
-func (pself *extMgrImpl) CreatePen() gdx.Object {
-	var _ret1 gdx.Object
-	return _ret1
-}
-func (pself *extMgrImpl) DestroyPen(obj gdx.Object)                                                {}
-func (pself *extMgrImpl) PenStamp(obj gdx.Object)                                                  {}
-func (pself *extMgrImpl) MovePenTo(obj gdx.Object, position Vec2)                                  {}
-func (pself *extMgrImpl) PenDown(obj gdx.Object, move_by_mouse bool)                               {}
-func (pself *extMgrImpl) PenUp(obj gdx.Object)                                                     {}
-func (pself *extMgrImpl) SetPenColorTo(obj gdx.Object, color Color)                                {}
-func (pself *extMgrImpl) ChangePenBy(obj gdx.Object, property int64, amount float64)               {}
-func (pself *extMgrImpl) SetPenTo(obj gdx.Object, property int64, value float64)                   {}
-func (pself *extMgrImpl) ChangePenSizeBy(obj gdx.Object, amount float64)                           {}
-func (pself *extMgrImpl) SetPenSizeTo(obj gdx.Object, size float64)                                {}
-func (pself *extMgrImpl) SetPenStampTexture(obj gdx.Object, texture_path string)                   {}
-func (pself *extMgrImpl) DebugDrawCircle(pos Vec2, radius float64, color Color)                    {}
-func (pself *extMgrImpl) DebugDrawRect(pos Vec2, size Vec2, color Color)                           {}
-func (pself *extMgrImpl) DebugDrawLine(from Vec2, to Vec2, color Color)                            {}
-func (pself *extMgrImpl) OpenDrawTilesWithSize(tile_size int64)                                    {}
-func (pself *extMgrImpl) OpenDrawTiles()                                                           {}
-func (pself *extMgrImpl) SetLayerIndex(index int64)                                                {}
-func (pself *extMgrImpl) SetTile(texture_path string, with_collision bool)                         {}
-func (pself *extMgrImpl) SetTileWithCollisionInfo(texture_path string, collision_points gdx.Array) {}
-func (pself *extMgrImpl) SetLayerOffset(index int64, offset Vec2)                                  {}
-func (pself *extMgrImpl) GetLayerOffset(index int64) Vec2 {
-	var _ret1 Vec2
-	return _ret1
-}
-func (pself *extMgrImpl) PlaceTiles(positions gdx.Array, texture_path string) {}
-func (pself *extMgrImpl) PlaceTilesWithLayer(positions gdx.Array, texture_path string, layer_index int64) {
-}
-func (pself *extMgrImpl) PlaceTile(pos Vec2, texture_path string)                             {}
-func (pself *extMgrImpl) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64) {}
-func (pself *extMgrImpl) EraseTile(pos Vec2)                                                  {}
-func (pself *extMgrImpl) EraseTileWithLayer(pos Vec2, layer_index int64)                      {}
-func (pself *extMgrImpl) GetTile(pos Vec2) string {
-	var _ret1 string
-	return _ret1
-}
-func (pself *extMgrImpl) GetTileWithLayer(pos Vec2, layer_index int64) string {
-	var _ret1 string
-	return _ret1
-}
-func (pself *extMgrImpl) CloseDrawTiles()                                              {}
-func (pself *extMgrImpl) ExitTilemapEditorMode()                                       {}
-func (pself *extMgrImpl) ClearPureSprites()                                            {}
-func (pself *extMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {}
-func (pself *extMgrImpl) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2) gdx.Object {
-	var _ret1 gdx.Object
-	return _ret1
-}
-func (pself *extMgrImpl) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2, collider_type int64, collider_pivot Vec2, collider_params gdx.Array) gdx.Object {
-	var _ret1 gdx.Object
-	return _ret1
-}
-func (pself *extMgrImpl) DestroyPureSprite(id gdx.Object) {}
-func (pself *extMgrImpl) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
-}
-func (pself *extMgrImpl) SetupPathFinder(with_jump bool)           {}
-func (pself *extMgrImpl) SetObstacle(obj gdx.Object, enabled bool) {}
-func (pself *extMgrImpl) FindPath(p_from Vec2, p_to Vec2, with_jump bool) gdx.Array {
-	var _ret1 gdx.Array
-	return _ret1
-}
+func (pself *extMgrImpl) NextFrame()                    {}
 func (pself *extMgrImpl) SetLayerSorterMode(mode int64) {}
 
 // IInputMgr
@@ -269,6 +237,34 @@ func (pself *inputMgrImpl) IsActionJustReleased(action string) bool {
 	var _ret1 bool
 	return _ret1
 }
+
+// INavigationMgr
+func (pself *navigationMgrImpl) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
+}
+func (pself *navigationMgrImpl) SetupPathFinder(with_jump bool)           {}
+func (pself *navigationMgrImpl) SetObstacle(obj gdx.Object, enabled bool) {}
+func (pself *navigationMgrImpl) FindPath(p_from Vec2, p_to Vec2, with_jump bool) gdx.Array {
+	var _ret1 gdx.Array
+	return _ret1
+}
+
+// IPenMgr
+func (pself *penMgrImpl) DestroyAllPens() {}
+func (pself *penMgrImpl) CreatePen() gdx.Object {
+	var _ret1 gdx.Object
+	return _ret1
+}
+func (pself *penMgrImpl) DestroyPen(obj gdx.Object)                                  {}
+func (pself *penMgrImpl) PenStamp(obj gdx.Object)                                    {}
+func (pself *penMgrImpl) MovePenTo(obj gdx.Object, position Vec2)                    {}
+func (pself *penMgrImpl) PenDown(obj gdx.Object, move_by_mouse bool)                 {}
+func (pself *penMgrImpl) PenUp(obj gdx.Object)                                       {}
+func (pself *penMgrImpl) SetPenColorTo(obj gdx.Object, color Color)                  {}
+func (pself *penMgrImpl) ChangePenBy(obj gdx.Object, property int64, amount float64) {}
+func (pself *penMgrImpl) SetPenTo(obj gdx.Object, property int64, value float64)     {}
+func (pself *penMgrImpl) ChangePenSizeBy(obj gdx.Object, amount float64)             {}
+func (pself *penMgrImpl) SetPenSizeTo(obj gdx.Object, size float64)                  {}
+func (pself *penMgrImpl) SetPenStampTexture(obj gdx.Object, texture_path string)     {}
 
 // IPhysicMgr
 func (pself *physicMgrImpl) Raycast(from Vec2, to Vec2, collision_mask int64) gdx.Object {
@@ -393,7 +389,18 @@ func (pself *sceneMgrImpl) ReloadCurrentScene() int64 {
 	var _ret1 int64
 	return _ret1
 }
-func (pself *sceneMgrImpl) UnloadCurrentScene() {}
+func (pself *sceneMgrImpl) UnloadCurrentScene()                                          {}
+func (pself *sceneMgrImpl) ClearPureSprites()                                            {}
+func (pself *sceneMgrImpl) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {}
+func (pself *sceneMgrImpl) DestroyPureSprite(id gdx.Object)                              {}
+func (pself *sceneMgrImpl) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2) gdx.Object {
+	var _ret1 gdx.Object
+	return _ret1
+}
+func (pself *sceneMgrImpl) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2, collider_type int64, collider_pivot Vec2, collider_params gdx.Array) gdx.Object {
+	var _ret1 gdx.Object
+	return _ret1
+}
 
 // ISpriteMgr
 func (pself *spriteMgrImpl) SetDontDestroyOnLoad(obj gdx.Object)          {}
@@ -700,6 +707,36 @@ func (pself *spriteMgrImpl) CheckCollisionWithSpriteByAlpha(obj gdx.Object, obj_
 	var _ret1 bool
 	return _ret1
 }
+
+// ITilemapMgr
+func (pself *tilemapMgrImpl) OpenDrawTilesWithSize(tile_size int64)            {}
+func (pself *tilemapMgrImpl) OpenDrawTiles()                                   {}
+func (pself *tilemapMgrImpl) SetLayerIndex(index int64)                        {}
+func (pself *tilemapMgrImpl) SetTile(texture_path string, with_collision bool) {}
+func (pself *tilemapMgrImpl) SetTileWithCollisionInfo(texture_path string, collision_points gdx.Array) {
+}
+func (pself *tilemapMgrImpl) SetLayerOffset(index int64, offset Vec2) {}
+func (pself *tilemapMgrImpl) GetLayerOffset(index int64) Vec2 {
+	var _ret1 Vec2
+	return _ret1
+}
+func (pself *tilemapMgrImpl) PlaceTiles(positions gdx.Array, texture_path string) {}
+func (pself *tilemapMgrImpl) PlaceTilesWithLayer(positions gdx.Array, texture_path string, layer_index int64) {
+}
+func (pself *tilemapMgrImpl) PlaceTile(pos Vec2, texture_path string)                             {}
+func (pself *tilemapMgrImpl) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64) {}
+func (pself *tilemapMgrImpl) EraseTile(pos Vec2)                                                  {}
+func (pself *tilemapMgrImpl) EraseTileWithLayer(pos Vec2, layer_index int64)                      {}
+func (pself *tilemapMgrImpl) GetTile(pos Vec2) string {
+	var _ret1 string
+	return _ret1
+}
+func (pself *tilemapMgrImpl) GetTileWithLayer(pos Vec2, layer_index int64) string {
+	var _ret1 string
+	return _ret1
+}
+func (pself *tilemapMgrImpl) CloseDrawTiles()        {}
+func (pself *tilemapMgrImpl) ExitTilemapEditorMode() {}
 
 // IUiMgr
 func (pself *uiMgrImpl) BindNode(obj gdx.Object, rel_path string) gdx.Object {

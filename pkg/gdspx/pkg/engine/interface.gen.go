@@ -15,16 +15,20 @@ import (
 )
 
 var (
-	AudioMgr    IAudioMgr
-	CameraMgr   ICameraMgr
-	ExtMgr      IExtMgr
-	InputMgr    IInputMgr
-	PhysicMgr   IPhysicMgr
-	PlatformMgr IPlatformMgr
-	ResMgr      IResMgr
-	SceneMgr    ISceneMgr
-	SpriteMgr   ISpriteMgr
-	UiMgr       IUiMgr
+	AudioMgr      IAudioMgr
+	CameraMgr     ICameraMgr
+	DebugMgr      IDebugMgr
+	ExtMgr        IExtMgr
+	InputMgr      IInputMgr
+	NavigationMgr INavigationMgr
+	PenMgr        IPenMgr
+	PhysicMgr     IPhysicMgr
+	PlatformMgr   IPlatformMgr
+	ResMgr        IResMgr
+	SceneMgr      ISceneMgr
+	SpriteMgr     ISpriteMgr
+	TilemapMgr    ITilemapMgr
+	UiMgr         IUiMgr
 )
 
 type IAudioMgr interface {
@@ -57,6 +61,12 @@ type ICameraMgr interface {
 	GetViewportRect() Rect2
 }
 
+type IDebugMgr interface {
+	DebugDrawCircle(pos Vec2, radius float64, color Color)
+	DebugDrawRect(pos Vec2, size Vec2, color Color)
+	DebugDrawLine(from Vec2, to Vec2, color Color)
+}
+
 type IExtMgr interface {
 	RequestExit(exit_code int64)
 	OnRuntimePanic(msg string)
@@ -64,6 +74,28 @@ type IExtMgr interface {
 	Resume()
 	IsPaused() bool
 	NextFrame()
+	SetLayerSorterMode(mode int64)
+}
+
+type IInputMgr interface {
+	GetMousePos() Vec2
+	GetKey(key int64) bool
+	GetMouseState(mouse_id int64) bool
+	GetKeyState(key int64) int64
+	GetAxis(neg_action string, pos_action string) float64
+	IsActionPressed(action string) bool
+	IsActionJustPressed(action string) bool
+	IsActionJustReleased(action string) bool
+}
+
+type INavigationMgr interface {
+	SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool)
+	SetupPathFinder(with_jump bool)
+	SetObstacle(obj Object, enabled bool)
+	FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array
+}
+
+type IPenMgr interface {
 	DestroyAllPens()
 	CreatePen() Object
 	DestroyPen(obj Object)
@@ -77,47 +109,6 @@ type IExtMgr interface {
 	ChangePenSizeBy(obj Object, amount float64)
 	SetPenSizeTo(obj Object, size float64)
 	SetPenStampTexture(obj Object, texture_path string)
-	DebugDrawCircle(pos Vec2, radius float64, color Color)
-	DebugDrawRect(pos Vec2, size Vec2, color Color)
-	DebugDrawLine(from Vec2, to Vec2, color Color)
-	OpenDrawTilesWithSize(tile_size int64)
-	OpenDrawTiles()
-	SetLayerIndex(index int64)
-	SetTile(texture_path string, with_collision bool)
-	SetTileWithCollisionInfo(texture_path string, collision_points Array)
-	SetLayerOffset(index int64, offset Vec2)
-	GetLayerOffset(index int64) Vec2
-	PlaceTiles(positions Array, texture_path string)
-	PlaceTilesWithLayer(positions Array, texture_path string, layer_index int64)
-	PlaceTile(pos Vec2, texture_path string)
-	PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64)
-	EraseTile(pos Vec2)
-	EraseTileWithLayer(pos Vec2, layer_index int64)
-	GetTile(pos Vec2) string
-	GetTileWithLayer(pos Vec2, layer_index int64) string
-	CloseDrawTiles()
-	ExitTilemapEditorMode()
-	ClearPureSprites()
-	CreatePureSprite(texture_path string, pos Vec2, zindex int64)
-	CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2) Object
-	CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2, collider_type int64, collider_pivot Vec2, collider_params Array) Object
-	DestroyPureSprite(id Object)
-	SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool)
-	SetupPathFinder(with_jump bool)
-	SetObstacle(obj Object, enabled bool)
-	FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array
-	SetLayerSorterMode(mode int64)
-}
-
-type IInputMgr interface {
-	GetMousePos() Vec2
-	GetKey(key int64) bool
-	GetMouseState(mouse_id int64) bool
-	GetKeyState(key int64) int64
-	GetAxis(neg_action string, pos_action string) float64
-	IsActionPressed(action string) bool
-	IsActionJustPressed(action string) bool
-	IsActionJustReleased(action string) bool
 }
 
 type IPhysicMgr interface {
@@ -174,6 +165,11 @@ type ISceneMgr interface {
 	DestroyAllSprites()
 	ReloadCurrentScene() int64
 	UnloadCurrentScene()
+	ClearPureSprites()
+	CreatePureSprite(texture_path string, pos Vec2, zindex int64)
+	DestroyPureSprite(id Object)
+	CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2) Object
+	CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2, collider_type int64, collider_pivot Vec2, collider_params Array) Object
 }
 
 type ISpriteMgr interface {
@@ -296,6 +292,26 @@ type ISpriteMgr interface {
 	CheckCollisionByColor(obj Object, color Color, color_threshold float64, alpha_threshold float64) bool
 	CheckCollisionByAlpha(obj Object, alpha_threshold float64) bool
 	CheckCollisionWithSpriteByAlpha(obj Object, obj_b Object, alpha_threshold float64) bool
+}
+
+type ITilemapMgr interface {
+	OpenDrawTilesWithSize(tile_size int64)
+	OpenDrawTiles()
+	SetLayerIndex(index int64)
+	SetTile(texture_path string, with_collision bool)
+	SetTileWithCollisionInfo(texture_path string, collision_points Array)
+	SetLayerOffset(index int64, offset Vec2)
+	GetLayerOffset(index int64) Vec2
+	PlaceTiles(positions Array, texture_path string)
+	PlaceTilesWithLayer(positions Array, texture_path string, layer_index int64)
+	PlaceTile(pos Vec2, texture_path string)
+	PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64)
+	EraseTile(pos Vec2)
+	EraseTileWithLayer(pos Vec2, layer_index int64)
+	GetTile(pos Vec2) string
+	GetTileWithLayer(pos Vec2, layer_index int64) string
+	CloseDrawTiles()
+	ExitTilemapEditorMode()
 }
 
 type IUiMgr interface {

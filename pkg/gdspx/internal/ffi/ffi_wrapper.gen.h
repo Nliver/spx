@@ -84,6 +84,15 @@ void cgo_callfn_GDExtensionSpxCameraSetCameraZoom(const GDExtensionSpxCameraSetC
 void cgo_callfn_GDExtensionSpxCameraGetViewportRect(const GDExtensionSpxCameraGetViewportRect fn, GdRect2* ret_val) {
 	fn(ret_val);
 }
+void cgo_callfn_GDExtensionSpxDebugDebugDrawCircle(const GDExtensionSpxDebugDebugDrawCircle fn, GdVec2 pos, GdFloat radius, GdColor color) {
+	fn(pos, radius, color);
+}
+void cgo_callfn_GDExtensionSpxDebugDebugDrawRect(const GDExtensionSpxDebugDebugDrawRect fn, GdVec2 pos, GdVec2 size, GdColor color) {
+	fn(pos, size, color);
+}
+void cgo_callfn_GDExtensionSpxDebugDebugDrawLine(const GDExtensionSpxDebugDebugDrawLine fn, GdVec2 from, GdVec2 to, GdColor color) {
+	fn(from, to, color);
+}
 void cgo_callfn_GDExtensionSpxExtRequestExit(const GDExtensionSpxExtRequestExit fn, GdInt exit_code) {
 	fn(exit_code);
 }
@@ -101,132 +110,6 @@ void cgo_callfn_GDExtensionSpxExtIsPaused(const GDExtensionSpxExtIsPaused fn, Gd
 }
 void cgo_callfn_GDExtensionSpxExtNextFrame(const GDExtensionSpxExtNextFrame fn) {
 	fn();
-}
-void cgo_callfn_GDExtensionSpxExtDestroyAllPens(const GDExtensionSpxExtDestroyAllPens fn) {
-	fn();
-}
-void cgo_callfn_GDExtensionSpxExtCreatePen(const GDExtensionSpxExtCreatePen fn, GdObj* ret_val) {
-	fn(ret_val);
-}
-void cgo_callfn_GDExtensionSpxExtDestroyPen(const GDExtensionSpxExtDestroyPen fn, GdObj obj) {
-	fn(obj);
-}
-void cgo_callfn_GDExtensionSpxExtPenStamp(const GDExtensionSpxExtPenStamp fn, GdObj obj) {
-	fn(obj);
-}
-void cgo_callfn_GDExtensionSpxExtMovePenTo(const GDExtensionSpxExtMovePenTo fn, GdObj obj, GdVec2 position) {
-	fn(obj, position);
-}
-void cgo_callfn_GDExtensionSpxExtPenDown(const GDExtensionSpxExtPenDown fn, GdObj obj, GdBool move_by_mouse) {
-	fn(obj, move_by_mouse);
-}
-void cgo_callfn_GDExtensionSpxExtPenUp(const GDExtensionSpxExtPenUp fn, GdObj obj) {
-	fn(obj);
-}
-void cgo_callfn_GDExtensionSpxExtSetPenColorTo(const GDExtensionSpxExtSetPenColorTo fn, GdObj obj, GdColor color) {
-	fn(obj, color);
-}
-void cgo_callfn_GDExtensionSpxExtChangePenBy(const GDExtensionSpxExtChangePenBy fn, GdObj obj, GdInt property, GdFloat amount) {
-	fn(obj, property, amount);
-}
-void cgo_callfn_GDExtensionSpxExtSetPenTo(const GDExtensionSpxExtSetPenTo fn, GdObj obj, GdInt property, GdFloat value) {
-	fn(obj, property, value);
-}
-void cgo_callfn_GDExtensionSpxExtChangePenSizeBy(const GDExtensionSpxExtChangePenSizeBy fn, GdObj obj, GdFloat amount) {
-	fn(obj, amount);
-}
-void cgo_callfn_GDExtensionSpxExtSetPenSizeTo(const GDExtensionSpxExtSetPenSizeTo fn, GdObj obj, GdFloat size) {
-	fn(obj, size);
-}
-void cgo_callfn_GDExtensionSpxExtSetPenStampTexture(const GDExtensionSpxExtSetPenStampTexture fn, GdObj obj, GdString texture_path) {
-	fn(obj, texture_path);
-}
-void cgo_callfn_GDExtensionSpxExtDebugDrawCircle(const GDExtensionSpxExtDebugDrawCircle fn, GdVec2 pos, GdFloat radius, GdColor color) {
-	fn(pos, radius, color);
-}
-void cgo_callfn_GDExtensionSpxExtDebugDrawRect(const GDExtensionSpxExtDebugDrawRect fn, GdVec2 pos, GdVec2 size, GdColor color) {
-	fn(pos, size, color);
-}
-void cgo_callfn_GDExtensionSpxExtDebugDrawLine(const GDExtensionSpxExtDebugDrawLine fn, GdVec2 from, GdVec2 to, GdColor color) {
-	fn(from, to, color);
-}
-void cgo_callfn_GDExtensionSpxExtOpenDrawTilesWithSize(const GDExtensionSpxExtOpenDrawTilesWithSize fn, GdInt tile_size) {
-	fn(tile_size);
-}
-void cgo_callfn_GDExtensionSpxExtOpenDrawTiles(const GDExtensionSpxExtOpenDrawTiles fn) {
-	fn();
-}
-void cgo_callfn_GDExtensionSpxExtSetLayerIndex(const GDExtensionSpxExtSetLayerIndex fn, GdInt index) {
-	fn(index);
-}
-void cgo_callfn_GDExtensionSpxExtSetTile(const GDExtensionSpxExtSetTile fn, GdString texture_path, GdBool with_collision) {
-	fn(texture_path, with_collision);
-}
-void cgo_callfn_GDExtensionSpxExtSetTileWithCollisionInfo(const GDExtensionSpxExtSetTileWithCollisionInfo fn, GdString texture_path, GdArray collision_points) {
-	fn(texture_path, collision_points);
-}
-void cgo_callfn_GDExtensionSpxExtSetLayerOffset(const GDExtensionSpxExtSetLayerOffset fn, GdInt index, GdVec2 offset) {
-	fn(index, offset);
-}
-void cgo_callfn_GDExtensionSpxExtGetLayerOffset(const GDExtensionSpxExtGetLayerOffset fn, GdInt index, GdVec2* ret_val) {
-	fn(index,ret_val);
-}
-void cgo_callfn_GDExtensionSpxExtPlaceTiles(const GDExtensionSpxExtPlaceTiles fn, GdArray positions, GdString texture_path) {
-	fn(positions, texture_path);
-}
-void cgo_callfn_GDExtensionSpxExtPlaceTilesWithLayer(const GDExtensionSpxExtPlaceTilesWithLayer fn, GdArray positions, GdString texture_path, GdInt layer_index) {
-	fn(positions, texture_path, layer_index);
-}
-void cgo_callfn_GDExtensionSpxExtPlaceTile(const GDExtensionSpxExtPlaceTile fn, GdVec2 pos, GdString texture_path) {
-	fn(pos, texture_path);
-}
-void cgo_callfn_GDExtensionSpxExtPlaceTileWithLayer(const GDExtensionSpxExtPlaceTileWithLayer fn, GdVec2 pos, GdString texture_path, GdInt layer_index) {
-	fn(pos, texture_path, layer_index);
-}
-void cgo_callfn_GDExtensionSpxExtEraseTile(const GDExtensionSpxExtEraseTile fn, GdVec2 pos) {
-	fn(pos);
-}
-void cgo_callfn_GDExtensionSpxExtEraseTileWithLayer(const GDExtensionSpxExtEraseTileWithLayer fn, GdVec2 pos, GdInt layer_index) {
-	fn(pos, layer_index);
-}
-void cgo_callfn_GDExtensionSpxExtGetTile(const GDExtensionSpxExtGetTile fn, GdVec2 pos, GdString* ret_val) {
-	fn(pos,ret_val);
-}
-void cgo_callfn_GDExtensionSpxExtGetTileWithLayer(const GDExtensionSpxExtGetTileWithLayer fn, GdVec2 pos, GdInt layer_index, GdString* ret_val) {
-	fn(pos, layer_index,ret_val);
-}
-void cgo_callfn_GDExtensionSpxExtCloseDrawTiles(const GDExtensionSpxExtCloseDrawTiles fn) {
-	fn();
-}
-void cgo_callfn_GDExtensionSpxExtExitTilemapEditorMode(const GDExtensionSpxExtExitTilemapEditorMode fn) {
-	fn();
-}
-void cgo_callfn_GDExtensionSpxExtClearPureSprites(const GDExtensionSpxExtClearPureSprites fn) {
-	fn();
-}
-void cgo_callfn_GDExtensionSpxExtCreatePureSprite(const GDExtensionSpxExtCreatePureSprite fn, GdString texture_path, GdVec2 pos, GdInt zindex) {
-	fn(texture_path, pos, zindex);
-}
-void cgo_callfn_GDExtensionSpxExtCreateRenderSprite(const GDExtensionSpxExtCreateRenderSprite fn, GdString texture_path, GdVec2 pos, GdFloat degree, GdVec2 scale, GdInt zindex, GdVec2 pivot, GdObj* ret_val) {
-	fn(texture_path, pos, degree, scale, zindex, pivot,ret_val);
-}
-void cgo_callfn_GDExtensionSpxExtCreateStaticSprite(const GDExtensionSpxExtCreateStaticSprite fn, GdString texture_path, GdVec2 pos, GdFloat degree, GdVec2 scale, GdInt zindex, GdVec2 pivot, GdInt collider_type, GdVec2 collider_pivot, GdArray collider_params, GdObj* ret_val) {
-	fn(texture_path, pos, degree, scale, zindex, pivot, collider_type, collider_pivot, collider_params,ret_val);
-}
-void cgo_callfn_GDExtensionSpxExtDestroyPureSprite(const GDExtensionSpxExtDestroyPureSprite fn, GdObj id) {
-	fn(id);
-}
-void cgo_callfn_GDExtensionSpxExtSetupPathFinderWithSize(const GDExtensionSpxExtSetupPathFinderWithSize fn, GdVec2 grid_size, GdVec2 cell_size, GdBool with_jump, GdBool with_debug) {
-	fn(grid_size, cell_size, with_jump, with_debug);
-}
-void cgo_callfn_GDExtensionSpxExtSetupPathFinder(const GDExtensionSpxExtSetupPathFinder fn, GdBool with_jump) {
-	fn(with_jump);
-}
-void cgo_callfn_GDExtensionSpxExtSetObstacle(const GDExtensionSpxExtSetObstacle fn, GdObj obj, GdBool enabled) {
-	fn(obj, enabled);
-}
-void cgo_callfn_GDExtensionSpxExtFindPath(const GDExtensionSpxExtFindPath fn, GdVec2 p_from, GdVec2 p_to, GdBool with_jump, GdArray* ret_val) {
-	fn(p_from, p_to, with_jump,ret_val);
 }
 void cgo_callfn_GDExtensionSpxExtSetLayerSorterMode(const GDExtensionSpxExtSetLayerSorterMode fn, GdInt mode) {
 	fn(mode);
@@ -254,6 +137,57 @@ void cgo_callfn_GDExtensionSpxInputIsActionJustPressed(const GDExtensionSpxInput
 }
 void cgo_callfn_GDExtensionSpxInputIsActionJustReleased(const GDExtensionSpxInputIsActionJustReleased fn, GdString action, GdBool* ret_val) {
 	fn(action,ret_val);
+}
+void cgo_callfn_GDExtensionSpxNavigationSetupPathFinderWithSize(const GDExtensionSpxNavigationSetupPathFinderWithSize fn, GdVec2 grid_size, GdVec2 cell_size, GdBool with_jump, GdBool with_debug) {
+	fn(grid_size, cell_size, with_jump, with_debug);
+}
+void cgo_callfn_GDExtensionSpxNavigationSetupPathFinder(const GDExtensionSpxNavigationSetupPathFinder fn, GdBool with_jump) {
+	fn(with_jump);
+}
+void cgo_callfn_GDExtensionSpxNavigationSetObstacle(const GDExtensionSpxNavigationSetObstacle fn, GdObj obj, GdBool enabled) {
+	fn(obj, enabled);
+}
+void cgo_callfn_GDExtensionSpxNavigationFindPath(const GDExtensionSpxNavigationFindPath fn, GdVec2 p_from, GdVec2 p_to, GdBool with_jump, GdArray* ret_val) {
+	fn(p_from, p_to, with_jump,ret_val);
+}
+void cgo_callfn_GDExtensionSpxPenDestroyAllPens(const GDExtensionSpxPenDestroyAllPens fn) {
+	fn();
+}
+void cgo_callfn_GDExtensionSpxPenCreatePen(const GDExtensionSpxPenCreatePen fn, GdObj* ret_val) {
+	fn(ret_val);
+}
+void cgo_callfn_GDExtensionSpxPenDestroyPen(const GDExtensionSpxPenDestroyPen fn, GdObj obj) {
+	fn(obj);
+}
+void cgo_callfn_GDExtensionSpxPenPenStamp(const GDExtensionSpxPenPenStamp fn, GdObj obj) {
+	fn(obj);
+}
+void cgo_callfn_GDExtensionSpxPenMovePenTo(const GDExtensionSpxPenMovePenTo fn, GdObj obj, GdVec2 position) {
+	fn(obj, position);
+}
+void cgo_callfn_GDExtensionSpxPenPenDown(const GDExtensionSpxPenPenDown fn, GdObj obj, GdBool move_by_mouse) {
+	fn(obj, move_by_mouse);
+}
+void cgo_callfn_GDExtensionSpxPenPenUp(const GDExtensionSpxPenPenUp fn, GdObj obj) {
+	fn(obj);
+}
+void cgo_callfn_GDExtensionSpxPenSetPenColorTo(const GDExtensionSpxPenSetPenColorTo fn, GdObj obj, GdColor color) {
+	fn(obj, color);
+}
+void cgo_callfn_GDExtensionSpxPenChangePenBy(const GDExtensionSpxPenChangePenBy fn, GdObj obj, GdInt property, GdFloat amount) {
+	fn(obj, property, amount);
+}
+void cgo_callfn_GDExtensionSpxPenSetPenTo(const GDExtensionSpxPenSetPenTo fn, GdObj obj, GdInt property, GdFloat value) {
+	fn(obj, property, value);
+}
+void cgo_callfn_GDExtensionSpxPenChangePenSizeBy(const GDExtensionSpxPenChangePenSizeBy fn, GdObj obj, GdFloat amount) {
+	fn(obj, amount);
+}
+void cgo_callfn_GDExtensionSpxPenSetPenSizeTo(const GDExtensionSpxPenSetPenSizeTo fn, GdObj obj, GdFloat size) {
+	fn(obj, size);
+}
+void cgo_callfn_GDExtensionSpxPenSetPenStampTexture(const GDExtensionSpxPenSetPenStampTexture fn, GdObj obj, GdString texture_path) {
+	fn(obj, texture_path);
 }
 void cgo_callfn_GDExtensionSpxPhysicRaycast(const GDExtensionSpxPhysicRaycast fn, GdVec2 from, GdVec2 to, GdInt collision_mask, GdObj* ret_val) {
 	fn(from, to, collision_mask,ret_val);
@@ -386,6 +320,21 @@ void cgo_callfn_GDExtensionSpxSceneReloadCurrentScene(const GDExtensionSpxSceneR
 }
 void cgo_callfn_GDExtensionSpxSceneUnloadCurrentScene(const GDExtensionSpxSceneUnloadCurrentScene fn) {
 	fn();
+}
+void cgo_callfn_GDExtensionSpxSceneClearPureSprites(const GDExtensionSpxSceneClearPureSprites fn) {
+	fn();
+}
+void cgo_callfn_GDExtensionSpxSceneCreatePureSprite(const GDExtensionSpxSceneCreatePureSprite fn, GdString texture_path, GdVec2 pos, GdInt zindex) {
+	fn(texture_path, pos, zindex);
+}
+void cgo_callfn_GDExtensionSpxSceneDestroyPureSprite(const GDExtensionSpxSceneDestroyPureSprite fn, GdObj id) {
+	fn(id);
+}
+void cgo_callfn_GDExtensionSpxSceneCreateRenderSprite(const GDExtensionSpxSceneCreateRenderSprite fn, GdString texture_path, GdVec2 pos, GdFloat degree, GdVec2 scale, GdInt zindex, GdVec2 pivot, GdObj* ret_val) {
+	fn(texture_path, pos, degree, scale, zindex, pivot,ret_val);
+}
+void cgo_callfn_GDExtensionSpxSceneCreateStaticSprite(const GDExtensionSpxSceneCreateStaticSprite fn, GdString texture_path, GdVec2 pos, GdFloat degree, GdVec2 scale, GdInt zindex, GdVec2 pivot, GdInt collider_type, GdVec2 collider_pivot, GdArray collider_params, GdObj* ret_val) {
+	fn(texture_path, pos, degree, scale, zindex, pivot, collider_type, collider_pivot, collider_params,ret_val);
 }
 void cgo_callfn_GDExtensionSpxSpriteSetDontDestroyOnLoad(const GDExtensionSpxSpriteSetDontDestroyOnLoad fn, GdObj obj) {
 	fn(obj);
@@ -743,6 +692,57 @@ void cgo_callfn_GDExtensionSpxSpriteCheckCollisionByAlpha(const GDExtensionSpxSp
 }
 void cgo_callfn_GDExtensionSpxSpriteCheckCollisionWithSpriteByAlpha(const GDExtensionSpxSpriteCheckCollisionWithSpriteByAlpha fn, GdObj obj, GdObj obj_b, GdFloat alpha_threshold, GdBool* ret_val) {
 	fn(obj, obj_b, alpha_threshold,ret_val);
+}
+void cgo_callfn_GDExtensionSpxTilemapOpenDrawTilesWithSize(const GDExtensionSpxTilemapOpenDrawTilesWithSize fn, GdInt tile_size) {
+	fn(tile_size);
+}
+void cgo_callfn_GDExtensionSpxTilemapOpenDrawTiles(const GDExtensionSpxTilemapOpenDrawTiles fn) {
+	fn();
+}
+void cgo_callfn_GDExtensionSpxTilemapSetLayerIndex(const GDExtensionSpxTilemapSetLayerIndex fn, GdInt index) {
+	fn(index);
+}
+void cgo_callfn_GDExtensionSpxTilemapSetTile(const GDExtensionSpxTilemapSetTile fn, GdString texture_path, GdBool with_collision) {
+	fn(texture_path, with_collision);
+}
+void cgo_callfn_GDExtensionSpxTilemapSetTileWithCollisionInfo(const GDExtensionSpxTilemapSetTileWithCollisionInfo fn, GdString texture_path, GdArray collision_points) {
+	fn(texture_path, collision_points);
+}
+void cgo_callfn_GDExtensionSpxTilemapSetLayerOffset(const GDExtensionSpxTilemapSetLayerOffset fn, GdInt index, GdVec2 offset) {
+	fn(index, offset);
+}
+void cgo_callfn_GDExtensionSpxTilemapGetLayerOffset(const GDExtensionSpxTilemapGetLayerOffset fn, GdInt index, GdVec2* ret_val) {
+	fn(index,ret_val);
+}
+void cgo_callfn_GDExtensionSpxTilemapPlaceTiles(const GDExtensionSpxTilemapPlaceTiles fn, GdArray positions, GdString texture_path) {
+	fn(positions, texture_path);
+}
+void cgo_callfn_GDExtensionSpxTilemapPlaceTilesWithLayer(const GDExtensionSpxTilemapPlaceTilesWithLayer fn, GdArray positions, GdString texture_path, GdInt layer_index) {
+	fn(positions, texture_path, layer_index);
+}
+void cgo_callfn_GDExtensionSpxTilemapPlaceTile(const GDExtensionSpxTilemapPlaceTile fn, GdVec2 pos, GdString texture_path) {
+	fn(pos, texture_path);
+}
+void cgo_callfn_GDExtensionSpxTilemapPlaceTileWithLayer(const GDExtensionSpxTilemapPlaceTileWithLayer fn, GdVec2 pos, GdString texture_path, GdInt layer_index) {
+	fn(pos, texture_path, layer_index);
+}
+void cgo_callfn_GDExtensionSpxTilemapEraseTile(const GDExtensionSpxTilemapEraseTile fn, GdVec2 pos) {
+	fn(pos);
+}
+void cgo_callfn_GDExtensionSpxTilemapEraseTileWithLayer(const GDExtensionSpxTilemapEraseTileWithLayer fn, GdVec2 pos, GdInt layer_index) {
+	fn(pos, layer_index);
+}
+void cgo_callfn_GDExtensionSpxTilemapGetTile(const GDExtensionSpxTilemapGetTile fn, GdVec2 pos, GdString* ret_val) {
+	fn(pos,ret_val);
+}
+void cgo_callfn_GDExtensionSpxTilemapGetTileWithLayer(const GDExtensionSpxTilemapGetTileWithLayer fn, GdVec2 pos, GdInt layer_index, GdString* ret_val) {
+	fn(pos, layer_index,ret_val);
+}
+void cgo_callfn_GDExtensionSpxTilemapCloseDrawTiles(const GDExtensionSpxTilemapCloseDrawTiles fn) {
+	fn();
+}
+void cgo_callfn_GDExtensionSpxTilemapExitTilemapEditorMode(const GDExtensionSpxTilemapExitTilemapEditorMode fn) {
+	fn();
 }
 void cgo_callfn_GDExtensionSpxUiBindNode(const GDExtensionSpxUiBindNode fn, GdObj obj, GdString rel_path, GdObj* ret_val) {
 	fn(obj, rel_path,ret_val);

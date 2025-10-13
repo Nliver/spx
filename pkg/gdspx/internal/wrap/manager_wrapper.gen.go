@@ -35,11 +35,20 @@ func BindMgr(mgrs []IManager) {
 		case ICameraMgr:
 			CameraMgr = v
 
+		case IDebugMgr:
+			DebugMgr = v
+
 		case IExtMgr:
 			ExtMgr = v
 
 		case IInputMgr:
 			InputMgr = v
+
+		case INavigationMgr:
+			NavigationMgr = v
+
+		case IPenMgr:
+			PenMgr = v
 
 		case IPhysicMgr:
 			PhysicMgr = v
@@ -56,6 +65,9 @@ func BindMgr(mgrs []IManager) {
 		case ISpriteMgr:
 			SpriteMgr = v
 
+		case ITilemapMgr:
+			TilemapMgr = v
+
 		case IUiMgr:
 			UiMgr = v
 
@@ -71,10 +83,19 @@ type audioMgr struct {
 type cameraMgr struct {
 	baseMgr
 }
+type debugMgr struct {
+	baseMgr
+}
 type extMgr struct {
 	baseMgr
 }
 type inputMgr struct {
+	baseMgr
+}
+type navigationMgr struct {
+	baseMgr
+}
+type penMgr struct {
 	baseMgr
 }
 type physicMgr struct {
@@ -92,6 +113,9 @@ type sceneMgr struct {
 type spriteMgr struct {
 	baseMgr
 }
+type tilemapMgr struct {
+	baseMgr
+}
 type uiMgr struct {
 	baseMgr
 }
@@ -99,13 +123,17 @@ type uiMgr struct {
 func createMgrs() []IManager {
 	addManager(&audioMgr{})
 	addManager(&cameraMgr{})
+	addManager(&debugMgr{})
 	addManager(&extMgr{})
 	addManager(&inputMgr{})
+	addManager(&navigationMgr{})
+	addManager(&penMgr{})
 	addManager(&physicMgr{})
 	addManager(&platformMgr{})
 	addManager(&resMgr{})
 	addManager(&sceneMgr{})
 	addManager(&spriteMgr{})
+	addManager(&tilemapMgr{})
 	addManager(&uiMgr{})
 	return mgrs
 }
@@ -229,6 +257,24 @@ func (pself *cameraMgr) GetViewportRect() Rect2 {
 	retValue := CallCameraGetViewportRect()
 	return ToRect2(retValue)
 }
+func (pself *debugMgr) DebugDrawCircle(pos Vec2, radius float64, color Color) {
+	arg0 := ToGdVec2(pos)
+	arg1 := ToGdFloat(radius)
+	arg2 := ToGdColor(color)
+	CallDebugDebugDrawCircle(arg0, arg1, arg2)
+}
+func (pself *debugMgr) DebugDrawRect(pos Vec2, size Vec2, color Color) {
+	arg0 := ToGdVec2(pos)
+	arg1 := ToGdVec2(size)
+	arg2 := ToGdColor(color)
+	CallDebugDebugDrawRect(arg0, arg1, arg2)
+}
+func (pself *debugMgr) DebugDrawLine(from Vec2, to Vec2, color Color) {
+	arg0 := ToGdVec2(from)
+	arg1 := ToGdVec2(to)
+	arg2 := ToGdColor(color)
+	CallDebugDebugDrawLine(arg0, arg1, arg2)
+}
 func (pself *extMgr) RequestExit(exit_code int64) {
 	arg0 := ToGdInt(exit_code)
 	CallExtRequestExit(arg0)
@@ -251,243 +297,6 @@ func (pself *extMgr) IsPaused() bool {
 }
 func (pself *extMgr) NextFrame() {
 	CallExtNextFrame()
-}
-func (pself *extMgr) DestroyAllPens() {
-	CallExtDestroyAllPens()
-}
-func (pself *extMgr) CreatePen() Object {
-	retValue := CallExtCreatePen()
-	return ToObject(retValue)
-}
-func (pself *extMgr) DestroyPen(obj Object) {
-	arg0 := ToGdObj(obj)
-	CallExtDestroyPen(arg0)
-}
-func (pself *extMgr) PenStamp(obj Object) {
-	arg0 := ToGdObj(obj)
-	CallExtPenStamp(arg0)
-}
-func (pself *extMgr) MovePenTo(obj Object, position Vec2) {
-	arg0 := ToGdObj(obj)
-	arg1 := ToGdVec2(position)
-	CallExtMovePenTo(arg0, arg1)
-}
-func (pself *extMgr) PenDown(obj Object, move_by_mouse bool) {
-	arg0 := ToGdObj(obj)
-	arg1 := ToGdBool(move_by_mouse)
-	CallExtPenDown(arg0, arg1)
-}
-func (pself *extMgr) PenUp(obj Object) {
-	arg0 := ToGdObj(obj)
-	CallExtPenUp(arg0)
-}
-func (pself *extMgr) SetPenColorTo(obj Object, color Color) {
-	arg0 := ToGdObj(obj)
-	arg1 := ToGdColor(color)
-	CallExtSetPenColorTo(arg0, arg1)
-}
-func (pself *extMgr) ChangePenBy(obj Object, property int64, amount float64) {
-	arg0 := ToGdObj(obj)
-	arg1 := ToGdInt(property)
-	arg2 := ToGdFloat(amount)
-	CallExtChangePenBy(arg0, arg1, arg2)
-}
-func (pself *extMgr) SetPenTo(obj Object, property int64, value float64) {
-	arg0 := ToGdObj(obj)
-	arg1 := ToGdInt(property)
-	arg2 := ToGdFloat(value)
-	CallExtSetPenTo(arg0, arg1, arg2)
-}
-func (pself *extMgr) ChangePenSizeBy(obj Object, amount float64) {
-	arg0 := ToGdObj(obj)
-	arg1 := ToGdFloat(amount)
-	CallExtChangePenSizeBy(arg0, arg1)
-}
-func (pself *extMgr) SetPenSizeTo(obj Object, size float64) {
-	arg0 := ToGdObj(obj)
-	arg1 := ToGdFloat(size)
-	CallExtSetPenSizeTo(arg0, arg1)
-}
-func (pself *extMgr) SetPenStampTexture(obj Object, texture_path string) {
-	arg0 := ToGdObj(obj)
-	arg1Str := C.CString(texture_path)
-	arg1 := (GdString)(arg1Str)
-	defer C.free(unsafe.Pointer(arg1Str))
-	CallExtSetPenStampTexture(arg0, arg1)
-}
-func (pself *extMgr) DebugDrawCircle(pos Vec2, radius float64, color Color) {
-	arg0 := ToGdVec2(pos)
-	arg1 := ToGdFloat(radius)
-	arg2 := ToGdColor(color)
-	CallExtDebugDrawCircle(arg0, arg1, arg2)
-}
-func (pself *extMgr) DebugDrawRect(pos Vec2, size Vec2, color Color) {
-	arg0 := ToGdVec2(pos)
-	arg1 := ToGdVec2(size)
-	arg2 := ToGdColor(color)
-	CallExtDebugDrawRect(arg0, arg1, arg2)
-}
-func (pself *extMgr) DebugDrawLine(from Vec2, to Vec2, color Color) {
-	arg0 := ToGdVec2(from)
-	arg1 := ToGdVec2(to)
-	arg2 := ToGdColor(color)
-	CallExtDebugDrawLine(arg0, arg1, arg2)
-}
-func (pself *extMgr) OpenDrawTilesWithSize(tile_size int64) {
-	arg0 := ToGdInt(tile_size)
-	CallExtOpenDrawTilesWithSize(arg0)
-}
-func (pself *extMgr) OpenDrawTiles() {
-	CallExtOpenDrawTiles()
-}
-func (pself *extMgr) SetLayerIndex(index int64) {
-	arg0 := ToGdInt(index)
-	CallExtSetLayerIndex(arg0)
-}
-func (pself *extMgr) SetTile(texture_path string, with_collision bool) {
-	arg0Str := C.CString(texture_path)
-	arg0 := (GdString)(arg0Str)
-	defer C.free(unsafe.Pointer(arg0Str))
-	arg1 := ToGdBool(with_collision)
-	CallExtSetTile(arg0, arg1)
-}
-func (pself *extMgr) SetTileWithCollisionInfo(texture_path string, collision_points Array) {
-	arg0Str := C.CString(texture_path)
-	arg0 := (GdString)(arg0Str)
-	defer C.free(unsafe.Pointer(arg0Str))
-	arg1 := ToGdArray(collision_points)
-	CallExtSetTileWithCollisionInfo(arg0, arg1)
-}
-func (pself *extMgr) SetLayerOffset(index int64, offset Vec2) {
-	arg0 := ToGdInt(index)
-	arg1 := ToGdVec2(offset)
-	CallExtSetLayerOffset(arg0, arg1)
-}
-func (pself *extMgr) GetLayerOffset(index int64) Vec2 {
-	arg0 := ToGdInt(index)
-	retValue := CallExtGetLayerOffset(arg0)
-	return ToVec2(retValue)
-}
-func (pself *extMgr) PlaceTiles(positions Array, texture_path string) {
-	arg0 := ToGdArray(positions)
-	arg1Str := C.CString(texture_path)
-	arg1 := (GdString)(arg1Str)
-	defer C.free(unsafe.Pointer(arg1Str))
-	CallExtPlaceTiles(arg0, arg1)
-}
-func (pself *extMgr) PlaceTilesWithLayer(positions Array, texture_path string, layer_index int64) {
-	arg0 := ToGdArray(positions)
-	arg1Str := C.CString(texture_path)
-	arg1 := (GdString)(arg1Str)
-	defer C.free(unsafe.Pointer(arg1Str))
-	arg2 := ToGdInt(layer_index)
-	CallExtPlaceTilesWithLayer(arg0, arg1, arg2)
-}
-func (pself *extMgr) PlaceTile(pos Vec2, texture_path string) {
-	arg0 := ToGdVec2(pos)
-	arg1Str := C.CString(texture_path)
-	arg1 := (GdString)(arg1Str)
-	defer C.free(unsafe.Pointer(arg1Str))
-	CallExtPlaceTile(arg0, arg1)
-}
-func (pself *extMgr) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64) {
-	arg0 := ToGdVec2(pos)
-	arg1Str := C.CString(texture_path)
-	arg1 := (GdString)(arg1Str)
-	defer C.free(unsafe.Pointer(arg1Str))
-	arg2 := ToGdInt(layer_index)
-	CallExtPlaceTileWithLayer(arg0, arg1, arg2)
-}
-func (pself *extMgr) EraseTile(pos Vec2) {
-	arg0 := ToGdVec2(pos)
-	CallExtEraseTile(arg0)
-}
-func (pself *extMgr) EraseTileWithLayer(pos Vec2, layer_index int64) {
-	arg0 := ToGdVec2(pos)
-	arg1 := ToGdInt(layer_index)
-	CallExtEraseTileWithLayer(arg0, arg1)
-}
-func (pself *extMgr) GetTile(pos Vec2) string {
-	arg0 := ToGdVec2(pos)
-	retValue := CallExtGetTile(arg0)
-	return ToString(retValue)
-}
-func (pself *extMgr) GetTileWithLayer(pos Vec2, layer_index int64) string {
-	arg0 := ToGdVec2(pos)
-	arg1 := ToGdInt(layer_index)
-	retValue := CallExtGetTileWithLayer(arg0, arg1)
-	return ToString(retValue)
-}
-func (pself *extMgr) CloseDrawTiles() {
-	CallExtCloseDrawTiles()
-}
-func (pself *extMgr) ExitTilemapEditorMode() {
-	CallExtExitTilemapEditorMode()
-}
-func (pself *extMgr) ClearPureSprites() {
-	CallExtClearPureSprites()
-}
-func (pself *extMgr) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {
-	arg0Str := C.CString(texture_path)
-	arg0 := (GdString)(arg0Str)
-	defer C.free(unsafe.Pointer(arg0Str))
-	arg1 := ToGdVec2(pos)
-	arg2 := ToGdInt(zindex)
-	CallExtCreatePureSprite(arg0, arg1, arg2)
-}
-func (pself *extMgr) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2) Object {
-	arg0Str := C.CString(texture_path)
-	arg0 := (GdString)(arg0Str)
-	defer C.free(unsafe.Pointer(arg0Str))
-	arg1 := ToGdVec2(pos)
-	arg2 := ToGdFloat(degree)
-	arg3 := ToGdVec2(scale)
-	arg4 := ToGdInt(zindex)
-	arg5 := ToGdVec2(pivot)
-	retValue := CallExtCreateRenderSprite(arg0, arg1, arg2, arg3, arg4, arg5)
-	return ToObject(retValue)
-}
-func (pself *extMgr) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2, collider_type int64, collider_pivot Vec2, collider_params Array) Object {
-	arg0Str := C.CString(texture_path)
-	arg0 := (GdString)(arg0Str)
-	defer C.free(unsafe.Pointer(arg0Str))
-	arg1 := ToGdVec2(pos)
-	arg2 := ToGdFloat(degree)
-	arg3 := ToGdVec2(scale)
-	arg4 := ToGdInt(zindex)
-	arg5 := ToGdVec2(pivot)
-	arg6 := ToGdInt(collider_type)
-	arg7 := ToGdVec2(collider_pivot)
-	arg8 := ToGdArray(collider_params)
-	retValue := CallExtCreateStaticSprite(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
-	return ToObject(retValue)
-}
-func (pself *extMgr) DestroyPureSprite(id Object) {
-	arg0 := ToGdObj(id)
-	CallExtDestroyPureSprite(arg0)
-}
-func (pself *extMgr) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
-	arg0 := ToGdVec2(grid_size)
-	arg1 := ToGdVec2(cell_size)
-	arg2 := ToGdBool(with_jump)
-	arg3 := ToGdBool(with_debug)
-	CallExtSetupPathFinderWithSize(arg0, arg1, arg2, arg3)
-}
-func (pself *extMgr) SetupPathFinder(with_jump bool) {
-	arg0 := ToGdBool(with_jump)
-	CallExtSetupPathFinder(arg0)
-}
-func (pself *extMgr) SetObstacle(obj Object, enabled bool) {
-	arg0 := ToGdObj(obj)
-	arg1 := ToGdBool(enabled)
-	CallExtSetObstacle(arg0, arg1)
-}
-func (pself *extMgr) FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array {
-	arg0 := ToGdVec2(p_from)
-	arg1 := ToGdVec2(p_to)
-	arg2 := ToGdBool(with_jump)
-	retValue := CallExtFindPath(arg0, arg1, arg2)
-	return ToArray(retValue)
 }
 func (pself *extMgr) SetLayerSorterMode(mode int64) {
 	arg0 := ToGdInt(mode)
@@ -542,6 +351,92 @@ func (pself *inputMgr) IsActionJustReleased(action string) bool {
 	defer C.free(unsafe.Pointer(arg0Str))
 	retValue := CallInputIsActionJustReleased(arg0)
 	return ToBool(retValue)
+}
+func (pself *navigationMgr) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
+	arg0 := ToGdVec2(grid_size)
+	arg1 := ToGdVec2(cell_size)
+	arg2 := ToGdBool(with_jump)
+	arg3 := ToGdBool(with_debug)
+	CallNavigationSetupPathFinderWithSize(arg0, arg1, arg2, arg3)
+}
+func (pself *navigationMgr) SetupPathFinder(with_jump bool) {
+	arg0 := ToGdBool(with_jump)
+	CallNavigationSetupPathFinder(arg0)
+}
+func (pself *navigationMgr) SetObstacle(obj Object, enabled bool) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdBool(enabled)
+	CallNavigationSetObstacle(arg0, arg1)
+}
+func (pself *navigationMgr) FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array {
+	arg0 := ToGdVec2(p_from)
+	arg1 := ToGdVec2(p_to)
+	arg2 := ToGdBool(with_jump)
+	retValue := CallNavigationFindPath(arg0, arg1, arg2)
+	return ToArray(retValue)
+}
+func (pself *penMgr) DestroyAllPens() {
+	CallPenDestroyAllPens()
+}
+func (pself *penMgr) CreatePen() Object {
+	retValue := CallPenCreatePen()
+	return ToObject(retValue)
+}
+func (pself *penMgr) DestroyPen(obj Object) {
+	arg0 := ToGdObj(obj)
+	CallPenDestroyPen(arg0)
+}
+func (pself *penMgr) PenStamp(obj Object) {
+	arg0 := ToGdObj(obj)
+	CallPenPenStamp(arg0)
+}
+func (pself *penMgr) MovePenTo(obj Object, position Vec2) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdVec2(position)
+	CallPenMovePenTo(arg0, arg1)
+}
+func (pself *penMgr) PenDown(obj Object, move_by_mouse bool) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdBool(move_by_mouse)
+	CallPenPenDown(arg0, arg1)
+}
+func (pself *penMgr) PenUp(obj Object) {
+	arg0 := ToGdObj(obj)
+	CallPenPenUp(arg0)
+}
+func (pself *penMgr) SetPenColorTo(obj Object, color Color) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdColor(color)
+	CallPenSetPenColorTo(arg0, arg1)
+}
+func (pself *penMgr) ChangePenBy(obj Object, property int64, amount float64) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdInt(property)
+	arg2 := ToGdFloat(amount)
+	CallPenChangePenBy(arg0, arg1, arg2)
+}
+func (pself *penMgr) SetPenTo(obj Object, property int64, value float64) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdInt(property)
+	arg2 := ToGdFloat(value)
+	CallPenSetPenTo(arg0, arg1, arg2)
+}
+func (pself *penMgr) ChangePenSizeBy(obj Object, amount float64) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdFloat(amount)
+	CallPenChangePenSizeBy(arg0, arg1)
+}
+func (pself *penMgr) SetPenSizeTo(obj Object, size float64) {
+	arg0 := ToGdObj(obj)
+	arg1 := ToGdFloat(size)
+	CallPenSetPenSizeTo(arg0, arg1)
+}
+func (pself *penMgr) SetPenStampTexture(obj Object, texture_path string) {
+	arg0 := ToGdObj(obj)
+	arg1Str := C.CString(texture_path)
+	arg1 := (GdString)(arg1Str)
+	defer C.free(unsafe.Pointer(arg1Str))
+	CallPenSetPenStampTexture(arg0, arg1)
 }
 func (pself *physicMgr) Raycast(from Vec2, to Vec2, collision_mask int64) Object {
 	arg0 := ToGdVec2(from)
@@ -777,6 +672,48 @@ func (pself *sceneMgr) ReloadCurrentScene() int64 {
 }
 func (pself *sceneMgr) UnloadCurrentScene() {
 	CallSceneUnloadCurrentScene()
+}
+func (pself *sceneMgr) ClearPureSprites() {
+	CallSceneClearPureSprites()
+}
+func (pself *sceneMgr) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {
+	arg0Str := C.CString(texture_path)
+	arg0 := (GdString)(arg0Str)
+	defer C.free(unsafe.Pointer(arg0Str))
+	arg1 := ToGdVec2(pos)
+	arg2 := ToGdInt(zindex)
+	CallSceneCreatePureSprite(arg0, arg1, arg2)
+}
+func (pself *sceneMgr) DestroyPureSprite(id Object) {
+	arg0 := ToGdObj(id)
+	CallSceneDestroyPureSprite(arg0)
+}
+func (pself *sceneMgr) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2) Object {
+	arg0Str := C.CString(texture_path)
+	arg0 := (GdString)(arg0Str)
+	defer C.free(unsafe.Pointer(arg0Str))
+	arg1 := ToGdVec2(pos)
+	arg2 := ToGdFloat(degree)
+	arg3 := ToGdVec2(scale)
+	arg4 := ToGdInt(zindex)
+	arg5 := ToGdVec2(pivot)
+	retValue := CallSceneCreateRenderSprite(arg0, arg1, arg2, arg3, arg4, arg5)
+	return ToObject(retValue)
+}
+func (pself *sceneMgr) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2, collider_type int64, collider_pivot Vec2, collider_params Array) Object {
+	arg0Str := C.CString(texture_path)
+	arg0 := (GdString)(arg0Str)
+	defer C.free(unsafe.Pointer(arg0Str))
+	arg1 := ToGdVec2(pos)
+	arg2 := ToGdFloat(degree)
+	arg3 := ToGdVec2(scale)
+	arg4 := ToGdInt(zindex)
+	arg5 := ToGdVec2(pivot)
+	arg6 := ToGdInt(collider_type)
+	arg7 := ToGdVec2(collider_pivot)
+	arg8 := ToGdArray(collider_params)
+	retValue := CallSceneCreateStaticSprite(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
+	return ToObject(retValue)
 }
 func (pself *spriteMgr) SetDontDestroyOnLoad(obj Object) {
 	arg0 := ToGdObj(obj)
@@ -1454,6 +1391,97 @@ func (pself *spriteMgr) CheckCollisionWithSpriteByAlpha(obj Object, obj_b Object
 	arg2 := ToGdFloat(alpha_threshold)
 	retValue := CallSpriteCheckCollisionWithSpriteByAlpha(arg0, arg1, arg2)
 	return ToBool(retValue)
+}
+func (pself *tilemapMgr) OpenDrawTilesWithSize(tile_size int64) {
+	arg0 := ToGdInt(tile_size)
+	CallTilemapOpenDrawTilesWithSize(arg0)
+}
+func (pself *tilemapMgr) OpenDrawTiles() {
+	CallTilemapOpenDrawTiles()
+}
+func (pself *tilemapMgr) SetLayerIndex(index int64) {
+	arg0 := ToGdInt(index)
+	CallTilemapSetLayerIndex(arg0)
+}
+func (pself *tilemapMgr) SetTile(texture_path string, with_collision bool) {
+	arg0Str := C.CString(texture_path)
+	arg0 := (GdString)(arg0Str)
+	defer C.free(unsafe.Pointer(arg0Str))
+	arg1 := ToGdBool(with_collision)
+	CallTilemapSetTile(arg0, arg1)
+}
+func (pself *tilemapMgr) SetTileWithCollisionInfo(texture_path string, collision_points Array) {
+	arg0Str := C.CString(texture_path)
+	arg0 := (GdString)(arg0Str)
+	defer C.free(unsafe.Pointer(arg0Str))
+	arg1 := ToGdArray(collision_points)
+	CallTilemapSetTileWithCollisionInfo(arg0, arg1)
+}
+func (pself *tilemapMgr) SetLayerOffset(index int64, offset Vec2) {
+	arg0 := ToGdInt(index)
+	arg1 := ToGdVec2(offset)
+	CallTilemapSetLayerOffset(arg0, arg1)
+}
+func (pself *tilemapMgr) GetLayerOffset(index int64) Vec2 {
+	arg0 := ToGdInt(index)
+	retValue := CallTilemapGetLayerOffset(arg0)
+	return ToVec2(retValue)
+}
+func (pself *tilemapMgr) PlaceTiles(positions Array, texture_path string) {
+	arg0 := ToGdArray(positions)
+	arg1Str := C.CString(texture_path)
+	arg1 := (GdString)(arg1Str)
+	defer C.free(unsafe.Pointer(arg1Str))
+	CallTilemapPlaceTiles(arg0, arg1)
+}
+func (pself *tilemapMgr) PlaceTilesWithLayer(positions Array, texture_path string, layer_index int64) {
+	arg0 := ToGdArray(positions)
+	arg1Str := C.CString(texture_path)
+	arg1 := (GdString)(arg1Str)
+	defer C.free(unsafe.Pointer(arg1Str))
+	arg2 := ToGdInt(layer_index)
+	CallTilemapPlaceTilesWithLayer(arg0, arg1, arg2)
+}
+func (pself *tilemapMgr) PlaceTile(pos Vec2, texture_path string) {
+	arg0 := ToGdVec2(pos)
+	arg1Str := C.CString(texture_path)
+	arg1 := (GdString)(arg1Str)
+	defer C.free(unsafe.Pointer(arg1Str))
+	CallTilemapPlaceTile(arg0, arg1)
+}
+func (pself *tilemapMgr) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64) {
+	arg0 := ToGdVec2(pos)
+	arg1Str := C.CString(texture_path)
+	arg1 := (GdString)(arg1Str)
+	defer C.free(unsafe.Pointer(arg1Str))
+	arg2 := ToGdInt(layer_index)
+	CallTilemapPlaceTileWithLayer(arg0, arg1, arg2)
+}
+func (pself *tilemapMgr) EraseTile(pos Vec2) {
+	arg0 := ToGdVec2(pos)
+	CallTilemapEraseTile(arg0)
+}
+func (pself *tilemapMgr) EraseTileWithLayer(pos Vec2, layer_index int64) {
+	arg0 := ToGdVec2(pos)
+	arg1 := ToGdInt(layer_index)
+	CallTilemapEraseTileWithLayer(arg0, arg1)
+}
+func (pself *tilemapMgr) GetTile(pos Vec2) string {
+	arg0 := ToGdVec2(pos)
+	retValue := CallTilemapGetTile(arg0)
+	return ToString(retValue)
+}
+func (pself *tilemapMgr) GetTileWithLayer(pos Vec2, layer_index int64) string {
+	arg0 := ToGdVec2(pos)
+	arg1 := ToGdInt(layer_index)
+	retValue := CallTilemapGetTileWithLayer(arg0, arg1)
+	return ToString(retValue)
+}
+func (pself *tilemapMgr) CloseDrawTiles() {
+	CallTilemapCloseDrawTiles()
+}
+func (pself *tilemapMgr) ExitTilemapEditorMode() {
+	CallTilemapExitTilemapEditorMode()
 }
 func (pself *uiMgr) BindNode(obj Object, rel_path string) Object {
 	arg0 := ToGdObj(obj)
