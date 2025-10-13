@@ -163,6 +163,7 @@ func logErrorAndExit(err error) {
 }
 
 func main() {
+	debug := false
 	js.Global().Set("setAIDescription", js.FuncOf(setAIDescription))
 	js.Global().Set("setAIInteractionAPIEndpoint", js.FuncOf(setAIInteractionAPIEndpoint))
 	js.Global().Set("setAIInteractionAPITokenProvider", js.FuncOf(setAIInteractionAPITokenProvider))
@@ -273,10 +274,10 @@ func Gopt_Player_Gopx_OnCmd[T any](p *Player, handler func(cmd T) error) {
 	if err != nil {
 		logErrorAndExit(fmt.Errorf("Failed to create interp: %w", err))
 	}
-
-	capacity, allocate, available := ixgo.IcallStat()
-	fmt.Printf("Icall Capacity: %d, Allocate: %d, Available: %d\n", capacity, allocate, available)
-
+	if debug {
+		capacity, allocate, available := ixgo.IcallStat()
+		fmt.Printf("Icall Capacity: %d, Allocate: %d, Available: %d\n", capacity, allocate, available)
+	}
 	code, err := ctx.RunInterp(interp, "main.go", nil)
 	if err != nil {
 		logErrorAndExit(fmt.Errorf("Failed to run XGo source (code %d): %w", code, err))
