@@ -125,7 +125,7 @@ setup_global_variables() {
 }
 
 
-download_engine() {
+download_engine_source() {
     cd $PROJ_DIR
     if [ ! -d "godot" ]; then
         echo "Godot directory not found. Creating and initializing..."
@@ -154,7 +154,7 @@ prepare_env() {
 
 
     scons --version
-    download_engine
+    download_engine_source
     if [[ "$(uname)" == "Darwin" ]]; then
         # check if vulkan sdk is already installed
         echo "try to install macos vulkan sdk"
