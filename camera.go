@@ -67,7 +67,6 @@ func (c *cameraImpl) constrainPos(cpos mathf.Vec2) {
 	csize := cameraRect.Size.Div(cameraMgr.GetCameraZoom())
 
 	viewportWidth, viewportHeight := csize.X, csize.Y
-	currentX, currentY := cpos.X, cpos.Y
 
 	// Calculate actual world boundaries (based on minWorld coordinates and world size)
 	worldLeft := float64(p.minWorldX_)
@@ -82,26 +81,12 @@ func (c *cameraImpl) constrainPos(cpos mathf.Vec2) {
 	maxY := worldTop - viewportHeight/2
 
 	// Constrain camera position
-	constrainedX := currentX
-	constrainedY := currentY
-
-	if constrainedX < minX {
-		constrainedX = minX
-	} else if constrainedX > maxX {
-		constrainedX = maxX
-	}
-
-	if constrainedY < minY {
-		constrainedY = minY
-	} else if constrainedY > maxY {
-		constrainedY = maxY
-	}
-
-	if constrainedX != currentX || constrainedY != currentY {
-		cpos = mathf.NewVec2(constrainedX, constrainedY)
-	}
+	minVec := mathf.Vec2{X: minX, Y: minY}
+	maxVec := mathf.Vec2{X: maxX, Y: maxY}
 	curPos := cameraMgr.GetPosition()
 	targetPos := mathf.Vec2.Lerp(curPos, cpos, 0.1)
+	targetPos = mathf.Vec2.Clamp(targetPos, minVec, maxVec)
+
 	cameraMgr.SetPosition(targetPos)
 }
 
