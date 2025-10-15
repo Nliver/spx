@@ -22,6 +22,15 @@ import (
 	"github.com/goplus/spbase/mathf"
 )
 
+type side int
+
+const (
+	sideLeft side = iota
+	sideTop
+	sideRight
+	sideBottom
+)
+
 type Camera interface {
 	ViewportRect() (float64, float64, float64, float64)
 	SetZoom(scale float64)
@@ -55,39 +64,27 @@ func (c *cameraImpl) onUpdate(delta float64) {
 	}
 }
 
-// constrainPos restricts camera position to prevent camera from seeing areas outside the world
-func (c *cameraImpl) constrainPos(cpos mathf.Vec2) {
+func (c *cameraImpl) setLimits() {
 	p := c.g
 	if p.worldWidth_ <= 0 || p.worldHeight_ <= 0 {
 		return // Skip constraint if world size is not set
 	}
 
-	// Calculate current camera center position
-	cameraRect := cameraMgr.GetViewportRect()
-	csize := cameraRect.Size.Div(cameraMgr.GetCameraZoom())
-
-	viewportWidth, viewportHeight := csize.X, csize.Y
-
 	// Calculate actual world boundaries (based on minWorld coordinates and world size)
-	worldLeft := float64(p.minWorldX_)
-	worldRight := float64(p.minWorldX_ + p.worldWidth_)
-	worldBottom := float64(p.minWorldY_)
-	worldTop := float64(p.minWorldY_ + p.worldHeight_)
+	world := map[side]int{
+		sideLeft:   p.minWorldX_,
+		sideTop:    -p.minWorldY_ - p.worldHeight_,
+		sideRight:  p.minWorldX_ + p.worldWidth_,
+		sideBottom: -p.minWorldY_,
+	}
 
-	// Calculate camera boundary constraints
-	minX := worldLeft + viewportWidth/2
-	maxX := worldRight - viewportWidth/2
-	minY := worldBottom + viewportHeight/2
-	maxY := worldTop - viewportHeight/2
+	// Apply camera limits
+	for side, value := range world {
+		cameraMgr.SetCameraLimit(int64(side), int64(value))
+	}
 
-	// Constrain camera position
-	minVec := mathf.Vec2{X: minX, Y: minY}
-	maxVec := mathf.Vec2{X: maxX, Y: maxY}
-	curPos := cameraMgr.GetPosition()
-	targetPos := mathf.Vec2.Lerp(curPos, cpos, 0.1)
-	targetPos = mathf.Vec2.Clamp(targetPos, minVec, maxVec)
-
-	cameraMgr.SetPosition(targetPos)
+	// Enalbe smoothing
+	cameraMgr.SetCameraSmoothing(true)
 }
 
 func (c *cameraImpl) ViewportRect() (float64, float64, float64, float64) {
@@ -119,7 +116,7 @@ func (c *cameraImpl) Ypos() float64 {
 }
 
 func (c *cameraImpl) SetXYpos(x float64, y float64) {
-	c.constrainPos(mathf.NewVec2(x, y))
+	cameraMgr.SetPosition(mathf.NewVec2(x, y))
 }
 
 func (c *cameraImpl) ChangeXYpos(x float64, y float64) {
@@ -169,6 +166,7 @@ func (c *cameraImpl) on(obj any) {
 		panic("Camera.Follow: unexpected parameter")
 	}
 	c.on_ = obj
+	c.setLimits()
 }
 
 func (c *cameraImpl) Follow__0(sprite Sprite) {

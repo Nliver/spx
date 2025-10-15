@@ -257,6 +257,15 @@ func (pself *cameraMgr) GetViewportRect() Rect2 {
 	retValue := CallCameraGetViewportRect()
 	return ToRect2(retValue)
 }
+func (pself *cameraMgr) SetCameraLimit(side int64, limit int64) {
+	arg0 := ToGdInt(side)
+	arg1 := ToGdInt(limit)
+	CallCameraSetCameraLimit(arg0, arg1)
+}
+func (pself *cameraMgr) SetCameraSmoothing(enabled bool) {
+	arg0 := ToGdBool(enabled)
+	CallCameraSetCameraSmoothing(arg0)
+}
 func (pself *debugMgr) DebugDrawCircle(pos Vec2, radius float64, color Color) {
 	arg0 := ToGdVec2(pos)
 	arg1 := ToGdFloat(radius)

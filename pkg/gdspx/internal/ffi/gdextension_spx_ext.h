@@ -240,6 +240,8 @@ typedef void (*GDExtensionSpxCameraSetCameraPosition)(GdVec2 position);
 typedef void (*GDExtensionSpxCameraGetCameraZoom)(GdVec2* ret_value);
 typedef void (*GDExtensionSpxCameraSetCameraZoom)(GdVec2 size);
 typedef void (*GDExtensionSpxCameraGetViewportRect)(GdRect2* ret_value);
+typedef void (*GDExtensionSpxCameraSetCameraLimit)(GdInt side, GdInt limit);
+typedef void (*GDExtensionSpxCameraSetCameraSmoothing)(GdBool enabled);
 // SpxDebug
 typedef void (*GDExtensionSpxDebugDebugDrawCircle)(GdVec2 pos, GdFloat radius, GdColor color);
 typedef void (*GDExtensionSpxDebugDebugDrawRect)(GdVec2 pos, GdVec2 size, GdColor color);

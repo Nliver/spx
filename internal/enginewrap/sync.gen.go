@@ -270,6 +270,16 @@ func (pself *cameraMgrImpl) GetViewportRect() Rect2 {
 	})
 	return _ret1
 }
+func (pself *cameraMgrImpl) SetCameraLimit(side int64, limit int64) {
+	callInMainThread(func() {
+		gdx.CameraMgr.SetCameraLimit(side, limit)
+	})
+}
+func (pself *cameraMgrImpl) SetCameraSmoothing(enabled bool) {
+	callInMainThread(func() {
+		gdx.CameraMgr.SetCameraSmoothing(enabled)
+	})
+}
 
 // IDebugMgr
 func (pself *debugMgrImpl) DebugDrawCircle(pos Vec2, radius float64, color Color) {
