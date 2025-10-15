@@ -201,6 +201,20 @@ type Sprite interface {
 	ColliderShape(isTrigger bool) (ColliderShapeType, []float64)
 	SetColliderPivot(isTrigger bool, offsetX, offsetY float64)
 	ColliderPivot(isTrigger bool) (offsetX, offsetY float64)
+
+	SetCollisionLayer(layer int64)
+	SetCollisionMask(mask int64)
+	SetCollisionEnabled(enabled bool)
+	CollisionLayer() int64
+	CollisionMask() int64
+	CollisionEnabled() bool
+
+	SetTriggerEnabled(trigger bool)
+	SetTriggerLayer(layer int64)
+	SetTriggerMask(mask int64)
+	TriggerLayer() int64
+	TriggerMask() int64
+	TriggerEnabled() bool
 }
 
 type SpriteName = string
@@ -2342,4 +2356,49 @@ func (p *SpriteImpl) SetColliderPivot(isTrigger bool, offsetX, offsetY float64) 
 
 func (p *SpriteImpl) ColliderPivot(isTrigger bool) (offsetX, offsetY float64) {
 	return p.getPhysicPivot(isTrigger)
+}
+
+func (p *SpriteImpl) SetCollisionLayer(layer int64) {
+	p.syncSprite.SetCollisionLayer(layer)
+}
+
+func (p *SpriteImpl) SetCollisionMask(mask int64) {
+	p.syncSprite.SetCollisionMask(mask)
+}
+
+func (p *SpriteImpl) SetCollisionEnabled(enabled bool) {
+	p.syncSprite.SetCollisionEnabled(enabled)
+}
+
+func (p *SpriteImpl) SetTriggerEnabled(trigger bool) {
+	p.syncSprite.SetTriggerEnabled(trigger)
+}
+
+func (p *SpriteImpl) SetTriggerLayer(layer int64) {
+	p.syncSprite.SetTriggerLayer(layer)
+}
+
+func (p *SpriteImpl) SetTriggerMask(mask int64) {
+	p.syncSprite.SetTriggerMask(mask)
+}
+
+func (p *SpriteImpl) TriggerLayer() int64 {
+	return p.syncSprite.GetTriggerLayer()
+}
+func (p *SpriteImpl) TriggerMask() int64 {
+	return p.syncSprite.GetTriggerMask()
+}
+func (p *SpriteImpl) TriggerEnabled() bool {
+	return p.syncSprite.IsTriggerEnabled()
+}
+
+func (p *SpriteImpl) CollisionLayer() int64 {
+	return p.syncSprite.GetCollisionLayer()
+}
+func (p *SpriteImpl) CollisionMask() int64 {
+	return p.syncSprite.GetCollisionMask()
+}
+
+func (p *SpriteImpl) CollisionEnabled() bool {
+	return p.syncSprite.IsCollisionEnabled()
 }
