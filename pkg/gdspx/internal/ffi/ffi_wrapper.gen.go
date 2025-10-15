@@ -108,54 +108,15 @@ type GDExtensionSpxCameraSetCameraPosition C.GDExtensionSpxCameraSetCameraPositi
 type GDExtensionSpxCameraGetCameraZoom C.GDExtensionSpxCameraGetCameraZoom
 type GDExtensionSpxCameraSetCameraZoom C.GDExtensionSpxCameraSetCameraZoom
 type GDExtensionSpxCameraGetViewportRect C.GDExtensionSpxCameraGetViewportRect
+type GDExtensionSpxDebugDebugDrawCircle C.GDExtensionSpxDebugDebugDrawCircle
+type GDExtensionSpxDebugDebugDrawRect C.GDExtensionSpxDebugDebugDrawRect
+type GDExtensionSpxDebugDebugDrawLine C.GDExtensionSpxDebugDebugDrawLine
 type GDExtensionSpxExtRequestExit C.GDExtensionSpxExtRequestExit
 type GDExtensionSpxExtOnRuntimePanic C.GDExtensionSpxExtOnRuntimePanic
 type GDExtensionSpxExtPause C.GDExtensionSpxExtPause
 type GDExtensionSpxExtResume C.GDExtensionSpxExtResume
 type GDExtensionSpxExtIsPaused C.GDExtensionSpxExtIsPaused
 type GDExtensionSpxExtNextFrame C.GDExtensionSpxExtNextFrame
-type GDExtensionSpxExtDestroyAllPens C.GDExtensionSpxExtDestroyAllPens
-type GDExtensionSpxExtCreatePen C.GDExtensionSpxExtCreatePen
-type GDExtensionSpxExtDestroyPen C.GDExtensionSpxExtDestroyPen
-type GDExtensionSpxExtPenStamp C.GDExtensionSpxExtPenStamp
-type GDExtensionSpxExtMovePenTo C.GDExtensionSpxExtMovePenTo
-type GDExtensionSpxExtPenDown C.GDExtensionSpxExtPenDown
-type GDExtensionSpxExtPenUp C.GDExtensionSpxExtPenUp
-type GDExtensionSpxExtSetPenColorTo C.GDExtensionSpxExtSetPenColorTo
-type GDExtensionSpxExtChangePenBy C.GDExtensionSpxExtChangePenBy
-type GDExtensionSpxExtSetPenTo C.GDExtensionSpxExtSetPenTo
-type GDExtensionSpxExtChangePenSizeBy C.GDExtensionSpxExtChangePenSizeBy
-type GDExtensionSpxExtSetPenSizeTo C.GDExtensionSpxExtSetPenSizeTo
-type GDExtensionSpxExtSetPenStampTexture C.GDExtensionSpxExtSetPenStampTexture
-type GDExtensionSpxExtDebugDrawCircle C.GDExtensionSpxExtDebugDrawCircle
-type GDExtensionSpxExtDebugDrawRect C.GDExtensionSpxExtDebugDrawRect
-type GDExtensionSpxExtDebugDrawLine C.GDExtensionSpxExtDebugDrawLine
-type GDExtensionSpxExtOpenDrawTilesWithSize C.GDExtensionSpxExtOpenDrawTilesWithSize
-type GDExtensionSpxExtOpenDrawTiles C.GDExtensionSpxExtOpenDrawTiles
-type GDExtensionSpxExtSetLayerIndex C.GDExtensionSpxExtSetLayerIndex
-type GDExtensionSpxExtSetTile C.GDExtensionSpxExtSetTile
-type GDExtensionSpxExtSetTileWithCollisionInfo C.GDExtensionSpxExtSetTileWithCollisionInfo
-type GDExtensionSpxExtSetLayerOffset C.GDExtensionSpxExtSetLayerOffset
-type GDExtensionSpxExtGetLayerOffset C.GDExtensionSpxExtGetLayerOffset
-type GDExtensionSpxExtPlaceTiles C.GDExtensionSpxExtPlaceTiles
-type GDExtensionSpxExtPlaceTilesWithLayer C.GDExtensionSpxExtPlaceTilesWithLayer
-type GDExtensionSpxExtPlaceTile C.GDExtensionSpxExtPlaceTile
-type GDExtensionSpxExtPlaceTileWithLayer C.GDExtensionSpxExtPlaceTileWithLayer
-type GDExtensionSpxExtEraseTile C.GDExtensionSpxExtEraseTile
-type GDExtensionSpxExtEraseTileWithLayer C.GDExtensionSpxExtEraseTileWithLayer
-type GDExtensionSpxExtGetTile C.GDExtensionSpxExtGetTile
-type GDExtensionSpxExtGetTileWithLayer C.GDExtensionSpxExtGetTileWithLayer
-type GDExtensionSpxExtCloseDrawTiles C.GDExtensionSpxExtCloseDrawTiles
-type GDExtensionSpxExtExitTilemapEditorMode C.GDExtensionSpxExtExitTilemapEditorMode
-type GDExtensionSpxExtClearPureSprites C.GDExtensionSpxExtClearPureSprites
-type GDExtensionSpxExtCreatePureSprite C.GDExtensionSpxExtCreatePureSprite
-type GDExtensionSpxExtCreateRenderSprite C.GDExtensionSpxExtCreateRenderSprite
-type GDExtensionSpxExtCreateStaticSprite C.GDExtensionSpxExtCreateStaticSprite
-type GDExtensionSpxExtDestroyPureSprite C.GDExtensionSpxExtDestroyPureSprite
-type GDExtensionSpxExtSetupPathFinderWithSize C.GDExtensionSpxExtSetupPathFinderWithSize
-type GDExtensionSpxExtSetupPathFinder C.GDExtensionSpxExtSetupPathFinder
-type GDExtensionSpxExtSetObstacle C.GDExtensionSpxExtSetObstacle
-type GDExtensionSpxExtFindPath C.GDExtensionSpxExtFindPath
 type GDExtensionSpxExtSetLayerSorterMode C.GDExtensionSpxExtSetLayerSorterMode
 type GDExtensionSpxInputGetMousePos C.GDExtensionSpxInputGetMousePos
 type GDExtensionSpxInputGetKey C.GDExtensionSpxInputGetKey
@@ -165,6 +126,23 @@ type GDExtensionSpxInputGetAxis C.GDExtensionSpxInputGetAxis
 type GDExtensionSpxInputIsActionPressed C.GDExtensionSpxInputIsActionPressed
 type GDExtensionSpxInputIsActionJustPressed C.GDExtensionSpxInputIsActionJustPressed
 type GDExtensionSpxInputIsActionJustReleased C.GDExtensionSpxInputIsActionJustReleased
+type GDExtensionSpxNavigationSetupPathFinderWithSize C.GDExtensionSpxNavigationSetupPathFinderWithSize
+type GDExtensionSpxNavigationSetupPathFinder C.GDExtensionSpxNavigationSetupPathFinder
+type GDExtensionSpxNavigationSetObstacle C.GDExtensionSpxNavigationSetObstacle
+type GDExtensionSpxNavigationFindPath C.GDExtensionSpxNavigationFindPath
+type GDExtensionSpxPenDestroyAllPens C.GDExtensionSpxPenDestroyAllPens
+type GDExtensionSpxPenCreatePen C.GDExtensionSpxPenCreatePen
+type GDExtensionSpxPenDestroyPen C.GDExtensionSpxPenDestroyPen
+type GDExtensionSpxPenPenStamp C.GDExtensionSpxPenPenStamp
+type GDExtensionSpxPenMovePenTo C.GDExtensionSpxPenMovePenTo
+type GDExtensionSpxPenPenDown C.GDExtensionSpxPenPenDown
+type GDExtensionSpxPenPenUp C.GDExtensionSpxPenPenUp
+type GDExtensionSpxPenSetPenColorTo C.GDExtensionSpxPenSetPenColorTo
+type GDExtensionSpxPenChangePenBy C.GDExtensionSpxPenChangePenBy
+type GDExtensionSpxPenSetPenTo C.GDExtensionSpxPenSetPenTo
+type GDExtensionSpxPenChangePenSizeBy C.GDExtensionSpxPenChangePenSizeBy
+type GDExtensionSpxPenSetPenSizeTo C.GDExtensionSpxPenSetPenSizeTo
+type GDExtensionSpxPenSetPenStampTexture C.GDExtensionSpxPenSetPenStampTexture
 type GDExtensionSpxPhysicRaycast C.GDExtensionSpxPhysicRaycast
 type GDExtensionSpxPhysicCheckCollision C.GDExtensionSpxPhysicCheckCollision
 type GDExtensionSpxPhysicCheckTouchedCameraBoundaries C.GDExtensionSpxPhysicCheckTouchedCameraBoundaries
@@ -209,6 +187,11 @@ type GDExtensionSpxSceneChangeSceneToFile C.GDExtensionSpxSceneChangeSceneToFile
 type GDExtensionSpxSceneDestroyAllSprites C.GDExtensionSpxSceneDestroyAllSprites
 type GDExtensionSpxSceneReloadCurrentScene C.GDExtensionSpxSceneReloadCurrentScene
 type GDExtensionSpxSceneUnloadCurrentScene C.GDExtensionSpxSceneUnloadCurrentScene
+type GDExtensionSpxSceneClearPureSprites C.GDExtensionSpxSceneClearPureSprites
+type GDExtensionSpxSceneCreatePureSprite C.GDExtensionSpxSceneCreatePureSprite
+type GDExtensionSpxSceneDestroyPureSprite C.GDExtensionSpxSceneDestroyPureSprite
+type GDExtensionSpxSceneCreateRenderSprite C.GDExtensionSpxSceneCreateRenderSprite
+type GDExtensionSpxSceneCreateStaticSprite C.GDExtensionSpxSceneCreateStaticSprite
 type GDExtensionSpxSpriteSetDontDestroyOnLoad C.GDExtensionSpxSpriteSetDontDestroyOnLoad
 type GDExtensionSpxSpriteSetProcess C.GDExtensionSpxSpriteSetProcess
 type GDExtensionSpxSpriteSetPhysicProcess C.GDExtensionSpxSpriteSetPhysicProcess
@@ -328,6 +311,23 @@ type GDExtensionSpxSpriteIsTriggerEnabled C.GDExtensionSpxSpriteIsTriggerEnabled
 type GDExtensionSpxSpriteCheckCollisionByColor C.GDExtensionSpxSpriteCheckCollisionByColor
 type GDExtensionSpxSpriteCheckCollisionByAlpha C.GDExtensionSpxSpriteCheckCollisionByAlpha
 type GDExtensionSpxSpriteCheckCollisionWithSpriteByAlpha C.GDExtensionSpxSpriteCheckCollisionWithSpriteByAlpha
+type GDExtensionSpxTilemapOpenDrawTilesWithSize C.GDExtensionSpxTilemapOpenDrawTilesWithSize
+type GDExtensionSpxTilemapOpenDrawTiles C.GDExtensionSpxTilemapOpenDrawTiles
+type GDExtensionSpxTilemapSetLayerIndex C.GDExtensionSpxTilemapSetLayerIndex
+type GDExtensionSpxTilemapSetTile C.GDExtensionSpxTilemapSetTile
+type GDExtensionSpxTilemapSetTileWithCollisionInfo C.GDExtensionSpxTilemapSetTileWithCollisionInfo
+type GDExtensionSpxTilemapSetLayerOffset C.GDExtensionSpxTilemapSetLayerOffset
+type GDExtensionSpxTilemapGetLayerOffset C.GDExtensionSpxTilemapGetLayerOffset
+type GDExtensionSpxTilemapPlaceTiles C.GDExtensionSpxTilemapPlaceTiles
+type GDExtensionSpxTilemapPlaceTilesWithLayer C.GDExtensionSpxTilemapPlaceTilesWithLayer
+type GDExtensionSpxTilemapPlaceTile C.GDExtensionSpxTilemapPlaceTile
+type GDExtensionSpxTilemapPlaceTileWithLayer C.GDExtensionSpxTilemapPlaceTileWithLayer
+type GDExtensionSpxTilemapEraseTile C.GDExtensionSpxTilemapEraseTile
+type GDExtensionSpxTilemapEraseTileWithLayer C.GDExtensionSpxTilemapEraseTileWithLayer
+type GDExtensionSpxTilemapGetTile C.GDExtensionSpxTilemapGetTile
+type GDExtensionSpxTilemapGetTileWithLayer C.GDExtensionSpxTilemapGetTileWithLayer
+type GDExtensionSpxTilemapCloseDrawTiles C.GDExtensionSpxTilemapCloseDrawTiles
+type GDExtensionSpxTilemapExitTilemapEditorMode C.GDExtensionSpxTilemapExitTilemapEditorMode
 type GDExtensionSpxUiBindNode C.GDExtensionSpxUiBindNode
 type GDExtensionSpxUiCreateNode C.GDExtensionSpxUiCreateNode
 type GDExtensionSpxUiCreateButton C.GDExtensionSpxUiCreateButton
@@ -600,6 +600,45 @@ func CallCameraGetViewportRect() GdRect2 {
 	C.cgo_callfn_GDExtensionSpxCameraGetViewportRect(arg0, &ret_val)
 	return (GdRect2)(ret_val)
 }
+func CallDebugDebugDrawCircle(
+	pos GdVec2,
+	radius GdFloat,
+	color GdColor,
+) {
+	arg0 := (C.GDExtensionSpxDebugDebugDrawCircle)(api.SpxDebugDebugDrawCircle)
+	arg1GdVec2 := (C.GdVec2)(pos)
+	arg2GdFloat := (C.GdFloat)(radius)
+	arg3GdColor := (C.GdColor)(color)
+
+	C.cgo_callfn_GDExtensionSpxDebugDebugDrawCircle(arg0, arg1GdVec2, arg2GdFloat, arg3GdColor)
+
+}
+func CallDebugDebugDrawRect(
+	pos GdVec2,
+	size GdVec2,
+	color GdColor,
+) {
+	arg0 := (C.GDExtensionSpxDebugDebugDrawRect)(api.SpxDebugDebugDrawRect)
+	arg1GdVec2 := (C.GdVec2)(pos)
+	arg2GdVec2 := (C.GdVec2)(size)
+	arg3GdColor := (C.GdColor)(color)
+
+	C.cgo_callfn_GDExtensionSpxDebugDebugDrawRect(arg0, arg1GdVec2, arg2GdVec2, arg3GdColor)
+
+}
+func CallDebugDebugDrawLine(
+	from GdVec2,
+	to GdVec2,
+	color GdColor,
+) {
+	arg0 := (C.GDExtensionSpxDebugDebugDrawLine)(api.SpxDebugDebugDrawLine)
+	arg1GdVec2 := (C.GdVec2)(from)
+	arg2GdVec2 := (C.GdVec2)(to)
+	arg3GdColor := (C.GdColor)(color)
+
+	C.cgo_callfn_GDExtensionSpxDebugDebugDrawLine(arg0, arg1GdVec2, arg2GdVec2, arg3GdColor)
+
+}
 func CallExtRequestExit(
 	exit_code GdInt,
 ) {
@@ -638,463 +677,6 @@ func CallExtNextFrame() {
 	arg0 := (C.GDExtensionSpxExtNextFrame)(api.SpxExtNextFrame)
 
 	C.cgo_callfn_GDExtensionSpxExtNextFrame(arg0)
-}
-func CallExtDestroyAllPens() {
-	arg0 := (C.GDExtensionSpxExtDestroyAllPens)(api.SpxExtDestroyAllPens)
-
-	C.cgo_callfn_GDExtensionSpxExtDestroyAllPens(arg0)
-}
-func CallExtCreatePen() GdObj {
-	arg0 := (C.GDExtensionSpxExtCreatePen)(api.SpxExtCreatePen)
-	var ret_val C.GdObj
-	C.cgo_callfn_GDExtensionSpxExtCreatePen(arg0, &ret_val)
-	return (GdObj)(ret_val)
-}
-func CallExtDestroyPen(
-	obj GdObj,
-) {
-	arg0 := (C.GDExtensionSpxExtDestroyPen)(api.SpxExtDestroyPen)
-	arg1GdObj := (C.GdObj)(obj)
-
-	C.cgo_callfn_GDExtensionSpxExtDestroyPen(arg0, arg1GdObj)
-
-}
-func CallExtPenStamp(
-	obj GdObj,
-) {
-	arg0 := (C.GDExtensionSpxExtPenStamp)(api.SpxExtPenStamp)
-	arg1GdObj := (C.GdObj)(obj)
-
-	C.cgo_callfn_GDExtensionSpxExtPenStamp(arg0, arg1GdObj)
-
-}
-func CallExtMovePenTo(
-	obj GdObj,
-	position GdVec2,
-) {
-	arg0 := (C.GDExtensionSpxExtMovePenTo)(api.SpxExtMovePenTo)
-	arg1GdObj := (C.GdObj)(obj)
-	arg2GdVec2 := (C.GdVec2)(position)
-
-	C.cgo_callfn_GDExtensionSpxExtMovePenTo(arg0, arg1GdObj, arg2GdVec2)
-
-}
-func CallExtPenDown(
-	obj GdObj,
-	move_by_mouse GdBool,
-) {
-	arg0 := (C.GDExtensionSpxExtPenDown)(api.SpxExtPenDown)
-	arg1GdObj := (C.GdObj)(obj)
-	arg2GdBool := (C.GdBool)(move_by_mouse)
-
-	C.cgo_callfn_GDExtensionSpxExtPenDown(arg0, arg1GdObj, arg2GdBool)
-
-}
-func CallExtPenUp(
-	obj GdObj,
-) {
-	arg0 := (C.GDExtensionSpxExtPenUp)(api.SpxExtPenUp)
-	arg1GdObj := (C.GdObj)(obj)
-
-	C.cgo_callfn_GDExtensionSpxExtPenUp(arg0, arg1GdObj)
-
-}
-func CallExtSetPenColorTo(
-	obj GdObj,
-	color GdColor,
-) {
-	arg0 := (C.GDExtensionSpxExtSetPenColorTo)(api.SpxExtSetPenColorTo)
-	arg1GdObj := (C.GdObj)(obj)
-	arg2GdColor := (C.GdColor)(color)
-
-	C.cgo_callfn_GDExtensionSpxExtSetPenColorTo(arg0, arg1GdObj, arg2GdColor)
-
-}
-func CallExtChangePenBy(
-	obj GdObj,
-	property GdInt,
-	amount GdFloat,
-) {
-	arg0 := (C.GDExtensionSpxExtChangePenBy)(api.SpxExtChangePenBy)
-	arg1GdObj := (C.GdObj)(obj)
-	arg2GdInt := (C.GdInt)(property)
-	arg3GdFloat := (C.GdFloat)(amount)
-
-	C.cgo_callfn_GDExtensionSpxExtChangePenBy(arg0, arg1GdObj, arg2GdInt, arg3GdFloat)
-
-}
-func CallExtSetPenTo(
-	obj GdObj,
-	property GdInt,
-	value GdFloat,
-) {
-	arg0 := (C.GDExtensionSpxExtSetPenTo)(api.SpxExtSetPenTo)
-	arg1GdObj := (C.GdObj)(obj)
-	arg2GdInt := (C.GdInt)(property)
-	arg3GdFloat := (C.GdFloat)(value)
-
-	C.cgo_callfn_GDExtensionSpxExtSetPenTo(arg0, arg1GdObj, arg2GdInt, arg3GdFloat)
-
-}
-func CallExtChangePenSizeBy(
-	obj GdObj,
-	amount GdFloat,
-) {
-	arg0 := (C.GDExtensionSpxExtChangePenSizeBy)(api.SpxExtChangePenSizeBy)
-	arg1GdObj := (C.GdObj)(obj)
-	arg2GdFloat := (C.GdFloat)(amount)
-
-	C.cgo_callfn_GDExtensionSpxExtChangePenSizeBy(arg0, arg1GdObj, arg2GdFloat)
-
-}
-func CallExtSetPenSizeTo(
-	obj GdObj,
-	size GdFloat,
-) {
-	arg0 := (C.GDExtensionSpxExtSetPenSizeTo)(api.SpxExtSetPenSizeTo)
-	arg1GdObj := (C.GdObj)(obj)
-	arg2GdFloat := (C.GdFloat)(size)
-
-	C.cgo_callfn_GDExtensionSpxExtSetPenSizeTo(arg0, arg1GdObj, arg2GdFloat)
-
-}
-func CallExtSetPenStampTexture(
-	obj GdObj,
-	texture_path GdString,
-) {
-	arg0 := (C.GDExtensionSpxExtSetPenStampTexture)(api.SpxExtSetPenStampTexture)
-	arg1GdObj := (C.GdObj)(obj)
-	arg2GdString := (C.GdString)(texture_path)
-
-	C.cgo_callfn_GDExtensionSpxExtSetPenStampTexture(arg0, arg1GdObj, arg2GdString)
-
-}
-func CallExtDebugDrawCircle(
-	pos GdVec2,
-	radius GdFloat,
-	color GdColor,
-) {
-	arg0 := (C.GDExtensionSpxExtDebugDrawCircle)(api.SpxExtDebugDrawCircle)
-	arg1GdVec2 := (C.GdVec2)(pos)
-	arg2GdFloat := (C.GdFloat)(radius)
-	arg3GdColor := (C.GdColor)(color)
-
-	C.cgo_callfn_GDExtensionSpxExtDebugDrawCircle(arg0, arg1GdVec2, arg2GdFloat, arg3GdColor)
-
-}
-func CallExtDebugDrawRect(
-	pos GdVec2,
-	size GdVec2,
-	color GdColor,
-) {
-	arg0 := (C.GDExtensionSpxExtDebugDrawRect)(api.SpxExtDebugDrawRect)
-	arg1GdVec2 := (C.GdVec2)(pos)
-	arg2GdVec2 := (C.GdVec2)(size)
-	arg3GdColor := (C.GdColor)(color)
-
-	C.cgo_callfn_GDExtensionSpxExtDebugDrawRect(arg0, arg1GdVec2, arg2GdVec2, arg3GdColor)
-
-}
-func CallExtDebugDrawLine(
-	from GdVec2,
-	to GdVec2,
-	color GdColor,
-) {
-	arg0 := (C.GDExtensionSpxExtDebugDrawLine)(api.SpxExtDebugDrawLine)
-	arg1GdVec2 := (C.GdVec2)(from)
-	arg2GdVec2 := (C.GdVec2)(to)
-	arg3GdColor := (C.GdColor)(color)
-
-	C.cgo_callfn_GDExtensionSpxExtDebugDrawLine(arg0, arg1GdVec2, arg2GdVec2, arg3GdColor)
-
-}
-func CallExtOpenDrawTilesWithSize(
-	tile_size GdInt,
-) {
-	arg0 := (C.GDExtensionSpxExtOpenDrawTilesWithSize)(api.SpxExtOpenDrawTilesWithSize)
-	arg1GdInt := (C.GdInt)(tile_size)
-
-	C.cgo_callfn_GDExtensionSpxExtOpenDrawTilesWithSize(arg0, arg1GdInt)
-
-}
-func CallExtOpenDrawTiles() {
-	arg0 := (C.GDExtensionSpxExtOpenDrawTiles)(api.SpxExtOpenDrawTiles)
-
-	C.cgo_callfn_GDExtensionSpxExtOpenDrawTiles(arg0)
-}
-func CallExtSetLayerIndex(
-	index GdInt,
-) {
-	arg0 := (C.GDExtensionSpxExtSetLayerIndex)(api.SpxExtSetLayerIndex)
-	arg1GdInt := (C.GdInt)(index)
-
-	C.cgo_callfn_GDExtensionSpxExtSetLayerIndex(arg0, arg1GdInt)
-
-}
-func CallExtSetTile(
-	texture_path GdString,
-	with_collision GdBool,
-) {
-	arg0 := (C.GDExtensionSpxExtSetTile)(api.SpxExtSetTile)
-	arg1GdString := (C.GdString)(texture_path)
-	arg2GdBool := (C.GdBool)(with_collision)
-
-	C.cgo_callfn_GDExtensionSpxExtSetTile(arg0, arg1GdString, arg2GdBool)
-
-}
-func CallExtSetTileWithCollisionInfo(
-	texture_path GdString,
-	collision_points GdArray,
-) {
-	arg0 := (C.GDExtensionSpxExtSetTileWithCollisionInfo)(api.SpxExtSetTileWithCollisionInfo)
-	arg1GdString := (C.GdString)(texture_path)
-	arg2GdArray := (C.GdArray)(collision_points)
-
-	C.cgo_callfn_GDExtensionSpxExtSetTileWithCollisionInfo(arg0, arg1GdString, arg2GdArray)
-
-}
-func CallExtSetLayerOffset(
-	index GdInt,
-	offset GdVec2,
-) {
-	arg0 := (C.GDExtensionSpxExtSetLayerOffset)(api.SpxExtSetLayerOffset)
-	arg1GdInt := (C.GdInt)(index)
-	arg2GdVec2 := (C.GdVec2)(offset)
-
-	C.cgo_callfn_GDExtensionSpxExtSetLayerOffset(arg0, arg1GdInt, arg2GdVec2)
-
-}
-func CallExtGetLayerOffset(
-	index GdInt,
-) GdVec2 {
-	arg0 := (C.GDExtensionSpxExtGetLayerOffset)(api.SpxExtGetLayerOffset)
-	arg1GdInt := (C.GdInt)(index)
-	var ret_val C.GdVec2
-	C.cgo_callfn_GDExtensionSpxExtGetLayerOffset(arg0, arg1GdInt, &ret_val)
-
-	return (GdVec2)(ret_val)
-}
-func CallExtPlaceTiles(
-	positions GdArray,
-	texture_path GdString,
-) {
-	arg0 := (C.GDExtensionSpxExtPlaceTiles)(api.SpxExtPlaceTiles)
-	arg1GdArray := (C.GdArray)(positions)
-	arg2GdString := (C.GdString)(texture_path)
-
-	C.cgo_callfn_GDExtensionSpxExtPlaceTiles(arg0, arg1GdArray, arg2GdString)
-
-}
-func CallExtPlaceTilesWithLayer(
-	positions GdArray,
-	texture_path GdString,
-	layer_index GdInt,
-) {
-	arg0 := (C.GDExtensionSpxExtPlaceTilesWithLayer)(api.SpxExtPlaceTilesWithLayer)
-	arg1GdArray := (C.GdArray)(positions)
-	arg2GdString := (C.GdString)(texture_path)
-	arg3GdInt := (C.GdInt)(layer_index)
-
-	C.cgo_callfn_GDExtensionSpxExtPlaceTilesWithLayer(arg0, arg1GdArray, arg2GdString, arg3GdInt)
-
-}
-func CallExtPlaceTile(
-	pos GdVec2,
-	texture_path GdString,
-) {
-	arg0 := (C.GDExtensionSpxExtPlaceTile)(api.SpxExtPlaceTile)
-	arg1GdVec2 := (C.GdVec2)(pos)
-	arg2GdString := (C.GdString)(texture_path)
-
-	C.cgo_callfn_GDExtensionSpxExtPlaceTile(arg0, arg1GdVec2, arg2GdString)
-
-}
-func CallExtPlaceTileWithLayer(
-	pos GdVec2,
-	texture_path GdString,
-	layer_index GdInt,
-) {
-	arg0 := (C.GDExtensionSpxExtPlaceTileWithLayer)(api.SpxExtPlaceTileWithLayer)
-	arg1GdVec2 := (C.GdVec2)(pos)
-	arg2GdString := (C.GdString)(texture_path)
-	arg3GdInt := (C.GdInt)(layer_index)
-
-	C.cgo_callfn_GDExtensionSpxExtPlaceTileWithLayer(arg0, arg1GdVec2, arg2GdString, arg3GdInt)
-
-}
-func CallExtEraseTile(
-	pos GdVec2,
-) {
-	arg0 := (C.GDExtensionSpxExtEraseTile)(api.SpxExtEraseTile)
-	arg1GdVec2 := (C.GdVec2)(pos)
-
-	C.cgo_callfn_GDExtensionSpxExtEraseTile(arg0, arg1GdVec2)
-
-}
-func CallExtEraseTileWithLayer(
-	pos GdVec2,
-	layer_index GdInt,
-) {
-	arg0 := (C.GDExtensionSpxExtEraseTileWithLayer)(api.SpxExtEraseTileWithLayer)
-	arg1GdVec2 := (C.GdVec2)(pos)
-	arg2GdInt := (C.GdInt)(layer_index)
-
-	C.cgo_callfn_GDExtensionSpxExtEraseTileWithLayer(arg0, arg1GdVec2, arg2GdInt)
-
-}
-func CallExtGetTile(
-	pos GdVec2,
-) GdString {
-	arg0 := (C.GDExtensionSpxExtGetTile)(api.SpxExtGetTile)
-	arg1GdVec2 := (C.GdVec2)(pos)
-	var ret_val C.GdString
-	C.cgo_callfn_GDExtensionSpxExtGetTile(arg0, arg1GdVec2, &ret_val)
-
-	return (GdString)(ret_val)
-}
-func CallExtGetTileWithLayer(
-	pos GdVec2,
-	layer_index GdInt,
-) GdString {
-	arg0 := (C.GDExtensionSpxExtGetTileWithLayer)(api.SpxExtGetTileWithLayer)
-	arg1GdVec2 := (C.GdVec2)(pos)
-	arg2GdInt := (C.GdInt)(layer_index)
-	var ret_val C.GdString
-	C.cgo_callfn_GDExtensionSpxExtGetTileWithLayer(arg0, arg1GdVec2, arg2GdInt, &ret_val)
-
-	return (GdString)(ret_val)
-}
-func CallExtCloseDrawTiles() {
-	arg0 := (C.GDExtensionSpxExtCloseDrawTiles)(api.SpxExtCloseDrawTiles)
-
-	C.cgo_callfn_GDExtensionSpxExtCloseDrawTiles(arg0)
-}
-func CallExtExitTilemapEditorMode() {
-	arg0 := (C.GDExtensionSpxExtExitTilemapEditorMode)(api.SpxExtExitTilemapEditorMode)
-
-	C.cgo_callfn_GDExtensionSpxExtExitTilemapEditorMode(arg0)
-}
-func CallExtClearPureSprites() {
-	arg0 := (C.GDExtensionSpxExtClearPureSprites)(api.SpxExtClearPureSprites)
-
-	C.cgo_callfn_GDExtensionSpxExtClearPureSprites(arg0)
-}
-func CallExtCreatePureSprite(
-	texture_path GdString,
-	pos GdVec2,
-	zindex GdInt,
-) {
-	arg0 := (C.GDExtensionSpxExtCreatePureSprite)(api.SpxExtCreatePureSprite)
-	arg1GdString := (C.GdString)(texture_path)
-	arg2GdVec2 := (C.GdVec2)(pos)
-	arg3GdInt := (C.GdInt)(zindex)
-
-	C.cgo_callfn_GDExtensionSpxExtCreatePureSprite(arg0, arg1GdString, arg2GdVec2, arg3GdInt)
-
-}
-func CallExtCreateRenderSprite(
-	texture_path GdString,
-	pos GdVec2,
-	degree GdFloat,
-	scale GdVec2,
-	zindex GdInt,
-	pivot GdVec2,
-) GdObj {
-	arg0 := (C.GDExtensionSpxExtCreateRenderSprite)(api.SpxExtCreateRenderSprite)
-	arg1GdString := (C.GdString)(texture_path)
-	arg2GdVec2 := (C.GdVec2)(pos)
-	arg3GdFloat := (C.GdFloat)(degree)
-	arg4GdVec2 := (C.GdVec2)(scale)
-	arg5GdInt := (C.GdInt)(zindex)
-	arg6GdVec2 := (C.GdVec2)(pivot)
-	var ret_val C.GdObj
-	C.cgo_callfn_GDExtensionSpxExtCreateRenderSprite(arg0, arg1GdString, arg2GdVec2, arg3GdFloat, arg4GdVec2, arg5GdInt, arg6GdVec2, &ret_val)
-
-	return (GdObj)(ret_val)
-}
-func CallExtCreateStaticSprite(
-	texture_path GdString,
-	pos GdVec2,
-	degree GdFloat,
-	scale GdVec2,
-	zindex GdInt,
-	pivot GdVec2,
-	collider_type GdInt,
-	collider_pivot GdVec2,
-	collider_params GdArray,
-) GdObj {
-	arg0 := (C.GDExtensionSpxExtCreateStaticSprite)(api.SpxExtCreateStaticSprite)
-	arg1GdString := (C.GdString)(texture_path)
-	arg2GdVec2 := (C.GdVec2)(pos)
-	arg3GdFloat := (C.GdFloat)(degree)
-	arg4GdVec2 := (C.GdVec2)(scale)
-	arg5GdInt := (C.GdInt)(zindex)
-	arg6GdVec2 := (C.GdVec2)(pivot)
-	arg7GdInt := (C.GdInt)(collider_type)
-	arg8GdVec2 := (C.GdVec2)(collider_pivot)
-	arg9GdArray := (C.GdArray)(collider_params)
-	var ret_val C.GdObj
-	C.cgo_callfn_GDExtensionSpxExtCreateStaticSprite(arg0, arg1GdString, arg2GdVec2, arg3GdFloat, arg4GdVec2, arg5GdInt, arg6GdVec2, arg7GdInt, arg8GdVec2, arg9GdArray, &ret_val)
-
-	return (GdObj)(ret_val)
-}
-func CallExtDestroyPureSprite(
-	id GdObj,
-) {
-	arg0 := (C.GDExtensionSpxExtDestroyPureSprite)(api.SpxExtDestroyPureSprite)
-	arg1GdObj := (C.GdObj)(id)
-
-	C.cgo_callfn_GDExtensionSpxExtDestroyPureSprite(arg0, arg1GdObj)
-
-}
-func CallExtSetupPathFinderWithSize(
-	grid_size GdVec2,
-	cell_size GdVec2,
-	with_jump GdBool,
-	with_debug GdBool,
-) {
-	arg0 := (C.GDExtensionSpxExtSetupPathFinderWithSize)(api.SpxExtSetupPathFinderWithSize)
-	arg1GdVec2 := (C.GdVec2)(grid_size)
-	arg2GdVec2 := (C.GdVec2)(cell_size)
-	arg3GdBool := (C.GdBool)(with_jump)
-	arg4GdBool := (C.GdBool)(with_debug)
-
-	C.cgo_callfn_GDExtensionSpxExtSetupPathFinderWithSize(arg0, arg1GdVec2, arg2GdVec2, arg3GdBool, arg4GdBool)
-
-}
-func CallExtSetupPathFinder(
-	with_jump GdBool,
-) {
-	arg0 := (C.GDExtensionSpxExtSetupPathFinder)(api.SpxExtSetupPathFinder)
-	arg1GdBool := (C.GdBool)(with_jump)
-
-	C.cgo_callfn_GDExtensionSpxExtSetupPathFinder(arg0, arg1GdBool)
-
-}
-func CallExtSetObstacle(
-	obj GdObj,
-	enabled GdBool,
-) {
-	arg0 := (C.GDExtensionSpxExtSetObstacle)(api.SpxExtSetObstacle)
-	arg1GdObj := (C.GdObj)(obj)
-	arg2GdBool := (C.GdBool)(enabled)
-
-	C.cgo_callfn_GDExtensionSpxExtSetObstacle(arg0, arg1GdObj, arg2GdBool)
-
-}
-func CallExtFindPath(
-	p_from GdVec2,
-	p_to GdVec2,
-	with_jump GdBool,
-) GdArray {
-	arg0 := (C.GDExtensionSpxExtFindPath)(api.SpxExtFindPath)
-	arg1GdVec2 := (C.GdVec2)(p_from)
-	arg2GdVec2 := (C.GdVec2)(p_to)
-	arg3GdBool := (C.GdBool)(with_jump)
-	var ret_val C.GdArray
-	C.cgo_callfn_GDExtensionSpxExtFindPath(arg0, arg1GdVec2, arg2GdVec2, arg3GdBool, &ret_val)
-
-	return GdArray(ret_val)
 }
 func CallExtSetLayerSorterMode(
 	mode GdInt,
@@ -1182,6 +764,185 @@ func CallInputIsActionJustReleased(
 	C.cgo_callfn_GDExtensionSpxInputIsActionJustReleased(arg0, arg1GdString, &ret_val)
 
 	return (GdBool)(ret_val)
+}
+func CallNavigationSetupPathFinderWithSize(
+	grid_size GdVec2,
+	cell_size GdVec2,
+	with_jump GdBool,
+	with_debug GdBool,
+) {
+	arg0 := (C.GDExtensionSpxNavigationSetupPathFinderWithSize)(api.SpxNavigationSetupPathFinderWithSize)
+	arg1GdVec2 := (C.GdVec2)(grid_size)
+	arg2GdVec2 := (C.GdVec2)(cell_size)
+	arg3GdBool := (C.GdBool)(with_jump)
+	arg4GdBool := (C.GdBool)(with_debug)
+
+	C.cgo_callfn_GDExtensionSpxNavigationSetupPathFinderWithSize(arg0, arg1GdVec2, arg2GdVec2, arg3GdBool, arg4GdBool)
+
+}
+func CallNavigationSetupPathFinder(
+	with_jump GdBool,
+) {
+	arg0 := (C.GDExtensionSpxNavigationSetupPathFinder)(api.SpxNavigationSetupPathFinder)
+	arg1GdBool := (C.GdBool)(with_jump)
+
+	C.cgo_callfn_GDExtensionSpxNavigationSetupPathFinder(arg0, arg1GdBool)
+
+}
+func CallNavigationSetObstacle(
+	obj GdObj,
+	enabled GdBool,
+) {
+	arg0 := (C.GDExtensionSpxNavigationSetObstacle)(api.SpxNavigationSetObstacle)
+	arg1GdObj := (C.GdObj)(obj)
+	arg2GdBool := (C.GdBool)(enabled)
+
+	C.cgo_callfn_GDExtensionSpxNavigationSetObstacle(arg0, arg1GdObj, arg2GdBool)
+
+}
+func CallNavigationFindPath(
+	p_from GdVec2,
+	p_to GdVec2,
+	with_jump GdBool,
+) GdArray {
+	arg0 := (C.GDExtensionSpxNavigationFindPath)(api.SpxNavigationFindPath)
+	arg1GdVec2 := (C.GdVec2)(p_from)
+	arg2GdVec2 := (C.GdVec2)(p_to)
+	arg3GdBool := (C.GdBool)(with_jump)
+	var ret_val C.GdArray
+	C.cgo_callfn_GDExtensionSpxNavigationFindPath(arg0, arg1GdVec2, arg2GdVec2, arg3GdBool, &ret_val)
+
+	return GdArray(ret_val)
+}
+func CallPenDestroyAllPens() {
+	arg0 := (C.GDExtensionSpxPenDestroyAllPens)(api.SpxPenDestroyAllPens)
+
+	C.cgo_callfn_GDExtensionSpxPenDestroyAllPens(arg0)
+}
+func CallPenCreatePen() GdObj {
+	arg0 := (C.GDExtensionSpxPenCreatePen)(api.SpxPenCreatePen)
+	var ret_val C.GdObj
+	C.cgo_callfn_GDExtensionSpxPenCreatePen(arg0, &ret_val)
+	return (GdObj)(ret_val)
+}
+func CallPenDestroyPen(
+	obj GdObj,
+) {
+	arg0 := (C.GDExtensionSpxPenDestroyPen)(api.SpxPenDestroyPen)
+	arg1GdObj := (C.GdObj)(obj)
+
+	C.cgo_callfn_GDExtensionSpxPenDestroyPen(arg0, arg1GdObj)
+
+}
+func CallPenPenStamp(
+	obj GdObj,
+) {
+	arg0 := (C.GDExtensionSpxPenPenStamp)(api.SpxPenPenStamp)
+	arg1GdObj := (C.GdObj)(obj)
+
+	C.cgo_callfn_GDExtensionSpxPenPenStamp(arg0, arg1GdObj)
+
+}
+func CallPenMovePenTo(
+	obj GdObj,
+	position GdVec2,
+) {
+	arg0 := (C.GDExtensionSpxPenMovePenTo)(api.SpxPenMovePenTo)
+	arg1GdObj := (C.GdObj)(obj)
+	arg2GdVec2 := (C.GdVec2)(position)
+
+	C.cgo_callfn_GDExtensionSpxPenMovePenTo(arg0, arg1GdObj, arg2GdVec2)
+
+}
+func CallPenPenDown(
+	obj GdObj,
+	move_by_mouse GdBool,
+) {
+	arg0 := (C.GDExtensionSpxPenPenDown)(api.SpxPenPenDown)
+	arg1GdObj := (C.GdObj)(obj)
+	arg2GdBool := (C.GdBool)(move_by_mouse)
+
+	C.cgo_callfn_GDExtensionSpxPenPenDown(arg0, arg1GdObj, arg2GdBool)
+
+}
+func CallPenPenUp(
+	obj GdObj,
+) {
+	arg0 := (C.GDExtensionSpxPenPenUp)(api.SpxPenPenUp)
+	arg1GdObj := (C.GdObj)(obj)
+
+	C.cgo_callfn_GDExtensionSpxPenPenUp(arg0, arg1GdObj)
+
+}
+func CallPenSetPenColorTo(
+	obj GdObj,
+	color GdColor,
+) {
+	arg0 := (C.GDExtensionSpxPenSetPenColorTo)(api.SpxPenSetPenColorTo)
+	arg1GdObj := (C.GdObj)(obj)
+	arg2GdColor := (C.GdColor)(color)
+
+	C.cgo_callfn_GDExtensionSpxPenSetPenColorTo(arg0, arg1GdObj, arg2GdColor)
+
+}
+func CallPenChangePenBy(
+	obj GdObj,
+	property GdInt,
+	amount GdFloat,
+) {
+	arg0 := (C.GDExtensionSpxPenChangePenBy)(api.SpxPenChangePenBy)
+	arg1GdObj := (C.GdObj)(obj)
+	arg2GdInt := (C.GdInt)(property)
+	arg3GdFloat := (C.GdFloat)(amount)
+
+	C.cgo_callfn_GDExtensionSpxPenChangePenBy(arg0, arg1GdObj, arg2GdInt, arg3GdFloat)
+
+}
+func CallPenSetPenTo(
+	obj GdObj,
+	property GdInt,
+	value GdFloat,
+) {
+	arg0 := (C.GDExtensionSpxPenSetPenTo)(api.SpxPenSetPenTo)
+	arg1GdObj := (C.GdObj)(obj)
+	arg2GdInt := (C.GdInt)(property)
+	arg3GdFloat := (C.GdFloat)(value)
+
+	C.cgo_callfn_GDExtensionSpxPenSetPenTo(arg0, arg1GdObj, arg2GdInt, arg3GdFloat)
+
+}
+func CallPenChangePenSizeBy(
+	obj GdObj,
+	amount GdFloat,
+) {
+	arg0 := (C.GDExtensionSpxPenChangePenSizeBy)(api.SpxPenChangePenSizeBy)
+	arg1GdObj := (C.GdObj)(obj)
+	arg2GdFloat := (C.GdFloat)(amount)
+
+	C.cgo_callfn_GDExtensionSpxPenChangePenSizeBy(arg0, arg1GdObj, arg2GdFloat)
+
+}
+func CallPenSetPenSizeTo(
+	obj GdObj,
+	size GdFloat,
+) {
+	arg0 := (C.GDExtensionSpxPenSetPenSizeTo)(api.SpxPenSetPenSizeTo)
+	arg1GdObj := (C.GdObj)(obj)
+	arg2GdFloat := (C.GdFloat)(size)
+
+	C.cgo_callfn_GDExtensionSpxPenSetPenSizeTo(arg0, arg1GdObj, arg2GdFloat)
+
+}
+func CallPenSetPenStampTexture(
+	obj GdObj,
+	texture_path GdString,
+) {
+	arg0 := (C.GDExtensionSpxPenSetPenStampTexture)(api.SpxPenSetPenStampTexture)
+	arg1GdObj := (C.GdObj)(obj)
+	arg2GdString := (C.GdString)(texture_path)
+
+	C.cgo_callfn_GDExtensionSpxPenSetPenStampTexture(arg0, arg1GdObj, arg2GdString)
+
 }
 func CallPhysicRaycast(
 	from GdVec2,
@@ -1588,6 +1349,79 @@ func CallSceneUnloadCurrentScene() {
 	arg0 := (C.GDExtensionSpxSceneUnloadCurrentScene)(api.SpxSceneUnloadCurrentScene)
 
 	C.cgo_callfn_GDExtensionSpxSceneUnloadCurrentScene(arg0)
+}
+func CallSceneClearPureSprites() {
+	arg0 := (C.GDExtensionSpxSceneClearPureSprites)(api.SpxSceneClearPureSprites)
+
+	C.cgo_callfn_GDExtensionSpxSceneClearPureSprites(arg0)
+}
+func CallSceneCreatePureSprite(
+	texture_path GdString,
+	pos GdVec2,
+	zindex GdInt,
+) {
+	arg0 := (C.GDExtensionSpxSceneCreatePureSprite)(api.SpxSceneCreatePureSprite)
+	arg1GdString := (C.GdString)(texture_path)
+	arg2GdVec2 := (C.GdVec2)(pos)
+	arg3GdInt := (C.GdInt)(zindex)
+
+	C.cgo_callfn_GDExtensionSpxSceneCreatePureSprite(arg0, arg1GdString, arg2GdVec2, arg3GdInt)
+
+}
+func CallSceneDestroyPureSprite(
+	id GdObj,
+) {
+	arg0 := (C.GDExtensionSpxSceneDestroyPureSprite)(api.SpxSceneDestroyPureSprite)
+	arg1GdObj := (C.GdObj)(id)
+
+	C.cgo_callfn_GDExtensionSpxSceneDestroyPureSprite(arg0, arg1GdObj)
+
+}
+func CallSceneCreateRenderSprite(
+	texture_path GdString,
+	pos GdVec2,
+	degree GdFloat,
+	scale GdVec2,
+	zindex GdInt,
+	pivot GdVec2,
+) GdObj {
+	arg0 := (C.GDExtensionSpxSceneCreateRenderSprite)(api.SpxSceneCreateRenderSprite)
+	arg1GdString := (C.GdString)(texture_path)
+	arg2GdVec2 := (C.GdVec2)(pos)
+	arg3GdFloat := (C.GdFloat)(degree)
+	arg4GdVec2 := (C.GdVec2)(scale)
+	arg5GdInt := (C.GdInt)(zindex)
+	arg6GdVec2 := (C.GdVec2)(pivot)
+	var ret_val C.GdObj
+	C.cgo_callfn_GDExtensionSpxSceneCreateRenderSprite(arg0, arg1GdString, arg2GdVec2, arg3GdFloat, arg4GdVec2, arg5GdInt, arg6GdVec2, &ret_val)
+
+	return (GdObj)(ret_val)
+}
+func CallSceneCreateStaticSprite(
+	texture_path GdString,
+	pos GdVec2,
+	degree GdFloat,
+	scale GdVec2,
+	zindex GdInt,
+	pivot GdVec2,
+	collider_type GdInt,
+	collider_pivot GdVec2,
+	collider_params GdArray,
+) GdObj {
+	arg0 := (C.GDExtensionSpxSceneCreateStaticSprite)(api.SpxSceneCreateStaticSprite)
+	arg1GdString := (C.GdString)(texture_path)
+	arg2GdVec2 := (C.GdVec2)(pos)
+	arg3GdFloat := (C.GdFloat)(degree)
+	arg4GdVec2 := (C.GdVec2)(scale)
+	arg5GdInt := (C.GdInt)(zindex)
+	arg6GdVec2 := (C.GdVec2)(pivot)
+	arg7GdInt := (C.GdInt)(collider_type)
+	arg8GdVec2 := (C.GdVec2)(collider_pivot)
+	arg9GdArray := (C.GdArray)(collider_params)
+	var ret_val C.GdObj
+	C.cgo_callfn_GDExtensionSpxSceneCreateStaticSprite(arg0, arg1GdString, arg2GdVec2, arg3GdFloat, arg4GdVec2, arg5GdInt, arg6GdVec2, arg7GdInt, arg8GdVec2, arg9GdArray, &ret_val)
+
+	return (GdObj)(ret_val)
 }
 func CallSpriteSetDontDestroyOnLoad(
 	obj GdObj,
@@ -2904,6 +2738,172 @@ func CallSpriteCheckCollisionWithSpriteByAlpha(
 	C.cgo_callfn_GDExtensionSpxSpriteCheckCollisionWithSpriteByAlpha(arg0, arg1GdObj, arg2GdObj, arg3GdFloat, &ret_val)
 
 	return (GdBool)(ret_val)
+}
+func CallTilemapOpenDrawTilesWithSize(
+	tile_size GdInt,
+) {
+	arg0 := (C.GDExtensionSpxTilemapOpenDrawTilesWithSize)(api.SpxTilemapOpenDrawTilesWithSize)
+	arg1GdInt := (C.GdInt)(tile_size)
+
+	C.cgo_callfn_GDExtensionSpxTilemapOpenDrawTilesWithSize(arg0, arg1GdInt)
+
+}
+func CallTilemapOpenDrawTiles() {
+	arg0 := (C.GDExtensionSpxTilemapOpenDrawTiles)(api.SpxTilemapOpenDrawTiles)
+
+	C.cgo_callfn_GDExtensionSpxTilemapOpenDrawTiles(arg0)
+}
+func CallTilemapSetLayerIndex(
+	index GdInt,
+) {
+	arg0 := (C.GDExtensionSpxTilemapSetLayerIndex)(api.SpxTilemapSetLayerIndex)
+	arg1GdInt := (C.GdInt)(index)
+
+	C.cgo_callfn_GDExtensionSpxTilemapSetLayerIndex(arg0, arg1GdInt)
+
+}
+func CallTilemapSetTile(
+	texture_path GdString,
+	with_collision GdBool,
+) {
+	arg0 := (C.GDExtensionSpxTilemapSetTile)(api.SpxTilemapSetTile)
+	arg1GdString := (C.GdString)(texture_path)
+	arg2GdBool := (C.GdBool)(with_collision)
+
+	C.cgo_callfn_GDExtensionSpxTilemapSetTile(arg0, arg1GdString, arg2GdBool)
+
+}
+func CallTilemapSetTileWithCollisionInfo(
+	texture_path GdString,
+	collision_points GdArray,
+) {
+	arg0 := (C.GDExtensionSpxTilemapSetTileWithCollisionInfo)(api.SpxTilemapSetTileWithCollisionInfo)
+	arg1GdString := (C.GdString)(texture_path)
+	arg2GdArray := (C.GdArray)(collision_points)
+
+	C.cgo_callfn_GDExtensionSpxTilemapSetTileWithCollisionInfo(arg0, arg1GdString, arg2GdArray)
+
+}
+func CallTilemapSetLayerOffset(
+	index GdInt,
+	offset GdVec2,
+) {
+	arg0 := (C.GDExtensionSpxTilemapSetLayerOffset)(api.SpxTilemapSetLayerOffset)
+	arg1GdInt := (C.GdInt)(index)
+	arg2GdVec2 := (C.GdVec2)(offset)
+
+	C.cgo_callfn_GDExtensionSpxTilemapSetLayerOffset(arg0, arg1GdInt, arg2GdVec2)
+
+}
+func CallTilemapGetLayerOffset(
+	index GdInt,
+) GdVec2 {
+	arg0 := (C.GDExtensionSpxTilemapGetLayerOffset)(api.SpxTilemapGetLayerOffset)
+	arg1GdInt := (C.GdInt)(index)
+	var ret_val C.GdVec2
+	C.cgo_callfn_GDExtensionSpxTilemapGetLayerOffset(arg0, arg1GdInt, &ret_val)
+
+	return (GdVec2)(ret_val)
+}
+func CallTilemapPlaceTiles(
+	positions GdArray,
+	texture_path GdString,
+) {
+	arg0 := (C.GDExtensionSpxTilemapPlaceTiles)(api.SpxTilemapPlaceTiles)
+	arg1GdArray := (C.GdArray)(positions)
+	arg2GdString := (C.GdString)(texture_path)
+
+	C.cgo_callfn_GDExtensionSpxTilemapPlaceTiles(arg0, arg1GdArray, arg2GdString)
+
+}
+func CallTilemapPlaceTilesWithLayer(
+	positions GdArray,
+	texture_path GdString,
+	layer_index GdInt,
+) {
+	arg0 := (C.GDExtensionSpxTilemapPlaceTilesWithLayer)(api.SpxTilemapPlaceTilesWithLayer)
+	arg1GdArray := (C.GdArray)(positions)
+	arg2GdString := (C.GdString)(texture_path)
+	arg3GdInt := (C.GdInt)(layer_index)
+
+	C.cgo_callfn_GDExtensionSpxTilemapPlaceTilesWithLayer(arg0, arg1GdArray, arg2GdString, arg3GdInt)
+
+}
+func CallTilemapPlaceTile(
+	pos GdVec2,
+	texture_path GdString,
+) {
+	arg0 := (C.GDExtensionSpxTilemapPlaceTile)(api.SpxTilemapPlaceTile)
+	arg1GdVec2 := (C.GdVec2)(pos)
+	arg2GdString := (C.GdString)(texture_path)
+
+	C.cgo_callfn_GDExtensionSpxTilemapPlaceTile(arg0, arg1GdVec2, arg2GdString)
+
+}
+func CallTilemapPlaceTileWithLayer(
+	pos GdVec2,
+	texture_path GdString,
+	layer_index GdInt,
+) {
+	arg0 := (C.GDExtensionSpxTilemapPlaceTileWithLayer)(api.SpxTilemapPlaceTileWithLayer)
+	arg1GdVec2 := (C.GdVec2)(pos)
+	arg2GdString := (C.GdString)(texture_path)
+	arg3GdInt := (C.GdInt)(layer_index)
+
+	C.cgo_callfn_GDExtensionSpxTilemapPlaceTileWithLayer(arg0, arg1GdVec2, arg2GdString, arg3GdInt)
+
+}
+func CallTilemapEraseTile(
+	pos GdVec2,
+) {
+	arg0 := (C.GDExtensionSpxTilemapEraseTile)(api.SpxTilemapEraseTile)
+	arg1GdVec2 := (C.GdVec2)(pos)
+
+	C.cgo_callfn_GDExtensionSpxTilemapEraseTile(arg0, arg1GdVec2)
+
+}
+func CallTilemapEraseTileWithLayer(
+	pos GdVec2,
+	layer_index GdInt,
+) {
+	arg0 := (C.GDExtensionSpxTilemapEraseTileWithLayer)(api.SpxTilemapEraseTileWithLayer)
+	arg1GdVec2 := (C.GdVec2)(pos)
+	arg2GdInt := (C.GdInt)(layer_index)
+
+	C.cgo_callfn_GDExtensionSpxTilemapEraseTileWithLayer(arg0, arg1GdVec2, arg2GdInt)
+
+}
+func CallTilemapGetTile(
+	pos GdVec2,
+) GdString {
+	arg0 := (C.GDExtensionSpxTilemapGetTile)(api.SpxTilemapGetTile)
+	arg1GdVec2 := (C.GdVec2)(pos)
+	var ret_val C.GdString
+	C.cgo_callfn_GDExtensionSpxTilemapGetTile(arg0, arg1GdVec2, &ret_val)
+
+	return (GdString)(ret_val)
+}
+func CallTilemapGetTileWithLayer(
+	pos GdVec2,
+	layer_index GdInt,
+) GdString {
+	arg0 := (C.GDExtensionSpxTilemapGetTileWithLayer)(api.SpxTilemapGetTileWithLayer)
+	arg1GdVec2 := (C.GdVec2)(pos)
+	arg2GdInt := (C.GdInt)(layer_index)
+	var ret_val C.GdString
+	C.cgo_callfn_GDExtensionSpxTilemapGetTileWithLayer(arg0, arg1GdVec2, arg2GdInt, &ret_val)
+
+	return (GdString)(ret_val)
+}
+func CallTilemapCloseDrawTiles() {
+	arg0 := (C.GDExtensionSpxTilemapCloseDrawTiles)(api.SpxTilemapCloseDrawTiles)
+
+	C.cgo_callfn_GDExtensionSpxTilemapCloseDrawTiles(arg0)
+}
+func CallTilemapExitTilemapEditorMode() {
+	arg0 := (C.GDExtensionSpxTilemapExitTilemapEditorMode)(api.SpxTilemapExitTilemapEditorMode)
+
+	C.cgo_callfn_GDExtensionSpxTilemapExitTilemapEditorMode(arg0)
 }
 func CallUiBindNode(
 	obj GdObj,

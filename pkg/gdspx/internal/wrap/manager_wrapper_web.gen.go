@@ -30,11 +30,20 @@ func BindMgr(mgrs []IManager) {
 		case ICameraMgr:
 			CameraMgr = v
 
+		case IDebugMgr:
+			DebugMgr = v
+
 		case IExtMgr:
 			ExtMgr = v
 
 		case IInputMgr:
 			InputMgr = v
+
+		case INavigationMgr:
+			NavigationMgr = v
+
+		case IPenMgr:
+			PenMgr = v
 
 		case IPhysicMgr:
 			PhysicMgr = v
@@ -51,6 +60,9 @@ func BindMgr(mgrs []IManager) {
 		case ISpriteMgr:
 			SpriteMgr = v
 
+		case ITilemapMgr:
+			TilemapMgr = v
+
 		case IUiMgr:
 			UiMgr = v
 
@@ -66,10 +78,19 @@ type audioMgr struct {
 type cameraMgr struct {
 	baseMgr
 }
+type debugMgr struct {
+	baseMgr
+}
 type extMgr struct {
 	baseMgr
 }
 type inputMgr struct {
+	baseMgr
+}
+type navigationMgr struct {
+	baseMgr
+}
+type penMgr struct {
 	baseMgr
 }
 type physicMgr struct {
@@ -87,6 +108,9 @@ type sceneMgr struct {
 type spriteMgr struct {
 	baseMgr
 }
+type tilemapMgr struct {
+	baseMgr
+}
 type uiMgr struct {
 	baseMgr
 }
@@ -94,13 +118,17 @@ type uiMgr struct {
 func createMgrs() []IManager {
 	addManager(&audioMgr{})
 	addManager(&cameraMgr{})
+	addManager(&debugMgr{})
 	addManager(&extMgr{})
 	addManager(&inputMgr{})
+	addManager(&navigationMgr{})
+	addManager(&penMgr{})
 	addManager(&physicMgr{})
 	addManager(&platformMgr{})
 	addManager(&resMgr{})
 	addManager(&sceneMgr{})
 	addManager(&spriteMgr{})
+	addManager(&tilemapMgr{})
 	addManager(&uiMgr{})
 	return mgrs
 }
@@ -220,6 +248,24 @@ func (pself *cameraMgr) GetViewportRect() Rect2 {
 	_retValue := API.SpxCameraGetViewportRect.Invoke()
 	return JsToGdRect2(_retValue)
 }
+func (pself *debugMgr) DebugDrawCircle(pos Vec2, radius float64, color Color) {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdFloat(radius)
+	arg2 := JsFromGdColor(color)
+	API.SpxDebugDebugDrawCircle.Invoke(arg0, arg1, arg2)
+}
+func (pself *debugMgr) DebugDrawRect(pos Vec2, size Vec2, color Color) {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdVec2(size)
+	arg2 := JsFromGdColor(color)
+	API.SpxDebugDebugDrawRect.Invoke(arg0, arg1, arg2)
+}
+func (pself *debugMgr) DebugDrawLine(from Vec2, to Vec2, color Color) {
+	arg0 := JsFromGdVec2(from)
+	arg1 := JsFromGdVec2(to)
+	arg2 := JsFromGdColor(color)
+	API.SpxDebugDebugDrawLine.Invoke(arg0, arg1, arg2)
+}
 func (pself *extMgr) RequestExit(exit_code int64) {
 	arg0 := JsFromGdInt(exit_code)
 	API.SpxExtRequestExit.Invoke(arg0)
@@ -240,223 +286,6 @@ func (pself *extMgr) IsPaused() bool {
 }
 func (pself *extMgr) NextFrame() {
 	API.SpxExtNextFrame.Invoke()
-}
-func (pself *extMgr) DestroyAllPens() {
-	API.SpxExtDestroyAllPens.Invoke()
-}
-func (pself *extMgr) CreatePen() Object {
-	_retValue := API.SpxExtCreatePen.Invoke()
-	return JsToGdObject(_retValue)
-}
-func (pself *extMgr) DestroyPen(obj Object) {
-	arg0 := JsFromGdObj(obj)
-	API.SpxExtDestroyPen.Invoke(arg0)
-}
-func (pself *extMgr) PenStamp(obj Object) {
-	arg0 := JsFromGdObj(obj)
-	API.SpxExtPenStamp.Invoke(arg0)
-}
-func (pself *extMgr) MovePenTo(obj Object, position Vec2) {
-	arg0 := JsFromGdObj(obj)
-	arg1 := JsFromGdVec2(position)
-	API.SpxExtMovePenTo.Invoke(arg0, arg1)
-}
-func (pself *extMgr) PenDown(obj Object, move_by_mouse bool) {
-	arg0 := JsFromGdObj(obj)
-	arg1 := JsFromGdBool(move_by_mouse)
-	API.SpxExtPenDown.Invoke(arg0, arg1)
-}
-func (pself *extMgr) PenUp(obj Object) {
-	arg0 := JsFromGdObj(obj)
-	API.SpxExtPenUp.Invoke(arg0)
-}
-func (pself *extMgr) SetPenColorTo(obj Object, color Color) {
-	arg0 := JsFromGdObj(obj)
-	arg1 := JsFromGdColor(color)
-	API.SpxExtSetPenColorTo.Invoke(arg0, arg1)
-}
-func (pself *extMgr) ChangePenBy(obj Object, property int64, amount float64) {
-	arg0 := JsFromGdObj(obj)
-	arg1 := JsFromGdInt(property)
-	arg2 := JsFromGdFloat(amount)
-	API.SpxExtChangePenBy.Invoke(arg0, arg1, arg2)
-}
-func (pself *extMgr) SetPenTo(obj Object, property int64, value float64) {
-	arg0 := JsFromGdObj(obj)
-	arg1 := JsFromGdInt(property)
-	arg2 := JsFromGdFloat(value)
-	API.SpxExtSetPenTo.Invoke(arg0, arg1, arg2)
-}
-func (pself *extMgr) ChangePenSizeBy(obj Object, amount float64) {
-	arg0 := JsFromGdObj(obj)
-	arg1 := JsFromGdFloat(amount)
-	API.SpxExtChangePenSizeBy.Invoke(arg0, arg1)
-}
-func (pself *extMgr) SetPenSizeTo(obj Object, size float64) {
-	arg0 := JsFromGdObj(obj)
-	arg1 := JsFromGdFloat(size)
-	API.SpxExtSetPenSizeTo.Invoke(arg0, arg1)
-}
-func (pself *extMgr) SetPenStampTexture(obj Object, texture_path string) {
-	arg0 := JsFromGdObj(obj)
-	arg1 := JsFromGdString(texture_path)
-	API.SpxExtSetPenStampTexture.Invoke(arg0, arg1)
-}
-func (pself *extMgr) DebugDrawCircle(pos Vec2, radius float64, color Color) {
-	arg0 := JsFromGdVec2(pos)
-	arg1 := JsFromGdFloat(radius)
-	arg2 := JsFromGdColor(color)
-	API.SpxExtDebugDrawCircle.Invoke(arg0, arg1, arg2)
-}
-func (pself *extMgr) DebugDrawRect(pos Vec2, size Vec2, color Color) {
-	arg0 := JsFromGdVec2(pos)
-	arg1 := JsFromGdVec2(size)
-	arg2 := JsFromGdColor(color)
-	API.SpxExtDebugDrawRect.Invoke(arg0, arg1, arg2)
-}
-func (pself *extMgr) DebugDrawLine(from Vec2, to Vec2, color Color) {
-	arg0 := JsFromGdVec2(from)
-	arg1 := JsFromGdVec2(to)
-	arg2 := JsFromGdColor(color)
-	API.SpxExtDebugDrawLine.Invoke(arg0, arg1, arg2)
-}
-func (pself *extMgr) OpenDrawTilesWithSize(tile_size int64) {
-	arg0 := JsFromGdInt(tile_size)
-	API.SpxExtOpenDrawTilesWithSize.Invoke(arg0)
-}
-func (pself *extMgr) OpenDrawTiles() {
-	API.SpxExtOpenDrawTiles.Invoke()
-}
-func (pself *extMgr) SetLayerIndex(index int64) {
-	arg0 := JsFromGdInt(index)
-	API.SpxExtSetLayerIndex.Invoke(arg0)
-}
-func (pself *extMgr) SetTile(texture_path string, with_collision bool) {
-	arg0 := JsFromGdString(texture_path)
-	arg1 := JsFromGdBool(with_collision)
-	API.SpxExtSetTile.Invoke(arg0, arg1)
-}
-func (pself *extMgr) SetTileWithCollisionInfo(texture_path string, collision_points Array) {
-	arg0 := JsFromGdString(texture_path)
-	arg1 := JsFromGdArray(collision_points)
-	API.SpxExtSetTileWithCollisionInfo.Invoke(arg0, arg1)
-}
-func (pself *extMgr) SetLayerOffset(index int64, offset Vec2) {
-	arg0 := JsFromGdInt(index)
-	arg1 := JsFromGdVec2(offset)
-	API.SpxExtSetLayerOffset.Invoke(arg0, arg1)
-}
-func (pself *extMgr) GetLayerOffset(index int64) Vec2 {
-	arg0 := JsFromGdInt(index)
-	_retValue := API.SpxExtGetLayerOffset.Invoke(arg0)
-	return JsToGdVec2(_retValue)
-}
-func (pself *extMgr) PlaceTiles(positions Array, texture_path string) {
-	arg0 := JsFromGdArray(positions)
-	arg1 := JsFromGdString(texture_path)
-	API.SpxExtPlaceTiles.Invoke(arg0, arg1)
-}
-func (pself *extMgr) PlaceTilesWithLayer(positions Array, texture_path string, layer_index int64) {
-	arg0 := JsFromGdArray(positions)
-	arg1 := JsFromGdString(texture_path)
-	arg2 := JsFromGdInt(layer_index)
-	API.SpxExtPlaceTilesWithLayer.Invoke(arg0, arg1, arg2)
-}
-func (pself *extMgr) PlaceTile(pos Vec2, texture_path string) {
-	arg0 := JsFromGdVec2(pos)
-	arg1 := JsFromGdString(texture_path)
-	API.SpxExtPlaceTile.Invoke(arg0, arg1)
-}
-func (pself *extMgr) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64) {
-	arg0 := JsFromGdVec2(pos)
-	arg1 := JsFromGdString(texture_path)
-	arg2 := JsFromGdInt(layer_index)
-	API.SpxExtPlaceTileWithLayer.Invoke(arg0, arg1, arg2)
-}
-func (pself *extMgr) EraseTile(pos Vec2) {
-	arg0 := JsFromGdVec2(pos)
-	API.SpxExtEraseTile.Invoke(arg0)
-}
-func (pself *extMgr) EraseTileWithLayer(pos Vec2, layer_index int64) {
-	arg0 := JsFromGdVec2(pos)
-	arg1 := JsFromGdInt(layer_index)
-	API.SpxExtEraseTileWithLayer.Invoke(arg0, arg1)
-}
-func (pself *extMgr) GetTile(pos Vec2) string {
-	arg0 := JsFromGdVec2(pos)
-	_retValue := API.SpxExtGetTile.Invoke(arg0)
-	return JsToGdString(_retValue)
-}
-func (pself *extMgr) GetTileWithLayer(pos Vec2, layer_index int64) string {
-	arg0 := JsFromGdVec2(pos)
-	arg1 := JsFromGdInt(layer_index)
-	_retValue := API.SpxExtGetTileWithLayer.Invoke(arg0, arg1)
-	return JsToGdString(_retValue)
-}
-func (pself *extMgr) CloseDrawTiles() {
-	API.SpxExtCloseDrawTiles.Invoke()
-}
-func (pself *extMgr) ExitTilemapEditorMode() {
-	API.SpxExtExitTilemapEditorMode.Invoke()
-}
-func (pself *extMgr) ClearPureSprites() {
-	API.SpxExtClearPureSprites.Invoke()
-}
-func (pself *extMgr) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {
-	arg0 := JsFromGdString(texture_path)
-	arg1 := JsFromGdVec2(pos)
-	arg2 := JsFromGdInt(zindex)
-	API.SpxExtCreatePureSprite.Invoke(arg0, arg1, arg2)
-}
-func (pself *extMgr) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2) Object {
-	arg0 := JsFromGdString(texture_path)
-	arg1 := JsFromGdVec2(pos)
-	arg2 := JsFromGdFloat(degree)
-	arg3 := JsFromGdVec2(scale)
-	arg4 := JsFromGdInt(zindex)
-	arg5 := JsFromGdVec2(pivot)
-	_retValue := API.SpxExtCreateRenderSprite.Invoke(arg0, arg1, arg2, arg3, arg4, arg5)
-	return JsToGdObject(_retValue)
-}
-func (pself *extMgr) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2, collider_type int64, collider_pivot Vec2, collider_params Array) Object {
-	arg0 := JsFromGdString(texture_path)
-	arg1 := JsFromGdVec2(pos)
-	arg2 := JsFromGdFloat(degree)
-	arg3 := JsFromGdVec2(scale)
-	arg4 := JsFromGdInt(zindex)
-	arg5 := JsFromGdVec2(pivot)
-	arg6 := JsFromGdInt(collider_type)
-	arg7 := JsFromGdVec2(collider_pivot)
-	arg8 := JsFromGdArray(collider_params)
-	_retValue := API.SpxExtCreateStaticSprite.Invoke(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
-	return JsToGdObject(_retValue)
-}
-func (pself *extMgr) DestroyPureSprite(id Object) {
-	arg0 := JsFromGdObj(id)
-	API.SpxExtDestroyPureSprite.Invoke(arg0)
-}
-func (pself *extMgr) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
-	arg0 := JsFromGdVec2(grid_size)
-	arg1 := JsFromGdVec2(cell_size)
-	arg2 := JsFromGdBool(with_jump)
-	arg3 := JsFromGdBool(with_debug)
-	API.SpxExtSetupPathFinderWithSize.Invoke(arg0, arg1, arg2, arg3)
-}
-func (pself *extMgr) SetupPathFinder(with_jump bool) {
-	arg0 := JsFromGdBool(with_jump)
-	API.SpxExtSetupPathFinder.Invoke(arg0)
-}
-func (pself *extMgr) SetObstacle(obj Object, enabled bool) {
-	arg0 := JsFromGdObj(obj)
-	arg1 := JsFromGdBool(enabled)
-	API.SpxExtSetObstacle.Invoke(arg0, arg1)
-}
-func (pself *extMgr) FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array {
-	arg0 := JsFromGdVec2(p_from)
-	arg1 := JsFromGdVec2(p_to)
-	arg2 := JsFromGdBool(with_jump)
-	_retValue := API.SpxExtFindPath.Invoke(arg0, arg1, arg2)
-	return JsToGdArray(_retValue)
 }
 func (pself *extMgr) SetLayerSorterMode(mode int64) {
 	arg0 := JsFromGdInt(mode)
@@ -501,6 +330,90 @@ func (pself *inputMgr) IsActionJustReleased(action string) bool {
 	arg0 := JsFromGdString(action)
 	_retValue := API.SpxInputIsActionJustReleased.Invoke(arg0)
 	return JsToGdBool(_retValue)
+}
+func (pself *navigationMgr) SetupPathFinderWithSize(grid_size Vec2, cell_size Vec2, with_jump bool, with_debug bool) {
+	arg0 := JsFromGdVec2(grid_size)
+	arg1 := JsFromGdVec2(cell_size)
+	arg2 := JsFromGdBool(with_jump)
+	arg3 := JsFromGdBool(with_debug)
+	API.SpxNavigationSetupPathFinderWithSize.Invoke(arg0, arg1, arg2, arg3)
+}
+func (pself *navigationMgr) SetupPathFinder(with_jump bool) {
+	arg0 := JsFromGdBool(with_jump)
+	API.SpxNavigationSetupPathFinder.Invoke(arg0)
+}
+func (pself *navigationMgr) SetObstacle(obj Object, enabled bool) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdBool(enabled)
+	API.SpxNavigationSetObstacle.Invoke(arg0, arg1)
+}
+func (pself *navigationMgr) FindPath(p_from Vec2, p_to Vec2, with_jump bool) Array {
+	arg0 := JsFromGdVec2(p_from)
+	arg1 := JsFromGdVec2(p_to)
+	arg2 := JsFromGdBool(with_jump)
+	_retValue := API.SpxNavigationFindPath.Invoke(arg0, arg1, arg2)
+	return JsToGdArray(_retValue)
+}
+func (pself *penMgr) DestroyAllPens() {
+	API.SpxPenDestroyAllPens.Invoke()
+}
+func (pself *penMgr) CreatePen() Object {
+	_retValue := API.SpxPenCreatePen.Invoke()
+	return JsToGdObject(_retValue)
+}
+func (pself *penMgr) DestroyPen(obj Object) {
+	arg0 := JsFromGdObj(obj)
+	API.SpxPenDestroyPen.Invoke(arg0)
+}
+func (pself *penMgr) PenStamp(obj Object) {
+	arg0 := JsFromGdObj(obj)
+	API.SpxPenPenStamp.Invoke(arg0)
+}
+func (pself *penMgr) MovePenTo(obj Object, position Vec2) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdVec2(position)
+	API.SpxPenMovePenTo.Invoke(arg0, arg1)
+}
+func (pself *penMgr) PenDown(obj Object, move_by_mouse bool) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdBool(move_by_mouse)
+	API.SpxPenPenDown.Invoke(arg0, arg1)
+}
+func (pself *penMgr) PenUp(obj Object) {
+	arg0 := JsFromGdObj(obj)
+	API.SpxPenPenUp.Invoke(arg0)
+}
+func (pself *penMgr) SetPenColorTo(obj Object, color Color) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdColor(color)
+	API.SpxPenSetPenColorTo.Invoke(arg0, arg1)
+}
+func (pself *penMgr) ChangePenBy(obj Object, property int64, amount float64) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdInt(property)
+	arg2 := JsFromGdFloat(amount)
+	API.SpxPenChangePenBy.Invoke(arg0, arg1, arg2)
+}
+func (pself *penMgr) SetPenTo(obj Object, property int64, value float64) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdInt(property)
+	arg2 := JsFromGdFloat(value)
+	API.SpxPenSetPenTo.Invoke(arg0, arg1, arg2)
+}
+func (pself *penMgr) ChangePenSizeBy(obj Object, amount float64) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdFloat(amount)
+	API.SpxPenChangePenSizeBy.Invoke(arg0, arg1)
+}
+func (pself *penMgr) SetPenSizeTo(obj Object, size float64) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdFloat(size)
+	API.SpxPenSetPenSizeTo.Invoke(arg0, arg1)
+}
+func (pself *penMgr) SetPenStampTexture(obj Object, texture_path string) {
+	arg0 := JsFromGdObj(obj)
+	arg1 := JsFromGdString(texture_path)
+	API.SpxPenSetPenStampTexture.Invoke(arg0, arg1)
 }
 func (pself *physicMgr) Raycast(from Vec2, to Vec2, collision_mask int64) Object {
 	arg0 := JsFromGdVec2(from)
@@ -708,6 +621,42 @@ func (pself *sceneMgr) ReloadCurrentScene() int64 {
 }
 func (pself *sceneMgr) UnloadCurrentScene() {
 	API.SpxSceneUnloadCurrentScene.Invoke()
+}
+func (pself *sceneMgr) ClearPureSprites() {
+	API.SpxSceneClearPureSprites.Invoke()
+}
+func (pself *sceneMgr) CreatePureSprite(texture_path string, pos Vec2, zindex int64) {
+	arg0 := JsFromGdString(texture_path)
+	arg1 := JsFromGdVec2(pos)
+	arg2 := JsFromGdInt(zindex)
+	API.SpxSceneCreatePureSprite.Invoke(arg0, arg1, arg2)
+}
+func (pself *sceneMgr) DestroyPureSprite(id Object) {
+	arg0 := JsFromGdObj(id)
+	API.SpxSceneDestroyPureSprite.Invoke(arg0)
+}
+func (pself *sceneMgr) CreateRenderSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2) Object {
+	arg0 := JsFromGdString(texture_path)
+	arg1 := JsFromGdVec2(pos)
+	arg2 := JsFromGdFloat(degree)
+	arg3 := JsFromGdVec2(scale)
+	arg4 := JsFromGdInt(zindex)
+	arg5 := JsFromGdVec2(pivot)
+	_retValue := API.SpxSceneCreateRenderSprite.Invoke(arg0, arg1, arg2, arg3, arg4, arg5)
+	return JsToGdObject(_retValue)
+}
+func (pself *sceneMgr) CreateStaticSprite(texture_path string, pos Vec2, degree float64, scale Vec2, zindex int64, pivot Vec2, collider_type int64, collider_pivot Vec2, collider_params Array) Object {
+	arg0 := JsFromGdString(texture_path)
+	arg1 := JsFromGdVec2(pos)
+	arg2 := JsFromGdFloat(degree)
+	arg3 := JsFromGdVec2(scale)
+	arg4 := JsFromGdInt(zindex)
+	arg5 := JsFromGdVec2(pivot)
+	arg6 := JsFromGdInt(collider_type)
+	arg7 := JsFromGdVec2(collider_pivot)
+	arg8 := JsFromGdArray(collider_params)
+	_retValue := API.SpxSceneCreateStaticSprite.Invoke(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
+	return JsToGdObject(_retValue)
 }
 func (pself *spriteMgr) SetDontDestroyOnLoad(obj Object) {
 	arg0 := JsFromGdObj(obj)
@@ -1337,6 +1286,85 @@ func (pself *spriteMgr) CheckCollisionWithSpriteByAlpha(obj Object, obj_b Object
 	arg2 := JsFromGdFloat(alpha_threshold)
 	_retValue := API.SpxSpriteCheckCollisionWithSpriteByAlpha.Invoke(arg0, arg1, arg2)
 	return JsToGdBool(_retValue)
+}
+func (pself *tilemapMgr) OpenDrawTilesWithSize(tile_size int64) {
+	arg0 := JsFromGdInt(tile_size)
+	API.SpxTilemapOpenDrawTilesWithSize.Invoke(arg0)
+}
+func (pself *tilemapMgr) OpenDrawTiles() {
+	API.SpxTilemapOpenDrawTiles.Invoke()
+}
+func (pself *tilemapMgr) SetLayerIndex(index int64) {
+	arg0 := JsFromGdInt(index)
+	API.SpxTilemapSetLayerIndex.Invoke(arg0)
+}
+func (pself *tilemapMgr) SetTile(texture_path string, with_collision bool) {
+	arg0 := JsFromGdString(texture_path)
+	arg1 := JsFromGdBool(with_collision)
+	API.SpxTilemapSetTile.Invoke(arg0, arg1)
+}
+func (pself *tilemapMgr) SetTileWithCollisionInfo(texture_path string, collision_points Array) {
+	arg0 := JsFromGdString(texture_path)
+	arg1 := JsFromGdArray(collision_points)
+	API.SpxTilemapSetTileWithCollisionInfo.Invoke(arg0, arg1)
+}
+func (pself *tilemapMgr) SetLayerOffset(index int64, offset Vec2) {
+	arg0 := JsFromGdInt(index)
+	arg1 := JsFromGdVec2(offset)
+	API.SpxTilemapSetLayerOffset.Invoke(arg0, arg1)
+}
+func (pself *tilemapMgr) GetLayerOffset(index int64) Vec2 {
+	arg0 := JsFromGdInt(index)
+	_retValue := API.SpxTilemapGetLayerOffset.Invoke(arg0)
+	return JsToGdVec2(_retValue)
+}
+func (pself *tilemapMgr) PlaceTiles(positions Array, texture_path string) {
+	arg0 := JsFromGdArray(positions)
+	arg1 := JsFromGdString(texture_path)
+	API.SpxTilemapPlaceTiles.Invoke(arg0, arg1)
+}
+func (pself *tilemapMgr) PlaceTilesWithLayer(positions Array, texture_path string, layer_index int64) {
+	arg0 := JsFromGdArray(positions)
+	arg1 := JsFromGdString(texture_path)
+	arg2 := JsFromGdInt(layer_index)
+	API.SpxTilemapPlaceTilesWithLayer.Invoke(arg0, arg1, arg2)
+}
+func (pself *tilemapMgr) PlaceTile(pos Vec2, texture_path string) {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdString(texture_path)
+	API.SpxTilemapPlaceTile.Invoke(arg0, arg1)
+}
+func (pself *tilemapMgr) PlaceTileWithLayer(pos Vec2, texture_path string, layer_index int64) {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdString(texture_path)
+	arg2 := JsFromGdInt(layer_index)
+	API.SpxTilemapPlaceTileWithLayer.Invoke(arg0, arg1, arg2)
+}
+func (pself *tilemapMgr) EraseTile(pos Vec2) {
+	arg0 := JsFromGdVec2(pos)
+	API.SpxTilemapEraseTile.Invoke(arg0)
+}
+func (pself *tilemapMgr) EraseTileWithLayer(pos Vec2, layer_index int64) {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdInt(layer_index)
+	API.SpxTilemapEraseTileWithLayer.Invoke(arg0, arg1)
+}
+func (pself *tilemapMgr) GetTile(pos Vec2) string {
+	arg0 := JsFromGdVec2(pos)
+	_retValue := API.SpxTilemapGetTile.Invoke(arg0)
+	return JsToGdString(_retValue)
+}
+func (pself *tilemapMgr) GetTileWithLayer(pos Vec2, layer_index int64) string {
+	arg0 := JsFromGdVec2(pos)
+	arg1 := JsFromGdInt(layer_index)
+	_retValue := API.SpxTilemapGetTileWithLayer.Invoke(arg0, arg1)
+	return JsToGdString(_retValue)
+}
+func (pself *tilemapMgr) CloseDrawTiles() {
+	API.SpxTilemapCloseDrawTiles.Invoke()
+}
+func (pself *tilemapMgr) ExitTilemapEditorMode() {
+	API.SpxTilemapExitTilemapEditorMode.Invoke()
 }
 func (pself *uiMgr) BindNode(obj Object, rel_path string) Object {
 	arg0 := JsFromGdObj(obj)

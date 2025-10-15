@@ -152,7 +152,7 @@ type Game struct {
 	audioAttenuation float64
 	audioMaxDistance float64
 
-	tilemapMgr tilemapMgr
+	tilemapMgr gameTilemapMgr
 }
 
 const maxCollisionLayerIdx = 32 // engine limit support 32 layers
@@ -1225,7 +1225,7 @@ func (p *Game) objectPos(obj any) (float64, float64) {
 // -----------------------------------------------------------------------------
 
 func (p *Game) EraseAll() {
-	extMgr.DestroyAllPens()
+	penMgr.DestroyAllPens()
 }
 
 // -----------------------------------------------------------------------------
@@ -1884,15 +1884,15 @@ func (p *Game) Raycast__2(fromX, fromY, toX, toY float64) (hit bool, sprite Spri
 }
 
 func (p *Game) DebugDrawRect(posX, posY, width, height float64, color Color) {
-	extMgr.DebugDrawRect(mathf.NewVec2(posX, posY), mathf.NewVec2(width, height), toMathfColor(color))
+	debugMgr.DebugDrawRect(mathf.NewVec2(posX, posY), mathf.NewVec2(width, height), toMathfColor(color))
 }
 
 func (p *Game) DebugDrawCircle(posX, posY, radius float64, color Color) {
-	extMgr.DebugDrawCircle(mathf.NewVec2(posX, posY), radius, toMathfColor(color))
+	debugMgr.DebugDrawCircle(mathf.NewVec2(posX, posY), radius, toMathfColor(color))
 }
 
 func (p *Game) DebugDrawLine(fromX, fromY, toX, toY float64, color Color) {
-	extMgr.DebugDrawLine(mathf.NewVec2(fromX, fromY), mathf.NewVec2(toX, toY), toMathfColor(color))
+	debugMgr.DebugDrawLine(mathf.NewVec2(fromX, fromY), mathf.NewVec2(toX, toY), toMathfColor(color))
 }
 
 func (p *Game) DebugDrawLines(points []float64, color Color) {
@@ -1903,66 +1903,66 @@ func (p *Game) DebugDrawLines(points []float64, color Color) {
 	for i := 0; i < len(points)-2; i += 2 {
 		from := mathf.NewVec2(points[i], points[i+1])
 		to := mathf.NewVec2(points[i+2], points[i+3])
-		extMgr.DebugDrawLine(from, to, toMathfColor(color))
+		debugMgr.DebugDrawLine(from, to, toMathfColor(color))
 	}
 }
 
 // -----------------------------------------------------------------------------
 func (p *Game) setTileMapLayerIndex(index int64) {
-	extMgr.SetLayerIndex(index)
+	tilemapMgr.SetLayerIndex(index)
 }
 
 func (p *Game) setTileInfo__0(texturePath string, isCollision bool) {
 	path := engine.ToAssetPath(texturePath)
-	extMgr.SetTile(path, isCollision)
+	tilemapMgr.SetTile(path, isCollision)
 }
 func (p *Game) setTileInfo__1(texturePath string, collisionPoints []float64) {
 	path := engine.ToAssetPath(texturePath)
-	extMgr.SetTileWithCollisionInfo(path, f64Tof32(collisionPoints))
+	tilemapMgr.SetTileWithCollisionInfo(path, f64Tof32(collisionPoints))
 }
 
 func (p *Game) PlaceTiles__0(positions []float64, texturePath string) {
 	path := engine.ToAssetPath(texturePath)
-	extMgr.PlaceTiles(f64Tof32(positions), path)
+	tilemapMgr.PlaceTiles(f64Tof32(positions), path)
 }
 
 func (p *Game) PlaceTiles__1(positions []float64, texturePath string, layerIndex int64) {
 	path := engine.ToAssetPath(texturePath)
-	extMgr.PlaceTilesWithLayer(f64Tof32(positions), path, layerIndex)
+	tilemapMgr.PlaceTilesWithLayer(f64Tof32(positions), path, layerIndex)
 }
 
 func (p *Game) PlaceTile(x, y float64, texturePath string) {
 	path := engine.ToAssetPath(texturePath)
-	extMgr.PlaceTile(mathf.NewVec2(x, y), path)
+	tilemapMgr.PlaceTile(mathf.NewVec2(x, y), path)
 }
 
 func (p *Game) EraseTile__0(x, y float64) {
-	extMgr.EraseTile(mathf.NewVec2(x, y))
+	tilemapMgr.EraseTile(mathf.NewVec2(x, y))
 }
 
 func (p *Game) EraseTile__1(x, y float64, layerIndex int64) {
-	extMgr.EraseTileWithLayer(mathf.NewVec2(x, y), layerIndex)
+	tilemapMgr.EraseTileWithLayer(mathf.NewVec2(x, y), layerIndex)
 }
 
 func (p *Game) GetTile__0(x, y float64) string {
-	return extMgr.GetTile(mathf.NewVec2(x, y))
+	return tilemapMgr.GetTile(mathf.NewVec2(x, y))
 }
 func (p *Game) GetTile__1(x, y float64, layerIndex int64) string {
-	return extMgr.GetTileWithLayer(mathf.NewVec2(x, y), layerIndex)
+	return tilemapMgr.GetTileWithLayer(mathf.NewVec2(x, y), layerIndex)
 }
 
 func (p *Game) setTileMapOffset(index int64, x, y float64) {
-	extMgr.SetLayerOffset(index, mathf.NewVec2(x, y))
+	tilemapMgr.SetLayerOffset(index, mathf.NewVec2(x, y))
 
 }
 
 func (p *Game) createDecorators(texturePath string, pos mathf.Vec2, rot float64, scale mathf.Vec2, zindex int64, pivot mathf.Vec2) {
-	extMgr.CreateStaticSprite(engine.ToAssetPath(texturePath), pos, rot, scale, zindex, pivot, 0, mathf.NewVec2(0, 0), nil)
+	sceneMgr.CreateStaticSprite(engine.ToAssetPath(texturePath), pos, rot, scale, zindex, pivot, 0, mathf.NewVec2(0, 0), nil)
 }
 
 func (p *Game) createStaticSprite(texturePath string, pos mathf.Vec2, rot float64, scale mathf.Vec2, zindex int64, pivot mathf.Vec2, colliderType string, colliderPivot mathf.Vec2, colliderParams []float64) {
 	colliderTypeInt := paserColliderShapeType(colliderType, 0)
-	extMgr.CreateStaticSprite(engine.ToAssetPath(texturePath), pos, rot, scale, zindex, pivot, colliderTypeInt, colliderPivot, colliderParams)
+	sceneMgr.CreateStaticSprite(engine.ToAssetPath(texturePath), pos, rot, scale, zindex, pivot, colliderTypeInt, colliderPivot, colliderParams)
 }
 
 // Path Finding
@@ -1971,19 +1971,19 @@ func (p *Game) SetupPathFinder__0() {
 }
 
 func (p *Game) SetupPathFinder__1(x_grid_size, y_grid_size, x_cell_size, y_cell_size float64, with_jump, with_debug bool) {
-	extMgr.SetupPathFinderWithSize(mathf.NewVec2(x_grid_size, y_grid_size), mathf.NewVec2(x_cell_size, y_cell_size), with_jump, with_debug)
+	navigationMgr.SetupPathFinderWithSize(mathf.NewVec2(x_grid_size, y_grid_size), mathf.NewVec2(x_cell_size, y_cell_size), with_jump, with_debug)
 }
 
 func (p *Game) setupPathFinder(with_jump, with_debug bool) {
 	cellSize := mathf.NewVec2(float64(p.pathCellSizeX), float64(p.pathCellSizeY))
 	gridSize := mathf.NewVec2(float64(p.worldWidth_), float64(p.worldHeight_)).Div(cellSize)
-	extMgr.SetupPathFinderWithSize(gridSize, cellSize, with_jump, with_debug)
+	navigationMgr.SetupPathFinderWithSize(gridSize, cellSize, with_jump, with_debug)
 }
 
 func (p *Game) setObstacle(sprite Sprite, enabled bool) {
 	impl := spriteOf(sprite)
 	if impl != nil {
-		extMgr.SetObstacle(impl.getSpriteId(), enabled)
+		navigationMgr.SetObstacle(impl.getSpriteId(), enabled)
 	}
 }
 
@@ -2000,7 +2000,7 @@ func (p *Game) FindPath__2(x_from, y_from, x_to, y_to float64, with_debug, with_
 		p.setupPathFinder(with_jump, with_debug)
 	})
 
-	arr := extMgr.FindPath(mathf.NewVec2(x_from, y_from), mathf.NewVec2(x_to, y_to), with_jump)
+	arr := navigationMgr.FindPath(mathf.NewVec2(x_from, y_from), mathf.NewVec2(x_to, y_to), with_jump)
 	result := arr.([]float32)
 	return f32Tof64(result)
 }

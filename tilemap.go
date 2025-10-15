@@ -27,12 +27,12 @@ import (
 	"github.com/goplus/spbase/mathf"
 )
 
-type tilemapMgr struct {
+type gameTilemapMgr struct {
 	g     *Game
 	datas *tm.TscnMapData
 }
 
-func (p *tilemapMgr) init(g *Game, fs spxfs.Dir, path string) {
+func (p *gameTilemapMgr) init(g *Game, fs spxfs.Dir, path string) {
 	p.g = g
 	if path == "" {
 		return
@@ -45,14 +45,14 @@ func (p *tilemapMgr) init(g *Game, fs spxfs.Dir, path string) {
 	p.datas = &data
 	tm.ConvertData(&data)
 }
-func (p *tilemapMgr) hasData() bool {
+func (p *gameTilemapMgr) hasData() bool {
 	return p.datas != nil
 }
 
-func (p *tilemapMgr) loadTilemaps(datas *tm.TscnMapData) {
+func (p *gameTilemapMgr) loadTilemaps(datas *tm.TscnMapData) {
 	tm.LoadTilemaps(datas, p.g.setTileInfo__1, p.g.setTileMapLayerIndex, p.g.PlaceTiles__1)
 }
-func (p *tilemapMgr) loadDecorators(datas *tm.TscnMapData) {
+func (p *gameTilemapMgr) loadDecorators(datas *tm.TscnMapData) {
 	const headingOffset = -90.0
 	for _, item := range datas.Decorators {
 		position := item.Position.ToVec2()
@@ -66,7 +66,7 @@ func (p *tilemapMgr) loadDecorators(datas *tm.TscnMapData) {
 	}
 }
 
-func (p *tilemapMgr) loadSprites(datas *tm.TscnMapData) {
+func (p *gameTilemapMgr) loadSprites(datas *tm.TscnMapData) {
 
 	sort.Slice(datas.Sprites, func(i, j int) bool {
 		return datas.Sprites[i].Path < datas.Sprites[j].Path
@@ -84,7 +84,7 @@ func (p *tilemapMgr) loadSprites(datas *tm.TscnMapData) {
 	}
 }
 
-func (p *tilemapMgr) parseTilemap() {
+func (p *gameTilemapMgr) parseTilemap() {
 	if p.datas == nil {
 		return
 	}
@@ -97,7 +97,7 @@ func (p *tilemapMgr) parseTilemap() {
 }
 
 // calcWorldSize calculates and updates world size based on actual tile distribution in tilemap
-func (p *tilemapMgr) calcWorldSize() {
+func (p *gameTilemapMgr) calcWorldSize() {
 	if p.datas == nil || len(p.datas.TileMap.Layers) == 0 {
 		fmt.Println("[TILEMAP DEBUG] No tilemap data or layers, skipping world size update")
 		return
@@ -155,7 +155,7 @@ func (p *tilemapMgr) calcWorldSize() {
 }
 
 // parseTileDataForBounds parses tile data for boundary calculation (copied logic from internal/tilemap package)
-func (p *tilemapMgr) parseTileDataForBounds(tileData []int32) []mathf.Vec2i {
+func (p *gameTilemapMgr) parseTileDataForBounds(tileData []int32) []mathf.Vec2i {
 	tileCount := len(tileData) / 5
 	tiles := make([]mathf.Vec2i, 0, tileCount)
 

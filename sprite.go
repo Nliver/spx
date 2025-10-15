@@ -1722,20 +1722,20 @@ const (
 func (p *SpriteImpl) PenUp() {
 	p.checkOrCreatePen()
 	p.isPenDown = false
-	extMgr.PenUp(*p.penObj)
+	penMgr.PenUp(*p.penObj)
 }
 
 func (p *SpriteImpl) PenDown() {
 	p.checkOrCreatePen()
 	p.isPenDown = true
 	p.movePen(p.x, p.y)
-	extMgr.PenDown(*p.penObj, false)
+	penMgr.PenDown(*p.penObj, false)
 }
 
 func (p *SpriteImpl) Stamp() {
 	p.checkOrCreatePen()
-	extMgr.SetPenStampTexture(*p.penObj, p.getCostumePath())
-	extMgr.PenStamp(*p.penObj)
+	penMgr.SetPenStampTexture(*p.penObj, p.getCostumePath())
+	penMgr.PenStamp(*p.penObj)
 }
 
 func (p *SpriteImpl) SetPenColor__0(color Color) {
@@ -1813,7 +1813,7 @@ func (p *SpriteImpl) changePenTransparency(delta float64) {
 func (p *SpriteImpl) SetPenSize(size float64) {
 	p.checkOrCreatePen()
 	p.penWidth = size
-	extMgr.SetPenSizeTo(*p.penObj, size)
+	penMgr.SetPenSizeTo(*p.penObj, size)
 }
 
 func (p *SpriteImpl) ChangePenSize(delta float64) {
@@ -1823,7 +1823,7 @@ func (p *SpriteImpl) ChangePenSize(delta float64) {
 
 func (p *SpriteImpl) checkOrCreatePen() {
 	if p.penObj == nil {
-		obj := extMgr.CreatePen()
+		obj := penMgr.CreatePen()
 		p.penObj = &obj
 		p.penTransparency = p.penColor.A * 100
 	}
@@ -1831,7 +1831,7 @@ func (p *SpriteImpl) checkOrCreatePen() {
 
 func (p *SpriteImpl) destroyPen() {
 	if p.penObj != nil {
-		extMgr.DestroyPen(*p.penObj)
+		penMgr.DestroyPen(*p.penObj)
 		p.penObj = nil
 	}
 }
@@ -1841,7 +1841,7 @@ func (p *SpriteImpl) movePen(x, y float64) {
 		return
 	}
 	applyRenderOffset(p, &x, &y)
-	extMgr.MovePenTo(*p.penObj, mathf.NewVec2(x, -y))
+	penMgr.MovePenTo(*p.penObj, mathf.NewVec2(x, -y))
 }
 
 func (p *SpriteImpl) applyPenColorProperty() {
@@ -1851,14 +1851,14 @@ func (p *SpriteImpl) applyPenColorProperty() {
 	p.penSaturation = s * 100
 	p.penBrightness = v * 100
 	p.penTransparency = p.penColor.A * 100
-	extMgr.SetPenColorTo(*p.penObj, p.penColor)
+	penMgr.SetPenColorTo(*p.penObj, p.penColor)
 }
 
 func (p *SpriteImpl) applyPenHsvProperty() {
 	color := mathf.NewColorHSV((p.penHue/100)*360, p.penSaturation/100, p.penBrightness/100)
 	p.penColor = color
 	p.penColor.A = p.penTransparency / 100
-	extMgr.SetPenColorTo(*p.penObj, p.penColor)
+	penMgr.SetPenColorTo(*p.penObj, p.penColor)
 }
 
 // -----------------------------------------------------------------------------
