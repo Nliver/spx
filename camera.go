@@ -150,12 +150,16 @@ func (c *cameraImpl) on(obj any) {
 			return
 		}
 		obj = sp
-		println("Camera.Follow: sprite found -", sp.name)
+		if c.g.debug {
+			log.Println("Camera.Follow: sprite found -", sp.name)
+		}
 	case *SpriteImpl:
 	case nil:
 	case Sprite:
 		obj = spriteOf(v)
-		println("Camera.Follow: obj -", obj.(*SpriteImpl).name)
+		if c.g.debug {
+			log.Println("Camera.Follow: obj -", obj.(*SpriteImpl).name)
+		}
 	case specialObj:
 		if v != Mouse {
 			log.Println("Camera.Follow: not support -", v)
