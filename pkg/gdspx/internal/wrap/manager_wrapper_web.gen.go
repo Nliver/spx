@@ -248,6 +248,15 @@ func (pself *cameraMgr) GetViewportRect() Rect2 {
 	_retValue := API.SpxCameraGetViewportRect.Invoke()
 	return JsToGdRect2(_retValue)
 }
+func (pself *cameraMgr) SetCameraLimit(side int64, limit int64) {
+	arg0 := JsFromGdInt(side)
+	arg1 := JsFromGdInt(limit)
+	API.SpxCameraSetCameraLimit.Invoke(arg0, arg1)
+}
+func (pself *cameraMgr) SetCameraSmoothing(enabled bool) {
+	arg0 := JsFromGdBool(enabled)
+	API.SpxCameraSetCameraSmoothing.Invoke(arg0)
+}
 func (pself *debugMgr) DebugDrawCircle(pos Vec2, radius float64, color Color) {
 	arg0 := JsFromGdVec2(pos)
 	arg1 := JsFromGdFloat(radius)

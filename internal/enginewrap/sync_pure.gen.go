@@ -186,6 +186,8 @@ func (pself *cameraMgrImpl) GetViewportRect() Rect2 {
 	var _ret1 Rect2
 	return _ret1
 }
+func (pself *cameraMgrImpl) SetCameraLimit(side int64, limit int64) {}
+func (pself *cameraMgrImpl) SetCameraSmoothing(enabled bool)        {}
 
 // IDebugMgr
 func (pself *debugMgrImpl) DebugDrawCircle(pos Vec2, radius float64, color Color) {}

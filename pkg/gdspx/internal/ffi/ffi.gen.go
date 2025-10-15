@@ -42,6 +42,8 @@ type GDExtensionInterface struct {
 	SpxCameraGetCameraZoom                   GDExtensionSpxCameraGetCameraZoom
 	SpxCameraSetCameraZoom                   GDExtensionSpxCameraSetCameraZoom
 	SpxCameraGetViewportRect                 GDExtensionSpxCameraGetViewportRect
+	SpxCameraSetCameraLimit                  GDExtensionSpxCameraSetCameraLimit
+	SpxCameraSetCameraSmoothing              GDExtensionSpxCameraSetCameraSmoothing
 	SpxDebugDebugDrawCircle                  GDExtensionSpxDebugDebugDrawCircle
 	SpxDebugDebugDrawRect                    GDExtensionSpxDebugDebugDrawRect
 	SpxDebugDebugDrawLine                    GDExtensionSpxDebugDebugDrawLine
@@ -331,6 +333,8 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxCameraGetCameraZoom = (GDExtensionSpxCameraGetCameraZoom)(dlsymGD("spx_camera_get_camera_zoom"))
 	x.SpxCameraSetCameraZoom = (GDExtensionSpxCameraSetCameraZoom)(dlsymGD("spx_camera_set_camera_zoom"))
 	x.SpxCameraGetViewportRect = (GDExtensionSpxCameraGetViewportRect)(dlsymGD("spx_camera_get_viewport_rect"))
+	x.SpxCameraSetCameraLimit = (GDExtensionSpxCameraSetCameraLimit)(dlsymGD("spx_camera_set_camera_limit"))
+	x.SpxCameraSetCameraSmoothing = (GDExtensionSpxCameraSetCameraSmoothing)(dlsymGD("spx_camera_set_camera_smoothing"))
 	x.SpxDebugDebugDrawCircle = (GDExtensionSpxDebugDebugDrawCircle)(dlsymGD("spx_debug_debug_draw_circle"))
 	x.SpxDebugDebugDrawRect = (GDExtensionSpxDebugDebugDrawRect)(dlsymGD("spx_debug_debug_draw_rect"))
 	x.SpxDebugDebugDrawLine = (GDExtensionSpxDebugDebugDrawLine)(dlsymGD("spx_debug_debug_draw_line"))

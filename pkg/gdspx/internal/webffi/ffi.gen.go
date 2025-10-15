@@ -46,6 +46,8 @@ type GDExtensionInterface struct {
 	SpxCameraGetCameraZoom                   js.Value
 	SpxCameraSetCameraZoom                   js.Value
 	SpxCameraGetViewportRect                 js.Value
+	SpxCameraSetCameraLimit                  js.Value
+	SpxCameraSetCameraSmoothing              js.Value
 	SpxDebugDebugDrawCircle                  js.Value
 	SpxDebugDebugDrawRect                    js.Value
 	SpxDebugDebugDrawLine                    js.Value
@@ -335,6 +337,8 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxCameraGetCameraZoom = dlsymGD("gdspx_camera_get_camera_zoom")
 	x.SpxCameraSetCameraZoom = dlsymGD("gdspx_camera_set_camera_zoom")
 	x.SpxCameraGetViewportRect = dlsymGD("gdspx_camera_get_viewport_rect")
+	x.SpxCameraSetCameraLimit = dlsymGD("gdspx_camera_set_camera_limit")
+	x.SpxCameraSetCameraSmoothing = dlsymGD("gdspx_camera_set_camera_smoothing")
 	x.SpxDebugDebugDrawCircle = dlsymGD("gdspx_debug_debug_draw_circle")
 	x.SpxDebugDebugDrawRect = dlsymGD("gdspx_debug_debug_draw_rect")
 	x.SpxDebugDebugDrawLine = dlsymGD("gdspx_debug_debug_draw_line")
