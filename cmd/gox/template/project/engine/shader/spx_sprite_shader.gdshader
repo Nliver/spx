@@ -9,6 +9,7 @@ uniform float pixleate_amount : hint_range(0.0, 100.0) = 0.0;
 uniform float whirl_amount : hint_range(-20, 20.0) = 0.0;
 uniform float fisheye_amount : hint_range(-1.0, 100.0) = 0.0;
 uniform vec4 atlas_uv_rect2 = vec4(0.0, 0.0, 1.0, 1.0); // offset , size
+uniform vec4 repeat_scale = vec4(1.0, 1.0, 0.0, 0.0);
 
 vec3 rgb_to_hsl(vec3 c) {
     vec4 K = vec4(0.0, -1.0/3.0, 2.0/3.0, -1.0);
@@ -85,6 +86,8 @@ void fragment() {
 		uv.y = mod(uv.y, 1.0);
 	}
 
+	uv = uv * repeat_scale.xy + repeat_scale.zw;
+	
 	// remmap uv to atlas
 	uv = atlas_uv_rect2.xy + uv * atlas_uv_rect2.zw;
 

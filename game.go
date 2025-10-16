@@ -669,37 +669,39 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 }
 
 func (p *Game) setupBackdrop() {
-	var imgW, imgH, dstW, dstH float64
-	imgW, imgH = p.getCostumeSize()
-	worldW := float64(p.worldWidth_)
-	worldH := float64(p.worldHeight_)
+	imgW, imgH := p.getCostumeSize()
+	dstW := float64(p.worldWidth_)
+	dstH := float64(p.worldHeight_)
 	imgRadio := (imgW / imgH)
-	worldRadio := (worldW / worldH)
+	worldRadio := (dstW / dstH)
 	// scale image's height to fit world's height
 	isScaleHeight := imgRadio > worldRadio
+
 	switch p.mapMode {
-	default:
-		dstW = worldW
-		dstH = worldH
 	case mapModeRepeat:
-		println("TODO implement mapModeRepeat")
+		repeatX := dstW / imgW
+		repeatY := dstH / imgH
+		p.setMaterialParamsVec4("repeat_scale", mathf.Vec4{
+			X: repeatX,
+			Y: repeatY,
+			Z: 0,
+			W: 0,
+		}, false)
 	case mapModeFillCut:
 		if isScaleHeight {
-			dstW = worldW
 			dstH = dstW / imgRadio
 		} else {
-			dstH = worldH
 			dstW = dstH * imgRadio
 		}
 	case mapModeFillRatio:
 		if isScaleHeight {
-			dstH = worldH
 			dstW = dstH * imgRadio
 		} else {
-			dstW = worldW
 			dstH = dstW / imgRadio
 		}
+	default:
 	}
+
 	scaleX := dstW / imgW
 	scaleY := dstH / imgH
 	p.scale = 1
