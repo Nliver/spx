@@ -257,6 +257,10 @@ func (pself *cameraMgr) GetViewportRect() Rect2 {
 	retValue := CallCameraGetViewportRect()
 	return ToRect2(retValue)
 }
+func (pself *cameraMgr) GetGlobalCameraRect() Rect2 {
+	retValue := CallCameraGetGlobalCameraRect()
+	return ToRect2(retValue)
+}
 func (pself *cameraMgr) SetCameraLimit(side int64, limit int64) {
 	arg0 := ToGdInt(side)
 	arg1 := ToGdInt(limit)

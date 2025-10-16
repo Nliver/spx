@@ -88,13 +88,10 @@ func (c *cameraImpl) setLimits() {
 }
 
 func (c *cameraImpl) ViewportRect() (float64, float64, float64, float64) {
-	cameraRect := cameraMgr.GetViewportRect()
-	zoom := cameraMgr.GetCameraZoom()
-	size := cameraRect.Size.Div(zoom)
-	cameraLeftBound := cameraMgr.GetCameraPosition().X - size.X/2
-	cameraBottomBound := cameraMgr.GetCameraPosition().Y - size.Y/2
-	return cameraLeftBound, cameraBottomBound, size.X, size.Y
+	rect := cameraMgr.GetGlobalCameraRect()
+	return rect.Position.X, rect.Position.Y, rect.Size.X, rect.Size.Y
 }
+
 func (c *cameraImpl) SetZoom(scale float64) {
 	scale *= c.g.windowScale
 	cameraMgr.SetCameraZoom(mathf.NewVec2(scale, scale))
