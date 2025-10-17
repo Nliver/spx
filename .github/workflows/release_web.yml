@@ -26,11 +26,6 @@ jobs:
       - name: Setup go/xgo & engine
         uses: ./.github/actions/deps
 
-      - name: Replace version
-        uses: ./.github/actions/replace-version
-        with:
-          version: ${{ inputs.version }}
-
       - name: Build release pack
         run: |
           make export-web
