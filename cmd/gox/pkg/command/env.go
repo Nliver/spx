@@ -177,7 +177,7 @@ func (pself *CmdTool) SetupEnv(version string, fs embed.FS, fsRelDir string, pro
 		pself.CmdPath = "" // Set empty path since we don't need engine
 	} else {
 		// Update the CmdTool struct fields
-		pself.BinPostfix, pself.CmdPath, err = impl.CheckAndGetAppPath(pself.GoBinPath, ENV_NAME, pself.Version)
+		pself.BinPostfix, pself.CmdPath, err = impl.CheckAndGetAppPath(pself.GoBinPath, ENV_NAME, pself.Version, pself.CustomGoEnv)
 		if err != nil {
 			return fmt.Errorf(ENV_NAME+"requires engine to be installed as a binary at %s: %w", pself.GoBinPath, err)
 		}
@@ -358,6 +358,7 @@ func (cmd *CmdTool) setupPortableGoEnv() error {
 	}
 
 	cmd.GoEnvDir = goEnvDir
+	cmd.CustomGoEnv = true
 
 	// Check if goenv directory exists
 	if _, err := os.Stat(goEnvDir); os.IsNotExist(err) {

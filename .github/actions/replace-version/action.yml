@@ -10,7 +10,7 @@ runs:
     - name: Replace version in go.mod.template
       shell: bash
       run: |
-        VERSION="${{ inputs.version }}"
+        VERSION="v${{ inputs.version }}"
         pwd && ls -la
 
         # Update version in go.mod.template

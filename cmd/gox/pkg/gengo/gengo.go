@@ -50,7 +50,7 @@ func GenGoFromFS(fsys parser.FileSystem, outputPath string) error {
 		return fmt.Errorf("failed to write generated Go code to %s: %w", outputPath, err)
 	}
 
-	println("==> xgobuild generated Go code: ", outputPath, "len = ", len(source))
+	println("xgobuild generated Go code: ", outputPath, "len = ", len(source))
 	return nil
 }
 

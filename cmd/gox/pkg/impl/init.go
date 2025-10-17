@@ -37,7 +37,7 @@ func downloadPack(dstDir, tagName, postfix string) error {
 	return err
 }
 
-func CheckAndGetAppPath(gobinDir, tag, version string) (string, string, error) {
+func CheckAndGetAppPath(gobinDir, tag, version string, customGoEnv bool) (string, string, error) {
 	binPostfix := ""
 	if runtime.GOOS == "windows" {
 		binPostfix = ".exe"
@@ -60,6 +60,9 @@ func CheckAndGetAppPath(gobinDir, tag, version string) (string, string, error) {
 	cmdPath := path.Join(dstDir, dstFileName)
 	info, err := os.Stat(cmdPath)
 	if os.IsNotExist(err) {
+		if customGoEnv {
+			return binPostfix, cmdPath, nil
+		}
 		println("Engine is not exist , please download or build engine from source ...", cmdPath)
 		os.Exit(1)
 	} else if err != nil {
