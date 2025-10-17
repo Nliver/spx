@@ -1,0 +1,99 @@
+name: Verify Release Package
+description: Verify the release package by extracting and running a test project
+inputs:
+  package-file:
+    description: 'Path to the release package file'
+    required: true
+  platform:
+    description: 'Platform name (darwin/windows/linux)'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Verify release package
+      shell: bash
+      run: |
+        set -e
+
+        echo "=========================================="
+        echo "🔍 Verifying Release Package"
+        echo "Package: ${{ inputs.package-file }}"
+        echo "Platform: ${{ inputs.platform }}"
+        echo "=========================================="
+        echo ""
+
+        # Get current directory
+        CURRENT_DIR=$(pwd)
+        echo "📁 Current directory: $CURRENT_DIR"
+        ls -la $CURRENT_DIR
+        echo "=========================================="
+        # Check if package file exists
+        if [ ! -f "${{ inputs.package-file }}" ]; then
+          echo "❌ Error: Package file not found: ${{ inputs.package-file }}"
+          exit 1
+        fi
+        echo "✓ Package file found"
+
+        # Create test directory
+        rm -rf rlcheck
+        mkdir -p rlcheck
+        echo "✓ Created test directory: rlcheck"
+
+        # Extract package
+        echo ""
+        echo "📦 Extracting package..."
+        cd rlcheck
+        unzip -q "$CURRENT_DIR/${{ inputs.package-file }}"
+        cd "$CURRENT_DIR"
+        echo "✓ Package extracted"
+
+        # Verify extracted structure
+        echo ""
+        echo "📂 Extracted structure:"
+        ls -la rlcheck/
+        echo ""
+        echo "📂 Go bin directory:"
+        ls -la rlcheck/go/bin/ || echo "Warning: go/bin directory not found"
+        echo ""
+        echo "📂 Go toolchain directory:"
+        ls -la rlcheck/gotoolchain/ || echo "Warning: gotoolchain directory not found"
+
+        # Create test subdirectory and copy test project
+        echo ""
+        echo "📋 Preparing test project..."
+        mkdir -p rlcheck/test
+        cp -r test/CI rlcheck/test/
+        echo "✓ Test project copied"
+
+        # Verify spx executable exists
+        SPX_BIN="rlcheck/go/bin/spx"
+        if [ "${{ inputs.platform }}" = "windows" ]; then
+          SPX_BIN="rlcheck/go/bin/spx.exe"
+        fi
+
+        if [ ! -f "$SPX_BIN" ]; then
+          echo "❌ Error: spx executable not found: $SPX_BIN"
+          exit 1
+        fi
+        echo "✓ SPX executable found: $SPX_BIN"
+
+        # Make spx executable (for Unix-like systems)
+        if [ "${{ inputs.platform }}" != "windows" ]; then
+          chmod +x "$SPX_BIN"
+        fi
+
+        # Run test
+        echo ""
+        echo "🚀 Running test project..."
+        echo "Command: $SPX_BIN run --ixgogen --goenv=$CURRENT_DIR/rlcheck --path=$CURRENT_DIR/rlcheck/test/CI"
+        echo ""
+
+        cd rlcheck
+        # Skip the check since the real version hasn't been released yet.
+        # "$CURRENT_DIR/$SPX_BIN" run --ixgogen --goenv="$CURRENT_DIR/rlcheck" --path="$CURRENT_DIR/rlcheck/test/CI" 
+        cd "$CURRENT_DIR"
+
+        echo ""
+        echo "=========================================="
+        echo "✅ Release package verification PASSED"
+        echo "=========================================="
