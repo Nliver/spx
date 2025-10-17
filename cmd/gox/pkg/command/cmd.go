@@ -57,9 +57,10 @@ type CmdTool struct {
 	UseXgobuildForCodegen bool
 
 	// Portable Go environment
-	GoEnvDir string // Portable Go environment directory
-	GoRoot   string // Calculated GOROOT path
-	GoPath   string // Calculated GOPATH path
+	GoEnvDir    string // Portable Go environment directory
+	GoRoot      string // Calculated GOROOT path
+	GoPath      string // Calculated GOPATH path
+	CustomGoEnv bool   // Custom Go environment
 }
 
 // RunCmd executes the specified command with the given parameters
