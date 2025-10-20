@@ -84,6 +84,9 @@ void cgo_callfn_GDExtensionSpxCameraSetCameraZoom(const GDExtensionSpxCameraSetC
 void cgo_callfn_GDExtensionSpxCameraGetViewportRect(const GDExtensionSpxCameraGetViewportRect fn, GdRect2* ret_val) {
 	fn(ret_val);
 }
+void cgo_callfn_GDExtensionSpxCameraGetGlobalCameraRect(const GDExtensionSpxCameraGetGlobalCameraRect fn, GdRect2* ret_val) {
+	fn(ret_val);
+}
 void cgo_callfn_GDExtensionSpxCameraSetCameraLimit(const GDExtensionSpxCameraSetCameraLimit fn, GdInt side, GdInt limit) {
 	fn(side, limit);
 }

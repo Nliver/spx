@@ -248,6 +248,10 @@ func (pself *cameraMgr) GetViewportRect() Rect2 {
 	_retValue := API.SpxCameraGetViewportRect.Invoke()
 	return JsToGdRect2(_retValue)
 }
+func (pself *cameraMgr) GetGlobalCameraRect() Rect2 {
+	_retValue := API.SpxCameraGetGlobalCameraRect.Invoke()
+	return JsToGdRect2(_retValue)
+}
 func (pself *cameraMgr) SetCameraLimit(side int64, limit int64) {
 	arg0 := JsFromGdInt(side)
 	arg1 := JsFromGdInt(limit)

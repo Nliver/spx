@@ -59,6 +59,7 @@ type ICameraMgr interface {
 	GetCameraZoom() Vec2
 	SetCameraZoom(size Vec2)
 	GetViewportRect() Rect2
+	GetGlobalCameraRect() Rect2
 	SetCameraLimit(side int64, limit int64)
 	SetCameraSmoothing(enabled bool)
 }

@@ -108,6 +108,7 @@ type GDExtensionSpxCameraSetCameraPosition C.GDExtensionSpxCameraSetCameraPositi
 type GDExtensionSpxCameraGetCameraZoom C.GDExtensionSpxCameraGetCameraZoom
 type GDExtensionSpxCameraSetCameraZoom C.GDExtensionSpxCameraSetCameraZoom
 type GDExtensionSpxCameraGetViewportRect C.GDExtensionSpxCameraGetViewportRect
+type GDExtensionSpxCameraGetGlobalCameraRect C.GDExtensionSpxCameraGetGlobalCameraRect
 type GDExtensionSpxCameraSetCameraLimit C.GDExtensionSpxCameraSetCameraLimit
 type GDExtensionSpxCameraSetCameraSmoothing C.GDExtensionSpxCameraSetCameraSmoothing
 type GDExtensionSpxDebugDebugDrawCircle C.GDExtensionSpxDebugDebugDrawCircle
@@ -600,6 +601,12 @@ func CallCameraGetViewportRect() GdRect2 {
 	arg0 := (C.GDExtensionSpxCameraGetViewportRect)(api.SpxCameraGetViewportRect)
 	var ret_val C.GdRect2
 	C.cgo_callfn_GDExtensionSpxCameraGetViewportRect(arg0, &ret_val)
+	return (GdRect2)(ret_val)
+}
+func CallCameraGetGlobalCameraRect() GdRect2 {
+	arg0 := (C.GDExtensionSpxCameraGetGlobalCameraRect)(api.SpxCameraGetGlobalCameraRect)
+	var ret_val C.GdRect2
+	C.cgo_callfn_GDExtensionSpxCameraGetGlobalCameraRect(arg0, &ret_val)
 	return (GdRect2)(ret_val)
 }
 func CallCameraSetCameraLimit(
