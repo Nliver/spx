@@ -17,7 +17,7 @@ runs:
 
     - name: Run test demo
       shell: bash
-      run: spx run -path="test/CI" -headless=true 2>&1 | tee cilog.txt || true 
+      run: spx run -path="test/CI" -headless=true 2>&1 | tee cilog.txt 
 
     - name: Check test result
       shell: bash
