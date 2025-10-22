@@ -35,9 +35,9 @@ func setupAITransport() {
 	// Set as default transport
 	ai.SetDefaultTransport(transport)
 
-	descriptive := os.Getenv("SPX_AI_DESCRIPTION")
+	description := os.Getenv("SPX_AI_DESCRIPTION")
 	ai.SetDefaultKnowledgeBase(map[string]any{
-		"AI-generated descriptive summary of the game world": descriptive,
+		"AI-generated descriptive summary of the game world": description,
 	})
 }
 

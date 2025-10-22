@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"regexp"
+
 	"github.com/goplus/ixgo"
 	"github.com/goplus/ixgo/xgobuild"
 	"github.com/goplus/mod/modfile"
@@ -45,8 +47,12 @@ func GenGoFromFS(fsys parser.FileSystem, outputPath string) error {
 		return fmt.Errorf("failed to build XGo source: %w", err)
 	}
 
+	// Replace @patch suffix in import aliases only, these patch suffix only works on ixgo
+	importPatchRegex := regexp.MustCompile(`(\w+)@patch`)
+	sourceStr := importPatchRegex.ReplaceAllString(string(source), "$1")
+
 	// Write generated source code to output file
-	if err := os.WriteFile(outputPath, source, 0644); err != nil {
+	if err := os.WriteFile(outputPath, []byte(sourceStr), 0644); err != nil {
 		return fmt.Errorf("failed to write generated Go code to %s: %w", outputPath, err)
 	}
 
