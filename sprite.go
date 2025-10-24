@@ -751,6 +751,7 @@ func (p *SpriteImpl) setCostume(costume any) {
 	}
 	p.goSetCostume(costume)
 	p.defaultCostumeIndex = p.costumeIndex_
+	p.updateTransform()
 }
 
 func (p *SpriteImpl) SetCostume__0(costume SpriteCostumeName) {
