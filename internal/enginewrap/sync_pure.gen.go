@@ -211,7 +211,7 @@ func (pself *extMgrImpl) NextFrame()                    {}
 func (pself *extMgrImpl) SetLayerSorterMode(mode int64) {}
 
 // IInputMgr
-func (pself *inputMgrImpl) GetMousePos() Vec2 {
+func (pself *inputMgrImpl) GetGlobalMousePos() Vec2 {
 	var _ret1 Vec2
 	return _ret1
 }
@@ -319,13 +319,15 @@ func (pself *physicMgrImpl) RaycastWithDetails(from Vec2, to Vec2, ignore_sprite
 }
 
 // IPlatformMgr
-func (pself *platformMgrImpl) SetStretchMode(enable bool) {}
-func (pself *platformMgrImpl) SetWindowPosition(pos Vec2) {}
+func (pself *platformMgrImpl) SetStretchMode(enable bool)                       {}
+func (pself *platformMgrImpl) SetStretchAspect(is_keep bool)                    {}
+func (pself *platformMgrImpl) SetStretchContentScale(width int64, height int64) {}
+func (pself *platformMgrImpl) SetWindowPosition(pos Vec2)                       {}
 func (pself *platformMgrImpl) GetWindowPosition() Vec2 {
 	var _ret1 Vec2
 	return _ret1
 }
-func (pself *platformMgrImpl) SetWindowSize(width int64, height int64) {}
+func (pself *platformMgrImpl) SetWindowSize(width int64, height int64, with_content_scale bool) {}
 func (pself *platformMgrImpl) GetWindowSize() Vec2 {
 	var _ret1 Vec2
 	return _ret1

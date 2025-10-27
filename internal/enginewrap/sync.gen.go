@@ -345,10 +345,10 @@ func (pself *extMgrImpl) SetLayerSorterMode(mode int64) {
 }
 
 // IInputMgr
-func (pself *inputMgrImpl) GetMousePos() Vec2 {
+func (pself *inputMgrImpl) GetGlobalMousePos() Vec2 {
 	var _ret1 Vec2
 	callInMainThread(func() {
-		_ret1 = gdx.InputMgr.GetMousePos()
+		_ret1 = gdx.InputMgr.GetGlobalMousePos()
 	})
 	return _ret1
 }
@@ -593,6 +593,16 @@ func (pself *platformMgrImpl) SetStretchMode(enable bool) {
 		gdx.PlatformMgr.SetStretchMode(enable)
 	})
 }
+func (pself *platformMgrImpl) SetStretchAspect(is_keep bool) {
+	callInMainThread(func() {
+		gdx.PlatformMgr.SetStretchAspect(is_keep)
+	})
+}
+func (pself *platformMgrImpl) SetStretchContentScale(width int64, height int64) {
+	callInMainThread(func() {
+		gdx.PlatformMgr.SetStretchContentScale(width, height)
+	})
+}
 func (pself *platformMgrImpl) SetWindowPosition(pos Vec2) {
 	callInMainThread(func() {
 		gdx.PlatformMgr.SetWindowPosition(pos)
@@ -605,9 +615,9 @@ func (pself *platformMgrImpl) GetWindowPosition() Vec2 {
 	})
 	return _ret1
 }
-func (pself *platformMgrImpl) SetWindowSize(width int64, height int64) {
+func (pself *platformMgrImpl) SetWindowSize(width int64, height int64, with_content_scale bool) {
 	callInMainThread(func() {
-		gdx.PlatformMgr.SetWindowSize(width, height)
+		gdx.PlatformMgr.SetWindowSize(width, height, with_content_scale)
 	})
 }
 func (pself *platformMgrImpl) GetWindowSize() Vec2 {

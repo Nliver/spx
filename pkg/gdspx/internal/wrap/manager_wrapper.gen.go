@@ -315,8 +315,8 @@ func (pself *extMgr) SetLayerSorterMode(mode int64) {
 	arg0 := ToGdInt(mode)
 	CallExtSetLayerSorterMode(arg0)
 }
-func (pself *inputMgr) GetMousePos() Vec2 {
-	retValue := CallInputGetMousePos()
+func (pself *inputMgr) GetGlobalMousePos() Vec2 {
+	retValue := CallInputGetGlobalMousePos()
 	return ToVec2(retValue)
 }
 func (pself *inputMgr) GetKey(key int64) bool {
@@ -534,6 +534,15 @@ func (pself *platformMgr) SetStretchMode(enable bool) {
 	arg0 := ToGdBool(enable)
 	CallPlatformSetStretchMode(arg0)
 }
+func (pself *platformMgr) SetStretchAspect(is_keep bool) {
+	arg0 := ToGdBool(is_keep)
+	CallPlatformSetStretchAspect(arg0)
+}
+func (pself *platformMgr) SetStretchContentScale(width int64, height int64) {
+	arg0 := ToGdInt(width)
+	arg1 := ToGdInt(height)
+	CallPlatformSetStretchContentScale(arg0, arg1)
+}
 func (pself *platformMgr) SetWindowPosition(pos Vec2) {
 	arg0 := ToGdVec2(pos)
 	CallPlatformSetWindowPosition(arg0)
@@ -542,10 +551,11 @@ func (pself *platformMgr) GetWindowPosition() Vec2 {
 	retValue := CallPlatformGetWindowPosition()
 	return ToVec2(retValue)
 }
-func (pself *platformMgr) SetWindowSize(width int64, height int64) {
+func (pself *platformMgr) SetWindowSize(width int64, height int64, with_content_scale bool) {
 	arg0 := ToGdInt(width)
 	arg1 := ToGdInt(height)
-	CallPlatformSetWindowSize(arg0, arg1)
+	arg2 := ToGdBool(with_content_scale)
+	CallPlatformSetWindowSize(arg0, arg1, arg2)
 }
 func (pself *platformMgr) GetWindowSize() Vec2 {
 	retValue := CallPlatformGetWindowSize()

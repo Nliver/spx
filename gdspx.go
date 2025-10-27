@@ -121,10 +121,7 @@ func (p *Game) syncUpdateCamera() {
 }
 
 func (p *Game) syncUpdateInput() {
-	pos := engine.SyncGetMousePos()
-	wpos := engine.SyncScreenToWorld(pos)
-	p.mousePos = wpos
-	p.mousePos = p.mousePos.Divf(p.windowScale)
+	p.mousePos = engine.SyncGetMousePos()
 }
 
 func (sprite *SpriteImpl) syncCheckInitProxy() {

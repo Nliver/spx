@@ -578,7 +578,7 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 		p.windowScale = scale
 	}
 
-	platformMgr.SetWindowSize(int64(float64(p.windowWidth_)*p.windowScale), int64(float64(p.windowHeight_)*p.windowScale))
+	platformMgr.SetWindowSize(int64(float64(p.windowWidth_)*p.windowScale), int64(float64(p.windowHeight_)*p.windowScale), true)
 	p.camera = &cameraImpl{}
 	p.Camera = p.camera
 	p.camera.init(p)
@@ -1023,7 +1023,7 @@ func (p *Game) inputEventLoop(me coroutine.Thread) int {
 		// Check mouse movement
 		// Note: We need to get the actual current mouse position from the engine
 		// For now, we'll use the stored mousePos which should be updated elsewhere
-		curMousePos := inputMgr.GetMousePos()
+		curMousePos := inputMgr.GetGlobalMousePos()
 		mathfMousePos := mathf.Vec2{X: float64(curMousePos.X), Y: float64(curMousePos.Y)}
 
 		// Check if mouse moved significantly
@@ -2005,6 +2005,10 @@ func (p *Game) FindPath__2(x_from, y_from, x_to, y_to float64, with_debug, with_
 	arr := navigationMgr.FindPath(mathf.NewVec2(x_from, y_from), mathf.NewVec2(x_to, y_to), with_jump)
 	result := arr.([]float32)
 	return f32Tof64(result)
+}
+
+func (p *Game) SetWindowSize(width int64, height int64) {
+	platformMgr.SetWindowSize(width, height, false)
 }
 
 // -----------------------------------------------------------------------------

@@ -28,7 +28,7 @@ func SyncGetTimeScale() float64 {
 	return gdx.PlatformMgr.GetTimeScale()
 }
 func SyncGetMousePos() Vec2 {
-	return gdx.InputMgr.GetMousePos()
+	return gdx.InputMgr.GetGlobalMousePos()
 }
 
 func SyncSetCameraPosition(pos Vec2) {
