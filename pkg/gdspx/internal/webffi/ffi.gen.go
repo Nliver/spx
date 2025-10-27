@@ -59,7 +59,7 @@ type GDExtensionInterface struct {
 	SpxExtIsPaused                           js.Value
 	SpxExtNextFrame                          js.Value
 	SpxExtSetLayerSorterMode                 js.Value
-	SpxInputGetMousePos                      js.Value
+	SpxInputGetGlobalMousePos                js.Value
 	SpxInputGetKey                           js.Value
 	SpxInputGetMouseState                    js.Value
 	SpxInputGetKeyState                      js.Value
@@ -99,6 +99,8 @@ type GDExtensionInterface struct {
 	SpxPhysicCheckCollisionCircle            js.Value
 	SpxPhysicRaycastWithDetails              js.Value
 	SpxPlatformSetStretchMode                js.Value
+	SpxPlatformSetStretchAspect              js.Value
+	SpxPlatformSetStretchContentScale        js.Value
 	SpxPlatformSetWindowPosition             js.Value
 	SpxPlatformGetWindowPosition             js.Value
 	SpxPlatformSetWindowSize                 js.Value
@@ -351,7 +353,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtIsPaused = dlsymGD("gdspx_ext_is_paused")
 	x.SpxExtNextFrame = dlsymGD("gdspx_ext_next_frame")
 	x.SpxExtSetLayerSorterMode = dlsymGD("gdspx_ext_set_layer_sorter_mode")
-	x.SpxInputGetMousePos = dlsymGD("gdspx_input_get_mouse_pos")
+	x.SpxInputGetGlobalMousePos = dlsymGD("gdspx_input_get_global_mouse_pos")
 	x.SpxInputGetKey = dlsymGD("gdspx_input_get_key")
 	x.SpxInputGetMouseState = dlsymGD("gdspx_input_get_mouse_state")
 	x.SpxInputGetKeyState = dlsymGD("gdspx_input_get_key_state")
@@ -391,6 +393,8 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxPhysicCheckCollisionCircle = dlsymGD("gdspx_physic_check_collision_circle")
 	x.SpxPhysicRaycastWithDetails = dlsymGD("gdspx_physic_raycast_with_details")
 	x.SpxPlatformSetStretchMode = dlsymGD("gdspx_platform_set_stretch_mode")
+	x.SpxPlatformSetStretchAspect = dlsymGD("gdspx_platform_set_stretch_aspect")
+	x.SpxPlatformSetStretchContentScale = dlsymGD("gdspx_platform_set_stretch_content_scale")
 	x.SpxPlatformSetWindowPosition = dlsymGD("gdspx_platform_set_window_position")
 	x.SpxPlatformGetWindowPosition = dlsymGD("gdspx_platform_get_window_position")
 	x.SpxPlatformSetWindowSize = dlsymGD("gdspx_platform_set_window_size")

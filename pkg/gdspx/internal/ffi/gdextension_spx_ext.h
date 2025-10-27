@@ -256,7 +256,7 @@ typedef void (*GDExtensionSpxExtIsPaused)(GdBool* ret_value);
 typedef void (*GDExtensionSpxExtNextFrame)();
 typedef void (*GDExtensionSpxExtSetLayerSorterMode)(GdInt mode);
 // SpxInput
-typedef void (*GDExtensionSpxInputGetMousePos)(GdVec2* ret_value);
+typedef void (*GDExtensionSpxInputGetGlobalMousePos)(GdVec2* ret_value);
 typedef void (*GDExtensionSpxInputGetKey)(GdInt key, GdBool* ret_value);
 typedef void (*GDExtensionSpxInputGetMouseState)(GdInt mouse_id, GdBool* ret_value);
 typedef void (*GDExtensionSpxInputGetKeyState)(GdInt key, GdInt* ret_value);
@@ -300,9 +300,11 @@ typedef void (*GDExtensionSpxPhysicCheckCollisionCircle)(GdVec2 pos, GdFloat rad
 typedef void (*GDExtensionSpxPhysicRaycastWithDetails)(GdVec2 from, GdVec2 to,GdArray ignore_sprites,GdInt collision_mask,GdBool collide_with_areas,GdBool collide_with_bodies, GdArray* ret_value);
 // SpxPlatform
 typedef void (*GDExtensionSpxPlatformSetStretchMode)(GdBool enable);
+typedef void (*GDExtensionSpxPlatformSetStretchAspect)(GdBool is_keep);
+typedef void (*GDExtensionSpxPlatformSetStretchContentScale)(GdInt width, GdInt height);
 typedef void (*GDExtensionSpxPlatformSetWindowPosition)(GdVec2 pos);
 typedef void (*GDExtensionSpxPlatformGetWindowPosition)(GdVec2* ret_value);
-typedef void (*GDExtensionSpxPlatformSetWindowSize)(GdInt width, GdInt height);
+typedef void (*GDExtensionSpxPlatformSetWindowSize)(GdInt width, GdInt height, GdBool with_content_scale);
 typedef void (*GDExtensionSpxPlatformGetWindowSize)(GdVec2* ret_value);
 typedef void (*GDExtensionSpxPlatformSetWindowTitle)(GdString title);
 typedef void (*GDExtensionSpxPlatformGetWindowTitle)(GdString* ret_value);

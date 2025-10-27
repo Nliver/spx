@@ -81,7 +81,7 @@ type IExtMgr interface {
 }
 
 type IInputMgr interface {
-	GetMousePos() Vec2
+	GetGlobalMousePos() Vec2
 	GetKey(key int64) bool
 	GetMouseState(mouse_id int64) bool
 	GetKeyState(key int64) int64
@@ -133,9 +133,11 @@ type IPhysicMgr interface {
 
 type IPlatformMgr interface {
 	SetStretchMode(enable bool)
+	SetStretchAspect(is_keep bool)
+	SetStretchContentScale(width int64, height int64)
 	SetWindowPosition(pos Vec2)
 	GetWindowPosition() Vec2
-	SetWindowSize(width int64, height int64)
+	SetWindowSize(width int64, height int64, with_content_scale bool)
 	GetWindowSize() Vec2
 	SetWindowTitle(title string)
 	GetWindowTitle() string

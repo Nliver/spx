@@ -304,8 +304,8 @@ func (pself *extMgr) SetLayerSorterMode(mode int64) {
 	arg0 := JsFromGdInt(mode)
 	API.SpxExtSetLayerSorterMode.Invoke(arg0)
 }
-func (pself *inputMgr) GetMousePos() Vec2 {
-	_retValue := API.SpxInputGetMousePos.Invoke()
+func (pself *inputMgr) GetGlobalMousePos() Vec2 {
+	_retValue := API.SpxInputGetGlobalMousePos.Invoke()
 	return JsToGdVec2(_retValue)
 }
 func (pself *inputMgr) GetKey(key int64) bool {
@@ -511,6 +511,15 @@ func (pself *platformMgr) SetStretchMode(enable bool) {
 	arg0 := JsFromGdBool(enable)
 	API.SpxPlatformSetStretchMode.Invoke(arg0)
 }
+func (pself *platformMgr) SetStretchAspect(is_keep bool) {
+	arg0 := JsFromGdBool(is_keep)
+	API.SpxPlatformSetStretchAspect.Invoke(arg0)
+}
+func (pself *platformMgr) SetStretchContentScale(width int64, height int64) {
+	arg0 := JsFromGdInt(width)
+	arg1 := JsFromGdInt(height)
+	API.SpxPlatformSetStretchContentScale.Invoke(arg0, arg1)
+}
 func (pself *platformMgr) SetWindowPosition(pos Vec2) {
 	arg0 := JsFromGdVec2(pos)
 	API.SpxPlatformSetWindowPosition.Invoke(arg0)
@@ -519,10 +528,11 @@ func (pself *platformMgr) GetWindowPosition() Vec2 {
 	_retValue := API.SpxPlatformGetWindowPosition.Invoke()
 	return JsToGdVec2(_retValue)
 }
-func (pself *platformMgr) SetWindowSize(width int64, height int64) {
+func (pself *platformMgr) SetWindowSize(width int64, height int64, with_content_scale bool) {
 	arg0 := JsFromGdInt(width)
 	arg1 := JsFromGdInt(height)
-	API.SpxPlatformSetWindowSize.Invoke(arg0, arg1)
+	arg2 := JsFromGdBool(with_content_scale)
+	API.SpxPlatformSetWindowSize.Invoke(arg0, arg1, arg2)
 }
 func (pself *platformMgr) GetWindowSize() Vec2 {
 	_retValue := API.SpxPlatformGetWindowSize.Invoke()

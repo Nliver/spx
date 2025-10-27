@@ -123,7 +123,7 @@ void cgo_callfn_GDExtensionSpxExtNextFrame(const GDExtensionSpxExtNextFrame fn) 
 void cgo_callfn_GDExtensionSpxExtSetLayerSorterMode(const GDExtensionSpxExtSetLayerSorterMode fn, GdInt mode) {
 	fn(mode);
 }
-void cgo_callfn_GDExtensionSpxInputGetMousePos(const GDExtensionSpxInputGetMousePos fn, GdVec2* ret_val) {
+void cgo_callfn_GDExtensionSpxInputGetGlobalMousePos(const GDExtensionSpxInputGetGlobalMousePos fn, GdVec2* ret_val) {
 	fn(ret_val);
 }
 void cgo_callfn_GDExtensionSpxInputGetKey(const GDExtensionSpxInputGetKey fn, GdInt key, GdBool* ret_val) {
@@ -243,14 +243,20 @@ void cgo_callfn_GDExtensionSpxPhysicRaycastWithDetails(const GDExtensionSpxPhysi
 void cgo_callfn_GDExtensionSpxPlatformSetStretchMode(const GDExtensionSpxPlatformSetStretchMode fn, GdBool enable) {
 	fn(enable);
 }
+void cgo_callfn_GDExtensionSpxPlatformSetStretchAspect(const GDExtensionSpxPlatformSetStretchAspect fn, GdBool is_keep) {
+	fn(is_keep);
+}
+void cgo_callfn_GDExtensionSpxPlatformSetStretchContentScale(const GDExtensionSpxPlatformSetStretchContentScale fn, GdInt width, GdInt height) {
+	fn(width, height);
+}
 void cgo_callfn_GDExtensionSpxPlatformSetWindowPosition(const GDExtensionSpxPlatformSetWindowPosition fn, GdVec2 pos) {
 	fn(pos);
 }
 void cgo_callfn_GDExtensionSpxPlatformGetWindowPosition(const GDExtensionSpxPlatformGetWindowPosition fn, GdVec2* ret_val) {
 	fn(ret_val);
 }
-void cgo_callfn_GDExtensionSpxPlatformSetWindowSize(const GDExtensionSpxPlatformSetWindowSize fn, GdInt width, GdInt height) {
-	fn(width, height);
+void cgo_callfn_GDExtensionSpxPlatformSetWindowSize(const GDExtensionSpxPlatformSetWindowSize fn, GdInt width, GdInt height, GdBool with_content_scale) {
+	fn(width, height, with_content_scale);
 }
 void cgo_callfn_GDExtensionSpxPlatformGetWindowSize(const GDExtensionSpxPlatformGetWindowSize fn, GdVec2* ret_val) {
 	fn(ret_val);

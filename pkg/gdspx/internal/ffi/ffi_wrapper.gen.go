@@ -121,7 +121,7 @@ type GDExtensionSpxExtResume C.GDExtensionSpxExtResume
 type GDExtensionSpxExtIsPaused C.GDExtensionSpxExtIsPaused
 type GDExtensionSpxExtNextFrame C.GDExtensionSpxExtNextFrame
 type GDExtensionSpxExtSetLayerSorterMode C.GDExtensionSpxExtSetLayerSorterMode
-type GDExtensionSpxInputGetMousePos C.GDExtensionSpxInputGetMousePos
+type GDExtensionSpxInputGetGlobalMousePos C.GDExtensionSpxInputGetGlobalMousePos
 type GDExtensionSpxInputGetKey C.GDExtensionSpxInputGetKey
 type GDExtensionSpxInputGetMouseState C.GDExtensionSpxInputGetMouseState
 type GDExtensionSpxInputGetKeyState C.GDExtensionSpxInputGetKeyState
@@ -161,6 +161,8 @@ type GDExtensionSpxPhysicCheckCollisionRect C.GDExtensionSpxPhysicCheckCollision
 type GDExtensionSpxPhysicCheckCollisionCircle C.GDExtensionSpxPhysicCheckCollisionCircle
 type GDExtensionSpxPhysicRaycastWithDetails C.GDExtensionSpxPhysicRaycastWithDetails
 type GDExtensionSpxPlatformSetStretchMode C.GDExtensionSpxPlatformSetStretchMode
+type GDExtensionSpxPlatformSetStretchAspect C.GDExtensionSpxPlatformSetStretchAspect
+type GDExtensionSpxPlatformSetStretchContentScale C.GDExtensionSpxPlatformSetStretchContentScale
 type GDExtensionSpxPlatformSetWindowPosition C.GDExtensionSpxPlatformSetWindowPosition
 type GDExtensionSpxPlatformGetWindowPosition C.GDExtensionSpxPlatformGetWindowPosition
 type GDExtensionSpxPlatformSetWindowSize C.GDExtensionSpxPlatformSetWindowSize
@@ -716,10 +718,10 @@ func CallExtSetLayerSorterMode(
 	C.cgo_callfn_GDExtensionSpxExtSetLayerSorterMode(arg0, arg1GdInt)
 
 }
-func CallInputGetMousePos() GdVec2 {
-	arg0 := (C.GDExtensionSpxInputGetMousePos)(api.SpxInputGetMousePos)
+func CallInputGetGlobalMousePos() GdVec2 {
+	arg0 := (C.GDExtensionSpxInputGetGlobalMousePos)(api.SpxInputGetGlobalMousePos)
 	var ret_val C.GdVec2
-	C.cgo_callfn_GDExtensionSpxInputGetMousePos(arg0, &ret_val)
+	C.cgo_callfn_GDExtensionSpxInputGetGlobalMousePos(arg0, &ret_val)
 	return (GdVec2)(ret_val)
 }
 func CallInputGetKey(
@@ -1138,6 +1140,26 @@ func CallPlatformSetStretchMode(
 	C.cgo_callfn_GDExtensionSpxPlatformSetStretchMode(arg0, arg1GdBool)
 
 }
+func CallPlatformSetStretchAspect(
+	is_keep GdBool,
+) {
+	arg0 := (C.GDExtensionSpxPlatformSetStretchAspect)(api.SpxPlatformSetStretchAspect)
+	arg1GdBool := (C.GdBool)(is_keep)
+
+	C.cgo_callfn_GDExtensionSpxPlatformSetStretchAspect(arg0, arg1GdBool)
+
+}
+func CallPlatformSetStretchContentScale(
+	width GdInt,
+	height GdInt,
+) {
+	arg0 := (C.GDExtensionSpxPlatformSetStretchContentScale)(api.SpxPlatformSetStretchContentScale)
+	arg1GdInt := (C.GdInt)(width)
+	arg2GdInt := (C.GdInt)(height)
+
+	C.cgo_callfn_GDExtensionSpxPlatformSetStretchContentScale(arg0, arg1GdInt, arg2GdInt)
+
+}
 func CallPlatformSetWindowPosition(
 	pos GdVec2,
 ) {
@@ -1156,12 +1178,14 @@ func CallPlatformGetWindowPosition() GdVec2 {
 func CallPlatformSetWindowSize(
 	width GdInt,
 	height GdInt,
+	with_content_scale GdBool,
 ) {
 	arg0 := (C.GDExtensionSpxPlatformSetWindowSize)(api.SpxPlatformSetWindowSize)
 	arg1GdInt := (C.GdInt)(width)
 	arg2GdInt := (C.GdInt)(height)
+	arg3GdBool := (C.GdBool)(with_content_scale)
 
-	C.cgo_callfn_GDExtensionSpxPlatformSetWindowSize(arg0, arg1GdInt, arg2GdInt)
+	C.cgo_callfn_GDExtensionSpxPlatformSetWindowSize(arg0, arg1GdInt, arg2GdInt, arg3GdBool)
 
 }
 func CallPlatformGetWindowSize() GdVec2 {

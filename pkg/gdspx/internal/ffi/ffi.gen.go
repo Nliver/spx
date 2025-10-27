@@ -55,7 +55,7 @@ type GDExtensionInterface struct {
 	SpxExtIsPaused                           GDExtensionSpxExtIsPaused
 	SpxExtNextFrame                          GDExtensionSpxExtNextFrame
 	SpxExtSetLayerSorterMode                 GDExtensionSpxExtSetLayerSorterMode
-	SpxInputGetMousePos                      GDExtensionSpxInputGetMousePos
+	SpxInputGetGlobalMousePos                GDExtensionSpxInputGetGlobalMousePos
 	SpxInputGetKey                           GDExtensionSpxInputGetKey
 	SpxInputGetMouseState                    GDExtensionSpxInputGetMouseState
 	SpxInputGetKeyState                      GDExtensionSpxInputGetKeyState
@@ -95,6 +95,8 @@ type GDExtensionInterface struct {
 	SpxPhysicCheckCollisionCircle            GDExtensionSpxPhysicCheckCollisionCircle
 	SpxPhysicRaycastWithDetails              GDExtensionSpxPhysicRaycastWithDetails
 	SpxPlatformSetStretchMode                GDExtensionSpxPlatformSetStretchMode
+	SpxPlatformSetStretchAspect              GDExtensionSpxPlatformSetStretchAspect
+	SpxPlatformSetStretchContentScale        GDExtensionSpxPlatformSetStretchContentScale
 	SpxPlatformSetWindowPosition             GDExtensionSpxPlatformSetWindowPosition
 	SpxPlatformGetWindowPosition             GDExtensionSpxPlatformGetWindowPosition
 	SpxPlatformSetWindowSize                 GDExtensionSpxPlatformSetWindowSize
@@ -347,7 +349,7 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxExtIsPaused = (GDExtensionSpxExtIsPaused)(dlsymGD("spx_ext_is_paused"))
 	x.SpxExtNextFrame = (GDExtensionSpxExtNextFrame)(dlsymGD("spx_ext_next_frame"))
 	x.SpxExtSetLayerSorterMode = (GDExtensionSpxExtSetLayerSorterMode)(dlsymGD("spx_ext_set_layer_sorter_mode"))
-	x.SpxInputGetMousePos = (GDExtensionSpxInputGetMousePos)(dlsymGD("spx_input_get_mouse_pos"))
+	x.SpxInputGetGlobalMousePos = (GDExtensionSpxInputGetGlobalMousePos)(dlsymGD("spx_input_get_global_mouse_pos"))
 	x.SpxInputGetKey = (GDExtensionSpxInputGetKey)(dlsymGD("spx_input_get_key"))
 	x.SpxInputGetMouseState = (GDExtensionSpxInputGetMouseState)(dlsymGD("spx_input_get_mouse_state"))
 	x.SpxInputGetKeyState = (GDExtensionSpxInputGetKeyState)(dlsymGD("spx_input_get_key_state"))
@@ -387,6 +389,8 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxPhysicCheckCollisionCircle = (GDExtensionSpxPhysicCheckCollisionCircle)(dlsymGD("spx_physic_check_collision_circle"))
 	x.SpxPhysicRaycastWithDetails = (GDExtensionSpxPhysicRaycastWithDetails)(dlsymGD("spx_physic_raycast_with_details"))
 	x.SpxPlatformSetStretchMode = (GDExtensionSpxPlatformSetStretchMode)(dlsymGD("spx_platform_set_stretch_mode"))
+	x.SpxPlatformSetStretchAspect = (GDExtensionSpxPlatformSetStretchAspect)(dlsymGD("spx_platform_set_stretch_aspect"))
+	x.SpxPlatformSetStretchContentScale = (GDExtensionSpxPlatformSetStretchContentScale)(dlsymGD("spx_platform_set_stretch_content_scale"))
 	x.SpxPlatformSetWindowPosition = (GDExtensionSpxPlatformSetWindowPosition)(dlsymGD("spx_platform_set_window_position"))
 	x.SpxPlatformGetWindowPosition = (GDExtensionSpxPlatformGetWindowPosition)(dlsymGD("spx_platform_get_window_position"))
 	x.SpxPlatformSetWindowSize = (GDExtensionSpxPlatformSetWindowSize)(dlsymGD("spx_platform_set_window_size"))
