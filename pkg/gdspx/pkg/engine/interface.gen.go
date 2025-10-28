@@ -193,7 +193,7 @@ type ISpriteMgr interface {
 	CheckCollision(obj Object, target Object, is_src_trigger bool, is_dst_trigger bool) bool
 	CheckCollisionWithPoint(obj Object, point Vec2, is_trigger bool) bool
 	CreateBackdrop(path string) Object
-	CreateSprite(path string) Object
+	CreateSprite(path string, pos Vec2) Object
 	CloneSprite(obj Object) Object
 	DestroySprite(obj Object) bool
 	IsSpriteAlive(obj Object) bool

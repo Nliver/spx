@@ -57,7 +57,7 @@ func (pself *Sprite) CreateBackdrop(path string) Object {
 	return _val
 }
 
-func (pself *Sprite) CreateSprite(path string) Object {
+func (pself *Sprite) CreateSprite(path string, pos Vec2) Object {
 	var _val Object
 	return _val
 }

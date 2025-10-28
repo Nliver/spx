@@ -52,8 +52,8 @@ func (pself *Sprite) CreateBackdrop(path string) Object {
 	return SpriteMgr.CreateBackdrop(path)
 }
 
-func (pself *Sprite) CreateSprite(path string) Object {
-	return SpriteMgr.CreateSprite(path)
+func (pself *Sprite) CreateSprite(path string, pos Vec2) Object {
+	return SpriteMgr.CreateSprite(path, pos)
 }
 
 func (pself *Sprite) DestroySprite() bool {

@@ -2,6 +2,8 @@ package engine
 
 import (
 	"reflect"
+
+	"github.com/goplus/spbase/mathf"
 )
 
 var (
@@ -74,16 +76,23 @@ func BindSceneInstantiatedSprite(id Object, type_name string) {
 		println("BindSceneInstantiatedSprite: type not found", type_name)
 	}
 }
-func CreateSprite[T any]() *T {
+func CreateSprite[T any](pos mathf.Vec2) *T {
 	tType := reflect.TypeOf((*T)(nil)).Elem()
 	name := tType.Name()
-	id := SpriteMgr.CreateSprite(getPrefabPath(name))
+	id := SpriteMgr.CreateSprite(getPrefabPath(name), pos)
 	spriteValue := createSprite(tType, id)
 	return spriteValue.Addr().Interface().(*T)
 }
-func CreateEmptySprite[T any]() *T {
+func CreateEmptySprite[T any](pos mathf.Vec2) *T {
 	tType := reflect.TypeOf((*T)(nil)).Elem()
-	id := SpriteMgr.CreateSprite("")
+	id := SpriteMgr.CreateSprite("", pos)
+	spriteValue := createSprite(tType, id)
+	return spriteValue.Addr().Interface().(*T)
+}
+
+func CreateBackdrop[T any]() *T {
+	tType := reflect.TypeOf((*T)(nil)).Elem()
+	id := SpriteMgr.CreateBackdrop("")
 	spriteValue := createSprite(tType, id)
 	return spriteValue.Addr().Interface().(*T)
 }

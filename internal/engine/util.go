@@ -85,7 +85,7 @@ func NewUiNode[T any]() *T {
 func NewBackdropProxy(obj any, path string, renderScale float64) *Sprite {
 	var _ret1 *Sprite
 	WaitMainThread(func() {
-		_ret1 = gdx.CreateEmptySprite[Sprite]()
+		_ret1 = gdx.CreateBackdrop[Sprite]()
 		_ret1.Target = obj
 		_ret1.SetZIndex(-1)
 		_ret1.DisablePhysic()

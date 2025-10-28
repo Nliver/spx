@@ -14,8 +14,8 @@ func SetWindowScale(scale float64) {
 }
 
 // !!!Warning these method can only be called in main thread
-func SyncNewSprite(obj any) *Sprite {
-	syncSprite := gdx.CreateEmptySprite[Sprite]()
+func SyncNewSprite(obj any, pos Vec2) *Sprite {
+	syncSprite := gdx.CreateEmptySprite[Sprite](pos)
 	syncSprite.Target = obj
 	return syncSprite
 }

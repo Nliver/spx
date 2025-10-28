@@ -447,7 +447,7 @@ func (pself *spriteMgrImpl) CreateBackdrop(path string) gdx.Object {
 	var _ret1 gdx.Object
 	return _ret1
 }
-func (pself *spriteMgrImpl) CreateSprite(path string) gdx.Object {
+func (pself *spriteMgrImpl) CreateSprite(path string, pos Vec2) gdx.Object {
 	var _ret1 gdx.Object
 	return _ret1
 }

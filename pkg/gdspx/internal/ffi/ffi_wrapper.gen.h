@@ -396,8 +396,8 @@ void cgo_callfn_GDExtensionSpxSpriteCheckCollisionWithPoint(const GDExtensionSpx
 void cgo_callfn_GDExtensionSpxSpriteCreateBackdrop(const GDExtensionSpxSpriteCreateBackdrop fn, GdString path, GdObj* ret_val) {
 	fn(path,ret_val);
 }
-void cgo_callfn_GDExtensionSpxSpriteCreateSprite(const GDExtensionSpxSpriteCreateSprite fn, GdString path, GdObj* ret_val) {
-	fn(path,ret_val);
+void cgo_callfn_GDExtensionSpxSpriteCreateSprite(const GDExtensionSpxSpriteCreateSprite fn, GdString path, GdVec2 pos, GdObj* ret_val) {
+	fn(path, pos,ret_val);
 }
 void cgo_callfn_GDExtensionSpxSpriteCloneSprite(const GDExtensionSpxSpriteCloneSprite fn, GdObj obj, GdObj* ret_val) {
 	fn(obj,ret_val);
