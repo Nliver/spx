@@ -570,7 +570,7 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 
 	// fullscreen when on mobile platform
 	if platform.IsMobile() || proj.FullScreen || platform.IsWeb() {
-		if proj.FullScreen || platform.IsMobile() {
+		if proj.FullScreen || platform.IsMobile() || proj.StretchMode {
 			platformMgr.SetWindowFullscreen(true)
 		}
 		winSize := platformMgr.GetWindowSize()
