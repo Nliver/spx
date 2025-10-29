@@ -1656,11 +1656,13 @@ func CallSpriteCreateBackdrop(
 }
 func CallSpriteCreateSprite(
 	path GdString,
+	pos GdVec2,
 ) GdObj {
 	arg0 := (C.GDExtensionSpxSpriteCreateSprite)(api.SpxSpriteCreateSprite)
 	arg1GdString := (C.GdString)(path)
+	arg2GdVec2 := (C.GdVec2)(pos)
 	var ret_val C.GdObj
-	C.cgo_callfn_GDExtensionSpxSpriteCreateSprite(arg0, arg1GdString, &ret_val)
+	C.cgo_callfn_GDExtensionSpxSpriteCreateSprite(arg0, arg1GdString, arg2GdVec2, &ret_val)
 
 	return (GdObj)(ret_val)
 }

@@ -127,7 +127,7 @@ func (p *Game) syncUpdateInput() {
 func (sprite *SpriteImpl) syncCheckInitProxy() {
 	// bind syncSprite
 	if sprite.syncSprite == nil && !sprite.HasDestroyed {
-		sprite.syncSprite = engine.SyncNewSprite(sprite)
+		sprite.syncSprite = engine.SyncNewSprite(sprite, mathf.NewVec2(sprite.x, sprite.y))
 		syncInitSpritePhysicInfo(sprite, sprite.syncSprite)
 		sprite.syncSprite.Name = sprite.name
 		sprite.syncSprite.SetTypeName(sprite.name)

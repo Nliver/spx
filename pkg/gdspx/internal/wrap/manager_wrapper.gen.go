@@ -839,11 +839,12 @@ func (pself *spriteMgr) CreateBackdrop(path string) Object {
 	retValue := CallSpriteCreateBackdrop(arg0)
 	return ToObject(retValue)
 }
-func (pself *spriteMgr) CreateSprite(path string) Object {
+func (pself *spriteMgr) CreateSprite(path string, pos Vec2) Object {
 	arg0Str := C.CString(path)
 	arg0 := (GdString)(arg0Str)
 	defer C.free(unsafe.Pointer(arg0Str))
-	retValue := CallSpriteCreateSprite(arg0)
+	arg1 := ToGdVec2(pos)
+	retValue := CallSpriteCreateSprite(arg0, arg1)
 	return ToObject(retValue)
 }
 func (pself *spriteMgr) CloneSprite(obj Object) Object {

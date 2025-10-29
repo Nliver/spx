@@ -900,10 +900,10 @@ func (pself *spriteMgrImpl) CreateBackdrop(path string) gdx.Object {
 	})
 	return _ret1
 }
-func (pself *spriteMgrImpl) CreateSprite(path string) gdx.Object {
+func (pself *spriteMgrImpl) CreateSprite(path string, pos Vec2) gdx.Object {
 	var _ret1 gdx.Object
 	callInMainThread(func() {
-		_ret1 = gdx.SpriteMgr.CreateSprite(path)
+		_ret1 = gdx.SpriteMgr.CreateSprite(path, pos)
 	})
 	return _ret1
 }

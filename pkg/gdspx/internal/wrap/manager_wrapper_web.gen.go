@@ -766,9 +766,10 @@ func (pself *spriteMgr) CreateBackdrop(path string) Object {
 	_retValue := API.SpxSpriteCreateBackdrop.Invoke(arg0)
 	return JsToGdObject(_retValue)
 }
-func (pself *spriteMgr) CreateSprite(path string) Object {
+func (pself *spriteMgr) CreateSprite(path string, pos Vec2) Object {
 	arg0 := JsFromGdString(path)
-	_retValue := API.SpxSpriteCreateSprite.Invoke(arg0)
+	arg1 := JsFromGdVec2(pos)
+	_retValue := API.SpxSpriteCreateSprite.Invoke(arg0, arg1)
 	return JsToGdObject(_retValue)
 }
 func (pself *spriteMgr) CloneSprite(obj Object) Object {
