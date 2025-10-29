@@ -378,7 +378,7 @@ func (p *SpriteImpl) init(
 
 	// register animations to engine
 	for animName, ani := range p.animations {
-		registerAnimToEngine(p.name, animName, ani, p.baseObj.costumes, p.isCostumeSet, spriteCfg.ApplyCustumeOffset2Animation)
+		registerAnimToEngine(p.name, animName, ani, p.baseObj.costumes, p.isCostumeSet)
 	}
 
 	p.pendingAudios = make([]string, 0)
