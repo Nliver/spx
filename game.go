@@ -1427,7 +1427,6 @@ type BackdropName = string
 //	SetBackdrop(spx.Prev)
 func (p *Game) setBackdrop(backdrop any, wait bool) {
 	if p.goSetCostume(backdrop) {
-		p.windowWidth_ = 0
 		p.setupBackdrop()
 		p.doWindowSize()
 		p.doWhenBackdropChanged(p.getCostumeName(), wait)
