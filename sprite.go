@@ -2165,12 +2165,10 @@ func (cfg *physicConfig) syncShape(syncProxy *engine.Sprite, isTrigger bool, spr
 	}
 	if cfg.Type == physicsColliderAuto {
 		pivot, autoSize := syncGetCostumeBoundByAlpha(sprite, scale)
-		pivot = pivot.Divf(scale)
 		if isTrigger {
 			autoSize.X += extraPixelSize
 			autoSize.Y += extraPixelSize
 		}
-		autoSize = autoSize.Divf(scale)
 		cfg.Pivot = pivot
 		cfg.Params = []float64{autoSize.X, autoSize.Y}
 	}
