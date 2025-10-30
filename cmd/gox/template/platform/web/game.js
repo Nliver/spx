@@ -19,7 +19,7 @@ class GameApp {
             'unloadAfterInit': false,
             'canvas': this.gameCanvas,
             'logLevel': this.logLevel,
-            'canvasResizePolicy': 1,
+            'canvasResizePolicy': 2,
             'onExit': () => {
                 this.onGameExit()
             },

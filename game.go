@@ -570,15 +570,22 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 
 	// fullscreen when on mobile platform
 	if platform.IsMobile() || proj.FullScreen || platform.IsWeb() {
-		if proj.FullScreen || platform.IsMobile() || proj.StretchMode {
+		if proj.FullScreen || platform.IsMobile() {
 			platformMgr.SetWindowFullscreen(true)
 		}
+
 		winSize := platformMgr.GetWindowSize()
 		scale := math.Min(winSize.X/float64(p.windowWidth_), winSize.Y/float64(p.windowHeight_))
 		p.windowScale = scale
 	}
 
-	platformMgr.SetWindowSize(int64(float64(p.windowWidth_)*p.windowScale), int64(float64(p.windowHeight_)*p.windowScale), true)
+	if platform.IsWeb() {
+		platformMgr.SetWindowSize(int64(platformMgr.GetWindowSize().X), int64(platformMgr.GetWindowSize().Y), true)
+	} else {
+		platformMgr.SetWindowSize(int64(float64(p.windowWidth_)*p.windowScale), int64(float64(p.windowHeight_)*p.windowScale), true)
+	}
+	platformMgr.SetStretchMode(p.stretchMode)
+
 	p.camera = &cameraImpl{}
 	p.Camera = p.camera
 	p.camera.init(p)
@@ -587,7 +594,6 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 	ui.SetWindowScale(p.windowScale)
 	ui.ClampUIPositionInScreen(isWindowMapSizeEqual)
 
-	platformMgr.SetStretchMode(p.stretchMode)
 	// setup syncSprite's property
 	p.syncSprite = engine.NewBackdropProxy(p, p.getCostumePath(), p.getCostumeRenderScale())
 	p.setupBackdrop()
