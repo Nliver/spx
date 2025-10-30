@@ -849,7 +849,9 @@ func (p *SpriteImpl) doAnimation(animName SpriteAnimationName, ani *aniConfig, l
 	if playAudio {
 		p.playAnimAudio(ani, info)
 	}
-	p.isCostumeDirty = false
+
+	syncCheckUpdateCostume(&p.baseObj)
+
 	spriteMgr.PlayAnim(p.syncSprite.GetId(), animName, speed, loop, false)
 	if isBlocking {
 		p.isAnimating = true
