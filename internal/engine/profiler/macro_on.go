@@ -3,8 +3,7 @@
 
 package profiler
 
-var Enabled bool = true
-
 func init() {
-	println("Profiler Enabled")
+	Enabled = true
+	println("Profiler Enabled (macro_on)")
 }

@@ -23,6 +23,7 @@ var (
 	lastUpdateDuration float64
 	totalStart         stime.Time
 	Debug              bool
+	Enabled            bool
 )
 
 func Calcfps() float64 {
@@ -49,16 +50,32 @@ func SetGco(co *coroutine.Coroutines) {
 	gco = co
 }
 
-func BeginSample() {
+func EnableTemporarily() func() {
+	prev := Enabled
+	Enabled = true
+	fmt.Println("Profiler temporarily enabled, previous state:", prev)
+	return func() {
+		Enabled = prev
+		fmt.Println("Profiler restored to previous state:", Enabled)
+	}
+}
+
+func BeginSample(sampleName ...string) {
 	if !Enabled {
 		return
 	}
+	name := "Unnamed"
+	if len(sampleName) > 0 {
+		name = sampleName[0]
+	}
+	fmt.Printf("========== Begin profiling sample: %s ==========\n", name)
+
 	totalStart = stime.Now()
 	// Clear the timing data of the previous frame
 	timingData = make(map[string]TimingInfo)
 }
 
-func EndSample() {
+func EndSample(sampleName ...string) {
 	if !Enabled {
 		return
 	}
@@ -92,7 +109,14 @@ func EndSample() {
 	}
 
 	lastUpdateDuration = total
+
+	name := "Unnamed"
+	if len(sampleName) > 0 {
+		name = sampleName[0]
+	}
+	fmt.Printf("========== End profiling sample: %s ==========\n", name)
 }
+
 func GetStats(name string) (TimingInfo, bool) {
 	info, ok := timingData[name]
 	return info, ok
