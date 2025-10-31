@@ -22,6 +22,7 @@ import (
 	_ "github.com/goplus/spx/v2"
 	"github.com/goplus/spx/v2/cmd/igox/zipfs"
 	goxfs "github.com/goplus/spx/v2/fs"
+	"github.com/goplus/spx/v2/internal/engine/profiler"
 )
 
 var aiDescription string
@@ -103,7 +104,10 @@ func loadData(this js.Value, args []js.Value) any {
 	// Convert Uint8Array to Go byte slice
 	length := inputArray.Get("length").Int()
 	goBytes := make([]byte, length)
+
+	profiler.BeginSample("CopyBytesToGo")
 	js.CopyBytesToGo(goBytes, inputArray)
+	profiler.EndSample("CopyBytesToGo")
 
 	dataChannel <- goBytes
 	return nil
@@ -260,16 +264,23 @@ func Gopt_Player_Gopx_OnCmd[T any](p *Player, handler func(cmd T) error) {
 		return len(msg), nil
 	})
 
+	restore := profiler.EnableTemporarily()
+
+	profiler.BeginSample("Build XGo Source")
 	source, err := xgobuild.BuildFSDir(ctx, fs, "")
 	if err != nil {
 		logErrorAndExit(fmt.Errorf("Failed to build XGo source: %w", err))
 	}
+	profiler.EndSample("Build XGo Source")
 
+	profiler.BeginSample("Load XGo Source")
 	pkg, err := ctx.LoadFile("main.go", source)
 	if err != nil {
 		logErrorAndExit(fmt.Errorf("Failed to load XGo source: %w", err))
 	}
+	profiler.EndSample("Load XGo Source")
 
+	profiler.BeginSample("Create NewInterp")
 	interp, err := ctx.NewInterp(pkg)
 	if err != nil {
 		logErrorAndExit(fmt.Errorf("Failed to create interp: %w", err))
@@ -278,10 +289,14 @@ func Gopt_Player_Gopx_OnCmd[T any](p *Player, handler func(cmd T) error) {
 		capacity, allocate, available := ixgo.IcallStat()
 		fmt.Printf("Icall Capacity: %d, Allocate: %d, Available: %d\n", capacity, allocate, available)
 	}
+	profiler.EndSample("Create NewInterp")
+
+	restore()
 	code, err := ctx.RunInterp(interp, "main.go", nil)
 	if err != nil {
 		logErrorAndExit(fmt.Errorf("Failed to run XGo source (code %d): %w", code, err))
 	}
+
 }
 
 //go:linkname spxEngineRegisterFFI github.com/goplus/spx/v2/pkg/gdspx/internal/engine.RegisterFFI

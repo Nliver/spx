@@ -3,4 +3,7 @@
 
 package profiler
 
-var Enabled bool = false
+func init() {
+	Enabled = false
+	println("Profiler Disabled (macro_off)")
+}
