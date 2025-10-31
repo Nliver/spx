@@ -168,6 +168,8 @@ func logErrorAndExit(err error) {
 
 func main() {
 	debug := false
+	restore := profiler.EnableTemporarily()
+
 	js.Global().Set("setAIDescription", js.FuncOf(setAIDescription))
 	js.Global().Set("setAIInteractionAPIEndpoint", js.FuncOf(setAIInteractionAPIEndpoint))
 	js.Global().Set("setAIInteractionAPITokenProvider", js.FuncOf(setAIInteractionAPITokenProvider))
@@ -183,21 +185,29 @@ func main() {
 	spxEngineRegisterFFI()
 	zipData := <-dataChannel
 
+	profiler.BeginSample("Read Zip Data")
 	zipReader, err := zip.NewReader(bytes.NewReader(zipData), int64(len(zipData)))
 	if err != nil {
 		logErrorAndExit(fmt.Errorf("Failed to read zip data: %w", err))
 	}
+	profiler.EndSample("Read Zip Data")
+
+	profiler.BeginSample("Create ZipFs")
 	fs := zipfs.NewZipFsFromReader(zipReader)
 	// Configure spx to load project files from zip-based file system.
 	goxfs.RegisterSchema("", func(path string) (goxfs.Dir, error) {
 		return fs.Chrooted(path), nil
 	})
+	profiler.EndSample("Create ZipFs")
 
+	profiler.BeginSample("Create XGo Context")
 	ctx := ixgo.NewContext(0)
 	ctx.Lookup = func(root, path string) (dir string, found bool) {
 		logErrorAndExit(fmt.Errorf("Failed to resolve package import %q", path))
 		return
 	}
+	profiler.EndSample("Create XGo Context")
+
 	ctx.SetPanic(logWithPanicInfo)
 
 	// NOTE(everyone): Keep sync with the config in spx [gop.mod](https://github.com/goplus/spx/blob/main/gop.mod)
@@ -263,8 +273,6 @@ func Gopt_Player_Gopx_OnCmd[T any](p *Player, handler func(cmd T) error) {
 		logWithCallerInfo(msg, frame)
 		return len(msg), nil
 	})
-
-	restore := profiler.EnableTemporarily()
 
 	profiler.BeginSample("Build XGo Source")
 	source, err := xgobuild.BuildFSDir(ctx, fs, "")
