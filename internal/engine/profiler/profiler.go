@@ -53,10 +53,10 @@ func SetGco(co *coroutine.Coroutines) {
 func EnableTemporarily() func() {
 	prev := Enabled
 	Enabled = true
-	fmt.Println("Profiler temporarily enabled, previous state:", prev)
+	fmt.Println("Profiler(GO) temporarily enabled, previous state:", prev)
 	return func() {
 		Enabled = prev
-		fmt.Println("Profiler restored to previous state:", Enabled)
+		fmt.Println("Profiler(GO) restored to previous state:", Enabled)
 	}
 }
 
@@ -82,8 +82,15 @@ func EndSample(sampleName ...string) {
 	// Calculate the total time
 	total := stime.Since(totalStart).Seconds() * 1000
 
+	name := "Unnamed"
+	interval := 20.0
+	if len(sampleName) > 0 {
+		name = sampleName[0]
+		interval = 0.0
+	}
+
 	// print a brief message
-	if total > 20 {
+	if total > interval {
 		fmt.Printf("Total time: %.3fms (GameUpdate: %.3fms, CoroUpdateJobs: %.3fms, GameRender: %.3fms)\n",
 			total, timingData["GameUpdate"].ActualCall, timingData["CoroUpdateJobs"].ActualCall, timingData["GameRender"].ActualCall)
 	}
@@ -110,10 +117,6 @@ func EndSample(sampleName ...string) {
 
 	lastUpdateDuration = total
 
-	name := "Unnamed"
-	if len(sampleName) > 0 {
-		name = sampleName[0]
-	}
 	fmt.Printf("========== End profiling sample: %s ==========\n", name)
 }
 
