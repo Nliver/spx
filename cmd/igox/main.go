@@ -183,6 +183,7 @@ func main() {
 	js.Global().Set("gdspx_on_engine_pause", js.FuncOf(gdspxOnEnginePause))
 	// register FFI for worker mode
 	spxEngineRegisterFFI()
+
 	zipData := <-dataChannel
 
 	profiler.BeginSample("Read Zip Data")
@@ -210,6 +211,7 @@ func main() {
 
 	ctx.SetPanic(logWithPanicInfo)
 
+	profiler.BeginSample("Register XGo Project")
 	// NOTE(everyone): Keep sync with the config in spx [gop.mod](https://github.com/goplus/spx/blob/main/gop.mod)
 	xgobuild.RegisterProject(&modfile.Project{
 		Ext:      ".spx",
@@ -273,6 +275,7 @@ func Gopt_Player_Gopx_OnCmd[T any](p *Player, handler func(cmd T) error) {
 		logWithCallerInfo(msg, frame)
 		return len(msg), nil
 	})
+	profiler.EndSample("Register XGo Project")
 
 	profiler.BeginSample("Build XGo Source")
 	source, err := xgobuild.BuildFSDir(ctx, fs, "")
