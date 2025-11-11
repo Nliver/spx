@@ -56,18 +56,13 @@ class GameApp {
             console.log(...args);
         }
     }
+
     startTask(prepareFunc, taskFunc, ...args) {
-        if (prepareFunc != null) {
-            prepareFunc()
-        }
-        this.logicPromise = this.logicPromise.then(async () => {
-            let promise = new Promise(async (resolve, reject) => {
-                await taskFunc.call(this, resolve, reject, ...args);
-            })
-            await promise
-        })
+        if (prepareFunc) prepareFunc()
+        this.logicPromise = this.logicPromise.then(() => taskFunc.call(this, ...args))
         return this.logicPromise
     }
+
 
     async RunGame() {
         return this.startTask(() => { this.runGameTask++ }, this.runGame)
@@ -77,13 +72,20 @@ class GameApp {
         return this.startTask(() => { this.stopGameTask++ }, this.stopGame)
     }
 
-    async runGame(resolve, reject) {
+    async RestartGame() {
+        return this.startTask(() => { this.runGameTask++ }, this.reRunGame)
+    }
+
+    async ResetGame() {
+        return this.startTask(() => { this.stopGameTask++ }, this.reset)
+    }
+
+    async runGame() {
         await profiler.profile('onRunPrepareEngineWasm', () => this.onRunPrepareEngineWasm());
 
         this.runGameTask--;
         if (this.stopGameTask > 0) {
             this.logVerbose("stopGame is called before runing game");
-            resolve();
             return;
         }
 
@@ -126,7 +128,7 @@ class GameApp {
 
         this.onProgress(0.6);
 
-        await profiler.profile('unpackGameData', () => this.unpackGameData(curGame));
+        await profiler.profile('unpackData', () => this.unpackData(curGame));
 
         this.onProgress(0.7);
 
@@ -144,22 +146,35 @@ class GameApp {
         this.onProgress(1.0);
         this.gameCanvas.focus();
         this.logVerbose("==> game start done");
-        resolve();
     }
 
+    async reRunGame() {
+        this.runGameTask--;
+        if (this.stopGameTask > 0) {
+            this.logVerbose("stopGame is called before runing game");
+            return;
+        }
 
+        let curGame = this.game;
+        profiler.mark('reRunGame');
+        await this.unpackGameData(curGame)
+        this.restart();
+        this.gameCanvas.focus();
+        await this.onRunAfterStart(curGame)
+        this.gameCanvas.focus();
+        profiler.mark('game start done');
+        profiler.measure('reRunGame', 'game start done');
+    }
 
-    async stopGame(resolve, reject) {
+    async stopGame() {
         this.stopGameTask--
         if (this.game == null) {
             // no game is running, do nothing
-            resolve()
             this.logVerbose("no game is running")
             return
         }
         this.stopGameResolve = () => {
             this.game = null
-            resolve();
             this.stopGameResolve = null
         }
         this.onProgress(1.0);
@@ -194,6 +209,24 @@ class GameApp {
             this.stopGameResolve()
         }
     }
+    async reset() {
+        this.stopGameTask--
+        if (this.game == null) {
+            this.logVerbose("no game is running")
+            return
+        }
+        let funPtr = this.game.rtenv["_gdspx_ext_request_reset"]
+        if(funPtr != null){
+            funPtr()
+        }
+    }
+    restart() {
+        let funPtr = this.game.rtenv["_gdspx_ext_request_restart"]
+        if(funPtr != null){
+            funPtr()
+        }
+    }
+
     pause() {
         let funPtr = this.game.rtenv["_gdspx_ext_pause"]
         if(funPtr != null){
@@ -220,10 +253,14 @@ class GameApp {
             this.config.onProgress(value);
         }
     }
-    async unpackGameData(game) {
+    async unpackData(game) {
         let packUrl = this.assetURLs[this.packName]
-        let pckData = await (await fetch(packUrl)).arrayBuffer();
-        await game.unpackGameData(this.persistentPath, this.projectDataName, this.projectData.buffer, this.packName, pckData)
+        let pckData = await (await fetch(packUrl)).arrayBuffer()
+        await game.unpackEngineData(this.persistentPath, this.packName, pckData)
+        await game.unpackGameData(this.persistentPath, this.projectDataName, this.projectData)
+    }
+    async unpackGameData(game) {
+        await game.unpackGameData(this.persistentPath, this.projectDataName, this.projectData)
     }
 
     callWorkerFunction(funcName, ...args) {

@@ -128,7 +128,7 @@ func WorldToScreen(pos Vec2) Vec2 {
 	return _ret1
 }
 
-func ReloadScene() {
+func ClearAllSprites() {
 	WaitMainThread(func() {
 		gdx.ClearAllSprites()
 	})

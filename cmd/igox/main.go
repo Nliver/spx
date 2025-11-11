@@ -372,17 +372,16 @@ func (r *SpxRunner) Run(this js.Value, args []js.Value) any {
 		interp := r.entry.interp
 		code, runErr := r.ctx.RunInterp(interp, "main.go", nil)
 
-		if runErr != nil && runErr != context.Canceled {
+		if runErr != nil && runErr != context.Canceled && code != 2 {
 			fmt.Printf("Failed to run XGo source (code %d): %v\n", code, runErr)
 			js.Global().Call("gdspx_ext_on_runtime_panic", runErr.Error())
 			js.Global().Call("gdspx_ext_request_exit", 1)
 			return
 		}
 
-		js.Global().Call("gdspx_ext_request_exit", 0)
 		// Clear cancel func after successful completion
 		r.entry.cancelFunc = nil
-		fmt.Printf("run done")
+		fmt.Println("run done")
 	}()
 
 	return nil
@@ -479,8 +478,9 @@ func main() {
 	js.Global().Set("ixgo_run", JSFuncOfWithError(defaultRunner.Run))
 	js.Global().Set("ixgo_cancel", JSFuncOfWithError(defaultRunner.Cancel))
 
-	// Keep WASM running
-	select {}
+	// Keep WASM running select {} will block the main goroutine forever
+	c := make(chan struct{})
+	<-c
 }
 
 //go:linkname spxEngineRegisterFFI github.com/goplus/spx/v2/pkg/gdspx/internal/engine.RegisterFFI

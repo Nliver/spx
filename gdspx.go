@@ -69,6 +69,10 @@ func (p *Game) OnEngineStart() {
 func (p *Game) OnEngineDestroy() {
 }
 
+func (p *Game) OnEngineReset() {
+	p.reset()
+}
+
 func (p *Game) OnEngineUpdate(delta float64) {
 	if !p.isRunned {
 		return

@@ -103,6 +103,7 @@ typedef void (*GDExtensionSpxCallbackOnEngineStart)();
 typedef void (*GDExtensionSpxCallbackOnEngineUpdate)(GdFloat delta);
 typedef void (*GDExtensionSpxCallbackOnEngineFixedUpdate)(GdFloat delta);
 typedef void (*GDExtensionSpxCallbackOnEngineDestroy)();
+typedef void (*GDExtensionSpxCallbackOnEngineReset)();
 typedef void (*GDExtensionSpxCallbackOnEnginePause)(GdBool is_paused);
 
 typedef void (*GDExtensionSpxCallbackOnSceneSpriteInstantiated)(GdObj obj,GdString type_name);
@@ -157,6 +158,7 @@ typedef struct {
 	GDExtensionSpxCallbackOnEngineUpdate func_on_engine_update;
 	GDExtensionSpxCallbackOnEngineFixedUpdate func_on_engine_fixed_update;
 	GDExtensionSpxCallbackOnEngineDestroy func_on_engine_destroy;
+	GDExtensionSpxCallbackOnEngineReset func_on_engine_reset;
 	GDExtensionSpxCallbackOnEnginePause func_on_engine_pause;
 
 	// scene
@@ -249,6 +251,8 @@ typedef void (*GDExtensionSpxDebugDebugDrawRect)(GdVec2 pos, GdVec2 size, GdColo
 typedef void (*GDExtensionSpxDebugDebugDrawLine)(GdVec2 from, GdVec2 to, GdColor color);
 // SpxExt
 typedef void (*GDExtensionSpxExtRequestExit)(GdInt exit_code);
+typedef void (*GDExtensionSpxExtRequestReset)();
+typedef void (*GDExtensionSpxExtRequestRestart)();
 typedef void (*GDExtensionSpxExtOnRuntimePanic)(GdString msg);
 typedef void (*GDExtensionSpxExtPause)();
 typedef void (*GDExtensionSpxExtResume)();

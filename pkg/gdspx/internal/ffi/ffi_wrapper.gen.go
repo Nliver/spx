@@ -47,6 +47,7 @@ type GDExtensionSpxCallbackOnEngineStart C.GDExtensionSpxCallbackOnEngineStart
 type GDExtensionSpxCallbackOnEngineUpdate C.GDExtensionSpxCallbackOnEngineUpdate
 type GDExtensionSpxCallbackOnEngineFixedUpdate C.GDExtensionSpxCallbackOnEngineFixedUpdate
 type GDExtensionSpxCallbackOnEngineDestroy C.GDExtensionSpxCallbackOnEngineDestroy
+type GDExtensionSpxCallbackOnEngineReset C.GDExtensionSpxCallbackOnEngineReset
 type GDExtensionSpxCallbackOnEnginePause C.GDExtensionSpxCallbackOnEnginePause
 type GDExtensionSpxCallbackOnSceneSpriteInstantiated C.GDExtensionSpxCallbackOnSceneSpriteInstantiated
 type GDExtensionSpxCallbackOnSpriteReady C.GDExtensionSpxCallbackOnSpriteReady
@@ -115,6 +116,8 @@ type GDExtensionSpxDebugDebugDrawCircle C.GDExtensionSpxDebugDebugDrawCircle
 type GDExtensionSpxDebugDebugDrawRect C.GDExtensionSpxDebugDebugDrawRect
 type GDExtensionSpxDebugDebugDrawLine C.GDExtensionSpxDebugDebugDrawLine
 type GDExtensionSpxExtRequestExit C.GDExtensionSpxExtRequestExit
+type GDExtensionSpxExtRequestReset C.GDExtensionSpxExtRequestReset
+type GDExtensionSpxExtRequestRestart C.GDExtensionSpxExtRequestRestart
 type GDExtensionSpxExtOnRuntimePanic C.GDExtensionSpxExtOnRuntimePanic
 type GDExtensionSpxExtPause C.GDExtensionSpxExtPause
 type GDExtensionSpxExtResume C.GDExtensionSpxExtResume
@@ -678,6 +681,16 @@ func CallExtRequestExit(
 
 	C.cgo_callfn_GDExtensionSpxExtRequestExit(arg0, arg1GdInt)
 
+}
+func CallExtRequestReset() {
+	arg0 := (C.GDExtensionSpxExtRequestReset)(api.SpxExtRequestReset)
+
+	C.cgo_callfn_GDExtensionSpxExtRequestReset(arg0)
+}
+func CallExtRequestRestart() {
+	arg0 := (C.GDExtensionSpxExtRequestRestart)(api.SpxExtRequestRestart)
+
+	C.cgo_callfn_GDExtensionSpxExtRequestRestart(arg0)
 }
 func CallExtOnRuntimePanic(
 	msg GdString,

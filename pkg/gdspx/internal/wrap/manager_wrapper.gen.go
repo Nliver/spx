@@ -292,6 +292,12 @@ func (pself *extMgr) RequestExit(exit_code int64) {
 	arg0 := ToGdInt(exit_code)
 	CallExtRequestExit(arg0)
 }
+func (pself *extMgr) RequestReset() {
+	CallExtRequestReset()
+}
+func (pself *extMgr) RequestRestart() {
+	CallExtRequestRestart()
+}
 func (pself *extMgr) OnRuntimePanic(msg string) {
 	arg0Str := C.CString(msg)
 	arg0 := (GdString)(arg0Str)

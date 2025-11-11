@@ -311,6 +311,16 @@ func (pself *extMgrImpl) RequestExit(exit_code int64) {
 		gdx.ExtMgr.RequestExit(exit_code)
 	})
 }
+func (pself *extMgrImpl) RequestReset() {
+	callInMainThread(func() {
+		gdx.ExtMgr.RequestReset()
+	})
+}
+func (pself *extMgrImpl) RequestRestart() {
+	callInMainThread(func() {
+		gdx.ExtMgr.RequestRestart()
+	})
+}
 func (pself *extMgrImpl) OnRuntimePanic(msg string) {
 	callInMainThread(func() {
 		gdx.ExtMgr.OnRuntimePanic(msg)

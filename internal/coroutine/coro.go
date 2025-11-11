@@ -89,6 +89,8 @@ type Coroutines struct {
 
 	// goroutineIDs tracks all goroutine IDs created by CreateAndStart
 	goroutineIDs sync.Map // map[int64]bool
+
+	allThreads map[Thread]struct{}
 }
 
 const (
@@ -118,9 +120,10 @@ type WaitJob struct {
 // New creates a coroutine manager.
 func New(onPanic func(name, stack string)) *Coroutines {
 	p := &Coroutines{
-		onPanic:   onPanic,
-		suspended: make(map[Thread]bool),
-		waiting:   make(map[Thread]bool),
+		onPanic:    onPanic,
+		suspended:  make(map[Thread]bool),
+		waiting:    make(map[Thread]bool),
+		allThreads: make(map[Thread]struct{}),
 	}
 	p.cond.L = &p.mutex
 	p.curQueue = NewQueue[*WaitJob]()
@@ -164,11 +167,32 @@ func (p *Coroutines) Abort() {
 	panic(ErrAbortThread)
 }
 
+func (p *Coroutines) AbortAll() {
+	p.mutex.Lock()
+	threads := make([]Thread, 0, len(p.allThreads))
+	for th := range p.allThreads {
+		threads = append(threads, th)
+	}
+	p.mutex.Unlock()
+
+	for _, th := range threads {
+		th.mutex.Lock()
+		if !th.stopped_ {
+			th.stopped_ = true
+			th.cond.Signal()
+		}
+		th.mutex.Unlock()
+	}
+
+	fmt.Println("[Coroutine] AbortAllSafe: signaled all coroutines to stop")
+}
+
 func (p *Coroutines) StopIf(filter func(th Thread) bool) {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 	for th := range p.suspended {
 		if filter(th) {
+			fmt.Println("Stopping coroutine:", th)
 			th.stopped_ = true
 		}
 	}
@@ -197,6 +221,10 @@ func (p *Coroutines) CreateAndStart(start bool, tobj ThreadObj, fn func(me Threa
 		id.stack = debug.GetStackTrace()
 	}
 
+	p.mutex.Lock()
+	p.allThreads[id] = struct{}{}
+	p.mutex.Unlock()
+
 	id.cond = sync.NewCond(&id.mutex) // Initialize the thread's condition variable
 	go func() {
 		// Track this goroutine ID
@@ -208,6 +236,7 @@ func (p *Coroutines) CreateAndStart(start bool, tobj ThreadObj, fn func(me Threa
 		defer func() {
 			p.mutex.Lock()
 			delete(p.suspended, id)
+			delete(p.allThreads, id)
 			p.mutex.Unlock()
 			p.setWaitStatus(id, waitStatusDelete)
 			p.sema.Unlock()
