@@ -200,6 +200,8 @@ func (pself *debugMgrImpl) DebugDrawLine(from Vec2, to Vec2, color Color)       
 
 // IExtMgr
 func (pself *extMgrImpl) RequestExit(exit_code int64) {}
+func (pself *extMgrImpl) RequestReset()               {}
+func (pself *extMgrImpl) RequestRestart()             {}
 func (pself *extMgrImpl) OnRuntimePanic(msg string)   {}
 func (pself *extMgrImpl) Pause()                      {}
 func (pself *extMgrImpl) Resume()                     {}

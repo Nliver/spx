@@ -213,15 +213,16 @@ func (p *Game) reset() {
 	p.sinkMgr.reset()
 	p.EraseAll() // clear pens
 	p.startFlag = sync.Once{}
-	p.Stop(AllOtherScripts)
 	p.items = nil
 	p.debugPanel = nil
 	p.askPanel = nil
-	p.destroyItems = nil
 	p.isLoaded = false
+	p.destroyItems = nil
 	p.oncePathFinder = sync.Once{}
 	p.sprs = make(map[string]Sprite)
 	timer.OnReload()
+	close(p.events)
+	p.Stop(AllOtherScripts)
 }
 
 func (p *Game) getGame() *Game {
@@ -317,8 +318,8 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 		appName := filepath.Base(dir)
 		conf.Title = appName + " (by XGo Builder)"
 	}
-	proj.FullScreen = proj.FullScreen || conf.FullScreen
 
+	proj.FullScreen = proj.FullScreen || conf.FullScreen
 	enabledPhysics = proj.Physics
 	physicMgr.SetGlobalGravity(parseDefaultFloatValue(proj.GlobalGravity, 1))
 	physicMgr.SetGlobalAirDrag(parseDefaultFloatValue(proj.GlobalAirDrag, 1))
@@ -726,7 +727,7 @@ func Gopt_Game_Reload(game Gamer, index any) (err error) {
 	v := reflect.ValueOf(game).Elem()
 	g := instance(v)
 	g.reset()
-	engine.ReloadScene()
+	engine.ClearAllSprites()
 	for i, n := 0, v.NumField(); i < n; i++ {
 		name, val := getFieldPtrOrAlloc(g, v, i)
 		if fld, ok := val.(Sprite); ok {
@@ -958,7 +959,6 @@ func (p *Game) logicLoop(me coroutine.Thread) int {
 	tempAnimations := []string{}
 	for {
 		p.camera.onUpdate(gtime.DeltaTime())
-
 		tempItems := p.getTempShapes()
 		for _, item := range tempItems {
 			if result, ok := item.(interface{ onUpdate(float64) }); ok {

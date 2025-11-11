@@ -283,6 +283,12 @@ func (pself *extMgr) RequestExit(exit_code int64) {
 	arg0 := JsFromGdInt(exit_code)
 	API.SpxExtRequestExit.Invoke(arg0)
 }
+func (pself *extMgr) RequestReset() {
+	API.SpxExtRequestReset.Invoke()
+}
+func (pself *extMgr) RequestRestart() {
+	API.SpxExtRequestRestart.Invoke()
+}
 func (pself *extMgr) OnRuntimePanic(msg string) {
 	arg0 := JsFromGdString(msg)
 	API.SpxExtOnRuntimePanic.Invoke(arg0)

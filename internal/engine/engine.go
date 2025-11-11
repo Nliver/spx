@@ -2,6 +2,7 @@ package engine
 
 import (
 	"fmt"
+	"runtime"
 	"sync"
 
 	stime "time"
@@ -121,6 +122,7 @@ type IGame interface {
 	OnEngineUpdate(delta float64)
 	OnEngineRender(delta float64)
 	OnEngineDestroy()
+	OnEngineReset()
 	OnEnginePause(isPaused bool)
 }
 
@@ -131,6 +133,7 @@ func Main(g IGame) {
 		OnEngineStart:   onStart,
 		OnEngineUpdate:  onUpdate,
 		OnEngineDestroy: onDestroy,
+		OnEngineReset:   onReset,
 		OnEnginePause:   onPaused,
 		OnKeyPressed:    onKeyPressed,
 		OnKeyReleased:   onKeyReleased,
@@ -185,6 +188,14 @@ func onDestroy() {
 
 func onPaused(isPaused bool) {
 	game.OnEnginePause(isPaused)
+}
+
+func onReset() {
+	engine.ClearAllSprites()
+	game.OnEngineReset()
+	gco.AbortAll()
+	gde.UnlinkEngine()
+	fmt.Println("Goroutines alive: ", runtime.NumGoroutine())
 }
 
 func onKeyPressed(id int64) {
