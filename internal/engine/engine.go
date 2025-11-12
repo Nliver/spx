@@ -2,7 +2,6 @@ package engine
 
 import (
 	"fmt"
-	"runtime"
 	"sync"
 
 	stime "time"
@@ -195,7 +194,6 @@ func onReset() {
 	game.OnEngineReset()
 	gco.AbortAll()
 	gde.UnlinkEngine()
-	fmt.Println("Goroutines alive: ", runtime.NumGoroutine())
 }
 
 func onKeyPressed(id int64) {
