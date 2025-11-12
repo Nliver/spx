@@ -230,19 +230,14 @@ func (r *SpxRunner) Build(this js.Value, args []js.Value) any {
 	// Get files object
 	inputArray := args[0]
 
-	// Convert Uint8Array to Go byte slice
-	length := inputArray.Get("length").Int()
-	zipData := make([]byte, length)
-	js.CopyBytesToGo(zipData, inputArray)
-
 	// Get pre-computed hash from args[1]
 	filesHash := args[1].String()
 
-	return r.build(zipData, filesHash)
+	return r.build(inputArray, filesHash)
 }
 
 // build performs the actual build process given the files and their hash.
-func (r *SpxRunner) build(zipData []byte, filesHash string) any {
+func (r *SpxRunner) build(inputArray js.Value, filesHash string) any {
 	// Check cache
 	if r.entry != nil {
 		if r.entry.hash == filesHash {
@@ -251,6 +246,11 @@ func (r *SpxRunner) build(zipData []byte, filesHash string) any {
 			r.Release()
 		}
 	}
+
+	// Convert Uint8Array to Go byte slice
+	length := inputArray.Get("length").Int()
+	zipData := make([]byte, length)
+	js.CopyBytesToGo(zipData, inputArray)
 
 	// Initialize zip file system
 	zipReader, err := zip.NewReader(bytes.NewReader(zipData), int64(len(zipData)))
@@ -325,18 +325,13 @@ func (r *SpxRunner) Run(this js.Value, args []js.Value) any {
 	// Get files object
 	inputArray := args[0]
 
-	// Convert Uint8Array to Go byte slice
-	length := inputArray.Get("length").Int()
-	zipData := make([]byte, length)
-	js.CopyBytesToGo(zipData, inputArray)
-
 	// Get pre-computed hash from args[1]
 	filesHash := args[1].String()
 
 	// Look for cached interp
 	if r.entry == nil || r.entry.hash != filesHash {
 		// Cache miss, need to build first
-		if buildErr := r.build(zipData, filesHash); buildErr != nil {
+		if buildErr := r.build(inputArray, filesHash); buildErr != nil {
 			return buildErr
 		}
 	}
