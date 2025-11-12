@@ -381,7 +381,6 @@ func (r *SpxRunner) Run(this js.Value, args []js.Value) any {
 
 		// Clear cancel func after successful completion
 		r.entry.cancelFunc = nil
-		fmt.Println("run done")
 	}()
 
 	return nil
