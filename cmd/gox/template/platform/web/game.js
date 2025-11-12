@@ -12,6 +12,7 @@ class GameApp {
         this.logLevel = config.logLevel;
         this.useProfiler = config.useProfiler || false;
         this.projectData = config.projectData;
+        this.projectCode = config.projectCode;
         this.oldData = config.projectData;
         this.gameCanvas = config.gameCanvas;
         this.assetURLs = config.assetURLs;
@@ -64,26 +65,30 @@ class GameApp {
     }
 
 
-    async RunGame() {
-        return this.startTask(() => { this.runGameTask++ }, this.runGame)
+    async InitGame() {
+        return this.startTask(() => { this.initGameTask++ }, this.initGame)
+    }
+
+    async BuildGame() {
+        return this.startTask(() => { this.buildGameTask++ }, this.buildGame)
     }
 
     async StopGame() {
         return this.startTask(() => { this.stopGameTask++ }, this.stopGame)
     }
 
-    async RestartGame() {
-        return this.startTask(() => { this.runGameTask++ }, this.reRunGame)
+    async StartGame() {
+        return this.startTask(() => { this.runGameTask++ }, this.startGame)
     }
 
     async ResetGame() {
         return this.startTask(() => { this.stopGameTask++ }, this.reset)
     }
 
-    async runGame() {
+    async initGame() {
         await profiler.profile('onRunPrepareEngineWasm', () => this.onRunPrepareEngineWasm());
 
-        this.runGameTask--;
+        this.initGameTask--;
         if (this.stopGameTask > 0) {
             this.logVerbose("stopGame is called before runing game");
             return;
@@ -128,7 +133,7 @@ class GameApp {
 
         this.onProgress(0.6);
 
-        await profiler.profile('unpackData', () => this.unpackData(curGame));
+        await profiler.profile('unpackData', () => this.unpackEngineData(curGame));
 
         this.onProgress(0.7);
 
@@ -138,17 +143,24 @@ class GameApp {
 
         await profiler.profile('curGame.start', () => curGame.start({ 'args': args, 'canvas': this.gameCanvas }));
 
-        this.onProgress(0.9);
-        this.gameCanvas.focus();
-
-        await profiler.profile('onRunAfterStart', () => this.onRunAfterStart(curGame));
-
         this.onProgress(1.0);
-        this.gameCanvas.focus();
         this.logVerbose("==> game start done");
     }
 
-    async reRunGame() {
+    async buildGame() {
+        this.buildGameTask--;
+        if (this.stopGameTask > 0) {
+            this.logVerbose("stopGame is called before runing game");
+            return;
+        }
+
+        window.ixgo_build(new Uint8Array(this.projectCode), this.curProjectHash);
+    }
+
+    async startGame() {
+        const startTime = performance.now();
+        console.log('[StartGame] Starting game...');
+        
         this.runGameTask--;
         if (this.stopGameTask > 0) {
             this.logVerbose("stopGame is called before runing game");
@@ -157,13 +169,31 @@ class GameApp {
 
         let curGame = this.game;
         profiler.mark('reRunGame');
+        
+        const unpackStart = performance.now();
         await this.unpackGameData(curGame)
+        console.log(`[StartGame] unpackGameData took ${(performance.now() - unpackStart).toFixed(2)}ms`);
+        
+        const spxReadyStart = performance.now();
+        await this.runSpxReady();
+        console.log(`[StartGame] runSpxReady took ${(performance.now() - spxReadyStart).toFixed(2)}ms`);
+        
+        const restartStart = performance.now();
         this.restart();
+        console.log(`[StartGame] restart took ${(performance.now() - restartStart).toFixed(2)}ms`);
+        
         this.gameCanvas.focus();
+        
+        const afterStartStart = performance.now();
         await this.onRunAfterStart(curGame)
+        console.log(`[StartGame] onRunAfterStart took ${(performance.now() - afterStartStart).toFixed(2)}ms`);
+        
         this.gameCanvas.focus();
         profiler.mark('game start done');
         profiler.measure('reRunGame', 'game start done');
+        
+        const totalTime = performance.now() - startTime;
+        console.log(`[StartGame] Total time: ${totalTime.toFixed(2)}ms`);
     }
 
     async stopGame() {
@@ -254,10 +284,14 @@ class GameApp {
         }
     }
     async unpackData(game) {
+        await this.unpackEngineData(game)
+        await this.unpackGameData(game)
+    }
+
+    async unpackEngineData(game) {
         let packUrl = this.assetURLs[this.packName]
         let pckData = await (await fetch(packUrl)).arrayBuffer()
         await game.unpackEngineData(this.persistentPath, this.packName, pckData)
-        await game.unpackGameData(this.persistentPath, this.projectDataName, this.projectData)
     }
     async unpackGameData(game) {
         await game.unpackGameData(this.persistentPath, this.projectDataName, this.projectData)
@@ -326,7 +360,7 @@ class GameApp {
             // register global functions
             Module = game.rtenv;
             FFI = self;
-            window.ixgo_run(new Uint8Array(this.projectData), this.curProjectHash);
+            window.ixgo_run(new Uint8Array(this.projectCode), this.curProjectHash);
         }
     }
 
@@ -362,13 +396,15 @@ class GameApp {
     }
     async runLogicWasm() {
         this.go.run(this.logicWasmInstance);
+    }
+
+    async runSpxReady() {
         if (!this.minigameMode) {
             if (this.config.onSpxReady != null) {
                 this.config.onSpxReady()
             }
         }
     }
-
 }
 
 // export GameApp to global

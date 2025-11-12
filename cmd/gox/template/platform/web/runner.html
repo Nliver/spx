@@ -57,6 +57,7 @@
 
 		window.spxIsProxyThreadMode = false
 		let onGameExit = null
+
 		function onProgress(value) {
 			const progressEvent = new CustomEvent('onProgress', {
 				detail: {
@@ -88,6 +89,7 @@
 				onGameError(msg)
 			}
 		}
+		
 		window.onGameError = function (callback) {
 			onGameError = callback
 		}
@@ -101,11 +103,12 @@
 		window.onGameExit = function (callback) {
 			onGameExit = callback
 		}
-		
-		window.startGame = async (buffer, assetURLs = null, onSpxReady = null, cfg = null) => {
+
+		window.initGame = async (assetURLs = null, onSpxReady = null) => {
 			isShowEditor = false
 			lastGameApp = null
 			_onSpxReady = onSpxReady
+			
 			if(EnginePackMode == "worker"){
 				window.setAIDescription = function (description) {
 					gameApp.callWorkerFunction("setAIDescription", description)
@@ -125,13 +128,12 @@
 				window.onGameStarted = function () {
 				}
 			}
+			
 			const config = {
 				'projectName': "spx_game",
 				'onProgress': onProgress,
 				"gameCanvas": document.getElementById('game-canvas'),
-				"projectData": new Uint8Array(buffer),
 				"logLevel": LOG_LEVEL_NONE,
-				"useProfiler": true,
 				"useAssetCache": false,
 				"isRuntimeMode": true,
 				"assetURLs": {
@@ -142,23 +144,76 @@
 				},
 				"onSpxReady": onSpxReady,
 				"recordingOnGameStart": false,
-				"autoDownloadRecordedVideo":false,
+				"autoDownloadRecordedVideo": false,
 			};
+			
 			if (assetURLs != null) {
 				config.assetURLs = assetURLs
 			}
-			if (cfg != null) {
-				Object.assign(config, cfg)
+
+			if (gameApp != null) {
+				await gameApp.StopProject();
 			}
-			if (gameApp !== null) {
-				console.log("Restarting game")
-			    await profiler.profile('RestartGame', () => gameApp.RestartGame());
-				return;
-				//await gameApp.StopProject();
-			}
-			// try install project and run game
+
 			gameApp = new GameApp(config);
-			await profiler.profile('RunGame', () => gameApp.RunGame());
+			await gameApp.InitGame();
+		}
+		
+		window.startGame = async (projectCode, filehash , projectData = null, assetURLs = null, onSpxReady = null, cfg = null) => {
+			if (gameApp == null) {
+				console.error("gameApp is null, should call initGame first")
+				return
+			}
+			
+			isShowEditor = false
+			lastGameApp = null
+			_onSpxReady = onSpxReady
+			
+			if(EnginePackMode == "worker"){
+				window.setAIDescription = function (description) {
+					gameApp.callWorkerFunction("setAIDescription", description)
+				}
+				window.setAIInteractionAPIEndpoint = function (endpoint) {
+					gameApp.callWorkerFunction("setAIInteractionAPIEndpoint", endpoint)
+				}
+				window.setAIInteractionAPITokenProvider = function (tokenProviderFunction) {
+					gameApp.callWorkerFunction("setAIInteractionAPITokenProvider", tokenProviderFunction)
+				}
+
+				window.onWasmLoaded = function () {
+					if (_onSpxReady != null) {
+						_onSpxReady()
+					}
+				}
+				window.onGameStarted = function () {
+				}
+			}
+
+			// Update project code
+			gameApp.projectCode = new Uint8Array(projectCode);
+			gameApp.curProjectHash = filehash;
+			
+			// Update gameApp configuration
+			if (projectData != null) {
+				gameApp.projectData = new Uint8Array(projectData);
+				gameApp.oldData = gameApp.projectData;
+				gameApp.config.projectData = gameApp.projectData;
+			}		
+			
+			if (assetURLs != null) {
+				gameApp.assetURLs = assetURLs;
+				gameApp.config.assetURLs = assetURLs;
+			}
+			
+			if (onSpxReady != null) {
+				gameApp.config.onSpxReady = onSpxReady;
+			}
+			
+			if (cfg != null) {
+				Object.assign(gameApp.config, cfg);
+			}
+
+			await gameApp.StartGame();
 		}
 		
 		// Starts recording the game canvas content as video
@@ -169,6 +224,7 @@
 			}
 			gameApp.startRecording()
 		}
+		
 		// Stops the current recording session and returns the result as a Blob.
 		window.stopRecording = async () => {
 			if (gameApp == null) {
@@ -217,15 +273,12 @@
 			app.downloadRecordedVideo(filename)
 		}
 
-
 		window.stopGame = async () => {
 			if (gameApp == null) {
 				console.error("gameApp is null, should call startGame first")
 				return
 			}
-			await gameApp.StopGame()
-			lastGameApp = gameApp
-			gameApp = null
+			await gameApp.ResetGame();
 		}
 
 		window.pauseGame = () => {
@@ -250,13 +303,6 @@
 				return
 			}
 			gameApp.stepNextFrame();
-		}
-		window.resetGame = () => {
-			if (gameApp === null) {
-				console.error("gameApp is null, should call startGame first")
-				return
-			}
-			gameApp.ResetGame();
 		}
 		
 		// Inform the parent window that the runner is ready (methods on the window object are callable)
