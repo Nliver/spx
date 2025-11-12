@@ -165,11 +165,11 @@ class GameApp {
 
         let curGame = this.game;
         profiler.mark('reRunGame');
-        await this.unpackGameData(curGame)
+        await this.unpackGameData(curGame);
         await this.runSpxReady();
         this.restart();
         this.gameCanvas.focus();
-        await this.onRunAfterStart(curGame)
+        await this.onRunAfterStart(curGame);
         this.gameCanvas.focus();
         profiler.mark('game start done');
         profiler.measure('reRunGame', 'game start done');
