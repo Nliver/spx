@@ -5,7 +5,6 @@ package main
 import (
 	"archive/zip"
 	"bytes"
-	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -129,10 +128,9 @@ type SpxRunner struct {
 
 // interpCacheEntry stores the build result.
 type interpCacheEntry struct {
-	hash       string
-	cancelFunc context.CancelFunc
-	interp     *ixgo.Interp
-	fs         *zipfs.ZipFs
+	hash   string
+	interp *ixgo.Interp
+	fs     *zipfs.ZipFs
 }
 
 // SpxRunner encapsulates the build and run functionality for SPX code with hash-based caching.
@@ -232,31 +230,27 @@ func (r *SpxRunner) Build(this js.Value, args []js.Value) any {
 	// Get files object
 	inputArray := args[0]
 
+	// Get pre-computed hash from args[1]
+	filesHash := args[1].String()
+
+	return r.build(inputArray, filesHash)
+}
+
+// build performs the actual build process given the files and their hash.
+func (r *SpxRunner) build(inputArray js.Value, filesHash string) any {
+	// Check cache
+	if r.entry != nil {
+		if r.entry.hash == filesHash {
+			return nil
+		} else {
+			r.Release()
+		}
+	}
+
 	// Convert Uint8Array to Go byte slice
 	length := inputArray.Get("length").Int()
 	zipData := make([]byte, length)
 	js.CopyBytesToGo(zipData, inputArray)
-
-	// Get pre-computed hash from args[1]
-	filesHash := args[1].String()
-
-	fmt.Printf("Files hash: %s\n", filesHash)
-	return r.build(zipData, filesHash)
-}
-
-// build performs the actual build process given the files and their hash.
-func (r *SpxRunner) build(zipData []byte, filesHash string) any {
-	// Check cache
-	if r.entry != nil {
-		println("Checking cache...", r.entry.hash, filesHash)
-		if r.entry.hash == filesHash {
-			fmt.Printf("Using cached build for hash: %s\n", filesHash)
-			return nil
-		} else {
-			fmt.Printf("Cache miss, rebuilding for hash: %s\n", filesHash)
-			r.Release()
-		}
-	}
 
 	// Initialize zip file system
 	zipReader, err := zip.NewReader(bytes.NewReader(zipData), int64(len(zipData)))
@@ -306,8 +300,6 @@ func (r *SpxRunner) build(zipData []byte, filesHash string) any {
 		fs:     fs,
 	}
 
-	fmt.Printf("Build completed and cached with hash: %s\n", filesHash)
-
 	return nil
 }
 
@@ -333,83 +325,36 @@ func (r *SpxRunner) Run(this js.Value, args []js.Value) any {
 	// Get files object
 	inputArray := args[0]
 
-	// Convert Uint8Array to Go byte slice
-	length := inputArray.Get("length").Int()
-	zipData := make([]byte, length)
-	js.CopyBytesToGo(zipData, inputArray)
-
 	// Get pre-computed hash from args[1]
 	filesHash := args[1].String()
-
-	fmt.Printf("Run with files hash: %s\n", filesHash)
 
 	// Look for cached interp
 	if r.entry == nil || r.entry.hash != filesHash {
 		// Cache miss, need to build first
-		fmt.Printf("Cache miss, building for hash: %s\n", filesHash)
-		if buildErr := r.build(zipData, filesHash); buildErr != nil {
+		if buildErr := r.build(inputArray, filesHash); buildErr != nil {
 			return buildErr
 		}
-	} else {
-		fmt.Printf("Cache hit, using cached interp for hash: %s\n", filesHash)
-	}
-
-	// Cancel previous execution if exists
-	if r.entry.cancelFunc != nil {
-		fmt.Println("Cancelling previous execution...")
-		r.entry.cancelFunc()
 	}
 
 	// Run interp in background goroutine (non-blocking)
 	go func() {
-		// Create cancellable context
-		runCtx, cancel := context.WithCancel(context.Background())
-		r.entry.cancelFunc = cancel
-
-		// Set context for ixgo
-		r.ctx.RunContext = runCtx
-
 		interp := r.entry.interp
 		code, runErr := r.ctx.RunInterp(interp, "main.go", nil)
 
-		if runErr != nil && runErr != context.Canceled {
+		if runErr != nil {
 			fmt.Printf("Failed to run XGo source (code %d): %v\n", code, runErr)
 			js.Global().Call("gdspx_ext_on_runtime_panic", runErr.Error())
 			js.Global().Call("gdspx_ext_request_exit", 1)
 			return
 		}
 
-		// Clear cancel func after successful completion
-		r.entry.cancelFunc = nil
 	}()
-
-	return nil
-}
-
-// Cancel stops the currently running execution, if any.
-//
-// Returns: nil on success, error if no execution is running.
-func (r *SpxRunner) Cancel(this js.Value, args []js.Value) any {
-	fmt.Printf("Cancel requested\n")
-	if r.entry == nil || r.entry.cancelFunc == nil {
-		return errors.New("Cancel: no execution is running")
-	}
-
-	fmt.Printf("Cancelling game execution...\n")
-	r.entry.cancelFunc()
-	r.entry.cancelFunc = nil
 
 	return nil
 }
 
 // Release releases resources held by the SpxRunner.
 func (r *SpxRunner) Release() {
-	// Cancel running execution first
-	if r.entry.cancelFunc != nil {
-		r.entry.cancelFunc()
-		r.entry.cancelFunc = nil
-	}
-
 	// Clear context
 	r.ctx.RunContext = nil
 	if r.entry != nil && r.entry.interp != nil {
@@ -475,7 +420,6 @@ func main() {
 	// Register SpxRunner WASM interface
 	js.Global().Set("ixgo_build", JSFuncOfWithError(defaultRunner.Build))
 	js.Global().Set("ixgo_run", JSFuncOfWithError(defaultRunner.Run))
-	js.Global().Set("ixgo_cancel", JSFuncOfWithError(defaultRunner.Cancel))
 
 	// Keep WASM running select {} will block the main goroutine forever
 	c := make(chan struct{})
