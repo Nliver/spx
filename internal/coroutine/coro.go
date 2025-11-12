@@ -183,8 +183,6 @@ func (p *Coroutines) AbortAll() {
 		}
 		th.mutex.Unlock()
 	}
-
-	fmt.Println("[Coroutine] AbortAllSafe: signaled all coroutines to stop")
 }
 
 func (p *Coroutines) StopIf(filter func(th Thread) bool) {
@@ -192,7 +190,6 @@ func (p *Coroutines) StopIf(filter func(th Thread) bool) {
 	defer p.mutex.Unlock()
 	for th := range p.suspended {
 		if filter(th) {
-			fmt.Println("Stopping coroutine:", th)
 			th.stopped_ = true
 		}
 	}
