@@ -24,7 +24,7 @@ modulate_color = Color(0.996078, 1, 1, 1)
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_sbh8w"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_c6mp2"]
-load_path = "res://.godot/imported/frame_value1.png-e7da32e606df1ada0f6c449f0a1d5a12.ctex"
+load_path = "res://.godot/imported/frame_value.png-2feb44c5f368df083422a7a9d1d0a102.ctex"
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_h4u5r"]
 texture = SubResource("CompressedTexture2D_c6mp2")

@@ -372,7 +372,7 @@ func (r *SpxRunner) Run(this js.Value, args []js.Value) any {
 		interp := r.entry.interp
 		code, runErr := r.ctx.RunInterp(interp, "main.go", nil)
 
-		if runErr != nil && runErr != context.Canceled && code != 2 {
+		if runErr != nil && runErr != context.Canceled {
 			fmt.Printf("Failed to run XGo source (code %d): %v\n", code, runErr)
 			js.Global().Call("gdspx_ext_on_runtime_panic", runErr.Error())
 			js.Global().Call("gdspx_ext_request_exit", 1)
