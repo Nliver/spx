@@ -11,7 +11,6 @@ import (
 	"log/slog"
 	"os"
 	"syscall/js"
-	"time"
 	_ "unsafe"
 
 	"github.com/goplus/builder/tools/ai"
@@ -301,8 +300,6 @@ func (r *SpxRunner) build(zipData []byte, filesHash string) any {
 		fs:     fs,
 	}
 
-	fmt.Printf("Build completed and cached with hash: %s\n", filesHash)
-
 	return nil
 }
 
@@ -324,11 +321,6 @@ func (r *SpxRunner) Run(this js.Value, args []js.Value) any {
 	if len(args) != 2 {
 		return errors.New("Run: missing files argument")
 	}
-	start := time.Now()
-	defer func() {
-		elapsed := time.Since(start)
-		fmt.Printf("Run completed in %s\n", elapsed)
-	}()
 
 	// Get files object
 	inputArray := args[0]
@@ -341,17 +333,12 @@ func (r *SpxRunner) Run(this js.Value, args []js.Value) any {
 	// Get pre-computed hash from args[1]
 	filesHash := args[1].String()
 
-	fmt.Printf("Run with files hash: %s\n", filesHash)
-
 	// Look for cached interp
 	if r.entry == nil || r.entry.hash != filesHash {
 		// Cache miss, need to build first
-		fmt.Printf("Cache miss, building for hash: %s\n", filesHash)
 		if buildErr := r.build(zipData, filesHash); buildErr != nil {
 			return buildErr
 		}
-	} else {
-		fmt.Printf("Cache hit, using cached interp for hash: %s\n", filesHash)
 	}
 
 	// Run interp in background goroutine (non-blocking)
