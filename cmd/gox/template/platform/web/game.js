@@ -12,7 +12,6 @@ class GameApp {
         this.logLevel = config.logLevel;
         this.useProfiler = config.useProfiler || false;
         this.projectData = config.projectData;
-        this.projectCode = config.projectCode;
         this.oldData = config.projectData;
         this.gameCanvas = config.gameCanvas;
         this.assetURLs = config.assetURLs;
@@ -154,13 +153,10 @@ class GameApp {
             return;
         }
 
-        window.ixgo_build(new Uint8Array(this.projectCode), this.curProjectHash);
+        window.ixgo_build(this.projectData, this.curProjectHash);
     }
 
     async startGame() {
-        const startTime = performance.now();
-        console.log('[StartGame] Starting game...');
-        
         this.runGameTask--;
         if (this.stopGameTask > 0) {
             this.logVerbose("stopGame is called before runing game");
@@ -169,31 +165,14 @@ class GameApp {
 
         let curGame = this.game;
         profiler.mark('reRunGame');
-        
-        const unpackStart = performance.now();
         await this.unpackGameData(curGame)
-        console.log(`[StartGame] unpackGameData took ${(performance.now() - unpackStart).toFixed(2)}ms`);
-        
-        const spxReadyStart = performance.now();
         await this.runSpxReady();
-        console.log(`[StartGame] runSpxReady took ${(performance.now() - spxReadyStart).toFixed(2)}ms`);
-        
-        const restartStart = performance.now();
         this.restart();
-        console.log(`[StartGame] restart took ${(performance.now() - restartStart).toFixed(2)}ms`);
-        
         this.gameCanvas.focus();
-        
-        const afterStartStart = performance.now();
         await this.onRunAfterStart(curGame)
-        console.log(`[StartGame] onRunAfterStart took ${(performance.now() - afterStartStart).toFixed(2)}ms`);
-        
         this.gameCanvas.focus();
         profiler.mark('game start done');
         profiler.measure('reRunGame', 'game start done');
-        
-        const totalTime = performance.now() - startTime;
-        console.log(`[StartGame] Total time: ${totalTime.toFixed(2)}ms`);
     }
 
     async stopGame() {
@@ -360,7 +339,7 @@ class GameApp {
             // register global functions
             Module = game.rtenv;
             FFI = self;
-            window.ixgo_run(new Uint8Array(this.projectCode), this.curProjectHash);
+            window.ixgo_run(this.projectData, this.curProjectHash);
         }
     }
 

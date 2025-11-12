@@ -159,7 +159,7 @@
 			await gameApp.InitGame();
 		}
 		
-		window.startGame = async (projectCode, filehash , projectData = null, assetURLs = null, onSpxReady = null, cfg = null) => {
+		window.startGame = async (projectData, filehash, assetURLs = null, onSpxReady = null, cfg = null) => {
 			if (gameApp == null) {
 				console.error("gameApp is null, should call initGame first")
 				return
@@ -189,16 +189,10 @@
 				}
 			}
 
-			// Update project code
-			gameApp.projectCode = new Uint8Array(projectCode);
 			gameApp.curProjectHash = filehash;
-			
-			// Update gameApp configuration
-			if (projectData != null) {
-				gameApp.projectData = new Uint8Array(projectData);
-				gameApp.oldData = gameApp.projectData;
-				gameApp.config.projectData = gameApp.projectData;
-			}		
+			gameApp.projectData = new Uint8Array(projectData);
+			gameApp.oldData = gameApp.projectData;
+			gameApp.config.projectData = gameApp.projectData;	
 			
 			if (assetURLs != null) {
 				gameApp.assetURLs = assetURLs;
