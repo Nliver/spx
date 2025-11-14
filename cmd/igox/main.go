@@ -128,7 +128,6 @@ type SpxRunner struct {
 
 // interpCacheEntry stores the build result.
 type interpCacheEntry struct {
-	hash   string
 	interp *ixgo.Interp
 	fs     *zipfs.ZipFs
 }
@@ -230,23 +229,6 @@ func (r *SpxRunner) Build(this js.Value, args []js.Value) any {
 	// Get files object
 	inputArray := args[0]
 
-	// Get pre-computed hash from args[1]
-	filesHash := args[1].String()
-
-	return r.build(inputArray, filesHash)
-}
-
-// build performs the actual build process given the files and their hash.
-func (r *SpxRunner) build(inputArray js.Value, filesHash string) any {
-	// Check cache
-	if r.entry != nil {
-		if r.entry.hash == filesHash {
-			return nil
-		} else {
-			r.Release()
-		}
-	}
-
 	// Convert Uint8Array to Go byte slice
 	length := inputArray.Get("length").Int()
 	zipData := make([]byte, length)
@@ -295,7 +277,6 @@ func (r *SpxRunner) build(inputArray js.Value, filesHash string) any {
 
 	// Cache build result
 	r.entry = &interpCacheEntry{
-		hash:   filesHash,
 		interp: interp,
 		fs:     fs,
 	}
@@ -305,37 +286,16 @@ func (r *SpxRunner) build(inputArray js.Value, filesHash string) any {
 
 // Run executes the cached interpreter, automatically building if necessary.
 //
-// Parameters:
-//
-//	args[0]: JS object with same structure as Build()
-//
 // Behavior:
-//  1. Computes hash of input files
-//  2. If cache miss or no cached build: Automatically calls Build()
-//  3. Executes the interpreter
+//  1. Executes the interpreter
 //
 // Returns: nil on success, error on build or execution failure.
 //
 // Note: This method is idempotent - won't rebuild unnecessarily.
 func (r *SpxRunner) Run(this js.Value, args []js.Value) any {
-	if len(args) != 2 {
-		return errors.New("Run: missing files argument")
+	if r.entry == nil || r.entry.interp == nil {
+		return errors.New("Run: Build() must be called first")
 	}
-
-	// Get files object
-	inputArray := args[0]
-
-	// Get pre-computed hash from args[1]
-	filesHash := args[1].String()
-
-	// Look for cached interp
-	if r.entry == nil || r.entry.hash != filesHash {
-		// Cache miss, need to build first
-		if buildErr := r.build(inputArray, filesHash); buildErr != nil {
-			return buildErr
-		}
-	}
-
 	// Run interp in background goroutine (non-blocking)
 	go func() {
 		interp := r.entry.interp
