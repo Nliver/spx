@@ -10,7 +10,7 @@ class GameApp {
         this.projectDataName = 'game.zip';
         this.persistentPath = 'engine';
         this.logLevel = config.logLevel;
-        this.useProfiler = config.useProfiler || false;
+        this.useProfiler = this.logLevel == LOG_LEVEL_VERBOSE;
         this.projectData = config.projectData;
         this.oldData = config.projectData;
         this.gameCanvas = config.gameCanvas;
@@ -37,6 +37,7 @@ class GameApp {
 
         this.useAssetCache = config.useAssetCache || this.miniprogramMode;
         profiler.enabled = this.useProfiler;
+
         // init worker message manager
         this.workerMessageManager = new globalThis.WorkerMessageManager();
 
@@ -164,15 +165,14 @@ class GameApp {
         }
 
         let curGame = this.game;
-        profiler.mark('reRunGame');
-        await this.unpackGameData(curGame);
-        await this.runSpxReady();
-        this.restart();
+        profiler.mark('RunGame Start');
+        await profiler.profile('unpackGameData', () => this.unpackGameData(curGame));
+        await profiler.profile('runSpxReady', () => this.runSpxReady());
+        await profiler.profile('restart', () => this.restart());
+        await profiler.profile('onRunAfterStart', () => this.onRunAfterStart(curGame));
         this.gameCanvas.focus();
-        await this.onRunAfterStart(curGame);
-        this.gameCanvas.focus();
-        profiler.mark('game start done');
-        profiler.measure('reRunGame', 'game start done');
+        profiler.mark('RunGame Done');
+        profiler.measure('RunGame Start', 'RunGame Done');
     }
 
     async stopGame() {
