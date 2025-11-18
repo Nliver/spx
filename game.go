@@ -156,6 +156,7 @@ type Game struct {
 }
 
 const maxCollisionLayerIdx = 32 // engine limit support 32 layers
+var imageSizeCache sync.Map
 
 type spriteCollisionInfo struct {
 	Id    int
@@ -222,6 +223,7 @@ func (p *Game) reset() {
 	p.sprs = make(map[string]Sprite)
 	timer.OnReload()
 	close(p.events)
+	imageSizeCache = sync.Map{}
 	p.Stop(AllOtherScripts)
 }
 
@@ -1610,7 +1612,6 @@ func (p *Game) loadSound(name SoundName) (media sound, err error) {
 		return
 	}
 	media.Path = prefix + "/" + media.Path
-	engine.CheckAssetFile(media.Path)
 	p.sounds.audios[name] = media
 	return
 }

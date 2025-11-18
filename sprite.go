@@ -22,6 +22,7 @@ import (
 	"maps"
 	"math"
 	"reflect"
+	"sync"
 
 	"github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/engine"
@@ -235,11 +236,12 @@ type SpriteImpl struct {
 	rotationStyle RotationStyle
 	pivot         mathf.Vec2
 
-	sayObj           *sayOrThinker
-	quoteObj         *quoter
-	animations       map[SpriteAnimationName]*aniConfig
-	animBindings     map[string]string
-	defaultAnimation SpriteAnimationName
+	sayObj            *sayOrThinker
+	quoteObj          *quoter
+	animations        map[SpriteAnimationName]*aniConfig
+	animBindings      map[string]string
+	defaultAnimation  SpriteAnimationName
+	animationWrappers map[SpriteAnimationName]*animationWrapper // lazy load
 
 	penColor mathf.Color
 	penWidth float64
@@ -279,6 +281,20 @@ type SpriteImpl struct {
 	friction    float64
 	airDrag     float64
 	gravity     float64
+}
+
+type animationWrapper struct {
+	spr      *SpriteImpl
+	ani      *aniConfig
+	loaded   bool
+	loadOnce sync.Once
+}
+
+func (aw *animationWrapper) ensureRegistered(pName string) {
+	aw.loadOnce.Do(func() {
+		registerAnimToEngine(aw.spr.name, pName, aw.ani, aw.spr.costumes, aw.spr.isCostumeSet)
+		aw.loaded = true
+	})
 }
 
 func (p *SpriteImpl) setDying() { // dying: visible but can't be touched
@@ -376,9 +392,10 @@ func (p *SpriteImpl) init(
 		p.animations[key] = ani
 	}
 
-	// register animations to engine
+	// lazy register animations to engine
+	p.animationWrappers = make(map[SpriteAnimationName]*animationWrapper)
 	for animName, ani := range p.animations {
-		registerAnimToEngine(p.name, animName, ani, p.baseObj.costumes, p.isCostumeSet)
+		p.animationWrappers[animName] = &animationWrapper{spr: p, ani: ani}
 	}
 
 	p.pendingAudios = make([]string, 0)
@@ -838,6 +855,7 @@ func (p *SpriteImpl) onAnimationDone(animName string) {
 }
 
 func (p *SpriteImpl) doAnimation(animName SpriteAnimationName, ani *aniConfig, loop bool, speed float64, isBlocking bool, playAudio bool) {
+	p.animationWrappers[animName].ensureRegistered(animName)
 	p.stopAnimState(p.curAnimState)
 	p.curAnimState = &animState{
 		AniType:    aniTypeFrame,
