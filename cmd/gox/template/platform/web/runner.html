@@ -46,13 +46,13 @@
 	<script src="storage.manager.js"></script>
 	<script src="worker.message.manager.js"></script>
 	<script src="engine.js"></script>
+	<script src="fflate.js"></script>
 	<script src="game.js"></script>
 	<script>
 		"use strict";
 		let gameApp = null
 		let isShowEditor = false
 		let onGameError = null
-		let _onSpxReady = null
 		let lastGameApp = null
 
 		window.spxIsProxyThreadMode = false
@@ -104,10 +104,9 @@
 			onGameExit = callback
 		}
 
-		window.initGame = async (assetURLs = null, onSpxReady = null) => {
+		window.initEngine = async (assetURLs = null, config = {}) => {
 			isShowEditor = false
 			lastGameApp = null
-			_onSpxReady = onSpxReady
 			
 			if(EnginePackMode == "worker"){
 				window.setAIDescription = function (description) {
@@ -120,16 +119,11 @@
 					gameApp.callWorkerFunction("setAIInteractionAPITokenProvider", tokenProviderFunction)
 				}
 
-				window.onWasmLoaded = function () {
-					if (_onSpxReady != null) {
-						_onSpxReady()
-					}
-				}
-				window.onGameStarted = function () {
-				}
+				window.onWasmLoaded = function () {}
+				window.onGameStarted = function () {}
 			}
 			
-			const config = {
+			const finalConfig = {
 				'projectName': "spx_game",
 				'onProgress': onProgress,
 				"gameCanvas": document.getElementById('game-canvas'),
@@ -142,80 +136,32 @@
 					"gdspx.wasm": "/gdspx.wasm",
 					"engine.wasm": "/engine.wasm",
 				},
-				"onSpxReady": onSpxReady,
 				"recordingOnGameStart": false,
 				"autoDownloadRecordedVideo": false,
 			};
 			
 			if (assetURLs != null) {
-				config.assetURLs = assetURLs
+				finalConfig.assetURLs = assetURLs
 			}
+
+			Object.assign(finalConfig, config);
 
 			if (gameApp != null) {
-				await gameApp.StopGame();
+				await gameApp.ResetGame();
 			}
 
-			gameApp = new GameApp(config);
-			await gameApp.InitGame();
+			gameApp = new GameApp(finalConfig);
+			await gameApp.InitEngine();
+		}
+
+		window.initGame = async (files) => {
+			if (gameApp == null) throw new Error("gameApp is null, should call initEngine first")
+			await gameApp.InitGame(files)
 		}
 		
-		window.startGame = async (projectData, filehash, assetURLs = null, onSpxReady = null, cfg = null) => {
-			if (gameApp == null) {
-				console.error("gameApp is null, should call initGame first")
-				return
-			}
-			
-			isShowEditor = false
-			lastGameApp = null
-			_onSpxReady = onSpxReady
-			
-			if(EnginePackMode == "worker"){
-				window.setAIDescription = function (description) {
-					gameApp.callWorkerFunction("setAIDescription", description)
-				}
-				window.setAIInteractionAPIEndpoint = function (endpoint) {
-					gameApp.callWorkerFunction("setAIInteractionAPIEndpoint", endpoint)
-				}
-				window.setAIInteractionAPITokenProvider = function (tokenProviderFunction) {
-					gameApp.callWorkerFunction("setAIInteractionAPITokenProvider", tokenProviderFunction)
-				}
-
-				window.onWasmLoaded = function () {
-					if (_onSpxReady != null) {
-						_onSpxReady()
-					}
-				}
-				window.onGameStarted = function () {
-				}
-			}
-
-			gameApp.curProjectHash = filehash;
-			gameApp.projectData = new Uint8Array(projectData);
-			gameApp.oldData = gameApp.projectData;
-			gameApp.config.projectData = gameApp.projectData;	
-			
-			if (assetURLs != null) {
-				gameApp.assetURLs = assetURLs;
-				gameApp.config.assetURLs = assetURLs;
-			}
-			
-			if (onSpxReady != null) {
-				gameApp.config.onSpxReady = onSpxReady;
-			}
-			
-			if (cfg != null) {
-				Object.assign(gameApp.config, cfg);
-			}
-
+		window.startGame = async () => {
+			if (gameApp == null) throw new Error("gameApp is null, should call initEngine first")
 			await gameApp.StartGame();
-		}
-		
-		window.buildGame = async () => {
-			if (gameApp == null) {
-				console.error("gameApp is null, should call startGame first")
-				return
-			}
-			await gameApp.buildGame()
 		}
 
 		// Starts recording the game canvas content as video
