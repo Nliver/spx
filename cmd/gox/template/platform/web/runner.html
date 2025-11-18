@@ -152,7 +152,7 @@
 			}
 
 			if (gameApp != null) {
-				await gameApp.StopProject();
+				await gameApp.StopGame();
 			}
 
 			gameApp = new GameApp(config);
@@ -210,6 +210,14 @@
 			await gameApp.StartGame();
 		}
 		
+		window.buildGame = async () => {
+			if (gameApp == null) {
+				console.error("gameApp is null, should call startGame first")
+				return
+			}
+			await gameApp.buildGame()
+		}
+
 		// Starts recording the game canvas content as video
 		window.startRecording = () => {
 			if (gameApp == null) {

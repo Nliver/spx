@@ -62,6 +62,7 @@
 </head>
 
 <body>
+	<button id="initGameBtn">Init</button>
 	<button id="startGameBtn">Start</button>
 	<button id="stopGameBtn">Stop</button>
 	<button id="startNewGameBtn">StartNew</button>
@@ -72,7 +73,7 @@
 	<button id="resumeGameBtn">Resume</button>
 	<button id="stepNextFrameBtn">NextFrame</button>
 	<button id="toggleSizeBtn">ToggleSize</button>
-	<button id="resetGameBtn">Reset</button>
+
 	<progress id="progress-bar" value="0" max="1" style="display: none;"></progress>
 	<div id="tabs">
 		<div id="tab-loader">
@@ -91,6 +92,7 @@
 	<script>
 		window.addEventListener('load', function() {
 			animateBox();
+			initGame()
 		});
 
 		function animateBox() {
@@ -110,6 +112,7 @@
 		}
 
 		let runnerWindow = {}
+		document.getElementById('initGameBtn').addEventListener('click', initGame);
 		document.getElementById('startNewGameBtn').addEventListener('click', startNewGame);
 		document.getElementById('startGameBtn').addEventListener('click', startGame);
 		document.getElementById('stopGameBtn').addEventListener('click', stopGame);
@@ -120,7 +123,7 @@
 		document.getElementById('resumeGameBtn').addEventListener('click', resumeGame);
 		document.getElementById('stepNextFrameBtn').addEventListener('click', stepNextFrame);
 		document.getElementById('toggleSizeBtn').addEventListener('click', toggleSizeFrame);
-		document.getElementById('resetGameBtn').addEventListener('click', resetGame);
+
 		const iframe = document.getElementById('runnerFrame');
 		let enlarged = false;
 
@@ -132,6 +135,10 @@
 				document.getElementById('tab-loader').style.display = 'none';
 			}
 			document.getElementById('progress-bar').style.display = value >= 1 ? 'none' : 'block';
+		}
+
+		async function initGame() {
+			await runnerWindow.initGame()
 		}
 
 		async function startNewGame() {
@@ -186,20 +193,6 @@
 			iframe.height = size.height;
 			enlarged = !enlarged;
 		}
-		async function restartGame() {
-			if (runnerWindow.restartGame) {
-				runnerWindow.restartGame();
-			} else {
-				console.warn("RestartGame function not available");
-			}
-		}
-		async function resetGame() {
-			if (runnerWindow.resetGame) {
-				runnerWindow.resetGame();
-			} else {
-				console.warn("StepNextFrame function not available");
-			}
-		}
 		async function takeScreenshot() {
 			try {
 				const blob = await runnerWindow.getScreenshot()
@@ -232,8 +225,9 @@
 			})
 			runnerWindow.spxIsForceDebugLog = true
 			let buffer = await (await (fetch(zipUrl))).arrayBuffer();
-			await runnerWindow.startGame(buffer, null, function () {
+			await runnerWindow.startGame(buffer, null, null,  () => {
 				runnerWindow.setAIInteractionAPIEndpoint("http://127.0.0.1:8000")
+				runnerWindow.buildGame()
 			},{ 
 				"logLevel":LOG_LEVEL_VERBOSE,
 			});
