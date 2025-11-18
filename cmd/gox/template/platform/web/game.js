@@ -50,6 +50,10 @@ class GameApp {
             logVerbose: this.logVerbose.bind(this)
         });
 
+        this.initGameTask = 0;
+        this.buildGameTask = 0;
+        this.runGameTask = 0;
+        this.stopGameTask = 0;  
         this.logVerbose("EnginePackMode: ", EnginePackMode)
     }
     logVerbose(...args) {
