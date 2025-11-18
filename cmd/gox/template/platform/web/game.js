@@ -1,5 +1,21 @@
 var Module = null
 
+/**
+ * @typedef {Object} FileMeta
+ * @property {number} lastModified Last modified time in milliseconds since Unix epoch.
+ */
+
+/**
+ * @typedef {Object} FileWithMeta
+ * @property {number} lastModified Last modified time in milliseconds since Unix epoch.
+ * @property {ArrayBuffer} content File content as ArrayBuffer.
+ */
+
+/**
+ * @typedef {{ [path: string]: FileWithMeta }} Files
+ * @typedef {{ [path: string]: FileMeta }} FilesMeta
+ */
+
 class GameApp {
     constructor(config) {
         config = config || {};
@@ -11,8 +27,6 @@ class GameApp {
         this.persistentPath = 'engine';
         this.logLevel = config.logLevel;
         this.useProfiler = this.logLevel == LOG_LEVEL_VERBOSE;
-        this.projectData = config.projectData;
-        this.oldData = config.projectData;
         this.gameCanvas = config.gameCanvas;
         this.assetURLs = config.assetURLs;
         this.gameConfig = {
@@ -28,7 +42,6 @@ class GameApp {
         this.recordingOnGameStart = config.recordingOnGameStart || false
         this.autoDownloadRecordedVideo = config.autoDownloadRecordedVideo || false
         this.logicPromise = Promise.resolve();
-        this.curProjectHash = ''
         // web worker mode
         this.workerMode = EnginePackMode == "worker"
         this.minigameMode = EnginePackMode == "minigame"
@@ -55,6 +68,12 @@ class GameApp {
         this.runGameTask = 0;
         this.stopGameTask = 0;  
         this.logVerbose("EnginePackMode: ", EnginePackMode)
+
+        /**
+         * Project files meta
+         * @type FilesMeta
+         */
+        this.projectFilesMeta = {};
     }
     logVerbose(...args) {
         if (this.logLevel == LOG_LEVEL_VERBOSE) {
@@ -69,12 +88,17 @@ class GameApp {
     }
 
 
-    async InitGame() {
-        return this.startTask(() => { this.initGameTask++ }, this.initGame)
+    async InitEngine() {
+        return this.startTask(() => { this.initGameTask++ }, this.initEngine)
     }
 
-    async BuildGame() {
-        return this.startTask(() => { this.buildGameTask++ }, this.buildGame)
+    /**
+     * Initialize game with given game files. It is expected to be called after `InitEngine`, while before `StartGame`.
+     * @param {Files} files 
+     * @returns Promise<void>
+     */
+    async InitGame(files) {
+        return this.startTask(() => { this.buildGameTask++ }, this.initGame, files)
     }
 
     async StopGame() {
@@ -89,7 +113,7 @@ class GameApp {
         return this.startTask(() => { this.stopGameTask++ }, this.reset)
     }
 
-    async initGame() {
+    async initEngine() {
         await profiler.profile('onRunPrepareEngineWasm', () => this.onRunPrepareEngineWasm());
 
         this.initGameTask--;
@@ -151,14 +175,67 @@ class GameApp {
         this.logVerbose("==> game start done");
     }
 
-    async buildGame() {
+    /**
+     * @private Initialize game with given game files
+     * @param {Files} files 
+     * @returns Promise<void>
+     */
+    async initGame(files) {
+        this.updateEngineFiles(files);
+        this.buildGame(files);
+    }
+
+    /**
+     * (Incrementally) Update engine files with given game files.
+     * @param {Files} files
+     */
+    updateEngineFiles(files) {
+        /** @type Array<{ name: string, data: Uint8Array }> */
+        const updatedFiles = [];
+        const savedFilesMeta = this.projectFilesMeta;
+        /** @type FilesMeta */
+        const filesMeta = {};
+        Object.entries(files).forEach(([path, { lastModified, content }]) => {
+            filesMeta[path] = { lastModified };
+            const savedFileMeta = savedFilesMeta[path];
+            if (savedFileMeta != null && savedFileMeta.lastModified === lastModified) {
+                return; // file not changed, skip
+            }
+            updatedFiles.push({ name: path, data: new Uint8Array(content) });
+        });
+        this.game.updateAssetsData(this.persistentPath, updatedFiles)
+        this.projectFilesMeta = filesMeta;
+
+        /** @type Array<string> */
+        const removedFilePaths = [];
+        Object.entries(savedFilesMeta).forEach(([path, _]) => {
+            if (filesMeta[path] == null) {
+                removedFilePaths.push(path);
+            }
+        });
+        this.game.deleteAssetsData(this.persistentPath, removedFilePaths);
+    }
+
+    /**
+     * Do spx build with given game files
+     * @param {Files} files
+     */
+    buildGame(files) {
         this.buildGameTask--;
         if (this.stopGameTask > 0) {
             this.logVerbose("stopGame is called before runing game");
             return;
         }
-
-        window.ixgo_build(this.projectData, this.curProjectHash);
+        /** @type {{ [path: string]: Uint8Array }} */
+        const nonAssetFiles = {};
+        Object.entries(files).forEach(([path, file]) => {
+            // `.spx` and `.json` files are treated as non-asset files
+            if (path.endsWith(".spx") || path.endsWith('.json')) {
+                nonAssetFiles[path] = new Uint8Array(file.content);
+            }
+        });
+        const zippedData = fflate.zipSync(nonAssetFiles, { level: 0 });
+        window.ixgo_build(zippedData);
     }
 
     async startGame() {
@@ -170,8 +247,6 @@ class GameApp {
 
         let curGame = this.game;
         profiler.mark('RunGame Start');
-        await profiler.profile('unpackGameData', () => this.unpackGameData(curGame));
-        await profiler.profile('runSpxReady', () => this.runSpxReady());
         await profiler.profile('restart', () => this.restart());
         await profiler.profile('onRunAfterStart', () => this.onRunAfterStart(curGame));
         this.gameCanvas.focus();
@@ -266,19 +341,19 @@ class GameApp {
             this.config.onProgress(value);
         }
     }
-    async unpackData(game) {
-        await this.unpackEngineData(game)
-        await this.unpackGameData(game)
-    }
+    // async unpackData(game) {
+    //     await this.unpackEngineData(game)
+    //     await this.unpackGameData(game)
+    // }
 
     async unpackEngineData(game) {
         let packUrl = this.assetURLs[this.packName]
         let pckData = await (await fetch(packUrl)).arrayBuffer()
         await game.unpackEngineData(this.persistentPath, this.packName, pckData)
     }
-    async unpackGameData(game) {
-        await game.unpackGameData(this.persistentPath, this.projectDataName, this.projectData)
-    }
+    // async unpackGameData(game) {
+    //     await game.unpackGameData(this.persistentPath, this.projectDataName, this.projectData)
+    // }
 
     callWorkerFunction(funcName, ...args) {
         this.workerMessageManager.callWorkerFunction(funcName, ...args)
@@ -343,7 +418,7 @@ class GameApp {
             // register global functions
             Module = game.rtenv;
             FFI = self;
-            window.ixgo_run(this.projectData, this.curProjectHash);
+            window.ixgo_run();
         }
     }
 
@@ -379,14 +454,6 @@ class GameApp {
     }
     async runLogicWasm() {
         this.go.run(this.logicWasmInstance);
-    }
-
-    async runSpxReady() {
-        if (!this.minigameMode) {
-            if (this.config.onSpxReady != null) {
-                this.config.onSpxReady()
-            }
-        }
     }
 }
 
