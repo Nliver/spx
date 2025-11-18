@@ -147,8 +147,7 @@
 			Object.assign(finalConfig, config);
 
 			if (gameApp != null) {
-				// TODO by @nighca: Should we use `ResetGame` instead?
-				await gameApp.StopGame();
+				await gameApp.ResetGame();
 			}
 
 			gameApp = new GameApp(finalConfig);
