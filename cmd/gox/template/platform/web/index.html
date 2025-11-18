@@ -59,10 +59,11 @@
 			}
 		}
 	</style>
+	<script src="fflate.js"></script>
 </head>
 
 <body>
-	<button id="initGameBtn">Init</button>
+	<!-- <button id="initGameBtn">Init</button> -->
 	<button id="startGameBtn">Start</button>
 	<button id="stopGameBtn">Stop</button>
 	<button id="startNewGameBtn">StartNew</button>
@@ -112,7 +113,7 @@
 		}
 
 		let runnerWindow = {}
-		document.getElementById('initGameBtn').addEventListener('click', initGame);
+		// document.getElementById('initGameBtn').addEventListener('click', initGame);
 		document.getElementById('startNewGameBtn').addEventListener('click', startNewGame);
 		document.getElementById('startGameBtn').addEventListener('click', startGame);
 		document.getElementById('stopGameBtn').addEventListener('click', stopGame);
@@ -137,9 +138,9 @@
 			document.getElementById('progress-bar').style.display = value >= 1 ? 'none' : 'block';
 		}
 
-		async function initGame() {
-			await runnerWindow.initGame()
-		}
+		// async function initGame() {
+		// 	await runnerWindow.initGame()
+		// }
 
 		async function startNewGame() {
 			await startProject('/diff.zip')
@@ -224,13 +225,16 @@
 				console.error("onGameExit", code)
 			})
 			runnerWindow.spxIsForceDebugLog = true
-			let buffer = await (await (fetch(zipUrl))).arrayBuffer();
-			await runnerWindow.startGame(buffer, null, null,  () => {
-				runnerWindow.setAIInteractionAPIEndpoint("http://127.0.0.1:8000")
-				runnerWindow.buildGame()
-			},{ 
-				"logLevel":LOG_LEVEL_VERBOSE,
-			});
+
+			await runnerWindow.initEngine(null, { logLevel: LOG_LEVEL_VERBOSE })
+			let zipped = await (await (fetch(zipUrl))).arrayBuffer()
+			let unzipped = fflate.unzipSync(new Uint8Array(zipped))
+			let files = {}
+			Object.entries(unzipped).forEach(([path, data]) => {
+				files[path] = { lastModified: Date.now(), content: data.buffer }
+			})
+			await runnerWindow.initGame(files)
+			await runnerWindow.startGame()
 		}
 	</script>
 </body>
