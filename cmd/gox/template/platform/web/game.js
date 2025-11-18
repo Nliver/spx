@@ -12,7 +12,7 @@ var Module = null
  */
 
 /**
- * @typedef {{ [path: string]: FileWithMeta }} Files
+ * @typedef {{ [path: string]: FileWithMeta }} Files Files only, directories should be omitted.
  * @typedef {{ [path: string]: FileMeta }} FilesMeta
  */
 

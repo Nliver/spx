@@ -93,7 +93,7 @@
 	<script>
 		window.addEventListener('load', function() {
 			animateBox();
-			initGame()
+			initEngine()
 		});
 
 		function animateBox() {
@@ -138,9 +138,9 @@
 			document.getElementById('progress-bar').style.display = value >= 1 ? 'none' : 'block';
 		}
 
-		// async function initGame() {
-		// 	await runnerWindow.initGame()
-		// }
+		async function initEngine() {
+			await runnerWindow.initEngine(null, { logLevel: LOG_LEVEL_VERBOSE })
+		}
 
 		async function startNewGame() {
 			await startProject('/diff.zip')
@@ -226,11 +226,11 @@
 			})
 			runnerWindow.spxIsForceDebugLog = true
 
-			await runnerWindow.initEngine(null, { logLevel: LOG_LEVEL_VERBOSE })
 			let zipped = await (await (fetch(zipUrl))).arrayBuffer()
 			let unzipped = fflate.unzipSync(new Uint8Array(zipped))
 			let files = {}
 			Object.entries(unzipped).forEach(([path, data]) => {
+				if (path.endsWith('/')) return // skip directories
 				files[path] = { lastModified: Date.now(), content: data.buffer }
 			})
 			await runnerWindow.initGame(files)
