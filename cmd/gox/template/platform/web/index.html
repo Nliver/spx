@@ -223,6 +223,11 @@
 			})
 			runnerWindow.onGameExit(function (code) {
 				console.error("onGameExit", code)
+				initEngine();
+			})
+			runnerWindow.addEventListener("godot-wasm-crash", e => {
+				console.error("Caught Godot crash:", e.detail);
+				initEngine();
 			})
 			runnerWindow.spxIsForceDebugLog = true
 
