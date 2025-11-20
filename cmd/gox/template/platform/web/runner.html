@@ -54,6 +54,9 @@
 		let isShowEditor = false
 		let onGameError = null
 
+		let lastAssetURLs = null
+		let lastConfig = null
+
 		window.spxIsProxyThreadMode = false
 		let onGameExit = null
 
@@ -83,6 +86,25 @@
 			}
 		}
 
+		async function restartEngineAfterCrash(reason) {
+			console.warn("Engine crashed, restarting...", reason);
+			if (gameApp) {
+				try {
+					await gameApp.ResetGame();
+				} catch (e) {
+					console.error("Error during ResetGame:", e);
+				}
+				gameApp = null;
+			}
+			try {
+				await window.initEngine(lastAssetURLs, lastConfig);
+				console.log("Engine reinitialized.");
+			} catch (e) {
+				console.error("Engine re-init failed:", e);
+				return;
+			}
+		}
+
 		window.gdspx_on_runtime_panic = function (msg) {
 			if (onGameError != null) {
 				onGameError(msg)
@@ -98,11 +120,16 @@
 				gameApp = null
 				onGameExit(code)
 			}
+			restartEngineAfterCrash("exit code " + code);
 		}
 
 		window.onGameExit = function (callback) {
 			onGameExit = callback
 		}
+		window.addEventListener("godot-wasm-crash", e => {
+			console.error("Caught Godot crash:", e.detail);
+			restartEngineAfterCrash(e.detail);
+		})
 
 		window.initEngine = async (assetURLs = null, config = {}) => {
 			isShowEditor = false
@@ -148,6 +175,8 @@
 				finalConfig.assetURLs = assetURLs
 			}
 
+			lastAssetURLs = assetURLs
+			lastConfig = config
 			Object.assign(finalConfig, config);
 			gameApp = new GameApp(finalConfig);
 			await gameApp.InitEngine();
