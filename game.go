@@ -476,7 +476,7 @@ func (p *Game) startLoad(fs spxfs.Dir, cfg *Config) {
 }
 
 func (p *Game) canBindSprite(name string) bool {
-	return hasAsset("sprites/"+name+"/index.json") && p.typs[name] != nil
+	return p.typs[name] != nil
 }
 
 func (p *Game) loadSprite(sprite Sprite, name string, gamer reflect.Value) error {

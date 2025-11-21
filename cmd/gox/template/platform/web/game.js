@@ -35,8 +35,8 @@ class GameApp {
             'canvas': this.gameCanvas,
             'logLevel': this.logLevel,
             'canvasResizePolicy': 2,
-            'onExit': () => {
-                this.onGameExit()
+            'onExit': (code) => {
+                this.onGodotExit(code)
             },
         };
         this.recordingOnGameStart = config.recordingOnGameStart || false
@@ -101,16 +101,12 @@ class GameApp {
         return this.startTask(() => { this.buildGameTask++ }, this.initGame, files)
     }
 
-    async StopGame() {
-        return this.startTask(() => { this.stopGameTask++ }, this.stopGame)
-    }
-
     async StartGame() {
         return this.startTask(() => { this.runGameTask++ }, this.startGame)
     }
 
     async ResetGame() {
-        return this.startTask(() => { this.stopGameTask++ }, this.reset)
+        return this.startTask(() => { this.stopGameTask++ }, this.resetGame)
     }
 
     async initEngine() {
@@ -253,26 +249,6 @@ class GameApp {
         profiler.measure('RunGame Start', 'RunGame Done');
     }
 
-    async stopGame() {
-        this.stopGameTask--
-        if (this.game == null) {
-            // no game is running, do nothing
-            this.logVerbose("no game is running")
-            return
-        }
-        this.stopGameResolve = () => {
-            this.game = null
-            this.stopGameResolve = null
-        }
-        this.onProgress(1.0);
-        this.game.requestQuit()
-
-        if(this.recordingOnGameStart && this.autoDownloadRecordedVideo){
-            let fileName = `spx_${new Date().getTime()}.webm`;
-            this.downloadRecordedVideo(fileName)
-        } 
-    }
-
     downloadRecordedVideo(fileName) { 
         Module.downloadRecordedVideo(fileName)
     }
@@ -289,24 +265,31 @@ class GameApp {
         return await Module.tryStopRecording()
     } 
 
-    onGameExit() {
+    onGodotExit(code) {
         this.game = null
-        this.logVerbose("on game quit")
-        if (this.stopGameResolve) {
-            this.stopGameResolve()
+        if (this.config.handleGodotExit != null) {
+            this.config.handleGodotExit(code);
         }
+ 
     }
-    async reset() {
+    async resetGame() {
         this.stopGameTask--
         if (this.game == null) {
-            this.logVerbose("no game is running")
+            this.logVerbose("No Game Is Running")
             return
         }
+
         let funPtr = this.game.rtenv["_gdspx_ext_request_reset"]
         if(funPtr != null){
             funPtr()
         }
+
+        if(this.recordingOnGameStart && this.autoDownloadRecordedVideo){
+            let fileName = `spx_${new Date().getTime()}.webm`;
+            this.downloadRecordedVideo(fileName)
+        } 
     }
+
     restart() {
         let funPtr = this.game.rtenv["_gdspx_ext_request_restart"]
         if(funPtr != null){
