@@ -85,22 +85,30 @@
 			}
 		}
 
-		async function restartEngineAfterCrash(reason) {
-			console.warn("Engine crashed, restarting...", reason);
-			if (gameApp) {
-				try {
-					await gameApp.ResetGame();
-				} catch (e) {
-					console.error("Error during ResetGame:", e);
-				}
-				gameApp = null;
+		async function handleGodotExit(code) {
+            await restartEngineAfterCrash("godot exit", code);
+        }
+
+		let restartAttempts = 0;
+		const MAX_RESTART_ATTEMPTS = 3;
+		async function restartEngineAfterCrash(reason, code) {
+			if (onGameExit != null) {
+				onGameExit(code)
 			}
+			if (restartAttempts >= MAX_RESTART_ATTEMPTS) {
+				console.error("Max restart attempts reached.  Please reload manually.");
+				return;
+			}
+			restartAttempts++;
+
+			console.warn(`Crash detected. Reason: ${reason}, Exit code: ${code}`);
+			gameApp = null;
 			try {
 				await window.initEngine(lastAssetURLs, lastConfig);
+				restartAttempts = 0; 
 				console.log("Engine reinitialized.");
 			} catch (e) {
 				console.error("Engine re-init failed:", e);
-				return;
 			}
 		}
 
@@ -114,12 +122,12 @@
 			onGameError = callback
 		}
 
-		window.gdspx_on_runtime_exit = function (code) {
-			if (onGameExit != null) {
-				gameApp = null
-				onGameExit(code)
-			}
-			restartEngineAfterCrash("exit code " + code);
+		window.gdspx_on_runtime_exit = async (code) => {
+			await restartEngineAfterCrash("runtime exit", code);
+		}
+
+		window.onGoWasmExit = async (code) => {
+			await restartEngineAfterCrash("go wasm exit", code);
 		}
 
 		window.onGameExit = function (callback) {
@@ -156,6 +164,7 @@
 			const finalConfig = {
 				'projectName': "spx_game",
 				'onProgress': onProgress,
+				'handleGodotExit': handleGodotExit,
 				"gameCanvas": document.getElementById('game-canvas'),
 				"logLevel": LOG_LEVEL_NONE,
 				"useAssetCache": false,

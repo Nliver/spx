@@ -99,6 +99,10 @@
 			this.exit = (code) => {
 				if (code !== 0) {
 					console.warn("exit code:", code);
+					if (typeof window.onGoWasmExit === "function") {
+                        try { window.onGoWasmExit(code); } 
+						catch (e) { console.error("onGoWasmExit threw:", e); }
+                    }
 				}
 			};
 			this._exitPromise = new Promise((resolve) => {
