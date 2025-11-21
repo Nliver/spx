@@ -51,13 +51,11 @@
 		"use strict";
 		let gameApp = null
 		let isShowEditor = false
-		let onGameError = null
 
 		let lastAssetURLs = null
 		let lastConfig = null
 
 		window.spxIsProxyThreadMode = false
-		let onGameExit = null
 
 		function onProgress(value) {
 			const progressEvent = new CustomEvent('onProgress', {
@@ -90,13 +88,16 @@
         }
 
 		let restartAttempts = 0;
+		let onGameError = null
+		let onGameExit = null
+		let onEngineCrash = null;
 		const MAX_RESTART_ATTEMPTS = 3;
 		async function restartEngineAfterCrash(reason, code) {
-			if (onGameExit != null) {
-				onGameExit(code)
-			}
 			if (restartAttempts >= MAX_RESTART_ATTEMPTS) {
 				console.error("Max restart attempts reached.  Please reload manually.");
+				if (onEngineCrash != null) {
+					onEngineCrash(`Crash detected, Exit code: ${code}`)
+				}
 				return;
 			}
 			restartAttempts++;
@@ -112,14 +113,20 @@
 			}
 		}
 
+		window.onGameError = function (callback) {
+			onGameError = callback
+		}
+		window.onGameExit = function (callback) {
+			onGameExit = callback
+		}
+		window.onEngineCrash = function (callback) {
+			onEngineCrash = callback
+		}
+
 		window.gdspx_on_runtime_panic = function (msg) {
 			if (onGameError != null) {
 				onGameError(msg)
 			}
-		}
-		
-		window.onGameError = function (callback) {
-			onGameError = callback
 		}
 
 		window.gdspx_on_runtime_exit = async (code) => {
@@ -130,12 +137,14 @@
 			await restartEngineAfterCrash("go wasm exit", code);
 		}
 
-		window.onGameExit = function (callback) {
-			onGameExit = callback
+		window.gdspx_on_runtime_reset = async (code) => {
+			if (onGameExit != null) {
+				onGameExit(code)
+			}
 		}
-		window.addEventListener("godot-wasm-crash", e => {
-			console.error("Caught Godot crash:", e.detail);
-			restartEngineAfterCrash(e.detail);
+
+		window.addEventListener("godot-wasm-crash", async e => {
+			await restartEngineAfterCrash("godot crash", e.detail);
 		})
 
 		window.initEngine = async (assetURLs = null, config = {}) => {

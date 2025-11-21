@@ -224,6 +224,9 @@
 			runnerWindow.onGameExit(function (code) {
 				console.error("onGameExit", code)
 			})
+			runnerWindow.onEngineCrash(function (code) {
+				console.error("onEngineCrash", code)
+			})
 
 			runnerWindow.spxIsForceDebugLog = true
 
