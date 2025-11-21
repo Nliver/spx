@@ -168,7 +168,7 @@ class GameApp {
         await profiler.profile('curGame.start', () => curGame.start({ 'args': args, 'canvas': this.gameCanvas }));
 
         this.onProgress(1.0);
-        this.logVerbose("==> game start done");
+        this.logVerbose("==> engine start done");
     }
 
     /**
@@ -427,8 +427,24 @@ class GameApp {
             }
         }
     }
+
+    notifyExit(code) {
+        if (typeof window.onGoWasmExit === "function") {
+            window.onGoWasmExit(code);
+        }
+
+        window.dispatchEvent(new CustomEvent("logicWasmExit", { detail: { code } }));
+
+        if (window.parent !== window) {
+            window.parent.postMessage({ type: "logicWasmExit", code }, "*");
+        }
+    }
+
     async runLogicWasm() {
-        this.go.run(this.logicWasmInstance);
+        this.go.run(this.logicWasmInstance).finally(() => {
+            console.error("Go WASM exited");
+            this.notifyExit(0);
+        });
     }
 }
 
