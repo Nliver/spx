@@ -441,10 +441,10 @@ class GameApp {
     }
 
     async runLogicWasm() {
-        this.go.run(this.logicWasmInstance).finally(() => {
-            console.error("Go WASM exited");
-            this.notifyExit(0);
-        });
+        this.go.exit = (code) => {
+            this.notifyExit(code);
+        };
+        this.go.run(this.logicWasmInstance);
     }
 }
 
