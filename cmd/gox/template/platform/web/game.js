@@ -436,7 +436,7 @@ class GameApp {
         window.dispatchEvent(new CustomEvent("logicWasmExit", { detail: { code } }));
 
         if (window.parent !== window) {
-            window.parent.postMessage({ type: "logicWasmExit", code }, "*");
+            window.parent.postMessage({ type: "EngineCrash", code }, "*");
         }
     }
 

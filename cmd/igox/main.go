@@ -295,7 +295,6 @@ func (r *SpxRunner) Run(this js.Value, args []js.Value) any {
 			js.Global().Call("gdspx_ext_request_reset", 0)
 			return
 		}
-
 	}()
 
 	return nil

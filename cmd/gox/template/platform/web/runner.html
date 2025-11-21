@@ -90,13 +90,13 @@
 		let restartAttempts = 0;
 		let onGameError = null
 		let onGameExit = null
-		let onRestartFailed = null;
+		let onEngineCrash = null;
 		const MAX_RESTART_ATTEMPTS = 3;
 		async function restartEngineAfterCrash(reason, code) {
 			if (restartAttempts >= MAX_RESTART_ATTEMPTS) {
 				console.error("Max restart attempts reached.  Please reload manually.");
-				if (onRestartFailed != null) {
-					onRestartFailed(`Crash detected. Reason: ${reason}, Exit code: ${code}`)
+				if (onEngineCrash != null) {
+					onEngineCrash(`Crash detected, Exit code: ${code}`)
 				}
 				return;
 			}
@@ -119,8 +119,8 @@
 		window.onGameExit = function (callback) {
 			onGameExit = callback
 		}
-		window.onRestartFailed = function (callback) {
-			onRestartFailed = callback
+		window.onEngineCrash = function (callback) {
+			onEngineCrash = callback
 		}
 
 		window.gdspx_on_runtime_panic = function (msg) {
