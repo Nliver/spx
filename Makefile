@@ -109,6 +109,7 @@ build-web: ## Build web engine template
 	./pkg/gdspx/tools/make_util.sh extrawebtemplate normal
 
 build-web-worker: ## Build web worker engine template
+	make install && \
 	./pkg/gdspx/tools/build_engine.sh -p web -m worker && \
 	./pkg/gdspx/tools/make_util.sh extrawebtemplate worker
 
@@ -173,7 +174,14 @@ endif
 	make stop && make build-wasm && \
 	cd $$DEMO && spx clear && spx runweb -serveraddr=":$(PORT)"
 
-
+run-web-worker: ## Run demo on web: make run-web DEMO_INDEX=N
+ifndef DEMO_INDEX
+	$(error DEMO_INDEX is not set! Usage: make run-web DEMO_INDEX=N)
+endif
+	@DEMO=$(GET_DEMO); \
+	echo "Running web worker mode: demo #$(DEMO_INDEX): $$DEMO"; \
+	make stop && make build-wasm && \
+	cd $$DEMO && spx clear && spx runwebworker -serveraddr=":$(PORT)"
 # ============================================
 # Utility Commands
 # ============================================
@@ -193,8 +201,8 @@ export-web: ## Export web engine
 stop: ## Stop running processes
 	@echo "Stopping running processes..."
 	@if [ "$$OS" = "Windows_NT" ]; then \
-		taskkill /F /FI "IMAGENAME eq python.exe" 2>/NUL || true; \
-		taskkill /F /FI "IMAGENAME eq python3.exe" 2>/NUL || true; \
+		taskkill /F /FI "IMAGENAME eq python.exe" 2>NUL || true; \
+		taskkill /F /FI "IMAGENAME eq python3.exe" 2>NUL || true; \
 	else \
 		PIDS=$$(pgrep -f gdspx_web_server.py || true); \
 		if [ -n "$$PIDS" ]; then kill -9 $$PIDS; fi \
