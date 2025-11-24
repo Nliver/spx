@@ -279,10 +279,7 @@ class GameApp {
             return
         }
 
-        let funPtr = this.game.rtenv["_gdspx_ext_request_reset"]
-        if(funPtr != null){
-            funPtr()
-        }
+        this.game.requestReset()
 
         if(this.recordingOnGameStart && this.autoDownloadRecordedVideo){
             let fileName = `spx_${new Date().getTime()}.webm`;
