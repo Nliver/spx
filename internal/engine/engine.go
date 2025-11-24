@@ -6,6 +6,7 @@ import (
 
 	stime "time"
 
+	"github.com/goplus/spx/v2/internal/engine/platform"
 	"github.com/goplus/spx/v2/internal/engine/profiler"
 	"github.com/goplus/spx/v2/internal/enginewrap"
 	"github.com/goplus/spx/v2/internal/time"
@@ -263,5 +264,10 @@ func OnPanic(name, stack string) {
 }
 
 func RequestExit(exitCode int64) {
-	extMgr.RequestReset(exitCode)
+	if platform.IsWeb() {
+		// On web platform, just request reset
+		extMgr.RequestReset(exitCode)
+		return
+	}
+	extMgr.RequestExit(exitCode)
 }
