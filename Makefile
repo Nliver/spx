@@ -29,9 +29,10 @@ help: ## Show available commands
 	@echo "Demo targets via index:"
 	@i=1; \
 	for demo in $(DEMOS); do \
-		echo "  make run DEMO_INDEX=$$i          # Run $$demo"; \
-		echo "  make run-web DEMO_INDEX=$$i      # Run web $$demo"; \
-		echo "  make run-editor DEMO_INDEX=$$i   # Run editor $$demo"; \
+		echo "  make run DEMO_INDEX=$$i            # Run $$demo"; \
+		echo "  make run-web DEMO_INDEX=$$i        # Run web $$demo"; \
+		echo "  make run-web-worker DEMO_INDEX=$$i # Run web-worker $$demo"; \
+		echo "  make run-editor DEMO_INDEX=$$i     # Run editor $$demo"; \
 		i=$$((i+1)); \
 	done
 
@@ -174,9 +175,9 @@ endif
 	make stop && make build-wasm && \
 	cd $$DEMO && spx clear && spx runweb -serveraddr=":$(PORT)"
 
-run-web-worker: ## Run demo on web: make run-web DEMO_INDEX=N
+run-web-worker: ## Run demo on web: make run-web-worker DEMO_INDEX=N
 ifndef DEMO_INDEX
-	$(error DEMO_INDEX is not set! Usage: make run-web DEMO_INDEX=N)
+	$(error DEMO_INDEX is not set! Usage: make run-web-worker DEMO_INDEX=N)
 endif
 	@DEMO=$(GET_DEMO); \
 	echo "Running web worker mode: demo #$(DEMO_INDEX): $$DEMO"; \
