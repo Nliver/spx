@@ -33,6 +33,8 @@ func Link(engineCallback EngineCallbackInfo) {
 }
 
 func Unlink() {
+	mgrs = nil
+	callback = EngineCallbackInfo{}
 	wrap.UnlinkFFI()
 }
 
