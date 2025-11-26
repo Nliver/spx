@@ -37,6 +37,7 @@ func Unlink() {
 		close(exitChan)
 		exitChan = nil
 	}
+	callbacks = engine.CallbackInfo{}
 	hasInitEngine = false
 }
 
