@@ -435,6 +435,10 @@ func (p *SpriteImpl) InitFrom(src *SpriteImpl) {
 	p.rotationStyle = src.rotationStyle
 	p.sayObj = nil
 	p.animations = src.animations
+	p.animationWrappers = make(map[SpriteAnimationName]*animationWrapper)
+	for animName, ani := range p.animations {
+		p.animationWrappers[animName] = &animationWrapper{spr: p, ani: ani}
+	}
 	// clone effect params
 	p.greffUniforms = maps.Clone(src.greffUniforms)
 
