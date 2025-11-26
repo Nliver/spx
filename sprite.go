@@ -1238,6 +1238,7 @@ func (p *SpriteImpl) playDefaultAnim() {
 	}
 
 	if _, ok := p.animations[animName]; ok {
+		p.animationWrappers[animName].ensureRegistered(animName)
 		spriteMgr.PlayAnim(p.syncSprite.GetId(), animName, speed, true, false)
 	} else {
 		p.goSetCostume(p.defaultCostumeIndex)
