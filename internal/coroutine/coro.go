@@ -246,7 +246,7 @@ func (p *Coroutines) CreateAndStart(start bool, tobj ThreadObj, fn func(me Threa
 					if p.onPanic != nil {
 						p.onPanic(id.name, id.stack)
 					}
-					panic(e)
+					//panic(e)
 				}
 			}
 		}()
