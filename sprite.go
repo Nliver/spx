@@ -689,8 +689,8 @@ func (p *SpriteImpl) Die() {
 	p.setDying()
 
 	p.Stop(OtherScriptsInSprite)
-	if ani, ok := p.animations[aniName]; ok {
-		p.doAnimation(aniName, ani, false, 1, true, true)
+	if p.hasAnim(aniName) {
+		p.AnimateAndWait(aniName)
 	}
 	p.Destroy()
 }
@@ -699,6 +699,8 @@ func (p *SpriteImpl) Destroy() { // destroy sprite, whether prototype or cloned
 	if debugInstr {
 		log.Println("Destroy", p.name)
 	}
+
+	p.syncSprite.UnRegisterOnAnimationFinished()
 
 	p.Hide()
 	p.doDeleteClone()
