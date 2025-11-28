@@ -286,13 +286,25 @@ func (r *SpxRunner) Run(this js.Value, args []js.Value) any {
 	})
 	// Run interp in background goroutine (non-blocking)
 	go func() {
+		handleErr := func(msg string) {
+			fmt.Println(msg)
+			js.Global().Call("gdspx_ext_on_runtime_panic", msg)
+			js.Global().Call("gdspx_ext_request_reset", 1)
+		}
+
+		defer func() {
+			if rec := recover(); rec != nil {
+				err := fmt.Errorf("panic in RunInterp: %v", rec)
+				handleErr(err.Error())
+			}
+		}()
+
 		interp := r.entry.interp
 		code, runErr := r.ctx.RunInterp(interp, "main.go", nil)
 
 		if runErr != nil {
-			fmt.Printf("Failed to run XGo source (code %d): %v\n", code, runErr)
-			js.Global().Call("gdspx_ext_on_runtime_panic", runErr.Error())
-			js.Global().Call("gdspx_ext_request_reset", 1)
+			msg := fmt.Sprintf("Failed to run XGo source (code %d): %v", code, runErr)
+			handleErr(msg)
 			return
 		}
 	}()

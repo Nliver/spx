@@ -254,7 +254,7 @@ func CheckPanic() {
 }
 
 func OnPanic(name, stack string) {
-	// on coro panic, exit game
+	// on coro panic, reset game
 	msg := name
 	if stack != "" {
 		msg += " stack:\n" + stack
