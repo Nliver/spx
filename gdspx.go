@@ -146,7 +146,7 @@ func (sprite *SpriteImpl) syncOnAnimationFinished() {
 	engine.Lock()
 	defer engine.Unlock()
 	state := sprite.curAnimState
-	if state != nil && state.Name != "" {
+	if state != nil && state.Name != "" && sprite.syncSprite != nil {
 		curAnimName := sprite.syncSprite.GetCurrentAnimName()
 		sprite.donedAnimations = append(sprite.donedAnimations, curAnimName)
 	}

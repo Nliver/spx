@@ -700,6 +700,8 @@ func (p *SpriteImpl) Destroy() { // destroy sprite, whether prototype or cloned
 		log.Println("Destroy", p.name)
 	}
 
+	p.syncSprite.UnRegisterOnAnimationFinished()
+
 	p.Hide()
 	p.doDeleteClone()
 	p.destroyPen()
