@@ -251,7 +251,6 @@ main() {
         echo "Usage: $0 [command] [options]"
         echo "Commands:"
         echo "  exportweb [mode] - Create a web release package (mode: normal|worker|minigame|miniprogram, default: normal)"
-        echo "  exportwebworker - Create a web worker release package (deprecated, use exportweb worker)"
         echo "  exportpack  - Set up and package the application"
         echo "  extrawebtemplate [mode] - Export web runtime template (mode: worker|minigame|miniprogram|normal)"
         echo "  compresswasm - Compress WASM files with brotli"
@@ -267,9 +266,6 @@ main() {
             mode="$1"
             do_exportweb "$mode"
             ;;
-        exportwebworker)
-            do_exportweb "worker"
-            ;;
         exportpack)
             do_exportpack
             ;;
@@ -282,7 +278,7 @@ main() {
             ;;
         *)
             echo "Unknown command: $command"
-            echo "Available commands: exportweb [mode], exportwebworker, exportpack, extrawebtemplate, compresswasm, runweb"
+            echo "Available commands: exportweb [mode], exportpack, extrawebtemplate, compresswasm, runweb"
             return 1
             ;;
     esac
