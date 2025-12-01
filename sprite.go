@@ -295,6 +295,16 @@ func (aw *animationWrapper) ensureRegistered(pName string) {
 		registerAnimToEngine(aw.spr.name, pName, aw.ani, aw.spr.costumes, aw.spr.isCostumeSet)
 		aw.loaded = true
 	})
+
+	aw.spr.adaptAnimBitmapResolution(aw.ani)
+}
+
+func (p *SpriteImpl) adaptAnimBitmapResolution(ani *aniConfig) {
+	resolution := p.getBitmapResolution(ani.IFrameFrom)
+	if resolution != p.getCurrentBitmapResolution() {
+		renderScale := p.getAnimRenderScale(ani.IFrameFrom)
+		p.syncSprite.SetRenderScale(mathf.NewVec2(renderScale, renderScale))
+	}
 }
 
 func (p *SpriteImpl) setDying() { // dying: visible but can't be touched
@@ -324,9 +334,7 @@ func (p *SpriteImpl) init(
 	p.isVisible = spriteCfg.Visible
 	p.pivot = spriteCfg.Pivot
 	p.animBindings = make(map[string]string)
-	for key, val := range spriteCfg.AnimBindings {
-		p.animBindings[key] = val
-	}
+	maps.Copy(p.animBindings, spriteCfg.AnimBindings)
 
 	p.collisionTargets = make(map[string]bool)
 
@@ -861,7 +869,6 @@ func (p *SpriteImpl) onAnimationDone(animName string) {
 }
 
 func (p *SpriteImpl) doAnimation(animName SpriteAnimationName, ani *aniConfig, loop bool, speed float64, isBlocking bool, playAudio bool) {
-	p.animationWrappers[animName].ensureRegistered(animName)
 	p.stopAnimState(p.curAnimState)
 	p.curAnimState = &animState{
 		AniType:    aniTypeFrame,
@@ -875,6 +882,7 @@ func (p *SpriteImpl) doAnimation(animName SpriteAnimationName, ani *aniConfig, l
 	}
 
 	syncCheckUpdateCostume(&p.baseObj)
+	p.animationWrappers[animName].ensureRegistered(animName)
 
 	spriteMgr.PlayAnim(p.syncSprite.GetId(), animName, speed, loop, false)
 	if isBlocking {
