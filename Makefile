@@ -137,11 +137,11 @@ build-web-worker: ## Build web worker engine template
 	./pkg/gdspx/tools/build_engine.sh -p web -m worker && \
 	./pkg/gdspx/tools/make_util.sh extrawebtemplate worker
 
-build-minigame: ## Build minigame template
+build-web-minigame: ## Build minigame template
 	./pkg/gdspx/tools/build_engine.sh -p web -m minigame && \
 	./pkg/gdspx/tools/make_util.sh extrawebtemplate minigame
 
-build-miniprogram: ## Build miniprogram template
+build-web-miniprogram: ## Build miniprogram template
 	./pkg/gdspx/tools/build_engine.sh -p web -m miniprogram && \
 	./pkg/gdspx/tools/make_util.sh extrawebtemplate miniprogram
 
