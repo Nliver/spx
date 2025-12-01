@@ -300,11 +300,8 @@ func (aw *animationWrapper) ensureRegistered(pName string) {
 }
 
 func (p *SpriteImpl) adaptAnimBitmapResolution(ani *aniConfig) {
-	resolution := p.getBitmapResolution(ani.IFrameFrom)
-	if resolution != p.getCurrentBitmapResolution() {
-		renderScale := p.getAnimRenderScale(ani.IFrameFrom)
-		p.syncSprite.SetRenderScale(mathf.NewVec2(renderScale, renderScale))
-	}
+	renderScale := p.getAnimRenderScale(ani.IFrameFrom)
+	p.syncSprite.SetRenderScale(mathf.NewVec2(renderScale, renderScale))
 }
 
 func (p *SpriteImpl) setDying() { // dying: visible but can't be touched
