@@ -420,6 +420,9 @@ func (p *baseObj) getCurrentBitmapResolution() int {
 	return p.costumes[p.costumeIndex_].bitmapResolution
 }
 func (p *baseObj) getBitmapResolution(costumeIndex int) int {
+	if costumeIndex < 0 || costumeIndex >= len(p.costumes) {
+		return p.getCurrentBitmapResolution()
+	}
 	return p.costumes[costumeIndex].bitmapResolution
 }
 func (p *baseObj) getCostumeSize() (float64, float64) {
