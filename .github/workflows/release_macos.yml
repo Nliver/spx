@@ -24,7 +24,7 @@ jobs:
           - arch: arm64
             arch_name: arm64
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Setup go/xgo & engine
         uses: ./.github/actions/deps
