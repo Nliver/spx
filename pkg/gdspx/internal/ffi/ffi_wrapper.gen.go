@@ -1297,18 +1297,18 @@ func CallPlatformIsInPersistantDataDir(
 	return (GdBool)(ret_val)
 }
 func CallResCreateAnimation(
-	sprite_type_name GdString,
-	anim_name GdString,
-	context GdString,
+	p_sprite_type GdString,
+	p_anim_name GdString,
+	p_json_ctx GdString,
 	fps GdInt,
-	is_altas GdBool,
+	is_atlas GdBool,
 ) {
 	arg0 := (C.GDExtensionSpxResCreateAnimation)(api.SpxResCreateAnimation)
-	arg1GdString := (C.GdString)(sprite_type_name)
-	arg2GdString := (C.GdString)(anim_name)
-	arg3GdString := (C.GdString)(context)
+	arg1GdString := (C.GdString)(p_sprite_type)
+	arg2GdString := (C.GdString)(p_anim_name)
+	arg3GdString := (C.GdString)(p_json_ctx)
 	arg4GdInt := (C.GdInt)(fps)
-	arg5GdBool := (C.GdBool)(is_altas)
+	arg5GdBool := (C.GdBool)(is_atlas)
 
 	C.cgo_callfn_GDExtensionSpxResCreateAnimation(arg0, arg1GdString, arg2GdString, arg3GdString, arg4GdInt, arg5GdBool)
 

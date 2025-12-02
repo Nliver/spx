@@ -292,7 +292,7 @@ type animationWrapper struct {
 
 func (aw *animationWrapper) ensureRegistered(pName string) {
 	aw.loadOnce.Do(func() {
-		registerAnimToEngine(aw.spr.name, pName, aw.ani, aw.spr.costumes, aw.spr.isCostumeSet)
+		createAnimation(aw.spr.name, pName, aw.ani, aw.spr.costumes, aw.spr.isCostumeSet)
 		aw.loaded = true
 	})
 
