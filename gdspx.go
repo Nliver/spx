@@ -376,6 +376,10 @@ func createAnimation(
 		panic(err)
 	}
 
+	if cfg.IFrameFrom < 0 || cfg.IFrameFrom >= len(costumes) || cfg.IFrameTo < 0 || cfg.IFrameTo >= len(costumes) {
+		panic(fmt.Sprintf("animation frame index out of bounds: from %d, to %d, costumes len %d", cfg.IFrameFrom, cfg.IFrameTo, len(costumes)))
+	}
+
 	resMgr.CreateAnimation(
 		spriteName,
 		animName,
@@ -393,7 +397,8 @@ func buildAnimPayload(cfg *aniConfig, costumes []*costume, isAtlas bool) animPay
 }
 
 func buildNormalPayload(cfg *aniConfig, costumes []*costume) animPayload {
-	var frames []any
+	frameCount := cfg.IFrameTo - cfg.IFrameFrom + 1
+	frames := make([]any, 0, frameCount)
 
 	for i := cfg.IFrameFrom; i <= cfg.IFrameTo; i++ {
 		c := costumes[i]
@@ -413,7 +418,6 @@ func buildNormalPayload(cfg *aniConfig, costumes []*costume) animPayload {
 }
 
 func buildAtlasPayload(cfg *aniConfig, costumes []*costume) animPayload {
-	var frames []any
 	base := engine.ToAssetPath(costumes[0].path)
 
 	step := 1
@@ -421,6 +425,8 @@ func buildAtlasPayload(cfg *aniConfig, costumes []*costume) animPayload {
 		step = -1
 	}
 
+	frameCount := (cfg.IFrameTo-cfg.IFrameFrom)*step + 1
+	frames := make([]any, 0, frameCount)
 	for i := cfg.IFrameFrom; i != cfg.IFrameTo+step; i += step {
 		c := costumes[i]
 		frames = append(frames, frameAtlas{
