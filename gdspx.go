@@ -370,6 +370,7 @@ func createAnimation(
 	isAtlas bool,
 ) {
 	payload := buildAnimPayload(cfg, costumes, isAtlas)
+	cfg.AdaptAnimBitmapResolution = int(payload.MostFrequentBitmap)
 
 	bin, err := json.Marshal(payload)
 	if err != nil {
@@ -397,11 +398,19 @@ func buildAnimPayload(cfg *aniConfig, costumes []*costume, isAtlas bool) animPay
 }
 
 func buildNormalPayload(cfg *aniConfig, costumes []*costume) animPayload {
+	maxBitmap := 0
+
 	frameCount := cfg.IFrameTo - cfg.IFrameFrom + 1
 	frames := make([]any, 0, frameCount)
 
 	for i := cfg.IFrameFrom; i <= cfg.IFrameTo; i++ {
 		c := costumes[i]
+		b := toBitmapResolution(c.bitmapResolution)
+
+		if b > maxBitmap {
+			maxBitmap = b
+		}
+
 		path := engine.ToAssetPath(c.path)
 		half := mathf.Vec2.Mulf(c.imageSize, 0.5)
 
@@ -411,10 +420,11 @@ func buildNormalPayload(cfg *aniConfig, costumes []*costume) animPayload {
 				c.center.X - half.X,
 				-(c.center.Y - half.Y),
 			},
+			Bitmap: int64(b),
 		})
 	}
 
-	return animPayload{Frames: frames}
+	return animPayload{Frames: frames, MostFrequentBitmap: int64(maxBitmap)}
 }
 
 func buildAtlasPayload(cfg *aniConfig, costumes []*costume) animPayload {
@@ -438,5 +448,5 @@ func buildAtlasPayload(cfg *aniConfig, costumes []*costume) animPayload {
 		})
 	}
 
-	return animPayload{BasePath: base, Frames: frames}
+	return animPayload{BasePath: base, Frames: frames, MostFrequentBitmap: 1}
 }

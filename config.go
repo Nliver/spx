@@ -261,6 +261,8 @@ type aniConfig struct {
 	IFrameFrom int
 	IFrameTo   int
 
+	AdaptAnimBitmapResolution int
+
 	Speed float64
 	From  any
 	To    any
@@ -270,6 +272,7 @@ type aniConfig struct {
 type frameNormal struct {
 	Path   string     `json:"path"`
 	Offset [2]float64 `json:"offset"`
+	Bitmap int64      `json:"bitmap"`
 }
 
 type frameAtlas struct {
@@ -281,8 +284,9 @@ type frameAtlas struct {
 }
 
 type animPayload struct {
-	BasePath string `json:"base_path,omitempty"`
-	Frames   []any  `json:"frames"`
+	BasePath           string `json:"base_path,omitempty"`
+	Frames             []any  `json:"frames"`
+	MostFrequentBitmap int64  `json:"most_frequent_bitmap"`
 }
 
 // -------------------------------------------------------------------------------------

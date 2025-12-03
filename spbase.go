@@ -413,17 +413,11 @@ func (p *baseObj) getCostumePath() string {
 func (p *baseObj) getCostumeRenderScale() float64 {
 	return 1.0 / float64(p.getCurrentBitmapResolution()) * p.scale
 }
-func (p *baseObj) getAnimRenderScale(costumeIndex int) float64 {
-	return 1.0 / float64(p.getBitmapResolution(costumeIndex)) * p.scale
+func (p *baseObj) getAnimRenderScale(bitmapResolution int) float64 {
+	return 1.0 / float64(bitmapResolution) * p.scale
 }
 func (p *baseObj) getCurrentBitmapResolution() int {
 	return p.costumes[p.costumeIndex_].bitmapResolution
-}
-func (p *baseObj) getBitmapResolution(costumeIndex int) int {
-	if costumeIndex < 0 || costumeIndex >= len(p.costumes) {
-		return p.getCurrentBitmapResolution()
-	}
-	return p.costumes[costumeIndex].bitmapResolution
 }
 func (p *baseObj) getCostumeSize() (float64, float64) {
 	x, y := p.costumes[p.costumeIndex_].getSize()

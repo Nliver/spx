@@ -300,7 +300,7 @@ func (aw *animationWrapper) ensureRegistered(pName string) {
 }
 
 func (p *SpriteImpl) adaptAnimBitmapResolution(ani *aniConfig) {
-	renderScale := p.getAnimRenderScale(ani.IFrameFrom)
+	renderScale := p.getAnimRenderScale(ani.AdaptAnimBitmapResolution)
 	p.syncSprite.SetRenderScale(mathf.NewVec2(renderScale, renderScale))
 }
 
