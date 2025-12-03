@@ -1,6 +1,7 @@
 package coroutine
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"reflect"
@@ -39,6 +40,26 @@ type threadImpl struct {
 
 	schedFrame     int64
 	schedTimestamp stime.Time
+
+	ctx        context.Context
+	cancelFunc context.CancelFunc
+}
+
+// Context returns the context associated with this thread.
+// If no context was set, returns context.Background().
+func (p *threadImpl) Context() context.Context {
+	if p.ctx == nil {
+		return context.Background()
+	}
+	return p.ctx
+}
+
+// Cancel cancels the thread's context, signaling graceful termination.
+// Safe to call multiple times or on threads without contexts.
+func (p *threadImpl) Cancel() {
+	if p.cancelFunc != nil {
+		p.cancelFunc()
+	}
 }
 
 func (p *threadImpl) String() string {
@@ -179,6 +200,7 @@ func (p *Coroutines) AbortAll() {
 		th.mutex.Lock()
 		if !th.stopped_ {
 			th.stopped_ = true
+			th.Cancel()
 			th.cond.Signal()
 		}
 		th.mutex.Unlock()
@@ -197,7 +219,24 @@ func (p *Coroutines) StopIf(filter func(th Thread) bool) {
 
 // CreateAndStart creates and executes the new coroutine.
 func (p *Coroutines) CreateAndStart(start bool, tobj ThreadObj, fn func(me Thread) int) Thread {
+	return p.createAndStart(context.Background(), start, tobj, fn)
+}
+
+// CreateWithContext creates a coroutine with a custom parent context.
+// The coroutine's context will be canceled when the parent context is canceled
+// or when the coroutine is aborted. If ctx is nil, context.Background() is used.
+func (p *Coroutines) CreateWithContext(ctx context.Context, tobj ThreadObj, fn func(me Thread) int) Thread {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	return p.createAndStart(ctx, false, tobj, fn)
+}
+
+// createAndStart is the internal implementation that creates and optionally starts a new coroutine with context support.
+func (p *Coroutines) createAndStart(ctx context.Context, start bool, tobj ThreadObj, fn func(me Thread) int) Thread {
 	id := &threadImpl{Obj: tobj, frame: p.frame, id: atomic.AddInt64(&p.curThId, 1), schedFrame: -1}
+
+	id.ctx, id.cancelFunc = context.WithCancel(ctx)
 
 	name := ""
 	if tobj != nil {
@@ -236,6 +275,7 @@ func (p *Coroutines) CreateAndStart(start bool, tobj ThreadObj, fn func(me Threa
 			delete(p.allThreads, id)
 			p.mutex.Unlock()
 			p.setWaitStatus(id, waitStatusDelete)
+			id.Cancel()
 			p.sema.Unlock()
 
 			// Remove goroutine ID from tracking
