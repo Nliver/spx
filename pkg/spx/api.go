@@ -145,14 +145,14 @@ func Execute(ctx context.Context, owner any, fn func(ctx context.Context, owner 
 	}
 
 	done := make(chan struct{}, 1)
-	GoWithContext(ctx, owner, func(ctx context.Context, owner any) {
+	Go(ctx, owner, func(ctx context.Context, owner any) {
 		defer close(done)
 		fn(ctx, owner)
 	})
 	<-done
 }
 
-// GoWithContext starts a new SPX coroutine that executes the given function concurrently.
+// Go starts a new SPX coroutine that executes the given function concurrently.
 // This is useful for running multiple operations in parallel without blocking
 // the main execution flow.
 //
@@ -178,7 +178,7 @@ func Execute(ctx context.Context, owner any, fn func(ctx context.Context, owner 
 // Example of correct usage for long-running tasks with context:
 //
 //	done := false
-//	spx.GoWithContext(ctx, owner, func(ctx context.Context, owner any) {
+//	spx Go(ctx, owner, func(ctx context.Context, owner any) {
 //	    for !done {
 //	        select {
 //	        case <-ctx.Done():
@@ -194,11 +194,11 @@ func Execute(ctx context.Context, owner any, fn func(ctx context.Context, owner 
 //
 // Example of simple delayed execution:
 //
-//	spx.GoWithContext(ctx, owner, func(ctx context.Context, owner any) {
+//	spx Go(ctx, owner, func(ctx context.Context, owner any) {
 //	    spx.Wait(2.0)
 //	    fmt.Println("Hello after 2 seconds")
 //	})
-func GoWithContext(ctx context.Context, owner any, fn func(ctx context.Context, owner any)) {
+func Go(ctx context.Context, owner any, fn func(ctx context.Context, owner any)) {
 	if isSpxEnv() {
 		if owner == nil {
 			if IsInCoroutine() {
