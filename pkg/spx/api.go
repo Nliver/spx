@@ -140,7 +140,7 @@ func ExecuteNative(ctx context.Context, fn func(ctx context.Context, owner any))
 func Execute(ctx context.Context, owner any, fn func(ctx context.Context, owner any)) {
 	// in spx coro, just run it
 	if engine.IsInCoroutine() {
-		fn(ctx, owner)
+		fn(engine.GetCurrentThreadContext(), owner)
 		return
 	}
 
@@ -211,7 +211,7 @@ func Go(ctx context.Context, owner any, fn func(ctx context.Context, owner any))
 			fn(ctx, owner)
 		})
 	} else {
-		go fn(context.Background(), owner)
+		go fn(ctx, owner)
 	}
 }
 
