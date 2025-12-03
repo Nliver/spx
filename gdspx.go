@@ -370,7 +370,7 @@ func createAnimation(
 	isAtlas bool,
 ) {
 	payload := buildAnimPayload(cfg, costumes, isAtlas)
-	cfg.AdaptAnimBitmapResolution = int(payload.MostFrequentBitmap)
+	cfg.AdaptAnimBitmapResolution = int(payload.MaxBitmap)
 
 	bin, err := json.Marshal(payload)
 	if err != nil {
@@ -424,7 +424,7 @@ func buildNormalPayload(cfg *aniConfig, costumes []*costume) animPayload {
 		})
 	}
 
-	return animPayload{Frames: frames, MostFrequentBitmap: int64(maxBitmap)}
+	return animPayload{Frames: frames, MaxBitmap: int64(maxBitmap)}
 }
 
 func buildAtlasPayload(cfg *aniConfig, costumes []*costume) animPayload {
@@ -448,5 +448,5 @@ func buildAtlasPayload(cfg *aniConfig, costumes []*costume) animPayload {
 		})
 	}
 
-	return animPayload{BasePath: base, Frames: frames, MostFrequentBitmap: 1}
+	return animPayload{BasePath: base, Frames: frames, MaxBitmap: 1}
 }
