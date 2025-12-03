@@ -365,7 +365,7 @@ func (pself *platformMgrImpl) IsInPersistantDataDir(path string) bool {
 }
 
 // IResMgr
-func (pself *resMgrImpl) CreateAnimation(sprite_type_name string, anim_name string, context string, fps int64, is_altas bool) {
+func (pself *resMgrImpl) CreateAnimation(p_sprite_type string, p_anim_name string, p_json_ctx string, fps int64, is_atlas bool) {
 }
 func (pself *resMgrImpl) SetLoadMode(is_direct_mode bool) {}
 func (pself *resMgrImpl) GetLoadMode() bool {
