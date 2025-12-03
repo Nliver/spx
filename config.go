@@ -284,9 +284,9 @@ type frameAtlas struct {
 }
 
 type animPayload struct {
-	BasePath           string `json:"base_path,omitempty"`
-	Frames             []any  `json:"frames"`
-	MostFrequentBitmap int64  `json:"most_frequent_bitmap"`
+	BasePath  string `json:"base_path,omitempty"`
+	Frames    []any  `json:"frames"`
+	MaxBitmap int64  `json:"max_bitmap"`
 }
 
 // -------------------------------------------------------------------------------------
