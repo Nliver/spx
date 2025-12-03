@@ -51,15 +51,8 @@ func SetCoroutines(co *coroutine.Coroutines) {
 	profiler.SetGco(co)
 }
 
-func Go(tobj coroutine.ThreadObj, fn func()) {
+func Go(tobj coroutine.ThreadObj, fn func(ctx context.Context)) {
 	gco.CreateAndStart(false, tobj, func(me coroutine.Thread) int {
-		fn()
-		return 0
-	})
-}
-
-func GoWithContext(ctx context.Context, tobj coroutine.ThreadObj, fn func(ctx context.Context)) {
-	gco.CreateWithContext(ctx, tobj, func(me coroutine.Thread) int {
 		fn(me.Context())
 		return 0
 	})
