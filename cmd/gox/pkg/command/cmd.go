@@ -49,9 +49,7 @@ type CmdTool struct {
 	RuntimePckPath string
 	RuntimeCmdPath string
 
-	GoModTemplate    string
-	InitAiGoTemplate string // AI pack init.go template
-	GopModTemplate   string // AI pack gop.mod template
+	GoModTemplate string
 
 	// Code generation mode
 	// true: use xgobuild library (new method)

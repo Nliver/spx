@@ -5,14 +5,13 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"log/slog"
 	"os"
 	"syscall/js"
 	_ "unsafe"
 
-	"github.com/goplus/builder/tools/ai"
-	"github.com/goplus/builder/tools/ai/wasmtrans"
+	"github.com/goplus/spx/v2/cmd/igox/plugin"
+
 	"github.com/goplus/ixgo"
 	"github.com/goplus/ixgo/xgobuild"
 	"github.com/goplus/mod/modfile"
@@ -21,77 +20,6 @@ import (
 	"github.com/goplus/spx/v2/cmd/igox/memfs"
 	goxfs "github.com/goplus/spx/v2/fs"
 )
-
-var aiDescription string
-
-func setAIDescription(this js.Value, args []js.Value) any {
-	if len(args) > 0 {
-		aiDescription = args[0].String()
-	}
-	return nil
-}
-
-var aiInteractionAPIEndpoint string
-
-func setAIInteractionAPIEndpoint(this js.Value, args []js.Value) any {
-	if len(args) > 0 {
-		aiInteractionAPIEndpoint = args[0].String()
-	}
-	return nil
-}
-
-var aiInteractionAPITokenProvider func() string
-
-func setAIInteractionAPITokenProvider(this js.Value, args []js.Value) any {
-	if len(args) > 0 && args[0].Type() == js.TypeFunction {
-		tokenProviderFunc := args[0]
-		aiInteractionAPITokenProvider = func() string {
-			result := tokenProviderFunc.Invoke()
-			if result.Type() != js.TypeObject || result.Get("then").IsUndefined() {
-				return result.String()
-			}
-
-			resultChan := make(chan string, 1)
-			then := js.FuncOf(func(this js.Value, args []js.Value) any {
-				var result string
-				if len(args) > 0 {
-					result = args[0].String()
-				}
-				resultChan <- result
-				return nil
-			})
-			defer then.Release()
-
-			errChan := make(chan error, 1)
-			catch := js.FuncOf(func(this js.Value, args []js.Value) any {
-				errMsg := "promise rejected"
-				if len(args) > 0 {
-					errVal := args[0]
-					if errVal.Type() == js.TypeObject && errVal.Get("message").Type() == js.TypeString {
-						errMsg = fmt.Sprintf("promise rejected: %s", errVal.Get("message"))
-					} else if errVal.Type() == js.TypeString {
-						errMsg = fmt.Sprintf("promise rejected: %s", errVal)
-					} else {
-						errMsg = fmt.Sprintf("promise rejected: %v", errVal)
-					}
-				}
-				errChan <- errors.New(errMsg)
-				return nil
-			})
-			defer catch.Release()
-
-			result.Call("then", then).Call("catch", catch)
-			select {
-			case result := <-resultChan:
-				return result
-			case err := <-errChan:
-				log.Printf("failed to get token: %v", err)
-				return ""
-			}
-		}
-	}
-	return nil
-}
 
 func goWasmInit(this js.Value, args []js.Value) any {
 	return js.ValueOf(nil)
@@ -169,7 +97,6 @@ func NewSpxRunner() *SpxRunner {
 		Class:    "Game",
 		Works:    []*modfile.Class{{Ext: ".spx", Class: "SpriteImpl", Embedded: true}},
 		PkgPaths: []string{"github.com/goplus/spx/v2", "math"},
-		Import:   []*modfile.Import{{Name: "ai", Path: "github.com/goplus/builder/tools/ai"}},
 	})
 
 	// Register patch for spx to support functions with generic type like `Gopt_Game_Gopx_GetWidget`.
@@ -191,16 +118,7 @@ func Gopt_Game_Gopx_GetWidget[T any](sg ShapeGetter, name string) *T {
 		return nil
 	}
 
-	if err := ctx.RegisterPatch("github.com/goplus/builder/tools/ai", `
-package ai
-
-import . "github.com/goplus/builder/tools/ai"
-
-func Gopt_Player_Gopx_OnCmd[T any](p *Player, handler func(cmd T) error) {
-	var cmd T
-	PlayerOnCmd_(p, cmd, handler)
-}
-`); err != nil {
+	if err := plugin.GetPluginManager().RegisterPatch(ctx); err != nil {
 		return nil
 	}
 
@@ -277,13 +195,7 @@ func (r *SpxRunner) Run(this js.Value, args []js.Value) any {
 		return errors.New("Run: Build() must be called first")
 	}
 
-	ai.SetDefaultTransport(wasmtrans.New(
-		wasmtrans.WithEndpoint(aiInteractionAPIEndpoint),
-		wasmtrans.WithTokenProvider(aiInteractionAPITokenProvider),
-	))
-	ai.SetDefaultKnowledgeBase(map[string]any{
-		"AI-generated descriptive summary of the game world": aiDescription,
-	})
+	plugin.GetPluginManager().Init()
 	// Run interp in background goroutine (non-blocking)
 	go func() {
 		handleErr := func(msg string) {
@@ -388,12 +300,7 @@ func JSFuncOfWithError(fn func(this js.Value, args []js.Value) any) js.Func {
 }
 
 func main() {
-
-	// Register AI-related functions
-	js.Global().Set("setAIDescription", js.FuncOf(setAIDescription))
-	js.Global().Set("setAIInteractionAPIEndpoint", js.FuncOf(setAIInteractionAPIEndpoint))
-	js.Global().Set("setAIInteractionAPITokenProvider", js.FuncOf(setAIInteractionAPITokenProvider))
-
+	plugin.GetPluginManager().RegisterJS()
 	// Register engine callback functions
 	js.Global().Set("goWasmInit", js.FuncOf(goWasmInit))
 	js.Global().Set("gdspx_on_engine_start", js.FuncOf(gdspxOnEngineStart))
