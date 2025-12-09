@@ -26,18 +26,9 @@ func Linked() {
 	if !hasInitEngine { // adapt for ixgo
 		gdspxOnEngineStart(js.Value{}, nil)
 	}
-
-	// wasm need Block forever
-	exitChan = make(chan struct{})
-	<-exitChan
 }
 
 func Unlink() {
-	if exitChan != nil {
-		close(exitChan)
-		exitChan = nil
-	}
-	callbacks = engine.CallbackInfo{}
 	hasInitEngine = false
 }
 
