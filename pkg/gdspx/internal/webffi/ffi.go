@@ -9,7 +9,6 @@ import (
 var (
 	callbacks     engine.CallbackInfo
 	hasInitEngine bool
-	exitChan      chan struct{}
 )
 
 func RegisterFuncs() {
