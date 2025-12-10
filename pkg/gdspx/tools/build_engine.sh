@@ -2,7 +2,8 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # copy version file
 cp -f $SCRIPT_DIR/../../../cmd/gox/template/version $SCRIPT_DIR
-
+# PCK version， only changed when spx's engine resource is updated
+PCK_VERSION=2.0.30
 EDITOR_ONLY=false
 PLATFORM=""
 DOWNLOAD=false
@@ -14,12 +15,12 @@ while getopts "p:m:edg" opt; do
         g) DOWNLOAD_ENGINE=true ;;
         p) PLATFORM="$OPTARG" ;;
         e) EDITOR_ONLY=true ;;
-        m) MODE="$OPTARG" ;;
+        m) MODE="$OPTARG";;
         *) echo "Usage: $0 [-p platform] [-e] [-d] [-g] [-m mode]"; exit 1 ;;
     esac
 done
-source $SCRIPT_DIR/common/setup_env.sh
 
+source $SCRIPT_DIR/common/setup_env.sh
 cd $PROJ_DIR
 
 COMMON_ARGS='
@@ -146,15 +147,48 @@ build_template() {
 download_editor() {
     setup_global_variables
     local saved_platform=$PLATFORM
-    echo "===>Download task 1/2 ....downloading pc via download_engine..."
+    local saved_mode=$MODE
+    echo "===> Downloading pc via download_engine..."
     download_engine || exit
 
-    export PLATFORM=web
-    echo "===>Download task 2/2 ....downloading web via download_engine..."
-    download_engine || exit
-    export PLATFORM=$saved_platform
+    # Download and extract gdspxrt.pck zip file
+    echo "===> Downloading gdspxrt.pck..."
+    local pck_url="https://github.com/goplus/spx/releases/download/v2.0.0-pre.30/gdspxrt.pck.${PCK_VERSION}.zip"
+    local tmp_dir=$SCRIPT_DIR/bin
+    local dst_dir=$GOPATH/bin
+    local pck_zip="$tmp_dir/gdspxrt.pck.${PCK_VERSION}.zip"
+    
+    mkdir -p "$tmp_dir"
+    mkdir -p "$dst_dir"
+    
+    echo "Downloading from: $pck_url"
+    if curl -L -o "$pck_zip" "$pck_url"; then
+        echo "Download successful, extracting gdspxrt.pck..."
+        local pck_tmp_dir=$(mktemp -d)
+        unzip -o "$pck_zip" -d "$pck_tmp_dir" > /dev/null 2>&1 || exit
+        
+        # Copy extracted files to GOPATH/bin
+        if [ -d "$pck_tmp_dir" ]; then
+            # Copy all files from extracted directory to GOPATH/bin
+            for file in "$pck_tmp_dir"/*; do
+                if [ -f "$file" ]; then
+                    cp -f "$file" "$dst_dir/"
+                    echo "Copied $(basename "$file") to $dst_dir"
+                fi
+            done
+            echo "gdspxrt.pck files copied to $dst_dir"
+        fi
+        
+        mv $dst_dir/gdspxrt.pck $dst_dir/gdspxrt$VERSION.pck
+        # Clean up
+        rm -rf "$pck_tmp_dir"
+        rm -f "$pck_zip"
+        echo "gdspxrt.pck downloaded and extracted successfully!"
+    else
+        echo "Warning: Failed to download gdspxrt.pck from $pck_url"
+        echo "Continuing without pck file..."
+    fi
 
-    echo "===>Download task 2/2 done ...."
     # List final files
     echo "Files in $GOPATH/bin:"
     ls -l "$GOPATH/bin"
@@ -311,7 +345,7 @@ download_engine() {
         echo "  - Mode: $web_mode"
 
     elif [ "$platform" = "linux" ] || [ "$platform" = "windows" ] || [ "$platform" = "macos" ]; then
-        # PC platform: download editor and template
+        # PC platform: download editor or template based on MODE
         platform_name=$platform
         local binary_postfix=""
         if [ "$platform" = "linux" ]; then
@@ -320,79 +354,84 @@ download_engine() {
             binary_postfix=".exe"
         fi
 
-        # Download PC editor
-        local zip_name="editor-$platform-"$arch".zip"
-        local binary_name="godot.$platform_name.editor.$arch$binary_postfix"
-        local final_binary="$dst_dir/gdspx$VERSION"$binary_postfix
-        local url=$url_prefix$zip_name
-        
-        echo "===> Downloading PC editor..."
-        # Check if editor binary already exists
-        if [ -f "$final_binary" ]; then
-            echo "Editor binary already exists, skipping download"
-        else
-            echo "Downloading pc editor..."
-            curl -L -o "$dst_dir/$zip_name" "$url" || exit
-            unzip -o "$dst_dir/$zip_name" -d "$tmp_dir" > /dev/null 2>&1  || exit
-            cp -f "$tmp_dir/$binary_name" "$dst_dir/gdspx$VERSION"$binary_postfix  || exit
-            rm -rf "$dst_dir/$zip_name"
-        fi
-
-        # Download PC template
-        zip_name="$platform-"$arch".zip"
-        binary_name="godot.$platform_name.template_release.$arch$binary_postfix"
-        local template_binary="$dst_dir/gdspxrt$VERSION"$binary_postfix
-
-        url=$url_prefix$zip_name
-        
-        echo "===> Downloading PC template..."
-        # Check if template binary already exists
-        if [ -f "$template_binary" ]; then
-            echo "Template binary already exists, skipping download"
-        else
-            echo "Downloading pc template..."
-            curl -L -o "$dst_dir/$zip_name" "$url" || exit
-            unzip -o "$dst_dir/$zip_name" -d "$tmp_dir" > /dev/null 2>&1  || exit
-            cp -f "$tmp_dir/$binary_name" "$template_binary"  || exit
-        fi
-
-        local filename="$template_binary"
-        # copy to build template dir
-        if [ "$platform" = "linux" ]; then
-            cp "$filename" "$template_dir/linux_debug.arm32"
-            cp "$filename" "$template_dir/linux_debug.arm64"
-            cp "$filename" "$template_dir/linux_debug.x86_32"
-            cp "$filename" "$template_dir/linux_debug.x86_64"
-            cp "$filename" "$template_dir/linux_release.arm32"
-            cp "$filename" "$template_dir/linux_release.arm64"
-            cp "$filename" "$template_dir/linux_release.x86_32"
-            cp "$filename" "$template_dir/linux_release.x86_64"
-
-        elif [ "$platform" = "windows" ]; then
-            cp "$filename" "$template_dir/windows_debug_x86_32_console.exe"
-            cp "$filename" "$template_dir/windows_debug_x86_32.exe"
-            cp "$filename" "$template_dir/windows_debug_x86_64_console.exe"
-            cp "$filename" "$template_dir/windows_debug_x86_64.exe"
-            cp "$filename" "$template_dir/windows_release_x86_32_console.exe"
-            cp "$filename" "$template_dir/windows_release_x86_32.exe"
-            cp "$filename" "$template_dir/windows_release_x86_64_console.exe"
-            cp "$filename" "$template_dir/windows_release_x86_64.exe"
-
-        elif [ "$platform" = "macos" ]; then
-            echo "===> Downloading macOS template..."
-            local macos_zip="$template_dir/macos.zip"
-            if [ -f "$macos_zip" ]; then
-                echo "macOS template already exists, skipping download"
+        if [ "$MODE" = "editor" ]; then
+            # Download PC editor only
+            local zip_name="editor-$platform-"$arch".zip"
+            local binary_name="godot.$platform_name.editor.$arch$binary_postfix"
+            local final_binary="$dst_dir/gdspx$VERSION"$binary_postfix
+            local url=$url_prefix$zip_name
+            
+            echo "===> Downloading PC editor..."
+            # Check if editor binary already exists
+            if [ -f "$final_binary" ]; then
+                echo "Editor binary already exists, skipping download"
             else
-                echo "Downloading macOS template..."
-                curl -L -o "$macos_zip" $url_prefix"macos.zip" || exit
+                echo "Downloading pc editor..."
+                curl -L -o "$dst_dir/$zip_name" "$url" || exit
+                unzip -o "$dst_dir/$zip_name" -d "$tmp_dir" > /dev/null 2>&1  || exit
+                cp -f "$tmp_dir/$binary_name" "$dst_dir/gdspx$VERSION"$binary_postfix  || exit
+                rm -rf "$dst_dir/$zip_name"
             fi
-        fi
 
-        # Clean up temporary files if they exist
-        [ -f "$dst_dir/$zip_name" ] && rm -f "$dst_dir/$zip_name"
-        [ -f "$tmp_dir/$zip_name" ] && rm -f "$tmp_dir/$zip_name"
-        [ -d "$tmp_dir" ] && rm -rf "$tmp_dir"
+            # Clean up temporary files if they exist
+            [ -f "$tmp_dir/$zip_name" ] && rm -f "$tmp_dir/$zip_name"
+            [ -d "$tmp_dir" ] && rm -rf "$tmp_dir"
+        else
+            # Download PC template only (MODE not set or other value)
+            local zip_name="$platform-"$arch".zip"
+            local binary_name="godot.$platform_name.template_release.$arch$binary_postfix"
+            local template_binary="$dst_dir/gdspxrt$VERSION"$binary_postfix
+            local url=$url_prefix$zip_name
+            
+            echo "===> Downloading PC template..."
+            # Check if template binary already exists
+            if [ -f "$template_binary" ]; then
+                echo "Template binary already exists, skipping download"
+            else
+                echo "Downloading pc template..."
+                curl -L -o "$dst_dir/$zip_name" "$url" || exit
+                unzip -o "$dst_dir/$zip_name" -d "$tmp_dir" > /dev/null 2>&1  || exit
+                cp -f "$tmp_dir/$binary_name" "$template_binary"  || exit
+            fi
+
+            local filename="$template_binary"
+            # copy to build template dir
+            if [ "$platform" = "linux" ]; then
+                cp "$filename" "$template_dir/linux_debug.arm32"
+                cp "$filename" "$template_dir/linux_debug.arm64"
+                cp "$filename" "$template_dir/linux_debug.x86_32"
+                cp "$filename" "$template_dir/linux_debug.x86_64"
+                cp "$filename" "$template_dir/linux_release.arm32"
+                cp "$filename" "$template_dir/linux_release.arm64"
+                cp "$filename" "$template_dir/linux_release.x86_32"
+                cp "$filename" "$template_dir/linux_release.x86_64"
+
+            elif [ "$platform" = "windows" ]; then
+                cp "$filename" "$template_dir/windows_debug_x86_32_console.exe"
+                cp "$filename" "$template_dir/windows_debug_x86_32.exe"
+                cp "$filename" "$template_dir/windows_debug_x86_64_console.exe"
+                cp "$filename" "$template_dir/windows_debug_x86_64.exe"
+                cp "$filename" "$template_dir/windows_release_x86_32_console.exe"
+                cp "$filename" "$template_dir/windows_release_x86_32.exe"
+                cp "$filename" "$template_dir/windows_release_x86_64_console.exe"
+                cp "$filename" "$template_dir/windows_release_x86_64.exe"
+
+            elif [ "$platform" = "macos" ]; then
+                echo "===> Downloading macOS template..."
+                local macos_zip="$template_dir/macos.zip"
+                if [ -f "$macos_zip" ]; then
+                    echo "macOS template already exists, skipping download"
+                else
+                    echo "Downloading macOS template..."
+                    curl -L -o "$macos_zip" $url_prefix"macos.zip" || exit
+                fi
+            fi
+
+            # Clean up temporary files if they exist
+            [ -f "$dst_dir/$zip_name" ] && rm -f "$dst_dir/$zip_name"
+            [ -f "$tmp_dir/$zip_name" ] && rm -f "$tmp_dir/$zip_name"
+            [ -d "$tmp_dir" ] && rm -rf "$tmp_dir"
+        fi
 
     else
         echo "Error: Unsupported platform for download_engine: $platform"
