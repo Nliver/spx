@@ -51,14 +51,10 @@ list-demos: ## List all demos with index
 # ============================================
 setup: ## Initialize the user environment
 	chmod +x ./pkg/gdspx/tools/*.sh && \
-	echo "===> Step 1/4: Install spx" && \
+	echo "===> Step 1/2: Install spx" && \
 	make install && \
-	echo "===> Step 2/4: Download engine" && \
+	echo "===> Step 2/2: Download engine" && \
 	make download && \
-	echo "===> Step 3/4: Export runtime package" && \
-	make export-pack && \
-	echo "===> Step 4/4: Prepare web template" && \
-	./pkg/gdspx/tools/make_util.sh extrawebtemplate && \
 	echo "===> setup done"
 
 
@@ -100,21 +96,23 @@ install: ## Install spx command
 	$(INSTALL_CMD)
 
 download: ## Download engines
-	make install && ./pkg/gdspx/tools/build_engine.sh -e -d
+	echo "" && ./pkg/gdspx/tools/build_engine.sh -e -d
 
 download-engine: ## Download engine templates for specific platform. Usage: make download-engine PLATFORM=android|ios|web [MODE=normal|worker|minigame|miniprogram]
-ifndef PLATFORM
-	$(error PLATFORM is not set! Usage: make download-engine PLATFORM=android or PLATFORM=ios or PLATFORM=web [MODE=mode])
-endif
+
 	@echo "Downloading engine templates for platform: $(PLATFORM)"
 	@if [ "$(PLATFORM)" = "web" ]; then \
 		if [ -n "$(MODE)" ]; then \
-			./pkg/gdspx/tools/build_engine.sh -p $(PLATFORM) -g -m $(MODE); \
+			MODE_ENV="$(MODE)" ./pkg/gdspx/tools/build_engine.sh -p "$(PLATFORM)" -g -m "$(MODE)"; \
 		else \
-			./pkg/gdspx/tools/build_engine.sh -p $(PLATFORM) -g; \
+			./pkg/gdspx/tools/build_engine.sh -p "$(PLATFORM)" -g; \
 		fi \
 	else \
-		./pkg/gdspx/tools/build_engine.sh -p $(PLATFORM) -g; \
+		if [ -n "$(MODE)" ]; then \
+			MODE_ENV="$(MODE)" ./pkg/gdspx/tools/build_engine.sh -p "$(PLATFORM)" -g -m "$(MODE)"; \
+		else \
+			./pkg/gdspx/tools/build_engine.sh -p "$(PLATFORM)" -g; \
+		fi \
 	fi 
 
 

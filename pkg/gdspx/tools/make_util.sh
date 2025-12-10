@@ -223,7 +223,7 @@ do_compresswasm() {
 do_exportpack() {
     do_prepare_export
     echo "Starting exportpack..."
-   
+    
     echo "exporting pck..."
     spx export 
     
@@ -241,6 +241,24 @@ do_exportpack() {
     fi
     # Clean up
     rm -rf "$CURRENT_PATH/.tmp"
+    TEMP_VERSION=$(cat "$CURRENT_PATH/cmd/gox/template/version")
+    OUTPUT_PCK="$GOPATH/bin/gdspxrt$TEMP_VERSION.pck"
+    
+    # Check if files exist before creating zip
+    if [ ! -f "$OUTPUT_PCK" ]; then
+        echo "Error: $OUTPUT_PCK does not exist"
+        return 1
+    fi
+    if [ ! -f "$GOPATH/bin/runtime.gdextension" ]; then
+        echo "Error: $GOPATH/bin/runtime.gdextension does not exist"
+        return 1
+    fi
+    TEMP_PCK="$GOPATH/bin/gdspxrt.pck"
+    DST_ZIP="$GOPATH/bin/gdspxrt.pck.$TEMP_VERSION.zip"
+    cp "$OUTPUT_PCK" "$TEMP_PCK"
+    rm -rf "$DST_ZIP"
+    zip -j "$DST_ZIP" "$TEMP_PCK" "$GOPATH/bin/runtime.gdextension"
+    rm -rf "$TEMP_PCK"
     return 0
 }
 
