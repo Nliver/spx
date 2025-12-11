@@ -277,11 +277,7 @@ func (cmd *CmdTool) executeRune() error {
 
 // executeRun handles the run command execution
 func (cmd *CmdTool) executeRun() error {
-	if cmd.Args.AiPack != nil && *cmd.Args.AiPack != "" {
-		// For AI pack mode, run with AI mode
-		args := cmd.Args.String()
-		return cmd.RunWithAiMode(args...)
-	} else if cmd.Args.Tags != nil && strings.Contains(*cmd.Args.Tags, "pure_engine") {
+	if cmd.Args.Tags != nil && strings.Contains(*cmd.Args.Tags, "pure_engine") {
 		// For pure_engine mode, run the Go binary directly
 		args := cmd.Args.String()
 		return cmd.RunPureEngine(args...)

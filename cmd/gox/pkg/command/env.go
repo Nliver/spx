@@ -92,11 +92,6 @@ func (pself *CmdTool) adaptGoMod() {
 		pself.createDefaultGoMod(pself.TargetDir, false)
 	}
 
-	// Add AI pack dependency if specified
-	if pself.Args.AiPack != nil && *pself.Args.AiPack != "" {
-		//pself.addAiPackDependency(rootGoModPath, *pself.Args.AiPack)
-	}
-
 	// Check if we need to add replace directive for local spx development
 	absTargetDir, _ := filepath.Abs(pself.TargetDir)
 	spxPath := pself.findSpxRoot(absTargetDir)
