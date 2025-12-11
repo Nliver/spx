@@ -15,8 +15,8 @@ type Plugin interface {
 
 var pluginManager = NewPluginManager()
 
-func Register(name string, p Plugin) {
-	pluginManager.RegisterPlugin(name, p)
+func Register(name string, plugin Plugin) {
+	pluginManager.RegisterPlugin(name, plugin)
 }
 
 func GetPluginManager() *PluginManager {
