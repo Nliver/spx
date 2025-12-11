@@ -20,12 +20,6 @@ runs:
 
     - name: Prepare engine
       run: |
-        echo "===> setup engine runtime "
-        make setup
-        echo "===> download engine editor"
-        make download-engine MODE=editor   
-        echo "===> download web engine & setup web engine normal mode"
-        make download-engine PLATFORM=web MODE=normal
-        make setup-web MODE=normal
+        make setup-web-full
       shell: bash
 

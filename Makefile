@@ -74,6 +74,13 @@ setup-dev: ## Initialize development environment (full)
 	make build-web && \
 	echo "===> setup-dev done, use 'make run DEMO_INDEX=N' to run demo"
 
+setup-web-full:
+	echo "===> Setup engine runtime" && \
+	make setup && \
+	echo "===> Download engine editor" && \
+	make download-engine MODE=editor && \
+	make setup-web MODE=normal 
+
 setup-web: ## Download and install web engine from godot releases. Usage: make setup-web MODE=normal (MODE: normal|worker|minigame|miniprogram)
 ifndef MODE
 	$(error MODE is not set! Usage: make setup-web MODE=normal or MODE=worker or MODE=minigame or MODE=miniprogram)
@@ -82,11 +89,11 @@ endif
 		echo "Error: Invalid MODE '$(MODE)'. Supported modes: normal, worker, minigame, miniprogram"; \
 		exit 1; \
 	fi
-	echo "===> Setting up web $(MODE) engine..."
+	echo "===> Setting up web ${MODE} engine..." && \
 	make build-wasm && \
-	./pkg/gdspx/tools/build_engine.sh -g -p web -m $(MODE) && \
-	./pkg/gdspx/tools/make_util.sh extrawebtemplate $(MODE) && \
-	echo "===> Web $(MODE) engine setup complete"
+	./pkg/gdspx/tools/build_engine.sh -g -p web -m ${MODE} && \
+	./pkg/gdspx/tools/make_util.sh extrawebtemplate ${MODE} && \
+	echo "===> Web ${MODE} engine setup complete"
 
 
 # ============================================
