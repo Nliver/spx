@@ -583,14 +583,13 @@ func doClone(sprite Sprite, data any, isAsync bool, onCloned func(sprite *Sprite
 }
 func (p *SpriteImpl) OnCloned__0(onCloned func(data any)) {
 	p.hasOnCloned = true
-	p.allWhenCloned = &eventSink{
-		prev:  p.allWhenCloned,
+	p.allWhenCloned = append(p.allWhenCloned, eventSink{
 		pthis: p,
 		sink:  onCloned,
 		cond: func(data any) bool {
 			return data == p
 		},
-	}
+	})
 }
 
 func (p *SpriteImpl) OnCloned__1(onCloned func()) {
@@ -619,14 +618,13 @@ func (p *SpriteImpl) fireTouchEnd(obj *SpriteImpl) {
 
 func (p *SpriteImpl) _onTouchStart(onTouchStart func(Sprite)) {
 	p.hasOnTouchStart = true
-	p.allWhenTouchStart = &eventSink{
-		prev:  p.allWhenTouchStart,
+	p.allWhenTouchStart = append(p.allWhenTouchStart, eventSink{
 		pthis: p,
 		sink:  onTouchStart,
 		cond: func(data any) bool {
 			return data == p
 		},
-	}
+	})
 }
 
 func (p *SpriteImpl) onTouchStart__0(onTouchStart func(Sprite)) {
