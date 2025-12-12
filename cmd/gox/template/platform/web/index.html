@@ -214,7 +214,14 @@
 			}
 		}
 		const LOG_LEVEL_VERBOSE = 0
+		let stopGameFlag = true
+
 		async function startProject(zipUrl) {
+			if(stopGameFlag === false){
+				console.error("game is running.")
+				return
+			}
+
 			runnerWindow.addEventListener('onProgress', (event) => {
 				onProgress(event.detail.progress)
 			})
@@ -222,9 +229,11 @@
 				console.error("onGameError", msg)
 			})
 			runnerWindow.onGameExit(function (code) {
+				stopGameFlag = true
 				console.error("onGameExit", code)
 			})
 			runnerWindow.onEngineCrash(function (code) {
+				stopGameFlag = true
 				console.error("onEngineCrash", code)
 			})
 
@@ -239,6 +248,7 @@
 			})
 			await runnerWindow.initGame(files)
 			await runnerWindow.startGame()
+			stopGameFlag = false
 		}
 	</script>
 </body>
