@@ -1647,18 +1647,21 @@ func (p *SpriteImpl) touchPoint(x, y float64) bool {
 	return spriteMgr.CheckCollisionWithPoint(p.syncSprite.GetId(), mathf.NewVec2(x, y), true)
 }
 
+const alphaThreshold = 0.05
+
 func (p *SpriteImpl) touchingColor(color mathf.Color) bool {
 	if p.syncSprite == nil {
 		return false
 	}
-	return spriteMgr.CheckCollisionByColor(p.syncSprite.GetId(), color, 0.05, 0.1)
+	return spriteMgr.CheckCollisionByColor(p.syncSprite.GetId(), color, alphaThreshold, 0.1)
 }
 
 func (p *SpriteImpl) touchingSprite(dst *SpriteImpl) bool {
 	if p.syncSprite == nil || dst.syncSprite == nil {
 		return false
 	}
-	return spriteMgr.CheckCollisionWithSpriteByAlpha(p.syncSprite.GetId(), dst.syncSprite.GetId(), 0.05)
+	ret := spriteMgr.CheckCollisionWithSpriteByAlpha(p.syncSprite.GetId(), dst.syncSprite.GetId(), alphaThreshold)
+	return ret
 }
 
 const (
