@@ -125,14 +125,14 @@ func (pself *CmdTool) BuildDll() error {
 	rawdir, _ := os.Getwd()
 	tagStr := pself.genGo()
 
-	// build dll
+	// Build dll
 	os.Chdir(pself.GoDir)
 	envs := []string{"CGO_ENABLED=1"}
 	rawPath := filepath.Base(pself.LibPath)
 	rawDir := filepath.Dir(pself.LibPath)
 	pself.LibPath = ""
 	for _, arch := range archs {
-		println("build dll arch=", arch, tagStr)
+		println("Build dll arch=", arch, tagStr)
 		strs := strings.Split(rawPath, "-")
 		posfix := strings.Split(strs[2], ".")
 		newPath := rawDir + "/" + strs[0] + "-" + strs[1] + "-" + arch + "." + posfix[len(posfix)-1]
@@ -189,11 +189,7 @@ func (pself *CmdTool) genGoUsingXgobuild(rawdir, spxProjPath string) string {
 	os.Chdir(rawdir)
 
 	// Return tags string for subsequent build steps
-	tagStr := ""
-	if *pself.Args.Tags != "" {
-		tagStr = "-tags=" + *pself.Args.Tags
-	}
-	return tagStr
+	return pself.SafeTagArgs()
 }
 
 // genGoUsingXgoCLI generates Go code using xgo CLI (old method)
@@ -201,12 +197,9 @@ func (pself *CmdTool) genGoUsingXgoCLI(rawdir, spxProjPath string) string {
 	// Generate code in spx project root directory
 	os.Chdir(spxProjPath)
 	envVars := []string{""}
-	tagStr := ""
-	if *pself.Args.Tags != "" {
-		tagStr = "-tags=" + *pself.Args.Tags
-	}
-	log.Printf("genGo tagStr: %s", tagStr)
 
+	tagStr := pself.SafeTagArgs()
+	log.Printf("genGo tagStr: %s", tagStr)
 	if tagStr == "" {
 		util.RunXGo(envVars, "go")
 	} else {
