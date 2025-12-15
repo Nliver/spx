@@ -21,6 +21,7 @@ import (
 	"log"
 	"math/rand"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -51,6 +52,40 @@ func fromObj(v obj) any {
 	return v
 }
 
+func toFloat64Any(v any) (float64, bool) {
+	switch x := v.(type) {
+	case float64:
+		return x, true
+	case float32:
+		return float64(x), true
+	case int:
+		return float64(x), true
+	case int8:
+		return float64(x), true
+	case int16:
+		return float64(x), true
+	case int32:
+		return float64(x), true
+	case int64:
+		return float64(x), true
+	case uint:
+		return float64(x), true
+	case uint8:
+		return float64(x), true
+	case uint16:
+		return float64(x), true
+	case uint32:
+		return float64(x), true
+	case uint64:
+		return float64(x), true
+	case string:
+		if f, err := strconv.ParseFloat(x, 64); err == nil {
+			return f, true
+		}
+	}
+	return 0, false
+}
+
 // -------------------------------------------------------------------------------------
 
 type Value struct {
@@ -78,15 +113,11 @@ func (p Value) Int() int {
 }
 
 func (p Value) Float() float64 {
-	switch v := p.data.(type) {
-	case float64:
-		return v
-	case nil:
-		return 0
-	default:
-		log.Panicln("todo: spx.Value.Float()", reflect.TypeOf(v))
-		return 0
+	f, ok := toFloat64Any(p.data)
+	if !ok {
+		log.Panicln("spx.Value.Float() conversion failed for type:", reflect.TypeOf(p.data))
 	}
+	return f
 }
 
 // -------------------------------------------------------------------------------------
