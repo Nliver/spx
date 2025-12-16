@@ -36,8 +36,8 @@ func (pself *CmdTool) withGoDir(f func() error) error {
 	return f()
 }
 
-// restoreFiles undoes renaming of files matching 'ios*' in the 'go' subdirectory.
-func (pself *CmdTool) restoreFiles() error {
+// hideIOSFiles does renaming of files matching 'ios*' in the 'go' subdirectory.
+func (pself *CmdTool) hideIOSFiles() error {
 	searchPattern := filepath.Join(pself.ProjectDir, "go", "ios*")
 	files, err := filepath.Glob(searchPattern)
 	if err != nil {
@@ -135,12 +135,14 @@ func (pself *CmdTool) genGoUsingXgobuild(rawdir, spxProjPath string) error {
 	if err := os.Chdir(spxProjPath); err != nil {
 		return fmt.Errorf("failed to change directory to project root for mod tidy: %w", err)
 	}
-	util.RunGolang(nil, "mod", "tidy")
 
-	if err := os.Chdir(rawdir); err != nil {
-		// Log as non-fatal but return error
-		return fmt.Errorf("failed to restore original directory: %w", err)
-	}
+	defer func() {
+		if err := os.Chdir(rawdir); err != nil {
+			log.Printf("Warning: Failed to restore working directory to %s: %v", rawdir, err)
+		}
+	}()
+
+	util.RunGolang(nil, "mod", "tidy")
 
 	return nil
 }
@@ -150,6 +152,11 @@ func (pself *CmdTool) genGoUsingXgoCLI(rawdir, spxProjPath string) error {
 	if err := os.Chdir(spxProjPath); err != nil {
 		return fmt.Errorf("failed to change directory to project root for XGo: %w", err)
 	}
+	defer func() {
+		if err := os.Chdir(rawdir); err != nil {
+			log.Printf("Warning: Failed to restore working directory to %s: %v", rawdir, err)
+		}
+	}()
 
 	tagStr := pself.SafeTagArgs()
 	log.Printf("genGo tagStr: %s", tagStr)
@@ -173,10 +180,6 @@ func (pself *CmdTool) genGoUsingXgoCLI(rawdir, spxProjPath string) error {
 	}
 
 	util.RunGolang(nil, "mod", "tidy")
-
-	if err := os.Chdir(rawdir); err != nil {
-		return fmt.Errorf("failed to restore original directory: %w", err)
-	}
 
 	return nil
 }
@@ -256,8 +259,8 @@ func (pself *CmdTool) BuildTinyGoLib() error {
 }
 
 func (pself *CmdTool) BuildDll() error {
-	// 1. Restore original files (undoing a potential previous step)
-	if err := pself.restoreFiles(); err != nil {
+	// 1. Hide original files (undoing a potential previous step)
+	if err := pself.hideIOSFiles(); err != nil {
 		return err
 	}
 
