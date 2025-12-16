@@ -557,6 +557,9 @@ func Gopt_SpriteImpl_Clone__1(sprite Sprite, data any) {
 }
 
 func doClone(sprite Sprite, data any, isAsync bool, onCloned func(sprite *SpriteImpl)) {
+	if sprite == nil {
+		log.Panicln("doClone, sprite is nil")
+	}
 	src := spriteOf(sprite)
 	if debugInstr {
 		log.Println("Clone", src.name)

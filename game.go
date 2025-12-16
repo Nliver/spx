@@ -99,13 +99,12 @@ type Game struct {
 
 	fs spxfs.Dir
 
-	inputs       inputManager
-	sounds       soundMgr
-	typs         map[string]reflect.Type // map: name => sprite type, for all sprites
-	sprs         map[string]Sprite       // map: name => sprite prototype, for loaded sprites
-	items        []Shape                 // shapes on stage (in Zorder), not only sprites
-	destroyItems []Shape                 // shapes on stage (in Zorder), not only sprites
-	tempItems    []Shape                 // temp items
+	inputs inputManager
+	sounds soundMgr
+	typs   map[string]reflect.Type // map: name => sprite type, for all sprites
+	sprs   map[string]Sprite       // map: name => sprite prototype, for loaded sprites
+
+	spriteMgr *spriteManager
 
 	events    chan event
 	aurec     *audiorecord.Recorder
@@ -213,12 +212,12 @@ func (p *Game) reset() {
 	}
 	p.sinkMgr.reset()
 	p.EraseAll() // clear pens
+	p.spriteMgr.reset()
 	p.startFlag = sync.Once{}
-	p.items = nil
 	p.debugPanel = nil
 	p.askPanel = nil
 	p.isLoaded = false
-	p.destroyItems = nil
+
 	p.oncePathFinder = sync.Once{}
 	p.sprs = make(map[string]Sprite)
 	timer.OnReload()
@@ -232,11 +231,18 @@ func (p *Game) initGame(sprites []Sprite) *Game {
 	p.eventSinks.init(&p.sinkMgr, p)
 	p.sprs = make(map[string]Sprite)
 	p.typs = make(map[string]reflect.Type)
+	p.initSpriteMgr()
 	for _, spr := range sprites {
 		tySpr := reflect.TypeOf(spr).Elem()
 		p.typs[tySpr.Name()] = tySpr
 	}
 	return p
+}
+
+func (p *Game) initSpriteMgr() {
+	if p.spriteMgr == nil {
+		p.spriteMgr = newSpriteManager()
+	}
 }
 
 // Gopt_Game_Main is required by XGo compiler as the entry of a .gmx project.
@@ -359,7 +365,7 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 	if g.isAutoSetCollisionLayer {
 		g.sprCollisionInfos = make(map[string]*spriteCollisionInfo)
 		idx := 0
-		for name, _ := range g.typs {
+		for name := range g.typs {
 			modIdx := int(math.Mod(float64(idx), maxCollisionLayerIdx))
 			info := &spriteCollisionInfo{Id: idx, Layer: 1 << modIdx}
 			g.sprCollisionInfos[name] = info
@@ -753,10 +759,10 @@ func (p *Game) addSpecialShape(g reflect.Value, v specsp, inits []Sprite) []Spri
 	case "stageMonitor", "monitor":
 		if sm, err := newMonitor(g, v); err == nil {
 			sm.game = p
-			p.addShape(sm)
+			p.spriteMgr.addShape(sm)
 		}
 	case "measure":
-		p.addShape(newMeasure(v))
+		p.spriteMgr.addShape(newMeasure(v))
 	case "sprites":
 		return p.addStageSprites(g, v, inits)
 	case "sprite":
@@ -773,7 +779,7 @@ func (p *Game) addStageSprite(g reflect.Value, v specsp, inits []Sprite) []Sprit
 		if sp, ok := val.(Sprite); ok {
 			dest := spriteOf(sp)
 			applySpriteProps(dest, v)
-			p.addShape(dest)
+			p.spriteMgr.addShape(dest)
 			inits = append(inits, sp)
 			return inits
 		}
@@ -823,7 +829,7 @@ func (p *Game) addStageSprites(g reflect.Value, v specsp, inits []Sprite) []Spri
 						newItem = newItem.Elem()
 					}
 					dest, sp := applySprite(newItem, spr, items[i].(specsp))
-					p.addShape(dest)
+					p.spriteMgr.addShape(dest)
 					inits = append(inits, sp)
 				}
 				fldSlice.Set(newSlice)
@@ -958,12 +964,7 @@ func (p *Game) logicLoop(me coroutine.Thread) int {
 	for {
 		p.camera.onUpdate(gtime.DeltaTime())
 		tempItems := p.getTempShapes()
-		for _, item := range tempItems {
-			if result, ok := item.(interface{ onUpdate(float64) }); ok {
-				result.onUpdate(gtime.DeltaTime())
-			}
-		}
-
+		p.spriteMgr.flushActivate()
 		// play audios
 		for _, item := range tempItems {
 			if sprite, ok := item.(*SpriteImpl); ok {
@@ -1192,7 +1193,7 @@ func (p *Game) touchingSpriteBy(dst *SpriteImpl, name string) *SpriteImpl {
 		return nil
 	}
 
-	for _, item := range p.items {
+	for _, item := range p.spriteMgr.items {
 		if sp, ok := item.(*SpriteImpl); ok && sp != dst {
 			if sp.name == name && (sp.isVisible && !sp.isDying) {
 				if sp.touchingSprite(dst) {
@@ -1208,7 +1209,7 @@ func (p *Game) touchingSpriteBy(dst *SpriteImpl, name string) *SpriteImpl {
 func (p *Game) objectPos(obj any) (float64, float64) {
 	switch v := obj.(type) {
 	case SpriteName:
-		if sp := p.findSprite(v); sp != nil {
+		if sp := p.spriteMgr.findSprite(v); sp != nil {
 			return sp.getXY()
 		}
 		panic("objectPos: sprite not found - " + v)
@@ -1237,66 +1238,27 @@ func (p *Game) EraseAll() {
 // -----------------------------------------------------------------------------
 
 func (p *Game) getItems() []Shape {
-	return p.items
+	return p.spriteMgr.all()
 }
 
 func (p *Game) addShape(child Shape) {
-	p.items = append(p.items, child)
+	p.spriteMgr.addShape(child)
 }
 
 func (p *Game) addClonedShape(src, clone Shape) {
-	items := p.items
-	idx := p.doFindSprite(src)
-	if idx < 0 {
-		log.Println("addClonedShape: clone a deleted sprite")
-		gco.Abort()
-	}
-
-	// p.getItems() requires immutable items, so we need copy before modify
-	n := len(items)
-	newItems := make([]Shape, n+1)
-	copy(newItems[:idx], items)
-	copy(newItems[idx+2:], items[idx+1:])
-	newItems[idx] = clone
-	newItems[idx+1] = src
-	p.items = newItems
-	p.updateRenderLayers()
+	p.spriteMgr.addClonedShape(src, clone)
 }
 
 func (p *Game) removeShape(child Shape) {
-	items := p.items
-	for i, item := range items {
-		if item == child {
-			// getItems() requires immutable items, so we need copy before modify
-			newItems := make([]Shape, len(items)-1)
-			copy(newItems, items[:i])
-			copy(newItems[i:], items[i+1:])
-			p.HasDestroyed = true
-			p.destroyItems = append(p.destroyItems, item)
-			p.items = newItems
-			return
-		}
-	}
-	p.updateRenderLayers()
+	p.spriteMgr.removeShape(child)
 }
 
 func (p *Game) activateShape(child Shape) {
-	items := p.items
-	for i, item := range items {
-		if item == child {
-			if i == 0 {
-				return
-			}
-			// getItems() requires immutable items, so we need copy before modify
-			newItems := make([]Shape, len(items))
-			copy(newItems, items[:i])
-			copy(newItems[i:], items[i+1:])
-			newItems[len(items)-1] = child
-			p.items = newItems
-			return
-		}
-	}
-	p.updateRenderLayers()
+	p.spriteMgr.activateShape(child)
+}
+
+func (p *Game) findSprite(name SpriteName) *SpriteImpl {
+	return p.spriteMgr.findSprite(name)
 }
 
 func (p *Game) gotoFront(spr *SpriteImpl) {
@@ -1308,101 +1270,7 @@ func (p *Game) gotoBack(spr *SpriteImpl) {
 }
 
 func (p *Game) goBackLayers(spr *SpriteImpl, n int) {
-	if engine.HasLayerSortMethod() {
-		log.Println("Cannot manually set sprite layer when a layer sort mode is active.")
-		return
-	}
-
-	idx := p.doFindSprite(spr)
-	if idx < 0 {
-		return
-	}
-	items := p.items
-	// go back
-	if n > 0 {
-		newIdx := idx
-		for newIdx > 0 {
-			newIdx--
-			item := items[newIdx]
-			if _, ok := item.(*SpriteImpl); ok {
-				n--
-				if n == 0 {
-					break
-				}
-			}
-		}
-		// should consider that backdrop is always at the bottom
-		if newIdx != idx {
-			// p.getItems() requires immutable items, so we need copy before modify
-			newItems := make([]Shape, len(items))
-			copy(newItems, items[:newIdx])
-			copy(newItems[newIdx+1:], items[newIdx:idx])
-			copy(newItems[idx+1:], items[idx+1:])
-			newItems[newIdx] = spr
-			p.items = newItems
-		}
-	} else if n < 0 { // go front
-		newIdx := idx
-		lastIdx := len(items) - 1
-		if newIdx < lastIdx {
-			for {
-				newIdx++
-				if newIdx >= lastIdx {
-					break
-				}
-				item := items[newIdx]
-				if _, ok := item.(*SpriteImpl); ok {
-					n++
-					if n == 0 {
-						break
-					}
-				}
-			}
-		}
-		if newIdx != idx {
-			// p.getItems() requires immutable items, so we need copy before modify
-			newItems := make([]Shape, len(items))
-			copy(newItems, items[:idx])
-			copy(newItems[idx:newIdx], items[idx+1:])
-			copy(newItems[newIdx+1:], items[newIdx+1:])
-			newItems[newIdx] = spr
-			p.items = newItems
-		}
-	}
-	p.updateRenderLayers()
-}
-func (p *Game) updateRenderLayers() {
-	// Manual layer updates are disabled when a layer sort mode is active
-	if engine.HasLayerSortMethod() {
-		return
-	}
-	layer := 0
-	for _, item := range p.items {
-		if sp, ok := item.(*SpriteImpl); ok {
-			layer++
-			sp.setLayer(layer)
-		}
-	}
-}
-
-func (p *Game) doFindSprite(src Shape) int {
-	for idx, item := range p.items {
-		if item == src {
-			return idx
-		}
-	}
-	return -1
-}
-
-func (p *Game) findSprite(name SpriteName) *SpriteImpl {
-	for _, item := range p.items {
-		if sp, ok := item.(*SpriteImpl); ok {
-			if !sp.isCloned_ && sp.name == name {
-				return sp
-			}
-		}
-	}
-	return nil
+	p.spriteMgr.goBackLayers(spr, n)
 }
 
 // -----------------------------------------------------------------------------
@@ -1751,7 +1619,7 @@ func (p *Game) BroadcastAndWait__1(msg string, data any) {
 // -----------------------------------------------------------------------------
 
 func (p *Game) setStageMonitor(target string, val string, visible bool) {
-	for _, item := range p.items {
+	for _, item := range p.spriteMgr.items {
 		if sp, ok := item.(*Monitor); ok && sp.val == val && sp.target == target {
 			sp.setVisible(visible)
 			return
@@ -1768,26 +1636,11 @@ func (p *Game) ShowVar(name string) {
 }
 
 func (p *Game) getAllShapes() []Shape {
-	return p.items
+	return p.spriteMgr.all()
 }
 
 func (p *Game) getTempShapes() []Shape {
-	p.tempItems = getTempShapes(p.tempItems, p.items)
-	return p.tempItems
-}
-
-func getTempShapes(dst []Shape, src []Shape) []Shape {
-	if dst == nil {
-		dst = make([]Shape, 50)
-	}
-	dst = dst[:0]
-	if cap(dst) < len(src) {
-		dst = make([]Shape, len(src))
-	} else {
-		dst = dst[:len(src)]
-	}
-	copy(dst, src)
-	return dst
+	return p.spriteMgr.getTempShapes()
 }
 
 // -----------------------------------------------------------------------------
