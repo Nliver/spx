@@ -18,7 +18,6 @@ package spx
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"reflect"
 	"strconv"
@@ -107,7 +106,7 @@ func (p Value) Int() int {
 	case nil:
 		return 0
 	default:
-		log.Panicln("todo: spx.Value.Int()", reflect.TypeOf(v))
+		doPanic("todo: spx.Value.Int()", reflect.TypeOf(v))
 		return 0
 	}
 }
@@ -115,7 +114,7 @@ func (p Value) Int() int {
 func (p Value) Float() float64 {
 	f, ok := toFloat64Any(p.data)
 	if !ok {
-		log.Panicln("spx.Value.Float() conversion failed for type:", reflect.TypeOf(p.data))
+		doPanic("spx.Value.Float() conversion failed for type:", reflect.TypeOf(p.data))
 	}
 	return f
 }
@@ -188,7 +187,7 @@ func (p *List) Set(i Pos, v obj) {
 	if i < 0 {
 		i = Pos(getListPos(i, n))
 		if i < 0 {
-			log.Panicln("Set failed: invalid index -", i)
+			doPanic("Set failed: invalid index -", i)
 			return
 		}
 	}
