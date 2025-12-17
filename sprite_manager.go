@@ -23,9 +23,6 @@ import (
 	gtime "github.com/goplus/spx/v2/internal/time"
 )
 
-// shape is your existing Shape definition.
-// type shape any
-
 // spriteManager manages the lifecycle of all sprites/shapes.
 // It is responsible for:
 //   - activation (delayed add)
@@ -35,10 +32,8 @@ import (
 type spriteManager struct {
 	// active shapes
 	items []Shape
-
 	// shapes waiting to be activated
 	tempItems []Shape
-
 	// shapes waiting to be destroyed
 	destroyItems []Shape
 }
@@ -47,7 +42,7 @@ type spriteManager struct {
 func newSpriteManager() *spriteManager {
 	return &spriteManager{
 		items:        make([]Shape, 0, 64),
-		tempItems:    make([]Shape, 0, 16),
+		tempItems:    make([]Shape, 0, 50),
 		destroyItems: make([]Shape, 0, 16),
 	}
 }
@@ -55,21 +50,9 @@ func newSpriteManager() *spriteManager {
 // reset clears all internal state while keeping allocated memory.
 // It is safe to call between scenes or rounds.
 func (sm *spriteManager) reset() {
-	// clear active items
 	sm.items = sm.items[:0]
-
-	// clear pending activation and destruction
 	sm.tempItems = sm.tempItems[:0]
 	sm.destroyItems = sm.destroyItems[:0]
-}
-
-// clear releases all internal references.
-// After calling clear, the manager should be discarded and replaced
-// by a newly created spriteManager.
-func (sm *spriteManager) clear() {
-	sm.items = nil
-	sm.tempItems = nil
-	sm.destroyItems = nil
 }
 
 //
@@ -77,134 +60,89 @@ func (sm *spriteManager) clear() {
 //
 
 // add immediately adds a shape to the active list.
-// Equivalent to the original addShape.
 func (sm *spriteManager) add(s Shape) {
 	sm.items = append(sm.items, s)
 }
 
 // remove schedules a shape for destruction at the end of the frame.
-// Equivalent to the original removeShape.
 func (sm *spriteManager) remove(s Shape) {
 	sm.destroyItems = append(sm.destroyItems, s)
 }
 
-// todo(refactor): old logic
+// addShape is a legacy wrapper for add.
+// Deprecated: Use add() instead.
 func (sm *spriteManager) addShape(child Shape) {
 	sm.add(child)
 }
 
+// addClonedShape inserts a cloned shape immediately after its source.
+// This preserves rendering order and ensures clones appear behind their source.
+// Creates a new slice to maintain immutability for concurrent access safety.
 func (sm *spriteManager) addClonedShape(src, clone Shape) {
-	items := sm.items
-	idx := sm.doFindSprite(src)
+	idx := sm.findShapeIndex(src)
 	if idx < 0 {
 		log.Println("addClonedShape: clone a deleted sprite")
 		gco.Abort()
+		return
 	}
-	n := len(items)
-	newItems := make([]Shape, n+1)
-	copy(newItems[:idx], items)
-	copy(newItems[idx+2:], items[idx+1:])
-	newItems[idx] = clone
-	newItems[idx+1] = src
-	sm.items = newItems
+
+	sm.items = sm.insertAt(sm.items, idx, clone)
 	sm.updateRenderLayers()
 }
 
+// removeShape removes a shape from the active list and schedules it for destruction.
+// Creates a new slice to maintain immutability for concurrent access safety.
 func (sm *spriteManager) removeShape(child Shape) {
-	items := sm.items
-	for i, item := range items {
-		if item == child {
-			newItems := make([]Shape, len(items)-1)
-			copy(newItems, items[:i])
-			copy(newItems[i:], items[i+1:])
-			sm.remove(item)
-			sm.items = newItems
-			return
-		}
+	idx := sm.findShapeIndex(child)
+	if idx < 0 {
+		return
 	}
+
+	sm.items = sm.deleteAt(sm.items, idx)
+	sm.remove(child)
 	sm.updateRenderLayers()
 }
 
+// activateShape moves a shape to the end of the active list (brings it to front).
+// Creates a new slice to maintain immutability for concurrent access safety.
 func (sm *spriteManager) activateShape(child Shape) {
 	items := sm.items
-	for i, item := range items {
+	for idx, item := range items {
 		if item == child {
-			if i == 0 {
+			if idx == len(items)-1 {
 				return
 			}
-			newItems := make([]Shape, len(items))
-			copy(newItems, items[:i])
-			copy(newItems[i:], items[i+1:])
-			newItems[len(items)-1] = child
-			sm.items = newItems
+			sm.items = sm.moveToEnd(sm.items, idx)
+			sm.updateRenderLayers()
 			return
 		}
 	}
-	sm.updateRenderLayers()
 }
 
+// goBackLayers moves a sprite forward or backward by n layers.
+// Positive n moves backward (deeper), negative n moves forward (shallower).
+// Creates a new slice to maintain immutability for concurrent access safety.
 func (sm *spriteManager) goBackLayers(spr *SpriteImpl, n int) {
 	if engine.HasLayerSortMethod() {
 		log.Println("Cannot manually set sprite layer when a layer sort mode is active.")
 		return
 	}
 
-	idx := sm.doFindSprite(spr)
+	if n == 0 {
+		return
+	}
+
+	idx := sm.findShapeIndex(spr)
 	if idx < 0 {
 		return
 	}
-	items := sm.items
-	// go back
-	if n > 0 {
-		newIdx := idx
-		for newIdx > 0 {
-			newIdx--
-			item := items[newIdx]
-			if _, ok := item.(*SpriteImpl); ok {
-				n--
-				if n == 0 {
-					break
-				}
-			}
-		}
-		// should consider that backdrop is always at the bottom
-		if newIdx != idx {
-			// p.getItems() requires immutable items, so we need copy before modify
-			newItems := make([]Shape, len(items))
-			copy(newItems, items[:newIdx])
-			copy(newItems[newIdx+1:], items[newIdx:idx])
-			copy(newItems[idx+1:], items[idx+1:])
-			newItems[newIdx] = spr
-			sm.items = newItems
-		}
-	} else if n < 0 { // go front
-		newIdx := idx
-		lastIdx := len(items) - 1
-		if newIdx < lastIdx {
-			for {
-				newIdx++
-				if newIdx >= lastIdx {
-					break
-				}
-				item := items[newIdx]
-				if _, ok := item.(*SpriteImpl); ok {
-					n++
-					if n == 0 {
-						break
-					}
-				}
-			}
-		}
-		if newIdx != idx {
-			// p.getItems() requires immutable items, so we need copy before modify
-			newItems := make([]Shape, len(items))
-			copy(newItems, items[:idx])
-			copy(newItems[idx:newIdx], items[idx+1:])
-			copy(newItems[newIdx+1:], items[newIdx+1:])
-			newItems[newIdx] = spr
-			sm.items = newItems
-		}
+
+	newIdx := sm.calculateNewIndex(idx, n)
+	if newIdx == idx {
+		return
 	}
+
+	sm.items = sm.moveToIndex(sm.items, idx, newIdx)
 	sm.updateRenderLayers()
 }
 
@@ -212,29 +150,27 @@ func (sm *spriteManager) goBackLayers(spr *SpriteImpl, n int) {
 // ========== flush phase ==========
 //
 
-// flushActivate moves all pending shapes into the active list.
+// flushActivate updates all pending shapes in the active list.
 func (sm *spriteManager) flushActivate() {
 	if len(sm.tempItems) == 0 {
 		return
 	}
 
 	for _, item := range sm.tempItems {
-		if result, ok := item.(interface{ onUpdate(float64) }); ok {
-			result.onUpdate(gtime.DeltaTime())
+		if updater, ok := item.(interface{ onUpdate(float64) }); ok {
+			updater.onUpdate(gtime.DeltaTime())
 		}
 	}
 }
 
-// flushDestroy removes all scheduled shapes from the active list.
-// Removal is deferred to preserve stable iteration during updates.
+// flushDestroy performs cleanup for shapes that have been scheduled for destruction.
 func (sm *spriteManager) flushDestroy() {
 	if len(sm.destroyItems) == 0 {
 		return
 	}
 
 	for _, item := range sm.destroyItems {
-		sprite, ok := item.(*SpriteImpl)
-		if ok && sprite.syncSprite != nil {
+		if sprite, ok := item.(*SpriteImpl); ok && sprite.syncSprite != nil {
 			sprite.syncSprite.Destroy()
 			sprite.syncSprite = nil
 		}
@@ -247,7 +183,8 @@ func (sm *spriteManager) flushDestroy() {
 // ========== render layer management ==========
 //
 
-// updateRenderLayers set only when marked dirty.
+// updateRenderLayers updates the layer index for all sprites.
+// Only effective when no layer sort method is active.
 func (sm *spriteManager) updateRenderLayers() {
 	if engine.HasLayerSortMethod() {
 		return
@@ -267,13 +204,14 @@ func (sm *spriteManager) updateRenderLayers() {
 //
 
 // all returns all active shapes.
-// all requires immutable items, so need copy before modify
+// Returns the internal slice - callers should not modify it.
 func (sm *spriteManager) all() []Shape {
 	return sm.items
 }
 
+// getTempShapes returns a copy of all active shapes in a temporary buffer.
 func (sm *spriteManager) getTempShapes() []Shape {
-	sm.tempItems = getTempShapes(sm.tempItems, sm.items)
+	sm.tempItems = copyShapes(sm.tempItems, sm.items)
 	return sm.tempItems
 }
 
@@ -282,19 +220,7 @@ func (sm *spriteManager) count() int {
 	return len(sm.items)
 }
 
-//
-// ========== internal helpers ==========
-//
-
-func (sm *spriteManager) doFindSprite(src Shape) int {
-	for idx, item := range sm.items {
-		if item == src {
-			return idx
-		}
-	}
-	return -1
-}
-
+// findSprite finds a sprite by name (only non-cloned sprites).
 func (sm *spriteManager) findSprite(name SpriteName) *SpriteImpl {
 	for _, item := range sm.items {
 		if sp, ok := item.(*SpriteImpl); ok {
@@ -306,16 +232,123 @@ func (sm *spriteManager) findSprite(name SpriteName) *SpriteImpl {
 	return nil
 }
 
-func getTempShapes(dst []Shape, src []Shape) []Shape {
-	if dst == nil {
-		dst = make([]Shape, 50)
+//
+// ========== internal helpers ==========
+//
+
+// findShapeIndex finds the index of a shape in the items slice.
+// Returns -1 if not found.
+func (sm *spriteManager) findShapeIndex(target Shape) int {
+	for i, item := range sm.items {
+		if item == target {
+			return i
+		}
 	}
-	dst = dst[:0]
+	return -1
+}
+
+// calculateNewIndex calculates the new index after moving n sprite layers.
+// Positive n moves backward (toward index 0), negative n moves forward (toward end).
+func (sm *spriteManager) calculateNewIndex(currentIdx, n int) int {
+	items := sm.items
+	newIdx := currentIdx
+
+	if n > 0 {
+		// Move backward (toward index 0)
+		for newIdx > 0 && n > 0 {
+			newIdx--
+			if _, ok := items[newIdx].(*SpriteImpl); ok {
+				n--
+			}
+		}
+	} else if n < 0 {
+		// Move forward (toward end)
+		lastIdx := len(items) - 1
+		for newIdx < lastIdx && n < 0 {
+			newIdx++
+			if _, ok := items[newIdx].(*SpriteImpl); ok {
+				n++
+			}
+		}
+	}
+
+	return newIdx
+}
+
+// insertAt inserts an item at the specified index.
+// Creates a new slice to maintain immutability for concurrent access safety.
+func (sm *spriteManager) insertAt(slice []Shape, idx int, item Shape) []Shape {
+	n := len(slice)
+	newSlice := make([]Shape, n+1)
+	copy(newSlice[:idx], slice[:idx])
+	newSlice[idx] = item
+	copy(newSlice[idx+1:], slice[idx:])
+	return newSlice
+}
+
+// deleteAt removes an item at the specified index.
+// Creates a new slice to maintain immutability for concurrent access safety.
+func (sm *spriteManager) deleteAt(slice []Shape, idx int) []Shape {
+	n := len(slice)
+	newSlice := make([]Shape, n-1)
+	copy(newSlice[:idx], slice[:idx])
+	copy(newSlice[idx:], slice[idx+1:])
+	return newSlice
+}
+
+// moveToEnd moves an item from idx to the end of the slice.
+// Creates a new slice to maintain immutability for concurrent access safety.
+func (sm *spriteManager) moveToEnd(slice []Shape, idx int) []Shape {
+	n := len(slice)
+	item := slice[idx]
+	newSlice := make([]Shape, n)
+	copy(newSlice[:idx], slice[:idx])
+	copy(newSlice[idx:n-1], slice[idx+1:])
+	newSlice[n-1] = item
+	return newSlice
+}
+
+// moveToIndex moves an item from oldIdx to newIdx.
+// Creates a new slice to maintain immutability for concurrent access safety.
+func (sm *spriteManager) moveToIndex(slice []Shape, oldIdx, newIdx int) []Shape {
+	if oldIdx == newIdx {
+		return slice
+	}
+
+	n := len(slice)
+	item := slice[oldIdx]
+	newSlice := make([]Shape, n)
+
+	if oldIdx < newIdx {
+		// Move forward: item moves toward end
+		copy(newSlice[:oldIdx], slice[:oldIdx])
+		copy(newSlice[oldIdx:newIdx], slice[oldIdx+1:newIdx+1])
+		newSlice[newIdx] = item
+		copy(newSlice[newIdx+1:], slice[newIdx+1:])
+	} else {
+		// Move backward: item moves toward start
+		copy(newSlice[:newIdx], slice[:newIdx])
+		newSlice[newIdx] = item
+		copy(newSlice[newIdx+1:oldIdx+1], slice[newIdx:oldIdx])
+		copy(newSlice[oldIdx+1:], slice[oldIdx+1:])
+	}
+
+	return newSlice
+}
+
+// copyShapes copies shapes from src to dst, reusing dst's capacity if possible.
+func copyShapes(dst, src []Shape) []Shape {
+	if dst == nil {
+		dst = make([]Shape, 0, 50)
+	}
+
+	// Ensure capacity
 	if cap(dst) < len(src) {
 		dst = make([]Shape, len(src))
 	} else {
 		dst = dst[:len(src)]
 	}
+
 	copy(dst, src)
 	return dst
 }
