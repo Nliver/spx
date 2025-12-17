@@ -201,14 +201,7 @@ func (p *Game) syncUpdateProxy() {
 	}
 
 	// unbind syncSprite
-	for _, item := range p.destroyItems {
-		sprite, ok := item.(*SpriteImpl)
-		if ok && sprite.syncSprite != nil {
-			sprite.syncSprite.Destroy()
-			sprite.syncSprite = nil
-		}
-	}
-	p.destroyItems = nil
+	p.spriteMgr.flushDestroy()
 }
 
 func checkUpdateCostume(p *baseObj) {

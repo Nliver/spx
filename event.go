@@ -115,8 +115,8 @@ func (p *eventSinkMgr) reset() {
 }
 
 func (p *eventSinkMgr) doDeleteClone(this any) {
-	p.allWhenStart = doDeleteClone(p.allWhenStart, this)
 	p.allWhenAwake = doDeleteClone(p.allWhenAwake, this)
+	p.allWhenStart = doDeleteClone(p.allWhenStart, this)
 	p.allWhenKeyPressed = doDeleteClone(p.allWhenKeyPressed, this)
 	p.allWhenSwipe = doDeleteClone(p.allWhenSwipe, this)
 	p.allWhenIReceive = doDeleteClone(p.allWhenIReceive, this)
