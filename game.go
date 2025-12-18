@@ -50,6 +50,9 @@ const (
 	Gop_sched  = "Sched,SchedNow"
 )
 
+// -------------------------------------------------------------------------------------
+// Debug flags
+
 type dbgFlags int
 
 const (
@@ -60,10 +63,25 @@ const (
 	DbgFlagAll = DbgFlagLoad | DbgFlagInstr | DbgFlagEvent | DbgFlagPerf
 )
 
+// -------------------------------------------------------------------------------------
+// Mouse button constants
+
 const (
 	MOUSE_BUTTON_LEFT   int64 = 1
 	MOUSE_BUTTON_RIGHT  int64 = 2
 	MOUSE_BUTTON_MIDDLE int64 = 3
+)
+
+// -------------------------------------------------------------------------------------
+// Configuration constants
+
+const (
+	eventBufferSize        = 16   // size of event channel buffer
+	schedTimeoutMs         = 3000 // timeout in milliseconds for scheduler
+	mainExecTimeoutSec     = 3    // timeout in seconds for main execution
+	mouseMovementThreshold = 1.0  // minimum movement to trigger mouse event (pixels)
+	defaultPathCellSize    = 16   // default path finding cell size
+	defaultAudioMaxDist    = 2000 // default maximum audio distance
 )
 
 var (
@@ -211,8 +229,8 @@ func (p *Game) reset() {
 		p.audioId = 0
 	}
 	p.sinkMgr.reset()
-	p.EraseAll() // clear pens
 	p.spriteMgr.reset()
+	p.EraseAll() // clear pens
 	p.startFlag = sync.Once{}
 	p.debugPanel = nil
 	p.askPanel = nil
@@ -350,12 +368,12 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 	// auto set collision layer by default
 	g.isAutoSetCollisionLayer = proj.AutoSetCollisionLayer == nil || *proj.AutoSetCollisionLayer
 
-	g.pathCellSizeX = parseDefaultNumber(proj.PathCellSizeX, 16)
-	g.pathCellSizeY = parseDefaultNumber(proj.PathCellSizeY, 16)
+	g.pathCellSizeX = parseDefaultNumber(proj.PathCellSizeX, defaultPathCellSize)
+	g.pathCellSizeY = parseDefaultNumber(proj.PathCellSizeY, defaultPathCellSize)
 
 	engine.SetLayerSortMode(proj.LayerSortMode)
 	g.audioAttenuation = parseDefaultFloatValue(proj.AudioAttenuation, 0) // 0 indicates no attenuation will occur, to compatibility with previous behavior.
-	g.audioMaxDistance = parseDefaultFloatValue(proj.AudioMaxDistance, 2000)
+	g.audioMaxDistance = parseDefaultFloatValue(proj.AudioMaxDistance, defaultAudioMaxDist)
 	if debugLoad {
 		log.Println("==> isCollisionByPixel", g.isCollisionByPixel)
 		log.Println("==> isAutoSetCollisionLayer", g.isAutoSetCollisionLayer)
@@ -412,7 +430,7 @@ func getFieldPtrOrAlloc(g *Game, v reflect.Value, i int) (name string, val any) 
 	word := unsafe.Pointer(vFld.Addr().Pointer())
 	ret := reflect.NewAt(typ, word).Interface()
 
-	if vFld.Kind() == reflect.Ptr && typ.Implements(tySprite) {
+	if vFld.Kind() == reflect.Pointer && typ.Implements(tySprite) {
 		obj := reflect.New(typ.Elem())
 		reflect.ValueOf(ret).Elem().Set(obj)
 		ret = obj.Interface()
@@ -429,7 +447,7 @@ func getFieldPtrOrAlloc(g *Game, v reflect.Value, i int) (name string, val any) 
 }
 
 func findFieldPtr(v reflect.Value, name string, from int) any {
-	if v.Kind() == reflect.Ptr {
+	if v.Kind() == reflect.Pointer {
 		v = v.Elem()
 	}
 	t := v.Type()
@@ -444,7 +462,7 @@ func findFieldPtr(v reflect.Value, name string, from int) any {
 }
 
 func findObjPtr(v reflect.Value, name string, from int) any {
-	if v.Kind() == reflect.Ptr {
+	if v.Kind() == reflect.Pointer {
 		v = v.Elem()
 	}
 	t := v.Type()
@@ -453,7 +471,7 @@ func findObjPtr(v reflect.Value, name string, from int) any {
 		if tFld.Name == name {
 			typ := tFld.Type
 			vFld := v.Field(i)
-			if vFld.Kind() == reflect.Ptr {
+			if vFld.Kind() == reflect.Pointer {
 				word := unsafe.Pointer(vFld.Pointer())
 				return reflect.NewAt(typ.Elem(), word).Interface()
 			}
@@ -471,7 +489,7 @@ func findObjPtr(v reflect.Value, name string, from int) any {
 func (p *Game) startLoad(fs spxfs.Dir, cfg *Config) {
 	p.sounds.init(p)
 	p.inputs.init(p)
-	p.events = make(chan event, 16)
+	p.events = make(chan event, eventBufferSize)
 	p.fs = fs
 	p.windowWidth_ = cfg.Width
 	p.windowHeight_ = cfg.Height
@@ -506,7 +524,7 @@ func (p *Game) loadSprite(sprite Sprite, name string, gamer reflect.Value) error
 
 func spriteOf(sprite Sprite) *SpriteImpl {
 	vSpr := reflect.ValueOf(sprite)
-	if vSpr.Kind() != reflect.Ptr {
+	if vSpr.Kind() != reflect.Pointer {
 		return nil
 	}
 	vSpr = vSpr.Elem()
@@ -811,7 +829,7 @@ func (p *Game) addStageSprites(g reflect.Value, v specsp, inits []Sprite) []Spri
 			var typItemPtr reflect.Type
 			typSlice := fldSlice.Type()
 			typItem := typSlice.Elem()
-			isPtr := typItem.Kind() == reflect.Ptr
+			isPtr := typItem.Kind() == reflect.Pointer
 			if isPtr {
 				typItem, typItemPtr = typItem.Elem(), typItem
 			} else {
@@ -925,21 +943,22 @@ func (p *Game) doWhenMouseMove(ev *eventMouseMove) {
 	p.inputs.onMouseMove(ev.Pos)
 }
 
-func (p *Game) handleEvent(event event) {
-	switch ev := event.(type) {
+// handleEvent dispatches events to their respective handlers
+func (p *Game) handleEvent(ev event) {
+	switch e := ev.(type) {
 	case *eventLeftButtonUp:
-		p.doWhenLeftButtonUp(ev)
+		p.doWhenLeftButtonUp(e)
 	case *eventLeftButtonDown:
-		p.doWhenLeftButtonDown(ev)
+		p.doWhenLeftButtonDown(e)
 	case *eventMouseMove:
-		p.doWhenMouseMove(ev)
+		p.doWhenMouseMove(e)
 	case *eventKeyDown:
-		p.sinkMgr.doWhenKeyPressed(ev.Key)
+		p.sinkMgr.doWhenKeyPressed(e.Key)
 	case *eventStart:
 		p.sinkMgr.doWhenAwake(nil)
 		p.sinkMgr.doWhenStart()
 	case *eventTimer:
-		p.sinkMgr.doWhenTimer(ev.Time)
+		p.sinkMgr.doWhenTimer(e.Time)
 	}
 }
 
@@ -958,6 +977,43 @@ func (p *Game) eventLoop(me coroutine.Thread) int {
 		p.handleEvent(ev)
 	}
 }
+
+// processPendingAudios plays any pending audio for sprites
+func (p *Game) processPendingAudios(items []Shape, tempAudios []string) []string {
+	for _, item := range items {
+		if sprite, ok := item.(*SpriteImpl); ok {
+			engine.Lock()
+			tempAudios = append(tempAudios, sprite.pendingAudios...)
+			sprite.pendingAudios = sprite.pendingAudios[:0]
+			engine.Unlock()
+
+			for _, audio := range tempAudios {
+				sprite.playAudio(audio, false)
+			}
+			tempAudios = tempAudios[:0]
+		}
+	}
+	return tempAudios
+}
+
+// processAnimationEvents handles completed animation events for sprites
+func (p *Game) processAnimationEvents(items []Shape, tempAnimations []string) []string {
+	for _, item := range items {
+		if sprite, ok := item.(*SpriteImpl); ok {
+			engine.Lock()
+			tempAnimations = append(tempAnimations, sprite.donedAnimations...)
+			sprite.donedAnimations = sprite.donedAnimations[:0]
+			engine.Unlock()
+
+			for _, animName := range tempAnimations {
+				sprite.onAnimationDone(animName)
+			}
+			tempAnimations = tempAnimations[:0]
+		}
+	}
+	return tempAnimations
+}
+
 func (p *Game) logicLoop(me coroutine.Thread) int {
 	tempAudios := []string{}
 	tempAnimations := []string{}
@@ -965,41 +1021,11 @@ func (p *Game) logicLoop(me coroutine.Thread) int {
 		p.camera.onUpdate(gtime.DeltaTime())
 		tempItems := p.getTempShapes()
 		p.spriteMgr.flushActivate()
-		// play audios
-		for _, item := range tempItems {
-			if sprite, ok := item.(*SpriteImpl); ok {
-				engine.Lock()
-				for _, audio := range sprite.pendingAudios {
-					tempAudios = append(tempAudios, audio)
-				}
-				sprite.pendingAudios = sprite.pendingAudios[:0]
-				engine.Unlock()
 
-				for _, audio := range tempAudios {
-					sprite.playAudio(audio, false)
-				}
-				tempAudios = tempAudios[:0]
-			}
-		}
-		// check anim done events
-		for _, item := range tempItems {
-			if sprite, ok := item.(*SpriteImpl); ok {
-				engine.Lock()
-				for _, animName := range sprite.donedAnimations {
-					tempAnimations = append(tempAnimations, animName)
-				}
-				sprite.donedAnimations = sprite.donedAnimations[:0]
-				engine.Unlock()
+		tempAudios = p.processPendingAudios(tempItems, tempAudios)
+		tempAnimations = p.processAnimationEvents(tempItems, tempAnimations)
 
-				for _, animName := range tempAnimations {
-					sprite.onAnimationDone(animName)
-				}
-				tempAnimations = tempAnimations[:0]
-			}
-		}
-
-		targetTimer := timer.CheckTimerEvent()
-		if targetTimer >= 0 {
+		if targetTimer := timer.CheckTimerEvent(); targetTimer >= 0 {
 			p.fireEvent(&eventTimer{Time: targetTimer})
 		}
 		engine.WaitNextFrame()
@@ -1009,8 +1035,7 @@ func (p *Game) logicLoop(me coroutine.Thread) int {
 
 func (p *Game) inputEventLoop(me coroutine.Thread) int {
 	lastLbtnPressed := false
-	lastMousePos := mathf.Vec2{}       // Track last mouse position
-	const mouseMovementThreshold = 1.0 // Minimum movement to trigger event (pixels)
+	lastMousePos := mathf.Vec2{} // Track last mouse position
 	keyEvents := make([]engine.KeyEvent, 0)
 
 	for {
@@ -1072,7 +1097,7 @@ type threadObj = coroutine.ThreadObj
 
 func SchedNow() int {
 	if isSchedInMain {
-		if time.Now().Sub(mainSchedTime) >= time.Second*3 {
+		if time.Since(mainSchedTime) >= time.Second*mainExecTimeoutSec {
 			panic("Main execution timed out. Please check if there is an infinite loop in the code.")
 		}
 	}
@@ -1084,12 +1109,12 @@ func SchedNow() int {
 
 func Sched() int {
 	if isSchedInMain {
-		if time.Now().Sub(mainSchedTime) >= time.Second*3 {
+		if time.Since(mainSchedTime) >= time.Second*mainExecTimeoutSec {
 			panic("Main execution timed out. Please check if there is an infinite loop in the code.")
 		}
 	} else {
 		if me := gco.Current(); me != nil {
-			if me.IsSchedTimeout(3000) {
+			if me.IsSchedTimeout(schedTimeoutMs) {
 				log.Println("For loop execution timed out. Please check if there is an infinite loop in the code.\n", debug.GetStackTrace())
 				engine.WaitNextFrame()
 			}
@@ -1456,11 +1481,6 @@ type sound *soundConfig
 
 type SoundName = string
 
-func hasAsset(path string) bool {
-	finalPath := engine.ToAssetPath(path)
-	return resMgr.HasFile(finalPath)
-}
-
 func (p *Game) loadSound(name SoundName) (media sound, err error) {
 	if media, ok := p.sounds.audios[name]; ok {
 		return media, nil
@@ -1521,15 +1541,16 @@ func (p *Game) Volume() float64 {
 }
 func (p *Game) Play__0(name SoundName, loop bool) {
 	p.checkAudioId()
-	p.playSound(p.syncSprite, p.audioId, name, loop, 0, 2000)
+	p.playSound(p.syncSprite, p.audioId, name, loop, 0, defaultAudioMaxDist)
 }
 
 func (p *Game) Play__1(name SoundName) {
 	p.Play__0(name, false)
 }
+
 func (p *Game) PlayAndWait(name SoundName) {
 	p.checkAudioId()
-	p.playSoundAndWait(p.syncSprite, p.audioId, name, 0, 2000)
+	p.playSoundAndWait(p.syncSprite, p.audioId, name, 0, defaultAudioMaxDist)
 }
 
 func (p *Game) PausePlaying(name SoundName) {
