@@ -218,7 +218,9 @@ format: ## Format Go code
 	go fmt ./...
 
 generate: ## Generate code
-	cd ./pkg/gdspx/cmd/codegen && go run . && cd $(CURRENT_PATH) && make format
+	cd ./pkg/gdspx/cmd/codegen && go run . && cd $(CURRENT_PATH) && \
+	go generate ./cmd/spxrun/runner && \
+	make format
 
 export-pack: ## Export runtime pck file
 	./pkg/gdspx/tools/make_util.sh exportpack && cd $(CURRENT_PATH)
@@ -246,4 +248,3 @@ stop: ## Stop running processes
 		if [ -n "$$PIDS" ]; then kill -9 $$PIDS; fi \
 	fi
 	@echo "Processes stopped."
-
