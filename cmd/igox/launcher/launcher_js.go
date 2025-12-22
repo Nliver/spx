@@ -33,8 +33,8 @@ func Run(plugins ...Plugin) {
 	spxEngineRegisterFFI()
 
 	// Register SpxRunner WASM interface
-	js.Global().Set("ixgo_build", jSFuncOfWithError(defaultRunner.build))
-	js.Global().Set("ixgo_run", jSFuncOfWithError(defaultRunner.run))
+	js.Global().Set("ixgo_build", jsFuncOfWithError(defaultRunner.build))
+	js.Global().Set("ixgo_run", jsFuncOfWithError(defaultRunner.run))
 
 	// Keep WASM running select {} will block the main goroutine forever
 	exitChan := make(chan struct{})
@@ -166,8 +166,8 @@ func convertJSFilesToMap(input js.Value) (map[string][]byte, error) {
 	return filesMap, nil
 }
 
-// jSFuncOfWithError wraps js.Func and converts error returns to JS Error objects.
-func jSFuncOfWithError(fn func(this js.Value, args []js.Value) any) js.Func {
+// jsFuncOfWithError wraps js.Func and converts error returns to JS Error objects.
+func jsFuncOfWithError(fn func(this js.Value, args []js.Value) any) js.Func {
 	return js.FuncOf(func(this js.Value, args []js.Value) any {
 		result := fn(this, args)
 		if err, ok := result.(error); ok {
@@ -176,4 +176,3 @@ func jSFuncOfWithError(fn func(this js.Value, args []js.Value) any) js.Func {
 		return result
 	})
 }
-
