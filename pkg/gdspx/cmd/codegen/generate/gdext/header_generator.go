@@ -161,7 +161,7 @@ func generateManagerHeader(input string, rawFormat bool) string {
 				if len(params) > 0 {
 					returnType = ", " + returnType
 				}
-				builder.WriteString(fmt.Sprintf("typedef void (*GDExtension%s%s)(%s%s* ret_value);\n", currentClassName, methodName, params, returnType))
+				builder.WriteString(fmt.Sprintf("typedef void (*GDExtension%s%s)(%s%s *ret_value);\n", currentClassName, methodName, params, returnType))
 			}
 		}
 	}

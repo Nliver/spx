@@ -65,10 +65,10 @@ EMSCRIPTEN_KEEPALIVE
 void gd{{ loadProcAddressName $f.Name }}(
 	{{- range $j, $arg := $f.Arguments -}}
 		{{ $arg.CStylePtrString $j }}
-		{{- if ne $j (sub (len $f.Arguments) 1) -}}, {{- end -}}
+		{{- if ne $j (sub (len $f.Arguments) 1) -}}, {{ end -}}
 	{{- end -}}
 	{{ if ne "void" $f.ReturnType.CStyleString -}} 
-	{{- if ne 0 (len $f.Arguments) -}}, {{- end -}}	{{$f.ReturnType.CStyleString }}* ret_val
+	{{- if ne 0 (len $f.Arguments) -}}, {{ end -}}{{$f.ReturnType.CStyleString }} *ret_val
 	{{- end -}}
 ) {
 	{{ if ne "void" $f.ReturnType.CStyleString -}} *ret_val = {{- end }} {{ getManagerName $f.Name}}Mgr->
