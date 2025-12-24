@@ -438,12 +438,12 @@ func (p *eventSinks) OnBackdrop__1(name BackdropName, onBackdrop func()) {
 type StopKind int
 
 const (
-	_All                 StopKind = All  // stop all scripts of stage/sprites and abort this script
-	AllOtherScripts      StopKind = -100 // stop all other scripts
-	AllSprites           StopKind = -101 // stop all scripts of sprites
-	ThisSprite           StopKind = -102 // stop all scripts of this sprite
-	ThisScript           StopKind = -103 // abort this script
-	OtherScriptsInSprite StopKind = -104 // stop other scripts of this sprite
+	AllStop              StopKind = -99 - iota // stop all scripts of stage/sprites and abort this script
+	AllOtherScripts                            // stop all other scripts
+	AllSprites                                 // stop all scripts of sprites
+	ThisSprite                                 // stop all scripts of this sprite
+	ThisScript                                 // abort this script
+	OtherScriptsInSprite                       // stop other scripts of this sprite
 )
 
 func (p *eventSinks) Stop(kind StopKind) {
@@ -467,7 +467,7 @@ func (p *eventSinks) Stop(kind StopKind) {
 		filter = func(th coroutine.Thread) bool {
 			return (isSprite(th.Obj) || isGame(th.Obj)) && th != gco.Current()
 		}
-	case All:
+	case AllStop:
 		gco.StopIf(func(th coroutine.Thread) bool {
 			return isSprite(th.Obj) || isGame(th.Obj)
 		})
