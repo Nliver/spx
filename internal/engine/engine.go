@@ -276,12 +276,19 @@ func OnPanic(name, stack string) {
 // handlePanic is the internal panic handler implementation.
 func handlePanic(name, stack string, err any, exitOnPanic bool) {
 	// Build panic message
-	msg := name
-	if stack != "" {
-		msg += " stack:\n" + stack
-	}
-	if err != nil && msg == "" {
+	var msg string
+	if err != nil {
 		msg = fmt.Sprintf("panic: %v", err)
+	}
+	if name != "" {
+		if msg != "" {
+			msg = name + ": " + msg
+		} else {
+			msg = name
+		}
+	}
+	if stack != "" {
+		msg += "\nstack:\n" + stack
 	}
 
 	// Report runtime panic to external manager

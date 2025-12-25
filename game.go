@@ -271,9 +271,28 @@ func Gopt_Game_Main(game Gamer, sprites ...Sprite) {
 	engine.Main(game)
 }
 
-// Gopt_Game_Run runs the game.
-// resource can be a string or fs.Dir object.
+// Gopt_Game_Run runs the game
 func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
+	fs, conf, proj := loadGameResources(resource, gameConf)
+	parseCommandLineFlags(&conf)
+	setupGameConfig(&conf, &proj)
+
+	v := reflect.ValueOf(game).Elem()
+	g := instance(v)
+
+	setupGameSystems(g, &proj)
+	loadGameSprites(g, v, fs, &proj)
+
+	if err := g.endLoad(v, &proj); err != nil {
+		panic(err)
+	}
+	if err := g.runLoop(&conf); err != nil {
+		panic(err)
+	}
+}
+
+// loadGameResources loads filesystem and configuration
+func loadGameResources(resource any, gameConf []*Config) (spxfs.Dir, Config, projConfig) {
 	switch resfld := resource.(type) {
 	case string:
 		if resfld != "" {
@@ -282,6 +301,7 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 			engine.SetAssetDir("assets")
 		}
 	}
+
 	fs, err := resourceDir(resource)
 	if err != nil {
 		panic(err)
@@ -296,7 +316,7 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 		err = loadProjConfig(&proj, fs, conf.Index)
 	} else {
 		err = loadProjConfig(&proj, fs, nil)
-		if proj.Run != nil { // load Config from index.json
+		if proj.Run != nil {
 			conf = *proj.Run
 		}
 	}
@@ -304,39 +324,49 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 		panic(err)
 	}
 
-	if !conf.DontParseFlags {
-		f := flag.CommandLine
-		verbose := f.Bool("v", false, "print verbose information")
-		fullscreen := f.Bool("f", false, "full screen")
-		help := f.Bool("h", false, "show help information")
-		fullscreen2 := f.Bool("fullscreen", false, "server mode")
+	return fs, conf, proj
+}
 
-		f.String("controller", "", "controller's name")
-		f.Bool("servermode", false, "server mode")
-		f.String("serveraddr", "", "server address")
-		f.Bool("nomap", false, "server mode")
-		f.Bool("debugweb", false, "server mode")
-		f.String("gdextpath", "", "godot extension path")
-		f.String("write-movie", "", "movie mode")
-
-		// godot args
-		f.String("path", "", "gdspx project path")
-		f.Bool("e", false, "editor mode")
-		f.Bool("headless", false, "Headless Mode")
-		f.Bool("remote-debug", false, "remote Debug Mode")
-		f.Bool("no-header", false, "disable engine's header output")
-		flag.Parse()
-
-		if *help {
-			fmt.Fprintf(os.Stderr, "Usage: %v [-v -f -h]\n", os.Args[0])
-			flag.PrintDefaults()
-			return
-		}
-		if *verbose {
-			SetDebug(DbgFlagAll)
-		}
-		conf.FullScreen = conf.FullScreen || *fullscreen2 || *fullscreen
+// parseCommandLineFlags handles command line arguments
+func parseCommandLineFlags(conf *Config) {
+	if conf.DontParseFlags {
+		return
 	}
+
+	f := flag.CommandLine
+	verbose := f.Bool("v", false, "print verbose information")
+	fullscreen := f.Bool("f", false, "full screen")
+	help := f.Bool("h", false, "show help information")
+	fullscreen2 := f.Bool("fullscreen", false, "server mode")
+
+	f.String("controller", "", "controller's name")
+	f.Bool("servermode", false, "server mode")
+	f.String("serveraddr", "", "server address")
+	f.Bool("nomap", false, "server mode")
+	f.Bool("debugweb", false, "server mode")
+	f.String("gdextpath", "", "godot extension path")
+	f.String("write-movie", "", "movie mode")
+
+	f.String("path", "", "gdspx project path")
+	f.Bool("e", false, "editor mode")
+	f.Bool("headless", false, "Headless Mode")
+	f.Bool("remote-debug", false, "remote Debug Mode")
+	f.Bool("no-header", false, "disable engine's header output")
+	flag.Parse()
+
+	if *help {
+		fmt.Fprintf(os.Stderr, "Usage: %v [-v -f -h]\n", os.Args[0])
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
+	if *verbose {
+		SetDebug(DbgFlagAll)
+	}
+	conf.FullScreen = conf.FullScreen || *fullscreen2 || *fullscreen
+}
+
+// setupGameConfig configures game settings
+func setupGameConfig(conf *Config, proj *projConfig) {
 	if conf.Title == "" {
 		dir, _ := os.Getwd()
 		appName := filepath.Base(dir)
@@ -354,32 +384,27 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 		key = os.Getenv("SPX_SCREENSHOT_KEY")
 	}
 	if key != "" {
-		err := os.Setenv("SPX_SCREENSHOT_KEY", key)
-		if err != nil {
+		if err := os.Setenv("SPX_SCREENSHOT_KEY", key); err != nil {
 			panic(err)
 		}
 	}
+}
 
-	v := reflect.ValueOf(game).Elem()
-	g := instance(v)
+// setupGameSystems initializes game subsystems
+func setupGameSystems(g *Game, proj *projConfig) {
 	if debugLoad {
-		log.Println("==> StartLoad", resource)
+		log.Println("==> isCollisionByPixel", !proj.CollisionByShape && !proj.Physics)
+		log.Println("==> isAutoSetCollisionLayer", proj.AutoSetCollisionLayer == nil || *proj.AutoSetCollisionLayer)
 	}
 
 	g.isCollisionByPixel = !proj.CollisionByShape && !proj.Physics
-	// auto set collision layer by default
 	g.isAutoSetCollisionLayer = proj.AutoSetCollisionLayer == nil || *proj.AutoSetCollisionLayer
-
 	g.pathCellSizeX = parseDefaultNumber(proj.PathCellSizeX, defaultPathCellSize)
 	g.pathCellSizeY = parseDefaultNumber(proj.PathCellSizeY, defaultPathCellSize)
 
 	engine.SetLayerSortMode(proj.LayerSortMode)
-	g.audioAttenuation = parseDefaultFloatValue(proj.AudioAttenuation, 0) // 0 indicates no attenuation will occur, to compatibility with previous behavior.
+	g.audioAttenuation = parseDefaultFloatValue(proj.AudioAttenuation, 0)
 	g.audioMaxDistance = parseDefaultFloatValue(proj.AudioMaxDistance, defaultAudioMaxDist)
-	if debugLoad {
-		log.Println("==> isCollisionByPixel", g.isCollisionByPixel)
-		log.Println("==> isAutoSetCollisionLayer", g.isAutoSetCollisionLayer)
-	}
 
 	physicMgr.SetCollisionSystemType(g.isCollisionByPixel)
 	if g.isAutoSetCollisionLayer {
@@ -392,29 +417,26 @@ func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 			idx++
 		}
 	}
+}
 
-	g.startLoad(fs, &conf)
+// loadGameSprites loads all sprites
+func loadGameSprites(g *Game, v reflect.Value, fs spxfs.Dir, proj *projConfig) {
+	if debugLoad {
+		log.Println("==> StartLoad")
+	}
+
+	g.startLoad(fs, &Config{Width: g.windowWidth_, Height: g.windowHeight_})
 	for i, n := 0, v.NumField(); i < n; i++ {
 		name, val := getFieldPtrOrAlloc(g, v, i)
-		switch fld := val.(type) {
-		case Sprite:
+		if fld, ok := val.(Sprite); ok {
 			if g.canBindSprite(name) {
 				if err := g.loadSprite(fld, name, v); err != nil {
 					panic(err)
 				}
 			}
-			// p.sprs[name] = fld (has been set by loadSprite)
 		}
 	}
 	g.tilemapMgr.init(g, fs, proj.TilemapPath)
-
-	if err := g.endLoad(v, &proj); err != nil {
-		panic(err)
-	}
-
-	if err := g.runLoop(&conf); err != nil {
-		panic(err)
-	}
 }
 
 func instance(gamer reflect.Value) *Game {
@@ -525,6 +547,21 @@ func (p *Game) loadSprite(sprite Sprite, name string, gamer reflect.Value) error
 }
 
 func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
+	p.setupDisplayConfig(proj)
+	p.setupWorldAndWindow(proj)
+	p.setupPlatformAndCamera(proj)
+
+	inits := p.loadAndInitSprites(g, proj)
+	p.runSpriteCallbacks(inits, proj, g)
+	p.setupCollisionLayers(inits)
+	p.loadAudioAndTilemap(proj)
+
+	p.isLoaded = true
+	return
+}
+
+// setupDisplayConfig initializes display configuration
+func (p *Game) setupDisplayConfig(proj *projConfig) {
 	windowScale := 1.0
 	if proj.WindowScale >= 0.001 {
 		windowScale = proj.WindowScale
@@ -532,8 +569,10 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 	p.windowScale = windowScale
 	p.stretchMode = proj.StretchMode == nil || *proj.StretchMode
 	p.debug = proj.Debug
+}
 
-	// when use tilemap , disable backdrop
+// setupWorldAndWindow configures world and window sizes
+func (p *Game) setupWorldAndWindow(proj *projConfig) {
 	backdrops := proj.getBackdrops()
 	if p.tilemapMgr.hasData() {
 		backdrops = make([]*backdropConfig, 0)
@@ -549,22 +588,22 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 		p.baseObj.initBackdrops("", backdrops, proj.getBackdropIndex())
 		p.worldWidth_ = proj.Map.Width
 		p.worldHeight_ = proj.Map.Height
-		p.minWorldX_ = -p.worldWidth_ / 2 // Default world center at (0,0)
+		p.minWorldX_ = -p.worldWidth_ / 2
 		p.minWorldY_ = -p.worldHeight_ / 2
-		p.doWorldSize() // set world size
+		p.doWorldSize()
 	} else {
 		p.worldWidth_ = proj.Map.Width
 		p.worldHeight_ = proj.Map.Height
-		p.minWorldX_ = -p.worldWidth_ / 2 // Default world center at (0,0)
+		p.minWorldX_ = -p.worldWidth_ / 2
 		p.minWorldY_ = -p.worldHeight_ / 2
 		p.baseObj.initWithSize(p.worldWidth_, p.worldHeight_)
 	}
+
 	if debugLoad {
 		log.Println("==> SetWorldSize", p.worldWidth_, p.worldHeight_)
 	}
 	p.mapMode = toMapMode(proj.Map.Mode)
-
-	p.doWindowSize() // set window size
+	p.doWindowSize()
 
 	engine.SetDebugMode(p.debug)
 	if debugLoad {
@@ -576,13 +615,14 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 	if p.windowHeight_ > p.worldHeight_ {
 		p.windowHeight_ = p.worldHeight_
 	}
+}
 
-	// fullscreen when on mobile platform
+// setupPlatformAndCamera configures platform settings and camera
+func (p *Game) setupPlatformAndCamera(proj *projConfig) {
 	if platform.IsMobile() || proj.FullScreen || platform.IsWeb() {
 		if proj.FullScreen || platform.IsMobile() {
 			platformMgr.SetWindowFullscreen(true)
 		}
-
 		winSize := platformMgr.GetWindowSize()
 		scale := math.Min(winSize.X/float64(p.windowWidth_), winSize.Y/float64(p.windowHeight_))
 		p.windowScale = scale
@@ -598,14 +638,18 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 	p.camera = &cameraImpl{}
 	p.Camera = p.camera
 	p.camera.init(p)
+
 	isWindowMapSizeEqual := p.worldHeight_ == p.windowHeight_ && p.worldWidth_ == p.windowWidth_
 	engine.SetWindowScale(p.windowScale)
 	ui.SetWindowScale(p.windowScale)
 	ui.ClampUIPositionInScreen(isWindowMapSizeEqual)
 
-	// setup syncSprite's property
 	p.syncSprite = engine.NewBackdropProxy(p, p.getCostumePath(), p.getCostumeRenderScale())
 	p.setupBackdrop()
+}
+
+// loadAndInitSprites loads all sprites from project configuration
+func (p *Game) loadAndInitSprites(g reflect.Value, proj *projConfig) []Sprite {
 	inits := make([]Sprite, 0, len(proj.Zorder))
 	for layer, v := range proj.Zorder {
 		if name, ok := v.(string); ok {
@@ -615,10 +659,14 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 			p.addShape(spr)
 			inits = append(inits, sp)
 		} else {
-			// not a prototype sprite
 			inits = p.addSpecialShape(g, v.(specsp), inits)
 		}
 	}
+	return inits
+}
+
+// runSpriteCallbacks executes sprite initialization callbacks
+func (p *Game) runSpriteCallbacks(inits []Sprite, proj *projConfig, g reflect.Value) {
 	for _, ini := range inits {
 		spr := spriteOf(ini)
 		if spr != nil {
@@ -635,52 +683,55 @@ func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 	if loader, ok := g.Addr().Interface().(interface{ OnLoaded() }); ok {
 		loader.OnLoaded()
 	}
+}
 
-	if p.isAutoSetCollisionLayer {
-		// Warning: Here, the sprite's `idx % maxCollisionLayerIdx` is treated as the actual layer.
-		// This means multiple sprites may share the same layer, and their collision masks are also shared
-		// (taking the union of all target layers). This impacts performance but does not affect correctness,
-		// since collision events will be filtered by `onTouchStart`.
-		maskMap := make([]int64, maxCollisionLayerIdx)
-		// gather masks
-		for _, ini := range inits {
-			spr := spriteOf(ini)
-			info := p.getSpriteCollisionInfo(spr.name)
-			info.Mask = 0
-			modIdx := int(math.Mod(float64(info.Id), maxCollisionLayerIdx))
-			for target, _ := range spr.collisionTargets {
-				targetLayer := p.getSpriteCollisionInfo(target)
-				maskMap[modIdx] |= targetLayer.Layer
-			}
-		}
-		// apply final masks
-		for _, ini := range inits {
-			spr := spriteOf(ini)
-			info := p.getSpriteCollisionInfo(spr.name)
-			modIdx := int(math.Mod(float64(info.Id), maxCollisionLayerIdx))
-			info.Mask = maskMap[modIdx]
-			if debugLoad {
-				log.Println("init sprite collision info", spr.name, info.Layer, info.Mask)
-			}
-		}
-		// recalc sprite prototype's physic info
-		engine.WaitMainThread(func() {
-			for _, ini := range inits {
-				spr := spriteOf(ini)
-				syncInitSpritePhysicInfo(spr, spr.syncSprite)
-			}
-		})
+// setupCollisionLayers configures collision detection layers
+func (p *Game) setupCollisionLayers(inits []Sprite) {
+	if !p.isAutoSetCollisionLayer {
+		return
 	}
 
-	// load tilemap
+	maskMap := make([]int64, maxCollisionLayerIdx)
+
+	// Gather collision masks
+	for _, ini := range inits {
+		spr := spriteOf(ini)
+		info := p.getSpriteCollisionInfo(spr.name)
+		info.Mask = 0
+		modIdx := int(math.Mod(float64(info.Id), maxCollisionLayerIdx))
+		for target := range spr.collisionTargets {
+			targetLayer := p.getSpriteCollisionInfo(target)
+			maskMap[modIdx] |= targetLayer.Layer
+		}
+	}
+
+	// Apply collision masks
+	for _, ini := range inits {
+		spr := spriteOf(ini)
+		info := p.getSpriteCollisionInfo(spr.name)
+		modIdx := int(math.Mod(float64(info.Id), maxCollisionLayerIdx))
+		info.Mask = maskMap[modIdx]
+		if debugLoad {
+			log.Println("init sprite collision info", spr.name, info.Layer, info.Mask)
+		}
+	}
+
+	// Recalculate physics info
+	engine.WaitMainThread(func() {
+		for _, ini := range inits {
+			spr := spriteOf(ini)
+			syncInitSpritePhysicInfo(spr, spr.syncSprite)
+		}
+	})
+}
+
+// loadAudioAndTilemap loads tilemap and background music
+func (p *Game) loadAudioAndTilemap(proj *projConfig) {
 	p.tilemapMgr.parseTilemap()
 	p.audioId = p.sounds.allocAudio()
 	if proj.Bgm != "" {
 		p.Play__0(proj.Bgm, true)
 	}
-	// game load success
-	p.isLoaded = true
-	return
 }
 
 func (p *Game) endLoad(g reflect.Value, proj *projConfig) (err error) {
@@ -786,7 +837,7 @@ func (p *Game) addStageSprites(g reflect.Value, v specsp, inits []Sprite) []Spri
 				items := v["items"].([]any)
 				n := len(items)
 				newSlice := reflect.MakeSlice(typSlice, n, n)
-				for i := 0; i < n; i++ {
+				for i := range n {
 					newItem := newSlice.Index(i)
 					if isPtr {
 						newItem.Set(reflect.New(typItem))
@@ -878,7 +929,7 @@ func Repeat(loopCount int, call func()) {
 	if call == nil {
 		return
 	}
-	for i := 0; i < loopCount; i++ {
+	for range loopCount {
 		call()
 		engine.WaitNextFrame()
 	}

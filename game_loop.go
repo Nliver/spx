@@ -51,7 +51,7 @@ func (p *Game) doWhenLeftButtonDown(ev *eventLeftButtonDown) {
 
 	var target clicker = nil
 	var targetSprite *SpriteImpl = nil
-	for i := 0; i < count; i++ {
+	for i := range count {
 		item := tempItems[count-i-1]
 		if o, ok := item.(clicker); ok {
 			syncSprite := o.getProxy()
