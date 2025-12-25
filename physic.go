@@ -33,42 +33,6 @@ const (
 	physicsColliderPolygon = 0x05
 )
 
-func parseDefaultValue(pval *int64, defaultValue int64) int64 {
-	if pval == nil {
-		return defaultValue
-	}
-	return *pval
-}
-
-func parseDefaultFloatValue(pval *float64, defaultValue float64) float64 {
-	if pval == nil {
-		return defaultValue
-	}
-	return *pval
-}
-
-func parseLayerMaskValue(pval *int64) int64 {
-	return parseDefaultValue(pval, 1)
-}
-
-func paserColliderShapeType(typeName string, defaultValue int64) int64 {
-	switch typeName {
-	case "none":
-		return physicsColliderNone
-	case "auto":
-		return physicsColliderAuto
-	case "circle":
-		return physicsColliderCircle
-	case "rect":
-		return physicsColliderRect
-	case "capsule":
-		return physicsColliderCapsule
-	case "polygon":
-		return physicsColliderPolygon
-	}
-	return defaultValue
-}
-
 type rayCastResult struct {
 	Hited    bool
 	SpriteId int64
