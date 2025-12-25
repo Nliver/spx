@@ -287,7 +287,7 @@ func initCSPart(p *baseObj, img *costumeSetImage, faceRight float64, bitmapResol
 		name := strconv.Itoa(len(p.costumes))
 		addCostumeWith(p, name, img, faceRight, 0, bitmapResolution)
 	} else if items == nil {
-		for index := 0; index < nx; index++ {
+		for index := range nx {
 			name := strconv.Itoa(len(p.costumes))
 			addCostumeWith(p, name, img, faceRight, index, bitmapResolution)
 		}
@@ -469,14 +469,14 @@ func (p *baseObj) changeGraphicEffect(kind EffectKind, delta float64) {
 func (p *baseObj) clearGraphicEffects() {
 	p.greffUniforms = nil
 	effs := p.requireGreffUniforms()
-	for i := 0; i < int(enumNumOfEffect); i++ {
+	for i := range int(enumNumOfEffect) {
 		effs[EffectKind(i)] = 0
 	}
 	p.applyGraphicEffects(false)
 }
 
 func (p *baseObj) applyGraphicEffects(isSync bool) {
-	for i := 0; i < int(enumNumOfEffect); i++ {
+	for i := range int(enumNumOfEffect) {
 		p.doSetGraphicEffect(EffectKind(i), isSync)
 	}
 }

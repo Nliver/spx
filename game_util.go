@@ -20,9 +20,10 @@ import (
 	"math/rand"
 
 	"github.com/goplus/spbase/mathf"
+	"github.com/goplus/spx/v2/internal/engine"
 )
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 // Window and World Size Utilities
 
 func (p *Game) getWindowSize() mathf.Vec2 {
@@ -58,7 +59,11 @@ func (p *Game) doWorldSize() {
 	}
 }
 
-// -----------------------------------------------------------------------------
+func (p *Game) SetWindowSize(width int64, height int64) {
+	platformMgr.SetWindowSize(width, height, false)
+}
+
+// -------------------------------------------------------------------------------------
 // Touch and Collision Utilities
 
 func (p *Game) touchingPoint(dst *SpriteImpl, x, y float64) bool {
@@ -83,7 +88,7 @@ func (p *Game) touchingSpriteBy(dst *SpriteImpl, name string) *SpriteImpl {
 	return nil
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 // Object Position Utilities
 
 func (p *Game) objectPos(obj any) (float64, float64) {
@@ -109,14 +114,14 @@ func (p *Game) objectPos(obj any) (float64, float64) {
 	panic("objectPos: unexpected input")
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 // Pen Utilities
 
 func (p *Game) EraseAll() {
 	penMgr.DestroyAllPens()
 }
 
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
 // Shape Management Utilities
 
 func (p *Game) getItems() []Shape {
@@ -149,4 +154,117 @@ func (p *Game) getAllShapes() []Shape {
 
 func (p *Game) getTempShapes() []Shape {
 	return p.spriteMgr.getTempShapes()
+}
+
+// -------------------------------------------------------------------------------------
+// Random Number Utilities
+
+func Rand__0(from, to int) float64 {
+	if to < from {
+		to = from
+	}
+	return float64(from + rand.Intn(to-from+1))
+}
+
+func Rand__1(from, to float64) float64 {
+	if to < from {
+		to = from
+	}
+	return rand.Float64()*(to-from) + from
+}
+
+// -------------------------------------------------------------------------------------
+// Math Utilities
+
+// Iround returns an integer value, while math.Round returns a float value.
+func Iround(v float64) int {
+	if v >= 0 {
+		return int(v + 0.5)
+	}
+	return int(v - 0.5)
+}
+
+// -------------------------------------------------------------------------------------
+// Color Utilities
+
+type Color struct {
+	r, g, b, a float64
+}
+
+func toMathfColor(c Color) mathf.Color {
+	return mathf.Color{R: c.r, G: c.g, B: c.b, A: c.a}
+}
+
+func toSpxColor(c mathf.Color) Color {
+	return Color{c.R, c.G, c.B, c.A}
+}
+
+// HSB creates a color from HSB values.
+// h, s, b in range [0, 100], just like Scratch
+func HSB(h, s, b float64) Color {
+	color := mathf.NewColorHSV(h*3.6, s/100, b/100)
+	color.A = 1
+	return toSpxColor(color)
+}
+
+// HSBA creates a color from HSBA values.
+// h, s, b, a in range [0, 100], just like Scratch
+func HSBA(h, s, b, a float64) Color {
+	color := HSB(h, s, b)
+	color.a = a / 100
+	return color
+}
+
+// -------------------------------------------------------------------------------------
+// Type Conversion Utilities
+
+func f64Tof32(slice []float64) []float32 {
+	if slice == nil {
+		return []float32{}
+	}
+	out := make([]float32, len(slice))
+	for i, v := range slice {
+		out[i] = float32(v)
+	}
+	return out
+}
+
+func f32Tof64(slice []float32) []float64 {
+	if slice == nil {
+		return []float64{}
+	}
+	out := make([]float64, len(slice))
+	for i, v := range slice {
+		out[i] = float64(v)
+	}
+	return out
+}
+
+func parseDefaultNumber[T any](pval *T, defaultValue T) T {
+	if pval == nil {
+		return defaultValue
+	}
+	return *pval
+}
+
+// -------------------------------------------------------------------------------------
+// Exit Functions
+
+func Exit__0(code int) {
+	engine.RequestExit(int64(code))
+}
+
+func Exit__1() {
+	engine.RequestExit(0)
+}
+
+// -------------------------------------------------------------------------------------
+// Panic Functions
+
+func doPanic(args ...any) {
+	engine.Panic(args...)
+}
+
+func doPanicf(format string, args ...any) {
+	engine.Panicf(format, args...)
 }
