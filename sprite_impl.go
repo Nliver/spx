@@ -1,0 +1,846 @@
+/*
+ * Copyright (c) 2021 The XGo Authors (xgo.dev). All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package spx
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"maps"
+	"math"
+	"reflect"
+
+	"github.com/goplus/spbase/mathf"
+	"github.com/goplus/spx/v2/internal/engine"
+	"github.com/goplus/spx/v2/internal/time"
+)
+
+// ============================================================================
+// SpriteImpl Structure
+// ============================================================================
+
+// SpriteImpl is the concrete implementation of the Sprite interface
+type SpriteImpl struct {
+	baseObj
+	eventSinks
+	g      *Game
+	sprite Sprite
+	name   string
+
+	// Position and orientation
+	x, y          float64
+	direction     float64
+	rotationStyle RotationStyle
+	pivot         mathf.Vec2
+
+	// Visual components
+	sayObj   *sayOrThinker
+	quoteObj *quoter
+
+	// Animation configuration
+	animations        map[SpriteAnimationName]*aniConfig
+	animBindings      map[string]string
+	defaultAnimation  SpriteAnimationName
+	animationWrappers map[SpriteAnimationName]*animationWrapper // lazy load
+
+	// Pen properties
+	penColor        mathf.Color
+	penWidth        float64
+	penHue          float64
+	penSaturation   float64
+	penBrightness   float64
+	penTransparency float64
+
+	// State flags
+	isVisible bool
+	isCloned_ bool
+	isPenDown bool
+	isDying   bool
+
+	// Event flags
+	hasOnCloned     bool
+	hasOnTouchStart bool
+	hasOnTouching   bool
+	hasOnTouchEnd   bool
+
+	// Internal state
+	gamer               reflect.Value
+	curAnimState        *animState
+	curTweenState       *animState
+	defaultCostumeIndex int
+
+	// Physics configuration
+	triggerInfo   physicConfig
+	collisionInfo physicConfig
+
+	// Engine objects
+	penObj  *engine.Object
+	audioId engine.Object
+
+	// Runtime data
+	collisionTargets map[string]bool
+	pendingAudios    []string
+	donedAnimations  []string
+
+	// Physics properties
+	physicsMode PhysicsMode
+	mass        float64
+	friction    float64
+	airDrag     float64
+	gravity     float64
+}
+
+// ============================================================================
+// Core Methods
+// ============================================================================
+
+func (p *SpriteImpl) Name() string {
+	return p.name
+}
+
+func (p *SpriteImpl) IsCloned() bool {
+	return p.isCloned_
+}
+
+func (p *SpriteImpl) setDying() { // dying: visible but can't be touched
+	p.isDying = true
+}
+
+func (p *SpriteImpl) getAllShapes() []Shape {
+	return p.g.getAllShapes()
+}
+
+// ============================================================================
+// Initialization Methods
+// ============================================================================
+
+func (p *SpriteImpl) init(
+	base string, g *Game, name string, spriteCfg *spriteConfig, gamer reflect.Value, sprite Sprite) {
+	if spriteCfg.Costumes != nil {
+		p.baseObj.init(base, spriteCfg.Costumes, spriteCfg.getCostumeIndex())
+	} else {
+		p.baseObj.initWith(base, spriteCfg)
+	}
+	p.defaultCostumeIndex = p.baseObj.costumeIndex_
+	p.eventSinks.init(&g.sinkMgr, p)
+
+	p.gamer = gamer
+	p.g, p.name, p.sprite = g, name, sprite
+	p.x, p.y = spriteCfg.X, spriteCfg.Y
+	p.scale = spriteCfg.Size
+	p.direction = spriteCfg.Heading
+	p.rotationStyle = toRotationStyle(spriteCfg.RotationStyle)
+	p.isVisible = spriteCfg.Visible
+	p.pivot = spriteCfg.Pivot
+	p.animBindings = make(map[string]string)
+	maps.Copy(p.animBindings, spriteCfg.AnimBindings)
+
+	p.collisionTargets = make(map[string]bool)
+
+	// bind physic config
+	p.collisionInfo.Mask = parseLayerMaskValue(spriteCfg.CollisionMask)
+	p.collisionInfo.Layer = parseLayerMaskValue(spriteCfg.CollisionLayer)
+	// collider is disable by default
+	var defaultCollisionType int64 = physicsColliderNone
+	if enabledPhysics {
+		defaultCollisionType = physicsColliderAuto
+	}
+	p.collisionInfo.Type = paserColliderShapeType(spriteCfg.CollisionShapeType, defaultCollisionType)
+	p.collisionInfo.Pivot = spriteCfg.CollisionPivot
+	p.collisionInfo.Params = spriteCfg.CollisionShapeParams
+	// Validate colliderShapeType and colliderShape length matching
+	if !p.collisionInfo.validateShape() {
+		fmt.Printf("Warning: Invalid collider configuration for sprite %s, using default values\n", p.name)
+		p.collisionInfo.Type = physicsColliderNone
+		p.collisionInfo.Params = nil
+	}
+
+	p.triggerInfo.Mask = parseLayerMaskValue(spriteCfg.TriggerMask)
+	p.triggerInfo.Layer = parseLayerMaskValue(spriteCfg.TriggerLayer)
+	p.triggerInfo.Type = paserColliderShapeType(spriteCfg.TriggerShapeType, physicsColliderAuto)
+	p.triggerInfo.Pivot = spriteCfg.TriggerPivot
+	p.triggerInfo.Params = spriteCfg.TriggerShapeParams
+	// Validate triggerType and triggerShape length matching
+	if !p.triggerInfo.validateShape() {
+		fmt.Printf("Warning: Invalid trigger configuration for sprite %s, using default values\n", p.name)
+		p.triggerInfo.Type = physicsColliderAuto
+		p.triggerInfo.Params = nil
+	}
+
+	p.physicsMode = toPhysicsMode(spriteCfg.PhysicsMode)
+	p.airDrag = parseDefaultFloatValue(spriteCfg.AirDrag, 1)
+	p.gravity = parseDefaultFloatValue(spriteCfg.Gravity, 1)
+	p.friction = parseDefaultFloatValue(spriteCfg.Friction, 1)
+	p.mass = parseDefaultFloatValue(spriteCfg.Mass, 1)
+
+	// setup animations
+	p.defaultAnimation = spriteCfg.DefaultAnimation
+	p.animations = make(map[string]*aniConfig)
+	anims := spriteCfg.FAnimations
+	for key, val := range anims {
+		var ani = val
+		_, ok := p.animations[key]
+		if ok {
+			log.Panicf("animation key [%s] is exist", key)
+		}
+		if ani.FrameFps == 0 {
+			ani.FrameFps = 25
+		}
+		if ani.TurnToDuration == 0 {
+			ani.TurnToDuration = 1
+		}
+		if ani.StepDuration == 0 {
+			ani.StepDuration = 0.01
+		}
+		from, to := p.getFromAnToForAniFrames(ani.FrameFrom, ani.FrameTo)
+		ani.IFrameFrom, ani.IFrameTo = int(from), int(to)
+		ani.Speed = 1
+		ani.Duration = (math.Abs(float64(ani.IFrameFrom-ani.IFrameTo)) + 1) / float64(ani.FrameFps)
+		p.animations[key] = ani
+	}
+
+	// lazy register animations to engine
+	p.animationWrappers = make(map[SpriteAnimationName]*animationWrapper)
+	for animName, ani := range p.animations {
+		p.animationWrappers[animName] = &animationWrapper{spr: p, ani: ani}
+	}
+
+	p.pendingAudios = make([]string, 0)
+	// create engine object
+	p.syncSprite = nil
+	engine.WaitMainThread(func() {
+		p.syncCheckInitProxy()
+	})
+}
+
+func (p *SpriteImpl) awake() {
+	p.playDefaultAnim()
+}
+
+func (p *SpriteImpl) initCollisionParams() {
+	if p.g.isAutoSetCollisionLayer {
+		info := p.g.getSpriteCollisionInfo(p.name)
+		p.collisionInfo.Layer = 0
+		p.collisionInfo.Mask = 0
+		p.triggerInfo.Layer = int64(info.Layer)
+		p.triggerInfo.Mask = int64(info.Mask)
+		if enabledPhysics {
+			p.collisionInfo.Layer = int64(info.Layer)
+			p.collisionInfo.Mask = int64(info.Mask)
+		}
+	}
+}
+
+func (p *SpriteImpl) InitFrom(src *SpriteImpl) {
+	p.baseObj.initFrom(&src.baseObj)
+	p.eventSinks.initFrom(&src.eventSinks, p)
+
+	p.g, p.name = src.g, src.name
+	p.x, p.y = src.x, src.y
+	p.scale = src.scale
+	p.direction = src.direction
+	p.rotationStyle = src.rotationStyle
+	p.sayObj = nil
+	p.animations = src.animations
+	p.animationWrappers = make(map[SpriteAnimationName]*animationWrapper)
+	for animName, ani := range p.animations {
+		p.animationWrappers[animName] = &animationWrapper{spr: p, ani: ani}
+	}
+	// clone effect params
+	p.greffUniforms = maps.Clone(src.greffUniforms)
+
+	p.penColor = src.penColor
+	p.penHue = src.penHue
+	p.penSaturation = src.penSaturation
+	p.penBrightness = src.penBrightness
+	p.penTransparency = src.penTransparency
+
+	p.penWidth = src.penWidth
+
+	p.isVisible = src.isVisible
+	p.isCloned_ = true
+	p.isPenDown = src.isPenDown
+	p.isDying = false
+
+	p.hasOnCloned = false
+	p.hasOnTouchStart = false
+	p.hasOnTouching = false
+	p.hasOnTouchEnd = false
+
+	p.collisionInfo.copyFrom(&src.collisionInfo)
+	p.triggerInfo.copyFrom(&src.triggerInfo)
+
+	p.pendingAudios = make([]string, 0)
+}
+
+// ============================================================================
+// Clone Methods
+// ============================================================================
+
+func Gopt_SpriteImpl_Clone__0(sprite Sprite) {
+	Gopt_SpriteImpl_Clone__1(sprite, nil)
+}
+
+func Gopt_SpriteImpl_Clone__1(sprite Sprite, data any) {
+	doClone(sprite, data, false, nil)
+}
+
+func doClone(sprite Sprite, data any, isAsync bool, onCloned func(sprite *SpriteImpl)) {
+	if sprite == nil {
+		log.Panicln("doClone, sprite is nil")
+	}
+	src := spriteOf(sprite)
+	if debugInstr {
+		log.Println("Clone", src.name)
+	}
+	in := reflect.ValueOf(sprite).Elem()
+	v := reflect.New(in.Type())
+	out, outPtr := v.Elem(), v.Interface().(Sprite)
+	dest := cloneSprite(out, outPtr, in, nil)
+	src.g.addClonedShape(src, dest)
+	if onCloned != nil {
+		onCloned(dest)
+	}
+	if dest.hasOnCloned {
+		if isAsync {
+			engine.Go(dest.pthis, func(ctx context.Context) {
+				dest.doWhenAwake(dest)
+				dest.doWhenCloned(dest, data)
+			})
+		} else {
+			dest.doWhenAwake(dest)
+			dest.doWhenCloned(dest, data)
+		}
+	}
+}
+
+func cloneSprite(out reflect.Value, outPtr Sprite, in reflect.Value, v specsp) *SpriteImpl {
+	dest := spriteOf(outPtr)
+	func() {
+		out.Set(in)
+		for i, n := 0, out.NumField(); i < n; i++ {
+			fld := out.Field(i).Addr()
+			if ini := fld.MethodByName("InitFrom"); ini.IsValid() {
+				args := []reflect.Value{in.Field(i).Addr()}
+				ini.Call(args)
+			}
+		}
+	}()
+	dest.sprite = outPtr
+	dest.isCostumeDirty = true
+	if v != nil { // in loadSprite
+		applySpriteProps(dest, v)
+	} else { // in sprite.Clone
+		dest.onAwake(func() {
+			dest.awake()
+		})
+		runMain(outPtr.Main)
+	}
+	dest.syncSprite = nil
+	dest.curAnimState = nil
+	dest.curTweenState = nil
+	engine.WaitMainThread(func() {
+		dest.syncCheckInitProxy()
+		syncCheckUpdateCostume(&dest.baseObj)
+	})
+	return dest
+}
+
+func cloneMap(v map[string]any) map[string]any {
+	if v == nil {
+		return nil
+	}
+	ret := make(map[string]any, len(v))
+	for k, v := range v {
+		ret[k] = v
+	}
+	return ret
+}
+
+func applyFloat64(out *float64, in any) {
+	if in != nil {
+		*out = in.(float64)
+	}
+}
+
+func applySpriteProps(dest *SpriteImpl, v specsp) {
+	applyFloat64(&dest.x, v["x"])
+	applyFloat64(&dest.y, v["y"])
+	applyFloat64(&dest.scale, v["size"])
+	applyFloat64(&dest.direction, v["heading"])
+	if visible, ok := v["visible"]; ok {
+		dest.isVisible = visible.(bool)
+	}
+	if style, ok := v["rotationStyle"]; ok {
+		dest.rotationStyle = toRotationStyle(style.(string))
+	}
+	if _, ok := v["currentCostumeIndex"]; ok {
+		// TODO(xsw): to be removed
+		panic("please change `currentCostumeIndex` => `costumeIndex` in index.json")
+	}
+	if idx, ok := v["costumeIndex"]; ok {
+		dest.setCustumeIndex(int(idx.(float64)))
+	}
+	dest.isCloned_ = false
+}
+
+func applySprite(out reflect.Value, sprite Sprite, v specsp) (*SpriteImpl, Sprite) {
+	in := reflect.ValueOf(sprite).Elem()
+	outPtr := out.Addr().Interface().(Sprite)
+	return cloneSprite(out, outPtr, in, v), outPtr
+}
+
+// ============================================================================
+// Event Handler Methods
+// ============================================================================
+
+func (p *SpriteImpl) OnCloned__0(onCloned func(data any)) {
+	p.hasOnCloned = true
+	p.allWhenCloned = append(p.allWhenCloned, eventSink{
+		pthis: p,
+		sink:  onCloned,
+		cond: func(data any) bool {
+			return data == p
+		},
+	})
+}
+
+func (p *SpriteImpl) OnCloned__1(onCloned func()) {
+	p.OnCloned__0(func(any) {
+		onCloned()
+	})
+}
+
+func (p *SpriteImpl) fireTouchStart(obj *SpriteImpl) {
+	if p.hasOnTouchStart {
+		p.doWhenTouchStart(p, obj)
+	}
+}
+
+func (p *SpriteImpl) fireTouching(obj *SpriteImpl) {
+	if p.hasOnTouching {
+		p.doWhenTouching(p, obj)
+	}
+}
+
+func (p *SpriteImpl) fireTouchEnd(obj *SpriteImpl) {
+	if p.hasOnTouchEnd {
+		p.doWhenTouchEnd(p, obj)
+	}
+}
+
+func (p *SpriteImpl) _onTouchStart(onTouchStart func(Sprite)) {
+	p.hasOnTouchStart = true
+	p.allWhenTouchStart = append(p.allWhenTouchStart, eventSink{
+		pthis: p,
+		sink:  onTouchStart,
+		cond: func(data any) bool {
+			return data == p
+		},
+	})
+}
+
+func (p *SpriteImpl) onTouchStart__0(onTouchStart func(Sprite)) {
+	// collision with other sprites by default
+	for name, _ := range p.g.sprs {
+		p.collisionTargets[name] = true
+	}
+	p._onTouchStart(onTouchStart)
+}
+
+func (p *SpriteImpl) onTouchStart__1(onTouchStart func()) {
+	// collision with all other sprites by default
+	for name, _ := range p.g.sprs {
+		p.collisionTargets[name] = true
+	}
+	p._onTouchStart(func(Sprite) {
+		onTouchStart()
+	})
+}
+
+func (p *SpriteImpl) OnTouchStart__0(sprite SpriteName, onTouchStart func(Sprite)) {
+	p.collisionTargets[sprite] = true
+	p._onTouchStart(func(s Sprite) {
+		impl := spriteOf(s)
+		if impl != nil && impl.name == sprite {
+			onTouchStart(s)
+		}
+	})
+}
+
+func (p *SpriteImpl) OnTouchStart__1(sprite SpriteName, onTouchStart func()) {
+	p.collisionTargets[sprite] = true
+	p.OnTouchStart__0(sprite, func(Sprite) {
+		onTouchStart()
+	})
+}
+
+func (p *SpriteImpl) OnTouchStart__2(sprites []SpriteName, onTouchStart func(Sprite)) {
+	for _, sprite := range sprites {
+		p.collisionTargets[sprite] = true
+	}
+	p._onTouchStart(func(s Sprite) {
+		impl := spriteOf(s)
+		if impl != nil {
+			for _, sprite := range sprites {
+				if impl.name == sprite {
+					onTouchStart(s)
+					return
+				}
+			}
+		}
+	})
+}
+
+func (p *SpriteImpl) OnTouchStart__3(sprites []SpriteName, onTouchStart func()) {
+	for _, sprite := range sprites {
+		p.collisionTargets[sprite] = true
+	}
+	p.OnTouchStart__2(sprites, func(Sprite) {
+		onTouchStart()
+	})
+}
+
+// ============================================================================
+// Lifecycle Methods
+// ============================================================================
+
+func (p *SpriteImpl) Die() {
+	aniName := p.getStateAnimName(StateDie)
+	p.setDying()
+
+	p.Stop(OtherScriptsInSprite)
+	if p.hasAnim(aniName) {
+		p.AnimateAndWait(aniName)
+	}
+	p.Destroy()
+}
+
+func (p *SpriteImpl) Destroy() { // destroy sprite, whether prototype or cloned
+	if debugInstr {
+		log.Println("Destroy", p.name)
+	}
+
+	p.syncSprite.UnRegisterOnAnimationFinished()
+
+	p.Hide()
+	p.doDeleteClone()
+	p.destroyPen()
+	p.g.removeShape(p)
+	p.Stop(ThisSprite)
+	if p == gco.Current().Obj {
+		gco.Abort()
+	}
+	p.HasDestroyed = true
+
+	if p.audioId != 0 {
+		p.g.sounds.releaseAudio(p.audioId)
+		p.audioId = 0
+	}
+}
+
+// DeleteThisClone deletes only cloned sprite, no effect on prototype sprite.
+// Add this interface to match Scratch.
+func (p *SpriteImpl) DeleteThisClone() {
+	if !p.isCloned_ {
+		return
+	}
+
+	p.Destroy()
+}
+
+// ============================================================================
+// Visibility Methods
+// ============================================================================
+
+func (p *SpriteImpl) Hide() {
+	if debugInstr {
+		log.Println("Hide", p.name)
+	}
+
+	p.doStopSay()
+	p.isVisible = false
+}
+
+func (p *SpriteImpl) Show() {
+	if debugInstr {
+		log.Println("Show", p.name)
+	}
+	p.isVisible = true
+}
+
+func (p *SpriteImpl) Visible() bool {
+	return p.isVisible
+}
+
+// ============================================================================
+// Costume Methods
+// ============================================================================
+
+func (p *SpriteImpl) CostumeName() SpriteCostumeName {
+	return p.getCostumeName()
+}
+
+func (p *SpriteImpl) CostumeIndex() int {
+	return p.getCostumeIndex()
+}
+
+// SetCostume sets the costume by:
+//   - costume name
+//   - index (float64 or int)
+//   - spx.Next or spx.Prev
+func (p *SpriteImpl) setCostume(costume any) {
+	if debugInstr {
+		log.Println("SetCostume", p.name, costume)
+	}
+	p.goSetCostume(costume)
+	p.defaultCostumeIndex = p.costumeIndex_
+	p.updateTransform()
+}
+
+func (p *SpriteImpl) SetCostume__0(costume SpriteCostumeName) {
+	p.setCostume(costume)
+}
+
+func (p *SpriteImpl) SetCostume__1(index float64) {
+	p.setCostume(index)
+}
+
+func (p *SpriteImpl) SetCostume__2(index int) {
+	p.setCostume(index)
+}
+
+func (p *SpriteImpl) SetCostume__3(action switchAction) {
+	p.setCostume(action)
+}
+
+// ============================================================================
+// Communication Methods
+// ============================================================================
+
+func (p *SpriteImpl) Ask(msg any) {
+	if debugInstr {
+		log.Println("Ask", p.name, msg)
+	}
+	msgStr, ok := msg.(string)
+	if !ok {
+		msgStr = fmt.Sprint(msg)
+	}
+	if msgStr == "" {
+		println("ask: msg should not be empty")
+		return
+	}
+	p.Say__0(msgStr)
+	p.g.ask(true, msgStr, func(answer string) {
+		p.doStopSay()
+	})
+}
+
+func (p *SpriteImpl) Say__0(msg any) {
+	p.Say__1(msg, 0)
+}
+
+func (p *SpriteImpl) Say__1(msg any, secs float64) {
+	if debugInstr {
+		log.Println("Say", p.name, msg, secs)
+	}
+	p.sayOrThink(msg, styleSay)
+	if secs > 0 {
+		p.waitStopSay(secs)
+	}
+}
+
+func (p *SpriteImpl) Think__0(msg any) {
+	p.Think__1(msg, 0)
+}
+
+func (p *SpriteImpl) Think__1(msg any, secs float64) {
+	if debugInstr {
+		log.Println("Think", p.name, msg, secs)
+	}
+	p.sayOrThink(msg, styleThink)
+	if secs > 0 {
+		p.waitStopSay(secs)
+	}
+}
+
+func (p *SpriteImpl) Quote__0(message string) {
+	if message == "" {
+		p.doStopQuote()
+		return
+	}
+	p.Quote__2(message, "")
+}
+
+func (p *SpriteImpl) Quote__1(message string, secs float64) {
+	p.Quote__3(message, "", secs)
+}
+
+func (p *SpriteImpl) Quote__2(message, description string) {
+	p.Quote__3(message, description, 0)
+}
+
+func (p *SpriteImpl) Quote__3(message, description string, secs float64) {
+	if debugInstr {
+		log.Println("Quote", p.name, message, description, secs)
+	}
+	p.quote_(message, description)
+	if secs > 0 {
+		p.waitStopQuote(secs)
+	}
+}
+
+// ============================================================================
+// Graphic Effects Methods
+// ============================================================================
+
+func (p *SpriteImpl) SetGraphicEffect(kind EffectKind, val float64) {
+	p.baseObj.setGraphicEffect(kind, val)
+}
+
+func (p *SpriteImpl) ChangeGraphicEffect(kind EffectKind, delta float64) {
+	p.baseObj.changeGraphicEffect(kind, delta)
+}
+
+func (p *SpriteImpl) ClearGraphicEffects() {
+	p.baseObj.clearGraphicEffects()
+}
+
+// ============================================================================
+// Touching and Collision Detection Methods
+// ============================================================================
+
+func (p *SpriteImpl) TouchingColor(color Color) bool {
+	return p.touchingColor(toMathfColor(color))
+}
+
+// Touching checks if sprite is touching:
+//   - another sprite (by name or Sprite object)
+//   - spx.Mouse
+//   - spx.Edge, spx.EdgeLeft, spx.EdgeTop, spx.EdgeRight, spx.EdgeBottom
+func (p *SpriteImpl) touching(obj any) bool {
+	if !p.isVisible || p.isDying {
+		return false
+	}
+	switch v := obj.(type) {
+	case SpriteName:
+		if o := p.g.touchingSpriteBy(p, v); o != nil {
+			return true
+		}
+		return false
+	case specialObj:
+		if v > 0 {
+			return p.checkTouchingScreen(int(v)) != 0
+		} else if v == Mouse {
+			x, y := p.g.getMousePos()
+			return p.g.touchingPoint(p, x, y)
+		}
+	case Sprite:
+		return touchingSprite(p, spriteOf(v))
+	}
+	panic("Touching: unexpected input")
+}
+
+func (p *SpriteImpl) Touching__0(sprite SpriteName) bool {
+	return p.touching(sprite)
+}
+
+func (p *SpriteImpl) Touching__1(sprite Sprite) bool {
+	return p.touching(sprite)
+}
+
+func (p *SpriteImpl) Touching__2(obj specialObj) bool {
+	return p.touching(obj)
+}
+
+func (p *SpriteImpl) BounceOffEdge() {
+	if debugInstr {
+		log.Println("BounceOffEdge", p.name)
+	}
+	dir := p.Heading()
+	where := checkTouchingDirection(dir)
+	touching := p.checkTouchingScreen(where)
+	if touching == 0 {
+		return
+	}
+	if (touching & (touchingScreenLeft | touchingScreenRight)) != 0 {
+		dir = -dir
+	} else {
+		dir = 180 - dir
+	}
+
+	p.direction = normalizeDirection(dir)
+}
+
+// ============================================================================
+// Layer Methods
+// ============================================================================
+
+func (p *SpriteImpl) SetLayer__0(layer layerAction) {
+	switch layer {
+	case Front:
+		p.g.gotoFront(p)
+	case Back:
+		p.g.gotoBack(p)
+	}
+
+}
+func (p *SpriteImpl) SetLayer__1(dir dirAction, delta int) {
+	switch dir {
+	case Forward:
+		p.g.goBackLayers(p, -delta)
+	case Backward:
+		p.g.goBackLayers(p, delta)
+	}
+}
+
+// ============================================================================
+// Monitor and Variable Display Methods
+// ============================================================================
+
+func (p *SpriteImpl) HideVar(name string) {
+	p.g.setStageMonitor(p.name, getVarPrefix+name, false)
+}
+
+func (p *SpriteImpl) ShowVar(name string) {
+	p.g.setStageMonitor(p.name, getVarPrefix+name, true)
+}
+
+// ============================================================================
+// Update Methods
+// ============================================================================
+
+func (pself *SpriteImpl) onUpdate(delta float64) {
+	if pself.quoteObj != nil {
+		pself.quoteObj.refresh()
+	}
+	if pself.sayObj != nil {
+		pself.sayObj.refresh()
+	}
+}
+
+// ============================================================================
+// Time Methods
+// ============================================================================
+
+func (pself *SpriteImpl) DeltaTime() float64 {
+	return time.DeltaTime()
+}
+
+func (pself *SpriteImpl) TimeSinceLevelLoad() float64 {
+	return time.TimeSinceLevelLoad()
+}
