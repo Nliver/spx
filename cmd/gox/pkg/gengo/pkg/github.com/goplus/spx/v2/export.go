@@ -121,6 +121,7 @@ func init() {
 		TypedConsts: map[string]ixgo.TypedConst{
 			"AllOtherScripts":      {reflect.TypeOf(q.AllOtherScripts), constant.MakeInt64(int64(q.AllOtherScripts))},
 			"AllSprites":           {reflect.TypeOf(q.AllSprites), constant.MakeInt64(int64(q.AllSprites))},
+			"AllStop":              {reflect.TypeOf(q.AllStop), constant.MakeInt64(int64(q.AllStop))},
 			"AnimChannelFrame":     {reflect.TypeOf(q.AnimChannelFrame), constant.MakeString(string(q.AnimChannelFrame))},
 			"AnimChannelGlide":     {reflect.TypeOf(q.AnimChannelGlide), constant.MakeString(string(q.AnimChannelGlide))},
 			"AnimChannelMove":      {reflect.TypeOf(q.AnimChannelMove), constant.MakeString(string(q.AnimChannelMove))},
