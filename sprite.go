@@ -934,37 +934,7 @@ func (p *SpriteImpl) Touching__2(obj specialObj) bool {
 	return p.touching(obj)
 }
 
-func touchingSprite(dst, src *SpriteImpl) bool {
-	if !src.isVisible || src.isDying {
-		return false
-	}
-	ret := src.touchingSprite(dst)
-	return ret
-}
-
-func (p *SpriteImpl) touchPoint(x, y float64) bool {
-	if p.syncSprite == nil {
-		return false
-	}
-	return spriteMgr.CheckCollisionWithPoint(p.syncSprite.GetId(), mathf.NewVec2(x, y), true)
-}
-
 const alphaThreshold = 0.05
-
-func (p *SpriteImpl) touchingColor(color mathf.Color) bool {
-	if p.syncSprite == nil {
-		return false
-	}
-	return spriteMgr.CheckCollisionByColor(p.syncSprite.GetId(), color, alphaThreshold, 0.1)
-}
-
-func (p *SpriteImpl) touchingSprite(dst *SpriteImpl) bool {
-	if p.syncSprite == nil || dst.syncSprite == nil {
-		return false
-	}
-	ret := spriteMgr.CheckCollisionWithSpriteByAlpha(p.syncSprite.GetId(), dst.syncSprite.GetId(), alphaThreshold)
-	return ret
-}
 
 const (
 	touchingScreenLeft   = 1
@@ -991,39 +961,6 @@ func (p *SpriteImpl) BounceOffEdge() {
 	}
 
 	p.direction = normalizeDirection(dir)
-}
-
-func checkTouchingDirection(dir float64) int {
-	if dir > 0 {
-		if dir < 90 {
-			return touchingScreenRight | touchingScreenTop
-		}
-		if dir > 90 {
-			if dir == 180 {
-				return touchingScreenBottom
-			}
-			return touchingScreenRight | touchingScreenBottom
-		}
-		return touchingScreenRight
-	}
-	if dir < 0 {
-		if dir > -90 {
-			return touchingScreenLeft | touchingScreenTop
-		}
-		if dir < -90 {
-			return touchingScreenLeft | touchingScreenBottom
-		}
-		return touchingScreenLeft
-	}
-	return touchingScreenTop
-}
-
-func (p *SpriteImpl) checkTouchingScreen(where int) (touching int) {
-	if p.syncSprite == nil {
-		return 0
-	}
-	touching = (int)(physicMgr.CheckTouchedCameraBoundaries(p.syncSprite.GetId()))
-	return touching & where
 }
 
 // -----------------------------------------------------------------------------
@@ -1055,41 +992,8 @@ func (p *SpriteImpl) ShowVar(name string) {
 }
 
 // -----------------------------------------------------------------------------
-
-func (p *SpriteImpl) bounds() *mathf.Rect2 {
-	if !p.isVisible {
-		return nil
-	}
-	x, y, w, h := 0.0, 0.0, 0.0, 0.0
-	c := p.costumes[p.costumeIndex_]
-	// calc center
-	x, y = p.x, p.y
-	applyRenderOffset(p, &x, &y)
-
-	if p.triggerInfo.Type != physicsColliderNone {
-		if p.triggerInfo.Type == physicsColliderAuto && p.syncSprite == nil {
-			// if sprite's proxy is not created, use the sync version to get the bound
-			center, size := getCostumeBoundByAlpha(p, p.scale, false)
-			// Update sprite state atomically to prevent race conditions
-			p.triggerInfo.Pivot = center
-			p.triggerInfo.Params = []float64{size.X, size.Y}
-		}
-		x += p.triggerInfo.Pivot.X
-		y += p.triggerInfo.Pivot.Y
-		// Calculate dimensions from triggerShape based on type
-		w, h = p.triggerInfo.getDimensions()
-	} else {
-		// calc scale
-		wi, hi := c.getSize()
-		w, h = float64(wi)*p.scale, float64(hi)*p.scale
-	}
-
-	rect := mathf.NewRect2(x-w*0.5, y-h*0.5, w, h)
-	return &rect
-
-}
-
-// ------------------------ Extra events ----------------------------------------
+// Extra events
+// -----------------------------------------------------------------------------
 func (pself *SpriteImpl) onUpdate(delta float64) {
 	if pself.quoteObj != nil {
 		pself.quoteObj.refresh()

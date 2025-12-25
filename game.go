@@ -523,22 +523,6 @@ func (p *Game) loadSprite(sprite Sprite, name string, gamer reflect.Value) error
 	return nil
 }
 
-func spriteOf(sprite Sprite) *SpriteImpl {
-	vSpr := reflect.ValueOf(sprite)
-	if vSpr.Kind() != reflect.Pointer {
-		return nil
-	}
-	vSpr = vSpr.Elem()
-	if vSpr.Kind() != reflect.Struct || vSpr.NumField() < 1 {
-		return nil
-	}
-	spriteField := vSpr.Field(0)
-	if spriteField.Type() != reflect.TypeOf(SpriteImpl{}) {
-		return nil
-	}
-	return spriteField.Addr().Interface().(*SpriteImpl)
-}
-
 func (p *Game) loadIndex(g reflect.Value, proj *projConfig) (err error) {
 	windowScale := 1.0
 	if proj.WindowScale >= 0.001 {
