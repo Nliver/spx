@@ -28,12 +28,26 @@ import (
 )
 
 func main() {
-	// Parse command line flags
-	path := flag.String("path", ".", "project path")
+	// Parse command line flags (for potential future use)
 	flag.Parse()
 
-	// Create runner
-	r, err := runner.New(*path)
+	// Get project directory from first positional argument
+	// Default to current directory if not specified
+	projectPath := "."
+	args := flag.Args()
+	if len(args) > 0 {
+		projectPath = args[0]
+	}
+
+	// Get optional version from second positional argument
+	// If not specified, defaults to "latest" in runner.New()
+	var version string
+	if len(args) > 1 {
+		version = args[1]
+	}
+
+	// Create runner with optional version
+	r, err := runner.New(projectPath, version)
 	if err != nil {
 		log.Fatalf("Failed to create runner: %v", err)
 	}

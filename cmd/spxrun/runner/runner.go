@@ -81,10 +81,13 @@ type Runner struct {
 	// Platform info
 	GOOS   string
 	GOARCH string
+
+	// SPX version
+	SpxVersion string // SPX module version (e.g., "latest", "v2.0.0")
 }
 
-// New creates a new Runner for the given project path
-func New(projectPath string) (*Runner, error) {
+// New creates a new Runner for the given project path and optional version
+func New(projectPath string, version ...string) (*Runner, error) {
 	absPath, err := filepath.Abs(projectPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve project path: %w", err)
@@ -98,6 +101,12 @@ func New(projectPath string) (*Runner, error) {
 	paths := filepath.SplitList(gopath)
 	goBinPath := filepath.Join(paths[0], "bin")
 
+	// Determine SPX version (default to "latest")
+	spxVersion := "latest"
+	if len(version) > 0 && version[0] != "" {
+		spxVersion = version[0]
+	}
+
 	r := &Runner{
 		ProjectDir: absPath,
 		GoDir:      filepath.Join(absPath, "project", "go"),
@@ -106,6 +115,7 @@ func New(projectPath string) (*Runner, error) {
 		GoBinPath:  goBinPath,
 		GOOS:       runtime.GOOS,
 		GOARCH:     runtime.GOARCH,
+		SpxVersion: spxVersion,
 	}
 
 	// Setup runtime paths
@@ -281,6 +291,13 @@ func (r *Runner) buildLibrary() error {
 		return fmt.Errorf("failed to create go directory: %w", err)
 	}
 
+	// Ensure go.mod exists in both project root and project/go directory
+	// Root go.mod is needed for xgo to resolve dependencies during code generation
+	// Create in project root first, then copy to project/go
+	if err := r.ensureGoMod(); err != nil {
+		return fmt.Errorf("failed to ensure go.mod: %w", err)
+	}
+
 	// Always regenerate Go code from .spx files (project may have changed)
 	fmt.Println("Generating Go code with xgo...")
 	if err := r.generateGoCode(); err != nil {
@@ -316,11 +333,6 @@ func (r *Runner) buildLibrary() error {
 		return fmt.Errorf("failed to change to go directory: %w", err)
 	}
 	defer os.Chdir(origDir)
-
-	// Ensure go.mod exists in go directory
-	if err := r.ensureGoMod(); err != nil {
-		return fmt.Errorf("failed to ensure go.mod: %w", err)
-	}
 
 	// Run go mod tidy first
 	fmt.Println("Running go mod tidy...")
@@ -435,11 +447,14 @@ func (r *Runner) ensureGopMod() error {
 // SpxModule is the SPX v2 module path
 const SpxModule = "github.com/goplus/spx/v2"
 
-// ensureGoMod ensures go.mod exists in the go directory
+// ensureGoMod ensures go.mod exists in both project root and project/go directory
 func (r *Runner) ensureGoMod() error {
-	goModPath := filepath.Join(r.GoDir, "go.mod")
-	if _, err := os.Stat(goModPath); os.IsNotExist(err) {
-		fmt.Println("Creating go.mod in project/go...")
+	rootGoModPath := filepath.Join(r.ProjectDir, "go.mod")
+	goGoModPath := filepath.Join(r.GoDir, "go.mod")
+
+	// Check if root go.mod already exists
+	if _, err := os.Stat(rootGoModPath); os.IsNotExist(err) {
+		fmt.Println("Creating go.mod in project root...")
 
 		// Determine module name from project directory name
 		moduleName := filepath.Base(r.ProjectDir)
@@ -447,25 +462,36 @@ func (r *Runner) ensureGoMod() error {
 			moduleName = "spxproject"
 		}
 
-		// Create minimal go.mod without dependencies
-		content := fmt.Sprintf(`module %s
+		// Use embedded template and replace placeholders
+		content := GoModTemplate
+		content = strings.Replace(content, "github.com/goplus/spxdemo", moduleName, 1)
+		content = strings.Replace(content, "v2.0.0-pre.28", r.SpxVersion, 1)
 
-go 1.24.0
-`, moduleName)
-		if err := os.WriteFile(goModPath, []byte(content), 0644); err != nil {
+		if err := os.WriteFile(rootGoModPath, []byte(content), 0644); err != nil {
 			return fmt.Errorf("failed to create go.mod: %w", err)
 		}
 
-		// Use 'go get' to add the latest spx/v2 version automatically
-		fmt.Println("Getting latest spx/v2...")
-		getCmd := exec.Command("go", "get", SpxModule+"@latest")
-		getCmd.Dir = r.GoDir
-		getCmd.Stdout = os.Stdout
-		getCmd.Stderr = os.Stderr
-		if err := getCmd.Run(); err != nil {
-			return fmt.Errorf("go get spx failed: %w", err)
+		// If version is "latest", use go get to update to actual latest version
+		if r.SpxVersion == "latest" {
+			fmt.Println("Updating to latest spx version...")
+			getCmd := exec.Command("go", "get", SpxModule+"@latest")
+			getCmd.Dir = r.ProjectDir
+			getCmd.Stdout = os.Stdout
+			getCmd.Stderr = os.Stderr
+			if err := getCmd.Run(); err != nil {
+				return fmt.Errorf("go get @latest failed: %w", err)
+			}
 		}
 	}
+
+	// Copy root go.mod to project/go if it doesn't exist
+	if _, err := os.Stat(goGoModPath); os.IsNotExist(err) {
+		fmt.Println("Copying go.mod to project/go...")
+		if err := copyFile(rootGoModPath, goGoModPath); err != nil {
+			return fmt.Errorf("failed to copy go.mod: %w", err)
+		}
+	}
+
 	return nil
 }
 
