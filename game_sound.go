@@ -185,3 +185,16 @@ func (p *Game) Loudness() float64 {
 	}
 	return p.aurec.Loudness() * 100
 }
+
+// ============================================================================
+// Sound Resource Management
+// ============================================================================
+
+// releaseGameAudio releases the game's audio resources
+func (p *Game) releaseGameAudio() {
+	p.sounds.stopAll()
+	if p.audioId != 0 {
+		p.sounds.releaseAudio(p.audioId)
+		p.audioId = 0
+	}
+}

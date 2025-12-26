@@ -222,10 +222,7 @@ func (p *Game) getSpriteProtoByName(name string, g reflect.Value) Sprite {
 }
 
 func (p *Game) reset() {
-	if p.audioId != 0 {
-		p.sounds.releaseAudio(p.audioId)
-		p.audioId = 0
-	}
+	p.releaseGameAudio()
 	p.sinkMgr.reset()
 	p.spriteMgr.reset()
 	p.EraseAll() // clear pens
