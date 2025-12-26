@@ -1051,9 +1051,9 @@ func (pself *spriteMgrImpl) GetMaterialParamsColor(obj gdx.Object, effect string
 	})
 	return _ret1
 }
-func (pself *spriteMgrImpl) SetTextureAltas(obj gdx.Object, path string, rect2 Rect2) {
+func (pself *spriteMgrImpl) SetTextureAtlas(obj gdx.Object, path string, rect2 Rect2) {
 	callInMainThread(func() {
-		gdx.SpriteMgr.SetTextureAltas(obj, path, rect2)
+		gdx.SpriteMgr.SetTextureAtlas(obj, path, rect2)
 	})
 }
 func (pself *spriteMgrImpl) SetTexture(obj gdx.Object, path string) {
@@ -1061,9 +1061,9 @@ func (pself *spriteMgrImpl) SetTexture(obj gdx.Object, path string) {
 		gdx.SpriteMgr.SetTexture(obj, path)
 	})
 }
-func (pself *spriteMgrImpl) SetTextureAltasDirect(obj gdx.Object, path string, rect2 Rect2) {
+func (pself *spriteMgrImpl) SetTextureAtlasDirect(obj gdx.Object, path string, rect2 Rect2) {
 	callInMainThread(func() {
-		gdx.SpriteMgr.SetTextureAltasDirect(obj, path, rect2)
+		gdx.SpriteMgr.SetTextureAtlasDirect(obj, path, rect2)
 	})
 }
 func (pself *spriteMgrImpl) SetTextureDirect(obj gdx.Object, path string) {

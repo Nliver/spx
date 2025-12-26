@@ -381,9 +381,9 @@ typedef void (*GDExtensionSpxSpriteSetMaterialParamsVec4)(GdObj obj, GdString ef
 typedef void (*GDExtensionSpxSpriteGetMaterialParamsVec4)(GdObj obj, GdString effect, GdVec4 *ret_value);
 typedef void (*GDExtensionSpxSpriteSetMaterialParamsColor)(GdObj obj, GdString effect, GdColor color);
 typedef void (*GDExtensionSpxSpriteGetMaterialParamsColor)(GdObj obj, GdString effect, GdColor *ret_value);
-typedef void (*GDExtensionSpxSpriteSetTextureAltas)(GdObj obj, GdString path, GdRect2 rect2);
+typedef void (*GDExtensionSpxSpriteSetTextureAtlas)(GdObj obj, GdString path, GdRect2 rect2);
 typedef void (*GDExtensionSpxSpriteSetTexture)(GdObj obj, GdString path);
-typedef void (*GDExtensionSpxSpriteSetTextureAltasDirect)(GdObj obj, GdString path, GdRect2 rect2);
+typedef void (*GDExtensionSpxSpriteSetTextureAtlasDirect)(GdObj obj, GdString path, GdRect2 rect2);
 typedef void (*GDExtensionSpxSpriteSetTextureDirect)(GdObj obj, GdString path);
 typedef void (*GDExtensionSpxSpriteGetTexture)(GdObj obj, GdString *ret_value);
 typedef void (*GDExtensionSpxSpriteSetVisible)(GdObj obj, GdBool visible);

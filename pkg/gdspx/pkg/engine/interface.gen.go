@@ -218,9 +218,9 @@ type ISpriteMgr interface {
 	GetMaterialParamsVec4(obj Object, effect string) Vec4
 	SetMaterialParamsColor(obj Object, effect string, color Color)
 	GetMaterialParamsColor(obj Object, effect string) Color
-	SetTextureAltas(obj Object, path string, rect2 Rect2)
+	SetTextureAtlas(obj Object, path string, rect2 Rect2)
 	SetTexture(obj Object, path string)
-	SetTextureAltasDirect(obj Object, path string, rect2 Rect2)
+	SetTextureAtlasDirect(obj Object, path string, rect2 Rect2)
 	SetTextureDirect(obj Object, path string)
 	GetTexture(obj Object) string
 	SetVisible(obj Object, visible bool)

@@ -990,13 +990,13 @@ func (pself *spriteMgr) GetMaterialParamsColor(obj Object, effect string) Color 
 	retValue := CallSpriteGetMaterialParamsColor(arg0, arg1)
 	return ToColor(retValue)
 }
-func (pself *spriteMgr) SetTextureAltas(obj Object, path string, rect2 Rect2) {
+func (pself *spriteMgr) SetTextureAtlas(obj Object, path string, rect2 Rect2) {
 	arg0 := ToGdObj(obj)
 	arg1Str := C.CString(path)
 	arg1 := (GdString)(arg1Str)
 	defer C.free(unsafe.Pointer(arg1Str))
 	arg2 := ToGdRect2(rect2)
-	CallSpriteSetTextureAltas(arg0, arg1, arg2)
+	CallSpriteSetTextureAtlas(arg0, arg1, arg2)
 }
 func (pself *spriteMgr) SetTexture(obj Object, path string) {
 	arg0 := ToGdObj(obj)
@@ -1005,13 +1005,13 @@ func (pself *spriteMgr) SetTexture(obj Object, path string) {
 	defer C.free(unsafe.Pointer(arg1Str))
 	CallSpriteSetTexture(arg0, arg1)
 }
-func (pself *spriteMgr) SetTextureAltasDirect(obj Object, path string, rect2 Rect2) {
+func (pself *spriteMgr) SetTextureAtlasDirect(obj Object, path string, rect2 Rect2) {
 	arg0 := ToGdObj(obj)
 	arg1Str := C.CString(path)
 	arg1 := (GdString)(arg1Str)
 	defer C.free(unsafe.Pointer(arg1Str))
 	arg2 := ToGdRect2(rect2)
-	CallSpriteSetTextureAltasDirect(arg0, arg1, arg2)
+	CallSpriteSetTextureAtlasDirect(arg0, arg1, arg2)
 }
 func (pself *spriteMgr) SetTextureDirect(obj Object, path string) {
 	arg0 := ToGdObj(obj)

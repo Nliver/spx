@@ -899,22 +899,22 @@ func (pself *spriteMgr) GetMaterialParamsColor(obj Object, effect string) Color 
 	_retValue := API.SpxSpriteGetMaterialParamsColor.Invoke(arg0, arg1)
 	return JsToGdColor(_retValue)
 }
-func (pself *spriteMgr) SetTextureAltas(obj Object, path string, rect2 Rect2) {
+func (pself *spriteMgr) SetTextureAtlas(obj Object, path string, rect2 Rect2) {
 	arg0 := JsFromGdObj(obj)
 	arg1 := JsFromGdString(path)
 	arg2 := JsFromGdRect2(rect2)
-	API.SpxSpriteSetTextureAltas.Invoke(arg0, arg1, arg2)
+	API.SpxSpriteSetTextureAtlas.Invoke(arg0, arg1, arg2)
 }
 func (pself *spriteMgr) SetTexture(obj Object, path string) {
 	arg0 := JsFromGdObj(obj)
 	arg1 := JsFromGdString(path)
 	API.SpxSpriteSetTexture.Invoke(arg0, arg1)
 }
-func (pself *spriteMgr) SetTextureAltasDirect(obj Object, path string, rect2 Rect2) {
+func (pself *spriteMgr) SetTextureAtlasDirect(obj Object, path string, rect2 Rect2) {
 	arg0 := JsFromGdObj(obj)
 	arg1 := JsFromGdString(path)
 	arg2 := JsFromGdRect2(rect2)
-	API.SpxSpriteSetTextureAltasDirect.Invoke(arg0, arg1, arg2)
+	API.SpxSpriteSetTextureAtlasDirect.Invoke(arg0, arg1, arg2)
 }
 func (pself *spriteMgr) SetTextureDirect(obj Object, path string) {
 	arg0 := JsFromGdObj(obj)

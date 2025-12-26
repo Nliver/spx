@@ -26,14 +26,14 @@ func (pself *Sprite) UpdateTexture(path string, renderScale float64, isUpdateTex
 	}
 	pself.SetRenderScale(NewVec2(renderScale, renderScale))
 }
-func (pself *Sprite) UpdateTextureAltas(path string, rect2 Rect2, renderScale float64, isUpdateTexture bool) {
+func (pself *Sprite) UpdateTextureAtlas(path string, rect2 Rect2, renderScale float64, isUpdateTexture bool) {
 	if path == "" {
 		return
 	}
 	resPath := ToAssetPath(path)
 	pself.PicPath = resPath
 	if isUpdateTexture {
-		pself.SetTextureAltas(pself.PicPath, rect2)
+		pself.SetTextureAtlas(pself.PicPath, rect2)
 	}
 	pself.SetRenderScale(NewVec2(renderScale, renderScale))
 }
