@@ -95,13 +95,6 @@ var (
 	enabledPhysics bool
 )
 
-func SetDebug(flags dbgFlags) {
-	debugLoad = true
-	debugInstr = (flags & DbgFlagInstr) != 0
-	debugEvent = (flags & DbgFlagEvent) != 0
-	debugPerf = (flags & DbgFlagPerf) != 0
-}
-
 // -------------------------------------------------------------------------------------
 // Core Types
 
@@ -223,19 +216,22 @@ func (p *Game) getSpriteProtoByName(name string, g reflect.Value) Sprite {
 
 func (p *Game) reset() {
 	p.releaseGameAudio()
+	p.EraseAll()
+
 	p.sinkMgr.reset()
 	p.spriteMgr.reset()
-	p.EraseAll() // clear pens
-	p.startFlag = sync.Once{}
+
 	p.debugPanel = nil
 	p.askPanel = nil
 	p.isLoaded = false
 
+	p.startFlag = sync.Once{}
 	p.oncePathFinder = sync.Once{}
+	imageSizeCache = sync.Map{}
 	p.sprs = make(map[string]Sprite)
+
 	timer.OnReload()
 	close(p.events)
-	imageSizeCache = sync.Map{}
 	p.Stop(AllOtherScripts)
 }
 
@@ -259,7 +255,15 @@ func (p *Game) initSpriteMgr() {
 }
 
 // -------------------------------------------------------------------------------------
-// Game Entry Points
+// Public API
+
+// SetDebug sets debug flags for the game
+func SetDebug(flags dbgFlags) {
+	debugLoad = true
+	debugInstr = (flags & DbgFlagInstr) != 0
+	debugEvent = (flags & DbgFlagEvent) != 0
+	debugPerf = (flags & DbgFlagPerf) != 0
+}
 
 // Gopt_Game_Main is required by XGo compiler as the entry of a .gmx project.
 func Gopt_Game_Main(game Gamer, sprites ...Sprite) {
@@ -268,61 +272,125 @@ func Gopt_Game_Main(game Gamer, sprites ...Sprite) {
 	engine.Main(game)
 }
 
-// Gopt_Game_Run runs the game
+// Gopt_Game_Run runs the game using the builder pattern
 func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
-	fs, conf, proj := loadGameResources(resource, gameConf)
-	parseCommandLineFlags(&conf)
-	setupGameConfig(&conf, &proj)
+	builder := newGameBuilder(game, resource, gameConf...)
+	if err := builder.buildAndRun(); err != nil {
+		panic(err)
+	}
+}
 
+// Gopt_Game_Reload reloads the game with new configuration
+func Gopt_Game_Reload(game Gamer, index any) (err error) {
 	v := reflect.ValueOf(game).Elem()
 	g := instance(v)
+	g.reset()
+	engine.ClearAllSprites()
 
-	setupGameSystems(g, &proj)
-	loadGameSprites(g, v, fs, &proj)
+	// Recreate events channel after reset closed it
+	g.events = make(chan event, eventBufferSize)
 
-	if err := g.endLoad(v, &proj); err != nil {
-		panic(err)
-	}
-	if err := g.runLoop(&conf); err != nil {
-		panic(err)
-	}
-}
-
-// loadGameResources loads filesystem and configuration
-func loadGameResources(resource any, gameConf []*Config) (spxfs.Dir, Config, projConfig) {
-	switch resfld := resource.(type) {
-	case string:
-		if resfld != "" {
-			engine.SetAssetDir(resfld)
-		} else {
-			engine.SetAssetDir("assets")
+	for i, n := 0, v.NumField(); i < n; i++ {
+		name, val := getFieldPtrOrAlloc(g, v, i)
+		if fld, ok := val.(Sprite); ok {
+			if err := g.loadSprite(fld, name, v); err != nil {
+				panic(err)
+			}
 		}
 	}
-
-	fs, err := resourceDir(resource)
-	if err != nil {
-		panic(err)
-	}
-	resMgr.SetDefaultFont("res://engine/fonts/CnFont.ttf")
-	engine.RegisterFileSystem(fs)
-
-	var conf Config
 	var proj projConfig
-	if gameConf != nil {
-		conf = *gameConf[0]
-		err = loadProjConfig(&proj, fs, conf.Index)
-	} else {
-		err = loadProjConfig(&proj, fs, nil)
-		if proj.Run != nil {
-			conf = *proj.Run
+	if err = loadProjConfig(&proj, g.fs, index); err != nil {
+		return
+	}
+	gco.OnRestart()
+	err = g.loadIndex(v, &proj)
+	gco.OnInited()
+
+	// Restart event loops after reload
+	g.initEventLoop()
+	return
+}
+
+// SchedNow performs immediate scheduling without timeout check
+func SchedNow() int {
+	if isSchedInMain {
+		if time.Since(mainSchedTime) >= time.Second*mainExecTimeoutSec {
+			panic("Main execution timed out. Please check if there is an infinite loop in the code.")
 		}
 	}
-	if err != nil {
-		panic(err)
+	if me := gco.Current(); me != nil {
+		gco.Sched(me)
 	}
-
-	return fs, conf, proj
+	return 0
 }
+
+// Sched performs scheduling with timeout check
+func Sched() int {
+	if isSchedInMain {
+		if time.Since(mainSchedTime) >= time.Second*mainExecTimeoutSec {
+			panic("Main execution timed out. Please check if there is an infinite loop in the code.")
+		}
+	} else {
+		if me := gco.Current(); me != nil {
+			if me.IsSchedTimeout(schedTimeoutMs) {
+				log.Println("For loop execution timed out. Please check if there is an infinite loop in the code.\n", debug.GetStackTrace())
+				engine.WaitNextFrame()
+			}
+		}
+	}
+	return 0
+}
+
+// Forever executes a function indefinitely
+func Forever(call func()) {
+	if call == nil {
+		return
+	}
+	for {
+		call()
+		engine.WaitNextFrame()
+	}
+}
+
+// Repeat executes a function for a specified number of times
+func Repeat(loopCount int, call func()) {
+	if call == nil {
+		return
+	}
+	for range loopCount {
+		call()
+		engine.WaitNextFrame()
+	}
+}
+
+// RepeatUntil executes a function until a condition is met
+func RepeatUntil(condition func() bool, call func()) {
+	if call == nil || condition == nil {
+		return
+	}
+	for {
+		if condition() {
+			return
+		}
+		call()
+		engine.WaitNextFrame()
+	}
+}
+
+// WaitUntil waits until a condition is met
+func WaitUntil(condition func() bool) {
+	if condition == nil {
+		return
+	}
+	for {
+		if condition() {
+			return
+		}
+		engine.WaitNextFrame()
+	}
+}
+
+// -------------------------------------------------------------------------------------
 
 // parseCommandLineFlags handles command line arguments
 func parseCommandLineFlags(conf *Config) {
@@ -738,29 +806,6 @@ func (p *Game) endLoad(g reflect.Value, proj *projConfig) (err error) {
 	return p.loadIndex(g, proj)
 }
 
-func Gopt_Game_Reload(game Gamer, index any) (err error) {
-	v := reflect.ValueOf(game).Elem()
-	g := instance(v)
-	g.reset()
-	engine.ClearAllSprites()
-	for i, n := 0, v.NumField(); i < n; i++ {
-		name, val := getFieldPtrOrAlloc(g, v, i)
-		if fld, ok := val.(Sprite); ok {
-			if err := g.loadSprite(fld, name, v); err != nil {
-				panic(err)
-			}
-		}
-	}
-	var proj projConfig
-	if err = loadProjConfig(&proj, g.fs, index); err != nil {
-		return
-	}
-	gco.OnRestart()
-	err = g.loadIndex(v, &proj)
-	gco.OnInited()
-	return
-}
-
 // -------------------------------------------------------------------------------------
 // Stage Setup and Special Shapes
 
@@ -882,80 +927,6 @@ var (
 )
 
 type threadObj = coroutine.ThreadObj
-
-// SchedNow performs immediate scheduling without timeout check
-func SchedNow() int {
-	if isSchedInMain {
-		if time.Since(mainSchedTime) >= time.Second*mainExecTimeoutSec {
-			panic("Main execution timed out. Please check if there is an infinite loop in the code.")
-		}
-	}
-	if me := gco.Current(); me != nil {
-		gco.Sched(me)
-	}
-	return 0
-}
-
-func Sched() int {
-	if isSchedInMain {
-		if time.Since(mainSchedTime) >= time.Second*mainExecTimeoutSec {
-			panic("Main execution timed out. Please check if there is an infinite loop in the code.")
-		}
-	} else {
-		if me := gco.Current(); me != nil {
-			if me.IsSchedTimeout(schedTimeoutMs) {
-				log.Println("For loop execution timed out. Please check if there is an infinite loop in the code.\n", debug.GetStackTrace())
-				engine.WaitNextFrame()
-			}
-		}
-	}
-	return 0
-}
-
-func Forever(call func()) {
-	if call == nil {
-		return
-	}
-	for {
-		call()
-		engine.WaitNextFrame()
-	}
-}
-
-func Repeat(loopCount int, call func()) {
-	if call == nil {
-		return
-	}
-	for range loopCount {
-		call()
-		engine.WaitNextFrame()
-	}
-}
-
-func RepeatUntil(condition func() bool, call func()) {
-	if call == nil || condition == nil {
-		return
-	}
-	for {
-		if condition() {
-			return
-		}
-		call()
-		engine.WaitNextFrame()
-	}
-}
-
-func WaitUntil(condition func() bool) {
-	if condition == nil {
-		return
-	}
-	for {
-		if condition() {
-			return
-		}
-		engine.WaitNextFrame()
-	}
-}
 
 func runMain(call func()) {
 	isSchedInMain = true

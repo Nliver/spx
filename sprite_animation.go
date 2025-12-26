@@ -262,13 +262,10 @@ func (p *SpriteImpl) playDefaultAnim() {
 		switch p.curTweenState.AniType {
 		case aniTypeMove:
 			animName = p.getStateAnimName(StateStep)
-			break
 		case aniTypeTurn:
 			animName = p.getStateAnimName(StateTurn)
-			break
 		case aniTypeGlide:
 			animName = p.getStateAnimName(StateGlide)
-			break
 		}
 		speed = p.curTweenState.Speed
 	}
@@ -316,10 +313,7 @@ func (p *SpriteImpl) AnimateAndWait(name SpriteAnimationName) {
 }
 
 func (p *SpriteImpl) StopAnimation(name SpriteAnimationName) {
-	if name == "" {
-		return
-	}
-	if !p.hasAnim(name) {
+	if name == "" || !p.hasAnim(name) {
 		return
 	}
 	if p.curAnimState == nil || p.curAnimState.Name != name {
