@@ -238,9 +238,9 @@ type GDExtensionSpxSpriteSetMaterialParamsVec4 C.GDExtensionSpxSpriteSetMaterial
 type GDExtensionSpxSpriteGetMaterialParamsVec4 C.GDExtensionSpxSpriteGetMaterialParamsVec4
 type GDExtensionSpxSpriteSetMaterialParamsColor C.GDExtensionSpxSpriteSetMaterialParamsColor
 type GDExtensionSpxSpriteGetMaterialParamsColor C.GDExtensionSpxSpriteGetMaterialParamsColor
-type GDExtensionSpxSpriteSetTextureAltas C.GDExtensionSpxSpriteSetTextureAltas
+type GDExtensionSpxSpriteSetTextureAtlas C.GDExtensionSpxSpriteSetTextureAtlas
 type GDExtensionSpxSpriteSetTexture C.GDExtensionSpxSpriteSetTexture
-type GDExtensionSpxSpriteSetTextureAltasDirect C.GDExtensionSpxSpriteSetTextureAltasDirect
+type GDExtensionSpxSpriteSetTextureAtlasDirect C.GDExtensionSpxSpriteSetTextureAtlasDirect
 type GDExtensionSpxSpriteSetTextureDirect C.GDExtensionSpxSpriteSetTextureDirect
 type GDExtensionSpxSpriteGetTexture C.GDExtensionSpxSpriteGetTexture
 type GDExtensionSpxSpriteSetVisible C.GDExtensionSpxSpriteSetVisible
@@ -1933,17 +1933,17 @@ func CallSpriteGetMaterialParamsColor(
 
 	return (GdColor)(ret_val)
 }
-func CallSpriteSetTextureAltas(
+func CallSpriteSetTextureAtlas(
 	obj GdObj,
 	path GdString,
 	rect2 GdRect2,
 ) {
-	arg0 := (C.GDExtensionSpxSpriteSetTextureAltas)(api.SpxSpriteSetTextureAltas)
+	arg0 := (C.GDExtensionSpxSpriteSetTextureAtlas)(api.SpxSpriteSetTextureAtlas)
 	arg1GdObj := (C.GdObj)(obj)
 	arg2GdString := (C.GdString)(path)
 	arg3GdRect2 := (C.GdRect2)(rect2)
 
-	C.cgo_callfn_GDExtensionSpxSpriteSetTextureAltas(arg0, arg1GdObj, arg2GdString, arg3GdRect2)
+	C.cgo_callfn_GDExtensionSpxSpriteSetTextureAtlas(arg0, arg1GdObj, arg2GdString, arg3GdRect2)
 
 }
 func CallSpriteSetTexture(
@@ -1957,17 +1957,17 @@ func CallSpriteSetTexture(
 	C.cgo_callfn_GDExtensionSpxSpriteSetTexture(arg0, arg1GdObj, arg2GdString)
 
 }
-func CallSpriteSetTextureAltasDirect(
+func CallSpriteSetTextureAtlasDirect(
 	obj GdObj,
 	path GdString,
 	rect2 GdRect2,
 ) {
-	arg0 := (C.GDExtensionSpxSpriteSetTextureAltasDirect)(api.SpxSpriteSetTextureAltasDirect)
+	arg0 := (C.GDExtensionSpxSpriteSetTextureAtlasDirect)(api.SpxSpriteSetTextureAtlasDirect)
 	arg1GdObj := (C.GdObj)(obj)
 	arg2GdString := (C.GdString)(path)
 	arg3GdRect2 := (C.GdRect2)(rect2)
 
-	C.cgo_callfn_GDExtensionSpxSpriteSetTextureAltasDirect(arg0, arg1GdObj, arg2GdString, arg3GdRect2)
+	C.cgo_callfn_GDExtensionSpxSpriteSetTextureAtlasDirect(arg0, arg1GdObj, arg2GdString, arg3GdRect2)
 
 }
 func CallSpriteSetTextureDirect(

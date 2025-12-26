@@ -512,9 +512,9 @@ func (pself *spriteMgrImpl) GetMaterialParamsColor(obj gdx.Object, effect string
 	var _ret1 Color
 	return _ret1
 }
-func (pself *spriteMgrImpl) SetTextureAltas(obj gdx.Object, path string, rect2 Rect2)       {}
+func (pself *spriteMgrImpl) SetTextureAtlas(obj gdx.Object, path string, rect2 Rect2)       {}
 func (pself *spriteMgrImpl) SetTexture(obj gdx.Object, path string)                         {}
-func (pself *spriteMgrImpl) SetTextureAltasDirect(obj gdx.Object, path string, rect2 Rect2) {}
+func (pself *spriteMgrImpl) SetTextureAtlasDirect(obj gdx.Object, path string, rect2 Rect2) {}
 func (pself *spriteMgrImpl) SetTextureDirect(obj gdx.Object, path string)                   {}
 func (pself *spriteMgrImpl) GetTexture(obj gdx.Object) string {
 	var _ret1 string

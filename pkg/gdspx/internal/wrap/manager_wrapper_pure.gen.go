@@ -315,7 +315,7 @@ func (pself *platformMgr) IsInPersistantDataDir(path string) bool {
 }
 
 // Resource Manager
-func (pself *resMgr) CreateAnimation(sprite_type_name string, anim_name string, context string, fps int64, is_altas bool) {
+func (pself *resMgr) CreateAnimation(sprite_type_name string, anim_name string, context string, fps int64, is_atlas bool) {
 	// Pure implementation - no operation
 }
 func (pself *resMgr) SetLoadMode(is_direct_mode bool) {

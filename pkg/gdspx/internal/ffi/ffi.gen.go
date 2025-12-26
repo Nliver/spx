@@ -171,9 +171,9 @@ type GDExtensionInterface struct {
 	SpxSpriteGetMaterialParamsVec4           GDExtensionSpxSpriteGetMaterialParamsVec4
 	SpxSpriteSetMaterialParamsColor          GDExtensionSpxSpriteSetMaterialParamsColor
 	SpxSpriteGetMaterialParamsColor          GDExtensionSpxSpriteGetMaterialParamsColor
-	SpxSpriteSetTextureAltas                 GDExtensionSpxSpriteSetTextureAltas
+	SpxSpriteSetTextureAtlas                 GDExtensionSpxSpriteSetTextureAtlas
 	SpxSpriteSetTexture                      GDExtensionSpxSpriteSetTexture
-	SpxSpriteSetTextureAltasDirect           GDExtensionSpxSpriteSetTextureAltasDirect
+	SpxSpriteSetTextureAtlasDirect           GDExtensionSpxSpriteSetTextureAtlasDirect
 	SpxSpriteSetTextureDirect                GDExtensionSpxSpriteSetTextureDirect
 	SpxSpriteGetTexture                      GDExtensionSpxSpriteGetTexture
 	SpxSpriteSetVisible                      GDExtensionSpxSpriteSetVisible
@@ -467,9 +467,9 @@ func (x *GDExtensionInterface) loadProcAddresses() {
 	x.SpxSpriteGetMaterialParamsVec4 = (GDExtensionSpxSpriteGetMaterialParamsVec4)(dlsymGD("spx_sprite_get_material_params_vec4"))
 	x.SpxSpriteSetMaterialParamsColor = (GDExtensionSpxSpriteSetMaterialParamsColor)(dlsymGD("spx_sprite_set_material_params_color"))
 	x.SpxSpriteGetMaterialParamsColor = (GDExtensionSpxSpriteGetMaterialParamsColor)(dlsymGD("spx_sprite_get_material_params_color"))
-	x.SpxSpriteSetTextureAltas = (GDExtensionSpxSpriteSetTextureAltas)(dlsymGD("spx_sprite_set_texture_altas"))
+	x.SpxSpriteSetTextureAtlas = (GDExtensionSpxSpriteSetTextureAtlas)(dlsymGD("spx_sprite_set_texture_atlas"))
 	x.SpxSpriteSetTexture = (GDExtensionSpxSpriteSetTexture)(dlsymGD("spx_sprite_set_texture"))
-	x.SpxSpriteSetTextureAltasDirect = (GDExtensionSpxSpriteSetTextureAltasDirect)(dlsymGD("spx_sprite_set_texture_altas_direct"))
+	x.SpxSpriteSetTextureAtlasDirect = (GDExtensionSpxSpriteSetTextureAtlasDirect)(dlsymGD("spx_sprite_set_texture_atlas_direct"))
 	x.SpxSpriteSetTextureDirect = (GDExtensionSpxSpriteSetTextureDirect)(dlsymGD("spx_sprite_set_texture_direct"))
 	x.SpxSpriteGetTexture = (GDExtensionSpxSpriteGetTexture)(dlsymGD("spx_sprite_get_texture"))
 	x.SpxSpriteSetVisible = (GDExtensionSpxSpriteSetVisible)(dlsymGD("spx_sprite_set_visible"))

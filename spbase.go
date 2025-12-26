@@ -88,7 +88,7 @@ type costume struct {
 	setIndex   int // costume index
 	posX, posY int // left top
 
-	altasUVRect mathf.Vec4
+	atlasUVRect mathf.Vec4
 }
 
 func newCostumeWithSize(width, height int) *costume {
@@ -102,7 +102,7 @@ func newCostumeWithSize(width, height int) *costume {
 	value.imageSize = mathf.NewVec2(float64(width), float64(height))
 	value.center.X = float64(value.width) / 2
 	value.center.Y = float64(value.height) / 2
-	value.altasUVRect = mathf.NewVec4(0, 0, 1, 1)
+	value.atlasUVRect = mathf.NewVec4(0, 0, 1, 1)
 	return value
 }
 
@@ -132,7 +132,7 @@ func newCostumeWith(name string, img *costumeSetImage, faceRight float64, i, bit
 	vStart := float64(value.posY) / imageSize.Y
 	uSize := float64(value.width) / imageSize.X
 	vSize := float64(value.height) / imageSize.Y
-	value.altasUVRect = mathf.NewVec4(uStart, vStart, uSize, vSize)
+	value.atlasUVRect = mathf.NewVec4(uStart, vStart, uSize, vSize)
 	value.center.X = float64(value.width) / 2
 	value.center.Y = float64(value.height) / 2
 	return value
@@ -150,7 +150,7 @@ func newCostume(base string, c *costumeConfig) *costume {
 		path:             fullPath,
 		posX:             0,
 		posY:             0,
-		altasUVRect:      mathf.NewVec4(0, 0, 1, 1),
+		atlasUVRect:      mathf.NewVec4(0, 0, 1, 1),
 	}
 
 	imageSize := resolveImageSize(c.ImageWidth, c.ImageHeight, fullPath)
@@ -196,7 +196,7 @@ func toBitmapResolution(v int) int {
 func (p *costume) getSize() (int, int) {
 	return p.width / p.bitmapResolution, p.height / p.bitmapResolution
 }
-func (p *costume) isAltas() bool {
+func (p *costume) isAtlas() bool {
 	return p.setIndex >= 0
 }
 
@@ -423,17 +423,16 @@ func (p *baseObj) getCostumeSize() (float64, float64) {
 	x, y := p.costumes[p.costumeIndex_].getSize()
 	return float64(x), float64(y)
 }
-func (p *baseObj) isCostumeAltas() bool {
-	//println("p.costumeIndex_ ", p.costumeIndex_, " len ", len(p.costumes), " isAltas ", p.costumes[p.costumeIndex_].isAltas())
-	return p.costumes[p.costumeIndex_].isAltas()
+func (p *baseObj) isCostumeAtlas() bool {
+	return p.costumes[p.costumeIndex_].isAtlas()
 }
 
-func (p *baseObj) getCostumeAltasUvRemap() mathf.Rect2 {
+func (p *baseObj) getCostumeAtlasUvRemap() mathf.Rect2 {
 	costume := p.costumes[p.costumeIndex_]
-	return mathf.NewRect2(costume.altasUVRect.X, costume.altasUVRect.Y, costume.altasUVRect.Z, costume.altasUVRect.W)
+	return mathf.NewRect2(costume.atlasUVRect.X, costume.atlasUVRect.Y, costume.atlasUVRect.Z, costume.atlasUVRect.W)
 }
 
-func (p *baseObj) getCostumeAltasRegion() mathf.Rect2 {
+func (p *baseObj) getCostumeAtlasRegion() mathf.Rect2 {
 	costume := p.costumes[p.costumeIndex_]
 	rect := mathf.NewRect2(float64(costume.posX), float64(costume.posY),
 		float64(costume.width), float64(costume.height))

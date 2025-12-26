@@ -224,8 +224,8 @@ func getCostumeBoundByAlpha(p *SpriteImpl, pscale float64, isSync bool) (mathf.V
 	cs := p.costumes[p.costumeIndex_]
 	var rect mathf.Rect2
 	// GetBoundFromAlpha is very slow, so we should cache the result
-	if cs.isAltas() {
-		rect = p.getCostumeAltasRegion()
+	if cs.isAtlas() {
+		rect = p.getCostumeAtlasRegion()
 		rect.Position.X = 0
 		rect.Position.Y = 0
 	} else {

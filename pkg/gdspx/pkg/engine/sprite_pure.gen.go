@@ -450,10 +450,10 @@ func (pself *Sprite) SetScale(scale Vec2) {
 func (pself *Sprite) SetTexture(path string) {
 }
 
-func (pself *Sprite) SetTextureAltas(path string, rect2 Rect2) {
+func (pself *Sprite) SetTextureAtlas(path string, rect2 Rect2) {
 }
 
-func (pself *Sprite) SetTextureAltasDirect(path string, rect2 Rect2) {
+func (pself *Sprite) SetTextureAtlasDirect(path string, rect2 Rect2) {
 }
 
 func (pself *Sprite) SetTextureDirect(path string) {

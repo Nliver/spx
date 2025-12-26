@@ -224,19 +224,19 @@ func syncCheckUpdateCostume(p *baseObj) {
 	p.isCostumeDirty = false
 	path := p.getCostumePath()
 	renderScale := p.getCostumeRenderScale()
-	rect := p.getCostumeAltasRegion()
-	isAltas := p.isCostumeAltas()
-	if isAltas {
+	rect := p.getCostumeAtlasRegion()
+	isAtlas := p.isCostumeAtlas()
+	if isAtlas {
 		// if is animating, will not update render texture
-		syncSprite.UpdateTextureAltas(path, rect, renderScale, !p.isAnimating)
-		syncOnAltasChanged(p)
+		syncSprite.UpdateTextureAtlas(path, rect, renderScale, !p.isAnimating)
+		syncOnAtlasChanged(p)
 	} else {
 		syncSprite.UpdateTexture(path, renderScale, !p.isAnimating)
 	}
 }
-func syncOnAltasChanged(p *baseObj) {
+func syncOnAtlasChanged(p *baseObj) {
 	key := "atlas_uv_rect2"
-	uvRemap := p.getCostumeAltasUvRemap()
+	uvRemap := p.getCostumeAtlasUvRemap()
 	val := mathf.NewVec4(uvRemap.Position.X, uvRemap.Position.Y, uvRemap.Size.X, uvRemap.Size.Y)
 	p.setMaterialParamsVec4(key, val, true)
 }

@@ -432,12 +432,12 @@ func (pself *Sprite) SetTexture(path string) {
 	SpriteMgr.SetTexture(pself.Id, path)
 }
 
-func (pself *Sprite) SetTextureAltas(path string, rect2 Rect2) {
-	SpriteMgr.SetTextureAltas(pself.Id, path, rect2)
+func (pself *Sprite) SetTextureAtlas(path string, rect2 Rect2) {
+	SpriteMgr.SetTextureAtlas(pself.Id, path, rect2)
 }
 
-func (pself *Sprite) SetTextureAltasDirect(path string, rect2 Rect2) {
-	SpriteMgr.SetTextureAltasDirect(pself.Id, path, rect2)
+func (pself *Sprite) SetTextureAtlasDirect(path string, rect2 Rect2) {
+	SpriteMgr.SetTextureAtlasDirect(pself.Id, path, rect2)
 }
 
 func (pself *Sprite) SetTextureDirect(path string) {

@@ -471,13 +471,13 @@ void cgo_callfn_GDExtensionSpxSpriteSetMaterialParamsColor(const GDExtensionSpxS
 void cgo_callfn_GDExtensionSpxSpriteGetMaterialParamsColor(const GDExtensionSpxSpriteGetMaterialParamsColor fn, GdObj obj, GdString effect, GdColor* ret_val) {
 	fn(obj, effect,ret_val);
 }
-void cgo_callfn_GDExtensionSpxSpriteSetTextureAltas(const GDExtensionSpxSpriteSetTextureAltas fn, GdObj obj, GdString path, GdRect2 rect2) {
+void cgo_callfn_GDExtensionSpxSpriteSetTextureAtlas(const GDExtensionSpxSpriteSetTextureAtlas fn, GdObj obj, GdString path, GdRect2 rect2) {
 	fn(obj, path, rect2);
 }
 void cgo_callfn_GDExtensionSpxSpriteSetTexture(const GDExtensionSpxSpriteSetTexture fn, GdObj obj, GdString path) {
 	fn(obj, path);
 }
-void cgo_callfn_GDExtensionSpxSpriteSetTextureAltasDirect(const GDExtensionSpxSpriteSetTextureAltasDirect fn, GdObj obj, GdString path, GdRect2 rect2) {
+void cgo_callfn_GDExtensionSpxSpriteSetTextureAtlasDirect(const GDExtensionSpxSpriteSetTextureAtlasDirect fn, GdObj obj, GdString path, GdRect2 rect2) {
 	fn(obj, path, rect2);
 }
 void cgo_callfn_GDExtensionSpxSpriteSetTextureDirect(const GDExtensionSpxSpriteSetTextureDirect fn, GdObj obj, GdString path) {
