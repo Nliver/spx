@@ -1,7 +1,7 @@
-gop 1.3
+xgo 1.3
 
-project .spx Game github.com/goplus/spx/v2 math 
+project main.spx Game github.com/goplus/spx/v2 math
 
-class -embed .spx SpriteImpl
+class -embed *.spx SpriteImpl
 
-run github.com/goplus/spx/v2/cmd/spxrun
+runner github.com/goplus/spx/v2/cmd/spxrun
