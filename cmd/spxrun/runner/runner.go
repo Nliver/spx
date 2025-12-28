@@ -82,8 +82,8 @@ type Runner struct {
 	GOOS   string
 	GOARCH string
 
-	// SPX version
-	SpxVersion string // SPX module version (e.g., "latest", "v2.0.0")
+	// Runner version (same as spx since runner is a subpackage of spx)
+	RunnerVersion string // Runner version (e.g., "latest", "v2.0.0")
 }
 
 // New creates a new Runner for the given project path and optional version
@@ -101,21 +101,21 @@ func New(projectPath string, version ...string) (*Runner, error) {
 	paths := filepath.SplitList(gopath)
 	goBinPath := filepath.Join(paths[0], "bin")
 
-	// Determine SPX version (default to "latest")
-	spxVersion := "latest"
+	// Determine runner version (default to "latest")
+	runnerVersion := "latest"
 	if len(version) > 0 && version[0] != "" {
-		spxVersion = version[0]
+		runnerVersion = version[0]
 	}
 
 	r := &Runner{
-		ProjectDir: absPath,
-		GoDir:      filepath.Join(absPath, "project", "go"),
-		LibDir:     filepath.Join(absPath, "project", "lib"),
-		TempDir:    filepath.Join(absPath, ".temp"),
-		GoBinPath:  goBinPath,
-		GOOS:       runtime.GOOS,
-		GOARCH:     runtime.GOARCH,
-		SpxVersion: spxVersion,
+		ProjectDir:    absPath,
+		GoDir:         filepath.Join(absPath, "project", "go"),
+		LibDir:        filepath.Join(absPath, "project", "lib"),
+		TempDir:       filepath.Join(absPath, ".temp"),
+		GoBinPath:     goBinPath,
+		GOOS:          runtime.GOOS,
+		GOARCH:        runtime.GOARCH,
+		RunnerVersion: runnerVersion,
 	}
 
 	// Setup runtime paths
@@ -465,14 +465,14 @@ func (r *Runner) ensureGoMod() error {
 		// Use embedded template and replace placeholders
 		content := GoModTemplate
 		content = strings.Replace(content, "github.com/goplus/spxdemo", moduleName, 1)
-		content = strings.Replace(content, "v2.0.0-pre.28", r.SpxVersion, 1)
+		content = strings.Replace(content, "v2.0.0-pre.28", r.RunnerVersion, 1)
 
 		if err := os.WriteFile(rootGoModPath, []byte(content), 0644); err != nil {
 			return fmt.Errorf("failed to create go.mod: %w", err)
 		}
 
 		// If version is "latest", use go get to update to actual latest version
-		if r.SpxVersion == "latest" {
+		if r.RunnerVersion == "latest" {
 			fmt.Println("Updating to latest spx version...")
 			getCmd := exec.Command("go", "get", SpxModule+"@latest")
 			getCmd.Dir = r.ProjectDir
