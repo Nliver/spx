@@ -17,11 +17,11 @@
 package spx
 
 import (
-	"log"
 	"math"
 	"time"
 
 	"github.com/goplus/spbase/mathf"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 	gdx "github.com/goplus/spx/v2/pkg/gdspx/pkg/engine"
 )
 
@@ -298,7 +298,7 @@ func (p *inputManager) checkSwipe(point mathf.Vec2) {
 			}
 
 			if debugEvent {
-				log.Printf("Swipe detected: direction=%v, velocity=%.2f, distance=%.2f, target=%s",
+				spxlog.Debug("Swipe detected: direction=%v, velocity=%.2f, distance=%.2f, target=%s",
 					swiper.detectedDirection, swiper.swipeVelocity, swiper.swipeDistance, targetName)
 			}
 

@@ -17,10 +17,9 @@
 package spx
 
 import (
-	"log"
-
 	"github.com/goplus/spx/v2/internal/audiorecord"
 	"github.com/goplus/spx/v2/internal/engine"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 )
 
 // ============================================================================
@@ -41,12 +40,12 @@ func (p *Game) loadSound(name SoundName) (media sound, err error) {
 	}
 
 	if debugLoad {
-		log.Println("==> LoadSound", name)
+		spxlog.Debug("==> LoadSound: %s", name)
 	}
 	prefix := "sounds/" + name
 	media = new(soundConfig)
 	if err = loadJson(media, p.fs, prefix+"/index.json"); err != nil {
-		println("loadSound failed:", err.Error())
+		spxlog.Error("loadSound failed: %v", err)
 		return
 	}
 	media.Path = prefix + "/" + media.Path

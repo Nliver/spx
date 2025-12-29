@@ -17,12 +17,12 @@
 package spx
 
 import (
-	"log"
 	"math"
 
 	"github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/coroutine"
 	"github.com/goplus/spx/v2/internal/engine"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 	gtime "github.com/goplus/spx/v2/internal/time"
 	"github.com/goplus/spx/v2/internal/timer"
 )
@@ -119,7 +119,9 @@ func (p *Game) fireEvent(ev event) {
 	select {
 	case p.events <- ev:
 	default:
-		log.Println("Event buffer is full. Skip event:", ev)
+		if debugInstr {
+			spxlog.Warn("Event buffer is full. Skip event: %v", ev)
+		}
 	}
 }
 

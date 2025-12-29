@@ -22,6 +22,7 @@ import (
 
 	"github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/engine"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 	"github.com/goplus/spx/v2/internal/time"
 	"github.com/goplus/spx/v2/internal/tools"
 )
@@ -292,23 +293,23 @@ func (p *SpriteImpl) Animate__0(name SpriteAnimationName) {
 
 func (p *SpriteImpl) Animate__1(name SpriteAnimationName, loop bool) {
 	if debugInstr {
-		log.Println("==> Animation", name)
+		spxlog.Debug("==> Animation", name)
 	}
 	if ani, ok := p.animations[name]; ok {
 		p.doAnimation(name, ani, loop, 1, false, true)
 	} else {
-		log.Println("Animation not found:", name)
+		spxlog.Debug("Animation not found:", name)
 	}
 }
 
 func (p *SpriteImpl) AnimateAndWait(name SpriteAnimationName) {
 	if debugInstr {
-		log.Println("==> AnimateAndWait", name)
+		spxlog.Debug("==> AnimateAndWait", name)
 	}
 	if ani, ok := p.animations[name]; ok {
 		p.doAnimation(name, ani, false, 1, true, true)
 	} else {
-		log.Println("Animation not found:", name)
+		spxlog.Debug("Animation not found:", name)
 	}
 }
 
