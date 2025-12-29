@@ -73,28 +73,24 @@ func (p *Game) playSoundAndWait(sprite *engine.Sprite, audioId engine.Object, na
 	p.sounds.play(audioId, m, false, true, sprite.Id, attenuation, maxDistance)
 }
 
-func (p *Game) pauseSound(audioId engine.Object, name SoundName) {
+func (p *Game) withSound(name SoundName, action func(m sound)) {
 	m, err := p.loadSound(name)
 	if err != nil {
 		return
 	}
-	p.sounds.pause(audioId, m)
+	action(m)
 }
 
-func (p *Game) resumeSound(audioId engine.Object, name SoundName) {
-	m, err := p.loadSound(name)
-	if err != nil {
-		return
-	}
-	p.sounds.resume(audioId, m)
+func (p *Game) pauseSound(name SoundName) {
+	p.withSound(name, p.sounds.pause)
 }
 
-func (p *Game) stopSound(audioId engine.Object, name SoundName) {
-	m, err := p.loadSound(name)
-	if err != nil {
-		return
-	}
-	p.sounds.stop(audioId, m)
+func (p *Game) resumeSound(name SoundName) {
+	p.withSound(name, p.sounds.resume)
+}
+
+func (p *Game) stopSound(name SoundName) {
+	p.withSound(name, p.sounds.stop)
 }
 
 func (p *Game) stopSoundInstance(instanceId soundId) {
@@ -126,17 +122,17 @@ func (p *Game) PlayAndWait(name SoundName) {
 
 func (p *Game) PausePlaying(name SoundName) {
 	p.checkAudioId()
-	p.pauseSound(p.audioId, name)
+	p.pauseSound(name)
 }
 
 func (p *Game) ResumePlaying(name SoundName) {
 	p.checkAudioId()
-	p.resumeSound(p.audioId, name)
+	p.resumeSound(name)
 }
 
 func (p *Game) StopPlaying(name SoundName) {
 	p.checkAudioId()
-	p.stopSound(p.audioId, name)
+	p.stopSound(name)
 }
 
 func (p *Game) SetVolume(volume float64) {

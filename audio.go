@@ -47,19 +47,19 @@ func (p *soundMgr) releaseAudio(audioId engine.Object) {
 	audioMgr.DestroyAudio(audioId)
 }
 
-func (p *soundMgr) pause(audioId engine.Object, media sound) {
+func (p *soundMgr) pause(media sound) {
 	for _, id := range p.path2ids[media.Path] {
 		audioMgr.Pause(id)
 	}
 }
 
-func (p *soundMgr) resume(audioId engine.Object, media sound) {
+func (p *soundMgr) resume(media sound) {
 	for _, id := range p.path2ids[media.Path] {
 		audioMgr.Resume(id)
 	}
 }
 
-func (p *soundMgr) stop(audioId engine.Object, media sound) {
+func (p *soundMgr) stop(media sound) {
 	for _, id := range p.path2ids[media.Path] {
 		audioMgr.Stop(id)
 	}

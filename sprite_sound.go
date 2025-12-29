@@ -64,19 +64,20 @@ func (p *SpriteImpl) PlayAndWait(name SoundName) {
 	p.g.playSoundAndWait(p.syncSprite, p.audioId, name, p.g.audioAttenuation, p.g.audioMaxDistance)
 }
 
+func (p *SpriteImpl) doSoundAction(name SoundName, action func(name SoundName)) {
+	action(name)
+}
+
 func (p *SpriteImpl) PausePlaying(name SoundName) {
-	p.checkAudioId()
-	p.g.pauseSound(p.audioId, name)
+	p.doSoundAction(name, p.g.pauseSound)
 }
 
 func (p *SpriteImpl) ResumePlaying(name SoundName) {
-	p.checkAudioId()
-	p.g.resumeSound(p.audioId, name)
+	p.doSoundAction(name, p.g.resumeSound)
 }
 
 func (p *SpriteImpl) StopPlaying(name SoundName) {
-	p.checkAudioId()
-	p.g.stopSound(p.audioId, name)
+	p.doSoundAction(name, p.g.stopSound)
 }
 
 // -----------------------------------------------------------------------------
