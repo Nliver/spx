@@ -1,6 +1,7 @@
 package engine
 
 import (
+	spxlog "github.com/goplus/spx/v2/internal/log"
 	. "github.com/goplus/spx/v2/pkg/gdspx/pkg/engine"
 )
 
@@ -69,10 +70,10 @@ func onSpriteReady(id int64) {
 	}
 }
 func onSpriteUpdated(delta float64) {
-	println("onSpriteUpdated ", delta)
+	spxlog.Debug("OnSpriteUpdated %f", delta)
 }
 func onSpriteFixedUpdated(delta float64) {
-	println("onSpriteFixedUpdated ", delta)
+	spxlog.Debug("OnSpriteFixedUpdated %f", delta)
 }
 func onSpriteDestroyed(id int64) {
 	delete(Id2Sprites, Object(id))
@@ -80,10 +81,10 @@ func onSpriteDestroyed(id int64) {
 
 // input
 func onMousePressed(id int64) {
-	println("onMousePressed ", id)
+	spxlog.Debug("OnMousePressed %d", id)
 }
 func onMouseReleased(id int64) {
-	println("onMouseReleased ", id)
+	spxlog.Debug("OnMouseReleased %d", id)
 }
 func onKeyPressed(id int64) {
 	if callback.OnKeyPressed != nil {
@@ -96,27 +97,27 @@ func onKeyReleased(id int64) {
 	}
 }
 func onActionPressed(name string) {
-	println("onActionPressed ", name)
+	spxlog.Debug("OnActionPressed %s", name)
 }
 func onActionJustPressed(name string) {
-	println("onActionJustPressed ", name)
+	spxlog.Debug("OnActionJustPressed %s", name)
 }
 func onActionJustReleased(name string) {
-	println("onActionJustReleased ", name)
+	spxlog.Debug("OnActionJustReleased %s", name)
 }
 func onAxisChanged(name string, value float64) {
-	println("onAxisChanged ", name, value)
+	spxlog.Debug("OnAxisChanged %s %f", name, value)
 }
 
 // physic
 func onCollisionEnter(id int64, oid int64) {
-	println("onTriggerExit ", id, oid)
+	spxlog.Debug("OnCollisionEnter %d %d", id, oid)
 }
 func onCollisionStay(id int64, oid int64) {
-	println("onTriggerExit ", id, oid)
+	spxlog.Debug("OnCollisionStay %d %d", id, oid)
 }
 func onCollisionExit(id int64, oid int64) {
-	println("onTriggerExit ", id, oid)
+	spxlog.Debug("OnCollisionExit %d %d", id, oid)
 }
 
 func onTriggerEnter(id int64, oid int64) {

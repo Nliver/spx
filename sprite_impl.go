@@ -800,6 +800,7 @@ func (p *SpriteImpl) SetLayer__0(layer layerAction) {
 	}
 
 }
+
 func (p *SpriteImpl) SetLayer__1(dir dirAction, delta int) {
 	switch dir {
 	case Forward:

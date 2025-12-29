@@ -119,7 +119,7 @@ func WalkDir(srcDir string, pattern string, call func(path string) bool) error {
 		if err != nil {
 			return err
 		}
-		// 正则匹配
+		// Pattern matching
 		if match, err := filepath.Match(pattern, d.Name()); err == nil && match {
 			if call(path) {
 				return fmt.Errorf("stop")

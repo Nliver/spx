@@ -101,6 +101,7 @@ func (c *cameraImpl) Zoom() float64 {
 	scale /= c.g.windowScale
 	return scale
 }
+
 func (c *cameraImpl) Xpos() float64 {
 	pos := cameraMgr.GetPosition()
 	return pos.X
@@ -134,6 +135,7 @@ func (c *cameraImpl) getFollowPos() (bool, mathf.Vec2) {
 	}
 	return false, mathf.NewVec2(0, 0)
 }
+
 func (c *cameraImpl) on(obj any) {
 	switch v := obj.(type) {
 	case SpriteName:

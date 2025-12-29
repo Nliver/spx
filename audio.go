@@ -46,16 +46,19 @@ func (p *soundMgr) releaseAudio(audioId engine.Object) {
 	}
 	audioMgr.DestroyAudio(audioId)
 }
+
 func (p *soundMgr) pause(audioId engine.Object, media sound) {
 	for _, id := range p.path2ids[media.Path] {
 		audioMgr.Pause(id)
 	}
 }
+
 func (p *soundMgr) resume(audioId engine.Object, media sound) {
 	for _, id := range p.path2ids[media.Path] {
 		audioMgr.Resume(id)
 	}
 }
+
 func (p *soundMgr) stop(audioId engine.Object, media sound) {
 	for _, id := range p.path2ids[media.Path] {
 		audioMgr.Stop(id)
@@ -119,6 +122,7 @@ func (p *soundMgr) setEffect(audioId engine.Object, kind SoundEffectKind, value 
 		panic("SetSoundEffect: invalid kind")
 	}
 }
+
 func (p *soundMgr) changeEffect(audioId engine.Object, kind SoundEffectKind, delta float64) {
 	val := (p.getEffect(audioId, kind) + delta)
 	p.setEffect(audioId, kind, val)

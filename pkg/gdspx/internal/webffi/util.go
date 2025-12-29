@@ -9,6 +9,7 @@ import (
 	"unsafe"
 
 	. "github.com/goplus/spbase/mathf"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 	. "github.com/goplus/spx/v2/pkg/gdspx/pkg/engine"
 )
 
@@ -357,7 +358,7 @@ func jsValue2Go(value js.Value) any {
 		keys := js.Global().Get("Object").Call("keys", value)
 		for i := 0; i < keys.Length(); i++ {
 			key := keys.Index(i).String()
-			obj[key] = jsValue2Go(value.Get(key)) // 递归处理嵌套对象
+			obj[key] = jsValue2Go(value.Get(key)) // Recursively process nested objects
 		}
 		return obj
 	case js.TypeString:
@@ -374,10 +375,10 @@ func PrintJs(rect js.Value) {
 	rectMap := jsValue2Go(rect)
 	jsonData, err := json.Marshal(rectMap)
 	if err != nil {
-		fmt.Println("Error converting to JSON:", err)
+		spxlog.Error("Error converting to JSON: %v", err)
 		return
 	}
-	fmt.Println(string(jsonData))
+	spxlog.Debug("%s", string(jsonData))
 }
 
 func JsFromGdObj(val Object) js.Value {

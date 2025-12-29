@@ -329,7 +329,7 @@ func (pself *CmdTool) CheckEnv() error {
 }
 
 func (pself *CmdTool) ShouldReimport() bool {
-	// TinyGo 构建不需要 Godot 导入过程
+	// TinyGo build doesn't need Godot import process
 	if pself.Args.CmdName == "buildtinygo" {
 		return false
 	}
@@ -337,16 +337,16 @@ func (pself *CmdTool) ShouldReimport() bool {
 }
 
 func (pself *CmdTool) Reimport() {
-	// 根据命令类型选择合适的构建方法
+	// Choose appropriate build method based on command type
 	switch pself.Args.CmdName {
 	case "buildtinygo":
-		// TinyGo 构建不需要 Godot 导入过程
+		// TinyGo build doesn't need Godot import process
 		return
 	case "buildweb", "runweb", "exportweb":
-		// Web 相关命令使用 BuildWasm
+		// Web-related commands use BuildWasm
 		pself.BuildWasm()
 	default:
-		// 其他命令使用 BuildDll
+		// Other commands use BuildDll
 		pself.BuildDll()
 	}
 	fmt.Println(" ================= Importing ... ================= ")

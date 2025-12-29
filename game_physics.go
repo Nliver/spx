@@ -21,6 +21,7 @@ import (
 
 	"github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/engine"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 )
 
 // -----------------------------------------------------------------------------
@@ -37,7 +38,7 @@ func (p *Game) checkCollision(ary any) []Sprite {
 			if impl != nil {
 				sprites = append(sprites, impl.sprite)
 			} else {
-				println(" collision ", item, " not Sprite")
+				spxlog.Warn("Collision object is not a Sprite: %v", item)
 			}
 		}
 	}

@@ -1,10 +1,11 @@
 package engine
 
 import (
-	"fmt"
 	"runtime/debug"
+
+	spxlog "github.com/goplus/spx/v2/internal/log"
 )
 
 func PrintStack() {
-	fmt.Printf("%s\n", debug.Stack())
+	spxlog.Debug("%s", debug.Stack())
 }

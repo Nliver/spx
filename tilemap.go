@@ -45,6 +45,7 @@ func (p *gameTilemapMgr) init(g *Game, fs spxfs.Dir, path string) {
 	p.datas = &data
 	tm.ConvertData(&data)
 }
+
 func (p *gameTilemapMgr) hasData() bool {
 	return p.datas != nil
 }
@@ -52,6 +53,7 @@ func (p *gameTilemapMgr) hasData() bool {
 func (p *gameTilemapMgr) loadTilemaps(datas *tm.TscnMapData) {
 	tm.LoadTilemaps(datas, p.g.setTileInfo__1, p.g.setTileMapLayerIndex, p.g.PlaceTiles__1)
 }
+
 func (p *gameTilemapMgr) loadDecorators(datas *tm.TscnMapData) {
 	const headingOffset = -90.0
 	for _, item := range datas.Decorators {

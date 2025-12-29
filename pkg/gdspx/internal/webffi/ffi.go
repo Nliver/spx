@@ -3,6 +3,7 @@ package webffi
 import (
 	"syscall/js"
 
+	spxlog "github.com/goplus/spx/v2/internal/log"
 	"github.com/goplus/spx/v2/pkg/gdspx/pkg/engine"
 )
 
@@ -33,7 +34,7 @@ func Unlink() {
 
 // this function will only be called in wasm mode, it will not be called in ixgo (interpreter) mode.
 func goWasmInit(this js.Value, args []js.Value) any {
-	println("Go wasm init succ!")
+	spxlog.Info("Go wasm init success!")
 	hasInitEngine = true
 	resiterFuncPtr2Js()
 	return js.ValueOf(nil)

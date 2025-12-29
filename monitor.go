@@ -188,33 +188,43 @@ func (pself *Monitor) GetName() WidgetName {
 func (pself *Monitor) Visible() bool {
 	return pself.visible
 }
+
 func (pself *Monitor) Show() {
 	pself.visible = true
 }
+
 func (pself *Monitor) Hide() {
 	pself.visible = false
 }
+
 func (pself *Monitor) Xpos() float64 {
 	return pself.pos.X
 }
+
 func (pself *Monitor) Ypos() float64 {
 	return pself.pos.Y
 }
+
 func (pself *Monitor) SetXpos(x float64) {
 	pself.pos.X = x
 }
+
 func (pself *Monitor) SetYpos(y float64) {
 	pself.pos.Y = y
 }
+
 func (pself *Monitor) SetXYpos(x float64, y float64) {
 	pself.pos = mathf.NewVec2(x, y)
 }
+
 func (pself *Monitor) ChangeXpos(dx float64) {
 	pself.pos.X += dx
 }
+
 func (pself *Monitor) ChangeYpos(dy float64) {
 	pself.pos.Y += dy
 }
+
 func (pself *Monitor) ChangeXYpos(dx float64, dy float64) {
 	pself.pos = pself.pos.Add(mathf.NewVec2(dx, dy))
 }
@@ -222,10 +232,12 @@ func (pself *Monitor) ChangeXYpos(dx float64, dy float64) {
 func (pself *Monitor) Size() float64 {
 	return pself.size
 }
+
 func (pself *Monitor) SetSize(size float64) {
 	pself.size = size
 	pself.updateSize()
 }
+
 func (pself *Monitor) ChangeSize(delta float64) {
 	pself.size += delta
 	pself.updateSize()
