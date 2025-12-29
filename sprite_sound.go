@@ -36,13 +36,13 @@ const (
 // -----------------------------------------------------------------------------
 
 func (p *SpriteImpl) playAudio(name SoundName, loop bool) soundId {
-	p.checkAudioId()
-	return p.g.playSound(p.syncSprite, p.audioId, name, loop, p.g.audioAttenuation, p.g.audioMaxDistance)
+	p.checkSoundObj()
+	return p.g.playSound(p.syncSprite, p.soundObj, name, loop, p.g.audioAttenuation, p.g.audioMaxDistance)
 }
 
-func (p *SpriteImpl) checkAudioId() {
-	if p.audioId == 0 {
-		p.audioId = p.g.sounds.allocAudio()
+func (p *SpriteImpl) checkSoundObj() {
+	if p.soundObj == 0 {
+		p.soundObj = p.g.sounds.allocSound()
 	}
 }
 
@@ -51,8 +51,8 @@ func (p *SpriteImpl) checkAudioId() {
 // -----------------------------------------------------------------------------
 
 func (p *SpriteImpl) Play__0(name SoundName, loop bool) {
-	p.checkAudioId()
-	p.g.playSound(p.syncSprite, p.audioId, name, loop, p.g.audioAttenuation, p.g.audioMaxDistance)
+	p.checkSoundObj()
+	p.g.playSound(p.syncSprite, p.soundObj, name, loop, p.g.audioAttenuation, p.g.audioMaxDistance)
 }
 
 func (p *SpriteImpl) Play__1(name SoundName) {
@@ -60,8 +60,8 @@ func (p *SpriteImpl) Play__1(name SoundName) {
 }
 
 func (p *SpriteImpl) PlayAndWait(name SoundName) {
-	p.checkAudioId()
-	p.g.playSoundAndWait(p.syncSprite, p.audioId, name, p.g.audioAttenuation, p.g.audioMaxDistance)
+	p.checkSoundObj()
+	p.g.playSoundAndWait(p.syncSprite, p.soundObj, name, p.g.audioAttenuation, p.g.audioMaxDistance)
 }
 
 func (p *SpriteImpl) doSoundAction(name SoundName, action func(name SoundName)) {
@@ -81,22 +81,22 @@ func (p *SpriteImpl) StopPlaying(name SoundName) {
 }
 
 // -----------------------------------------------------------------------------
-// Volume Control
+// Sound Volume Control
 // -----------------------------------------------------------------------------
 
 func (p *SpriteImpl) Volume() float64 {
-	p.checkAudioId()
-	return p.g.sounds.getVolume(p.audioId)
+	p.checkSoundObj()
+	return p.g.sounds.getVolume(p.soundObj)
 }
 
 func (p *SpriteImpl) SetVolume(volume float64) {
-	p.checkAudioId()
-	p.g.sounds.setVolume(p.audioId, volume)
+	p.checkSoundObj()
+	p.g.sounds.setVolume(p.soundObj, volume)
 }
 
 func (p *SpriteImpl) ChangeVolume(delta float64) {
-	p.checkAudioId()
-	p.g.sounds.changeVolume(p.audioId, delta)
+	p.checkSoundObj()
+	p.g.sounds.changeVolume(p.soundObj, delta)
 }
 
 // -----------------------------------------------------------------------------
@@ -104,16 +104,16 @@ func (p *SpriteImpl) ChangeVolume(delta float64) {
 // -----------------------------------------------------------------------------
 
 func (p *SpriteImpl) GetSoundEffect(kind SoundEffectKind) float64 {
-	p.checkAudioId()
-	return p.g.sounds.getEffect(p.audioId, kind)
+	p.checkSoundObj()
+	return p.g.sounds.getEffect(p.soundObj, kind)
 }
 
 func (p *SpriteImpl) SetSoundEffect(kind SoundEffectKind, value float64) {
-	p.checkAudioId()
-	p.g.sounds.setEffect(p.audioId, kind, value)
+	p.checkSoundObj()
+	p.g.sounds.setEffect(p.soundObj, kind, value)
 }
 
 func (p *SpriteImpl) ChangeSoundEffect(kind SoundEffectKind, delta float64) {
-	p.checkAudioId()
-	p.g.sounds.changeEffect(p.audioId, kind, delta)
+	p.checkSoundObj()
+	p.g.sounds.changeEffect(p.soundObj, kind, delta)
 }

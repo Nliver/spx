@@ -35,7 +35,7 @@ type SoundName = string
 // ============================================================================
 
 func (p *Game) loadSound(name SoundName) (media sound, err error) {
-	if media, ok := p.sounds.audios[name]; ok {
+	if media, ok := p.sounds.sounds[name]; ok {
 		return media, nil
 	}
 
@@ -49,7 +49,7 @@ func (p *Game) loadSound(name SoundName) (media sound, err error) {
 		return
 	}
 	media.Path = prefix + "/" + media.Path
-	p.sounds.audios[name] = media
+	p.sounds.sounds[name] = media
 	return
 }
 
@@ -102,13 +102,13 @@ func (p *Game) stopSoundInstance(instanceId soundId) {
 // ============================================================================
 
 func (p *Game) Volume() float64 {
-	p.checkAudioId()
-	return p.sounds.getVolume(p.audioId)
+	p.checkSoundObj()
+	return p.sounds.getVolume(p.soundObj)
 }
 
 func (p *Game) Play__0(name SoundName, loop bool) {
-	p.checkAudioId()
-	p.playSound(p.syncSprite, p.audioId, name, loop, 0, defaultAudioMaxDist)
+	p.checkSoundObj()
+	p.playSound(p.syncSprite, p.soundObj, name, loop, 0, defaultAudioMaxDist)
 }
 
 func (p *Game) Play__1(name SoundName) {
@@ -116,53 +116,53 @@ func (p *Game) Play__1(name SoundName) {
 }
 
 func (p *Game) PlayAndWait(name SoundName) {
-	p.checkAudioId()
-	p.playSoundAndWait(p.syncSprite, p.audioId, name, 0, defaultAudioMaxDist)
+	p.checkSoundObj()
+	p.playSoundAndWait(p.syncSprite, p.soundObj, name, 0, defaultAudioMaxDist)
 }
 
 func (p *Game) PausePlaying(name SoundName) {
-	p.checkAudioId()
+	p.checkSoundObj()
 	p.pauseSound(name)
 }
 
 func (p *Game) ResumePlaying(name SoundName) {
-	p.checkAudioId()
+	p.checkSoundObj()
 	p.resumeSound(name)
 }
 
 func (p *Game) StopPlaying(name SoundName) {
-	p.checkAudioId()
+	p.checkSoundObj()
 	p.stopSound(name)
 }
 
 func (p *Game) SetVolume(volume float64) {
-	p.checkAudioId()
-	p.sounds.setVolume(p.audioId, volume)
+	p.checkSoundObj()
+	p.sounds.setVolume(p.soundObj, volume)
 }
 
 func (p *Game) ChangeVolume(delta float64) {
-	p.checkAudioId()
-	p.sounds.changeVolume(p.audioId, delta)
+	p.checkSoundObj()
+	p.sounds.changeVolume(p.soundObj, delta)
 }
 
 func (p *Game) GetSoundEffect(kind SoundEffectKind) float64 {
-	p.checkAudioId()
-	return p.sounds.getEffect(p.audioId, kind)
+	p.checkSoundObj()
+	return p.sounds.getEffect(p.soundObj, kind)
 }
 
 func (p *Game) SetSoundEffect(kind SoundEffectKind, value float64) {
-	p.checkAudioId()
-	p.sounds.setEffect(p.audioId, kind, value)
+	p.checkSoundObj()
+	p.sounds.setEffect(p.soundObj, kind, value)
 }
 
 func (p *Game) ChangeSoundEffect(kind SoundEffectKind, delta float64) {
-	p.checkAudioId()
-	p.sounds.changeEffect(p.audioId, kind, delta)
+	p.checkSoundObj()
+	p.sounds.changeEffect(p.soundObj, kind, delta)
 }
 
-func (p *Game) checkAudioId() {
-	if p.audioId == 0 {
-		p.audioId = p.sounds.allocAudio()
+func (p *Game) checkSoundObj() {
+	if p.soundObj == 0 {
+		p.soundObj = p.sounds.allocSound()
 	}
 }
 
@@ -188,8 +188,8 @@ func (p *Game) Loudness() float64 {
 // releaseGameAudio releases the game's audio resources
 func (p *Game) releaseGameAudio() {
 	p.sounds.stopAll()
-	if p.audioId != 0 {
-		p.sounds.releaseAudio(p.audioId)
-		p.audioId = 0
+	if p.soundObj != 0 {
+		p.sounds.releaseSound(p.soundObj)
+		p.soundObj = 0
 	}
 }
