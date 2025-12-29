@@ -17,8 +17,9 @@
 package spx
 
 import (
-	spxlog "github.com/goplus/spx/v2/internal/log"
 	"fmt"
+
+	spxlog "github.com/goplus/spx/v2/internal/log"
 
 	"reflect"
 	"strings"
@@ -167,9 +168,9 @@ func buildMonitorEval(g reflect.Value, t, val string) func() string {
 				}
 			}
 		}
-		spxlog.Debug("Bind monitor error: cannot find property or method (getter):", name)
+		spxlog.Debug("Bind monitor error: cannot find property or method (getter): %s", name)
 	default:
-		spxlog.Debug("Bind monitor error: unknown command:", val)
+		spxlog.Debug("Bind monitor error: unknown command: %s", val)
 	}
 	return nil
 }

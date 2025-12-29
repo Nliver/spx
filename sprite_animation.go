@@ -293,23 +293,23 @@ func (p *SpriteImpl) Animate__0(name SpriteAnimationName) {
 
 func (p *SpriteImpl) Animate__1(name SpriteAnimationName, loop bool) {
 	if debugInstr {
-		spxlog.Debug("==> Animation", name)
+		spxlog.Debug("==> Animation %s", name)
 	}
 	if ani, ok := p.animations[name]; ok {
 		p.doAnimation(name, ani, loop, 1, false, true)
 	} else {
-		spxlog.Debug("Animation not found:", name)
+		spxlog.Debug("Animation not found: %s", name)
 	}
 }
 
 func (p *SpriteImpl) AnimateAndWait(name SpriteAnimationName) {
 	if debugInstr {
-		spxlog.Debug("==> AnimateAndWait", name)
+		spxlog.Debug("==> AnimateAndWait %s", name)
 	}
 	if ani, ok := p.animations[name]; ok {
 		p.doAnimation(name, ani, false, 1, true, true)
 	} else {
-		spxlog.Debug("Animation not found:", name)
+		spxlog.Debug("Animation not found: %s", name)
 	}
 }
 

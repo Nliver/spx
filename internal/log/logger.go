@@ -54,8 +54,6 @@ type Logger struct {
 
 var (
 	defaultLogger *Logger
-	// formatVerbs contains common Go format verbs
-	formatVerbs = []string{"%v", "%+v", "%#v", "%T", "%t", "%b", "%c", "%d", "%o", "%O", "%q", "%x", "%X", "%U", "%e", "%E", "%f", "%F", "%g", "%G", "%s", "%p", "%%"}
 )
 
 // init initializes the default logger
@@ -111,29 +109,12 @@ func (l *Logger) log(level Level, format string, args ...any) {
 	}
 
 	var msg string
-	// Check if format string contains formatting verbs
-	if containsFormatVerb(format) {
-		// Use Sprintf for formatted output
+	if len(args) > 0 {
 		msg = fmt.Sprintf(format, args...)
 	} else {
-		// Use Sprint for simple concatenation
-		if len(args) > 0 {
-			msg = fmt.Sprint(append([]any{format}, args...)...)
-		} else {
-			msg = format
-		}
+		msg = format
 	}
 	l.logger.Printf("[%s] [%s] %s", level, l.prefix, msg)
-}
-
-// containsFormatVerb checks if the format string contains formatting verbs
-func containsFormatVerb(format string) bool {
-	for _, verb := range formatVerbs {
-		if strings.Contains(format, verb) {
-			return true
-		}
-	}
-	return false
 }
 
 // Debug logs a debug message
@@ -180,16 +161,16 @@ func Error(format string, args ...any) {
 
 // ParseLevel converts a string to a log level
 func ParseLevel(s string) Level {
-	switch s {
-	case "debug", "DEBUG":
+	switch strings.ToLower(s) {
+	case "debug":
 		return LevelDebug
-	case "info", "INFO":
+	case "info":
 		return LevelInfo
-	case "warn", "WARN", "warning", "WARNING":
+	case "warn", "warning":
 		return LevelWarn
-	case "error", "ERROR":
+	case "error":
 		return LevelError
-	case "none", "NONE":
+	case "none":
 		return LevelNone
 	default:
 		return LevelInfo
