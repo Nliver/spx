@@ -29,6 +29,7 @@ func init() {
 	const dpi = 72
 
 }
+
 func (p *Game) showDebugPanel() {
 	engine.SetDebugMode(p.debug)
 	profiler.Debug = p.debug

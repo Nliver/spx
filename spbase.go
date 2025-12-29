@@ -196,6 +196,7 @@ func toBitmapResolution(v int) int {
 func (p *costume) getSize() (int, int) {
 	return p.width / p.bitmapResolution, p.height / p.bitmapResolution
 }
+
 func (p *costume) isAtlas() bool {
 	return p.setIndex >= 0
 }
@@ -225,6 +226,7 @@ type baseObj struct {
 func (p *baseObj) getSpriteId() engine.Object {
 	return p.syncSprite.GetId()
 }
+
 func (p *baseObj) setLayer(layer int) { // dying: visible but can't be touched
 	if p.layer != layer {
 		p.layer = layer
@@ -383,6 +385,7 @@ func (p *baseObj) setCostumeByIndex(idx int) bool {
 	p.setCustumeIndex(idx)
 	return true
 }
+
 func (p *baseObj) setCostumeByName(name SpriteCostumeName) bool {
 	if idx := p.findCostume(name); idx >= 0 {
 		return p.setCostumeByIndex(idx)
@@ -407,22 +410,28 @@ func (p *baseObj) getCostumeIndex() int {
 func (p *baseObj) getCostumeName() SpriteCostumeName {
 	return p.costumes[p.costumeIndex_].name
 }
+
 func (p *baseObj) getCostumePath() string {
 	return p.costumes[p.costumeIndex_].path
 }
+
 func (p *baseObj) getCostumeRenderScale() float64 {
 	return 1.0 / float64(p.getCurrentBitmapResolution()) * p.scale
 }
+
 func (p *baseObj) getAnimRenderScale(bitmapResolution int) float64 {
 	return 1.0 / float64(bitmapResolution) * p.scale
 }
+
 func (p *baseObj) getCurrentBitmapResolution() int {
 	return p.costumes[p.costumeIndex_].bitmapResolution
 }
+
 func (p *baseObj) getCostumeSize() (float64, float64) {
 	x, y := p.costumes[p.costumeIndex_].getSize()
 	return float64(x), float64(y)
 }
+
 func (p *baseObj) isCostumeAtlas() bool {
 	return p.costumes[p.costumeIndex_].isAtlas()
 }
@@ -524,6 +533,7 @@ func (p *baseObj) setMaterialParamsVec4(effect string, amount mathf.Vec4, isSync
 		})
 	}
 }
+
 func (p *baseObj) setMaterialParams(effect string, amount float64, isSync bool) {
 	if isSync {
 		p._setMaterialParams(effect, amount)

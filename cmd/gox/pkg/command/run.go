@@ -71,12 +71,11 @@ func (pself *CmdTool) runWebServer() error {
 	scriptPath = strings.ReplaceAll(scriptPath, "\\", "/")
 	executeDir := filepath.Join(pself.ProjectDir, ".builds/web")
 	executeDir = strings.ReplaceAll(executeDir, "\\", "/")
-	println("web server running at http://127.0.0.1:" + fmt.Sprint(port))
+	fmt.Printf("Web server running at http://127.0.0.1:%d\n", port)
 
-	// 检查 python 命令是否可用，不可用则尝试 python3
+	// Check if python command is available, try python3 if not
 	pythonCmd := "python"
 	if _, err := exec.LookPath("python"); err != nil {
-		// python 不可用，尝试 python3
 		if _, err := exec.LookPath("python3"); err != nil {
 			return fmt.Errorf("neither python nor python3 command found in PATH")
 		}

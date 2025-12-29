@@ -33,6 +33,7 @@ func init() {
 			"github.com/goplus/spx/v2/internal/engine/platform": "platform",
 			"github.com/goplus/spx/v2/internal/engine/profiler": "profiler",
 			"github.com/goplus/spx/v2/internal/enginewrap":      "enginewrap",
+			"github.com/goplus/spx/v2/internal/log":             "log",
 			"github.com/goplus/spx/v2/internal/tilemap":         "tilemap",
 			"github.com/goplus/spx/v2/internal/time":            "time",
 			"github.com/goplus/spx/v2/internal/timer":           "timer",

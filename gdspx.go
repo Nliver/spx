@@ -83,6 +83,7 @@ func (p *Game) OnEngineUpdate(delta float64) {
 	p.syncUpdateLogic()
 	p.syncEnginePositions()
 }
+
 func (p *Game) OnEngineRender(delta float64) {
 	if !p.isRunned {
 		return
@@ -104,6 +105,7 @@ func (p *Game) syncUpdateLogic() error {
 
 	return nil
 }
+
 func (p *Game) syncEnginePositions() error {
 	items := p.getTempShapes()
 	for _, item := range items {
@@ -142,6 +144,7 @@ func (sprite *SpriteImpl) syncCheckInitProxy() {
 		sprite.updateProxyTransform(true)
 	}
 }
+
 func (sprite *SpriteImpl) syncOnAnimationFinished() {
 	engine.Lock()
 	defer engine.Unlock()
@@ -151,6 +154,7 @@ func (sprite *SpriteImpl) syncOnAnimationFinished() {
 		sprite.donedAnimations = append(sprite.donedAnimations, curAnimName)
 	}
 }
+
 func (sprite *SpriteImpl) syncOnAnimationLooped() {
 	engine.Lock()
 	defer engine.Unlock()
@@ -159,6 +163,7 @@ func (sprite *SpriteImpl) syncOnAnimationLooped() {
 		sprite.pendingAudios = append(sprite.pendingAudios, state.AudioName)
 	}
 }
+
 func (sprite *SpriteImpl) updateProxyTransform(isSync bool) {
 	if sprite.syncSprite == nil {
 		return
@@ -234,6 +239,7 @@ func syncCheckUpdateCostume(p *baseObj) {
 		syncSprite.UpdateTexture(path, renderScale, !p.isAnimating)
 	}
 }
+
 func syncOnAtlasChanged(p *baseObj) {
 	key := "atlas_uv_rect2"
 	uvRemap := p.getCostumeAtlasUvRemap()

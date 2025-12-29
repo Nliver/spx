@@ -25,7 +25,7 @@ func (pself *CmdTool) prepareExport() error {
 }
 
 func (pself *CmdTool) ExportBuild(platform string) error {
-	println("start export: platform =", platform, " ProjectDir =", pself.ProjectDir)
+	fmt.Printf("Starting export: platform=%s, ProjectDir=%s\n", platform, pself.ProjectDir)
 	os.MkdirAll(filepath.Join(pself.ProjectDir, ".builds", strings.ToLower(platform)), os.ModePerm)
 	cmd := exec.Command(pself.CmdPath, "--headless", "--quit", "--path", pself.ProjectDir, "--export-debug", platform)
 	err := cmd.Run()

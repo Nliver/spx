@@ -4,6 +4,7 @@ import (
 	"reflect"
 
 	"github.com/goplus/spbase/mathf"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 )
 
 var (
@@ -73,7 +74,7 @@ func BindSceneInstantiatedSprite(id Object, type_name string) {
 	if t, ok := name2SpriteType[type_name]; ok {
 		createSprite(t, id)
 	} else {
-		println("BindSceneInstantiatedSprite: type not found", type_name)
+		spxlog.Error("BindSceneInstantiatedSprite: type not found %s", type_name)
 	}
 }
 func CreateSprite[T any](pos mathf.Vec2) *T {
@@ -122,7 +123,7 @@ func createUI[T any](prefabName string, is_engine bool) *T {
 func BindUI[T any](parentNode Object, path string) *T {
 	id := UiMgr.BindNode(parentNode, path)
 	if id == 0 {
-		println("BindUI failed", parentNode, path)
+		spxlog.Error("BindUI failed: parentNode=%d path=%s", parentNode, path)
 		return nil
 	}
 	tType := reflect.TypeOf((*T)(nil)).Elem()

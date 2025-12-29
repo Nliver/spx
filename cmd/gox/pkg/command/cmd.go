@@ -191,7 +191,7 @@ func (cmd *CmdTool) executeCommand() error {
 	// Then, handle execution phase
 	err := cmd.handleExecutionPhase()
 	if err != nil {
-		println("executeCommand error: ", err.Error())
+		fmt.Fprintf(os.Stderr, "Error executing command: %v\n", err)
 	}
 	return err
 
@@ -199,7 +199,6 @@ func (cmd *CmdTool) executeCommand() error {
 
 // handleBuildPhase handles the build phase for commands that need it
 func (cmd *CmdTool) handleBuildPhase() error {
-	// 添加调试日志
 	fmt.Printf("[DEBUG] handleBuildPhase: command=%s %s\n", cmd.Args.CmdName, cmd.SafeTagArgs())
 
 	switch cmd.Args.CmdName {

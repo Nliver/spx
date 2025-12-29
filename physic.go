@@ -22,6 +22,7 @@ import (
 
 	"github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/engine"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 )
 
 const (
@@ -54,6 +55,7 @@ func (p *rayCastResult) ToArray() engine.Array {
 	ary[5] = engine.ConvertToInt64(p.NormalY)
 	return ary
 }
+
 func tryRaycastResult(ary engine.Array) (*rayCastResult, error) {
 	dataAry, succ := ary.([]int64)
 	if !succ {
@@ -72,11 +74,12 @@ func tryRaycastResult(ary engine.Array) (*rayCastResult, error) {
 	p.NormalY = engine.ConvertToFloat64(dataAry[5])
 	return p, nil
 }
+
 func raycast(from, to mathf.Vec2, ignoreSprites []int64, mask int64) *rayCastResult {
 	ary := physicMgr.RaycastWithDetails(from, to, ignoreSprites, -1, true, true)
 	result, err := tryRaycastResult(ary)
 	if err != nil {
-		println("raycast error:", err.Error())
+		spxlog.Warn("Raycast error: %v", err)
 	}
 	return result
 }

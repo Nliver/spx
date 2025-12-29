@@ -85,7 +85,7 @@ func (pself *CmdTool) CheckCmdWithError(ext ...string) (err error) {
 		return
 	}
 	if !pself.CheckCmd(ext...) {
-		println("invalid cmd, please refer to help")
+		fmt.Fprintf(os.Stderr, "Error: invalid cmd, please refer to help\n")
 		pself.ShowHelpInfo()
 	}
 	return
