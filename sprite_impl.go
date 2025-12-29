@@ -26,6 +26,7 @@ import (
 
 	"github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/engine"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 	"github.com/goplus/spx/v2/internal/time"
 )
 
@@ -164,7 +165,7 @@ func (p *SpriteImpl) init(
 	p.collisionInfo.Params = spriteCfg.CollisionShapeParams
 	// Validate colliderShapeType and colliderShape length matching
 	if !p.collisionInfo.validateShape() {
-		fmt.Printf("Warning: Invalid collider configuration for sprite %s, using default values\n", p.name)
+		spxlog.Warn("Invalid collider configuration for sprite %s, using default values", p.name)
 		p.collisionInfo.Type = physicsColliderNone
 		p.collisionInfo.Params = nil
 	}
@@ -176,7 +177,7 @@ func (p *SpriteImpl) init(
 	p.triggerInfo.Params = spriteCfg.TriggerShapeParams
 	// Validate triggerType and triggerShape length matching
 	if !p.triggerInfo.validateShape() {
-		fmt.Printf("Warning: Invalid trigger configuration for sprite %s, using default values\n", p.name)
+		spxlog.Warn("Invalid trigger configuration for sprite %s, using default values", p.name)
 		p.triggerInfo.Type = physicsColliderAuto
 		p.triggerInfo.Params = nil
 	}
@@ -305,7 +306,7 @@ func doClone(sprite Sprite, data any, isAsync bool, onCloned func(sprite *Sprite
 	}
 	src := spriteOf(sprite)
 	if debugInstr {
-		log.Println("Clone", src.name)
+		spxlog.Debug("Clone: %s", src.name)
 	}
 	in := reflect.ValueOf(sprite).Elem()
 	v := reflect.New(in.Type())
@@ -532,7 +533,7 @@ func (p *SpriteImpl) Die() {
 
 func (p *SpriteImpl) Destroy() { // destroy sprite, whether prototype or cloned
 	if debugInstr {
-		log.Println("Destroy", p.name)
+		spxlog.Debug("Destroy: %s", p.name)
 	}
 
 	p.syncSprite.UnRegisterOnAnimationFinished()
@@ -569,7 +570,7 @@ func (p *SpriteImpl) DeleteThisClone() {
 
 func (p *SpriteImpl) Hide() {
 	if debugInstr {
-		log.Println("Hide", p.name)
+		spxlog.Debug("Hide: %s", p.name)
 	}
 
 	p.doStopSay()
@@ -578,7 +579,7 @@ func (p *SpriteImpl) Hide() {
 
 func (p *SpriteImpl) Show() {
 	if debugInstr {
-		log.Println("Show", p.name)
+		spxlog.Debug("Show: %s", p.name)
 	}
 	p.isVisible = true
 }
@@ -605,7 +606,7 @@ func (p *SpriteImpl) CostumeIndex() int {
 //   - spx.Next or spx.Prev
 func (p *SpriteImpl) setCostume(costume any) {
 	if debugInstr {
-		log.Println("SetCostume", p.name, costume)
+		spxlog.Debug("SetCostume: sprite=%s, costume=%v", p.name, costume)
 	}
 	p.goSetCostume(costume)
 	p.defaultCostumeIndex = p.costumeIndex_
@@ -634,14 +635,14 @@ func (p *SpriteImpl) SetCostume__3(action switchAction) {
 
 func (p *SpriteImpl) Ask(msg any) {
 	if debugInstr {
-		log.Println("Ask", p.name, msg)
+		spxlog.Debug("Ask: sprite=%s, msg=%v", p.name, msg)
 	}
 	msgStr, ok := msg.(string)
 	if !ok {
 		msgStr = fmt.Sprint(msg)
 	}
 	if msgStr == "" {
-		println("ask: msg should not be empty")
+		spxlog.Warn("ask: msg should not be empty")
 		return
 	}
 	p.Say__0(msgStr)
@@ -656,7 +657,7 @@ func (p *SpriteImpl) Say__0(msg any) {
 
 func (p *SpriteImpl) Say__1(msg any, secs float64) {
 	if debugInstr {
-		log.Println("Say", p.name, msg, secs)
+		spxlog.Debug("Say: sprite=%s, msg=%v, secs=%v", p.name, msg, secs)
 	}
 	p.sayOrThink(msg, styleSay)
 	if secs > 0 {
@@ -670,7 +671,7 @@ func (p *SpriteImpl) Think__0(msg any) {
 
 func (p *SpriteImpl) Think__1(msg any, secs float64) {
 	if debugInstr {
-		log.Println("Think", p.name, msg, secs)
+		spxlog.Debug("Think: sprite=%s, msg=%v, secs=%v", p.name, msg, secs)
 	}
 	p.sayOrThink(msg, styleThink)
 	if secs > 0 {
@@ -696,7 +697,7 @@ func (p *SpriteImpl) Quote__2(message, description string) {
 
 func (p *SpriteImpl) Quote__3(message, description string, secs float64) {
 	if debugInstr {
-		log.Println("Quote", p.name, message, description, secs)
+		spxlog.Debug("Quote: sprite=%s, message=%s, description=%s, secs=%v", p.name, message, description, secs)
 	}
 	p.quote_(message, description)
 	if secs > 0 {
@@ -769,7 +770,7 @@ func (p *SpriteImpl) Touching__2(obj specialObj) bool {
 
 func (p *SpriteImpl) BounceOffEdge() {
 	if debugInstr {
-		log.Println("BounceOffEdge", p.name)
+		spxlog.Debug("BounceOffEdge: %s", p.name)
 	}
 	dir := p.Heading()
 	where := checkTouchingDirection(dir)

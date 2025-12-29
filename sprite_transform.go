@@ -17,10 +17,10 @@
 package spx
 
 import (
-	"log"
 	"math"
 
 	"github.com/goplus/spbase/mathf"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 )
 
 // ======================== Transform Component ========================
@@ -97,7 +97,7 @@ func (p *SpriteImpl) goMoveForward(step float64) {
 
 func (p *SpriteImpl) Move__0(step float64) {
 	if debugInstr {
-		log.Println("Move", p.name, step)
+		spxlog.Debug("Move: sprite=%s, step=%v", p.name, step)
 	}
 	p.goMoveForward(step)
 }
@@ -146,7 +146,7 @@ func (p *SpriteImpl) doStepToPos(x, y, speed float64, animation SpriteAnimationN
 
 func (p *SpriteImpl) doStepTo(obj any, speed float64, animation SpriteAnimationName) {
 	if debugInstr {
-		log.Println("Goto", p.name, obj)
+		spxlog.Debug("Goto: sprite=%s, obj=%v", p.name, obj)
 	}
 	x, y := p.g.objectPos(obj)
 	p.doStepToPos(x, y, speed, animation)
@@ -209,7 +209,7 @@ func (p *SpriteImpl) StepTo__b(obj specialObj, speed float64, animation SpriteAn
 
 func (p *SpriteImpl) doGlideTo(obj any, secs float64) {
 	if debugInstr {
-		log.Println("Glide", obj, secs)
+		spxlog.Debug("Glide: obj=%v, secs=%v", obj, secs)
 	}
 	x, y := p.g.objectPos(obj)
 	p.doGlide(x, y, secs)
@@ -217,7 +217,7 @@ func (p *SpriteImpl) doGlideTo(obj any, secs float64) {
 
 func (p *SpriteImpl) doGlide(x, y float64, secs float64) {
 	if debugInstr {
-		log.Println("Glide", p.name, x, y, secs)
+		spxlog.Debug("Glide: sprite=%s, x=%v, y=%v, secs=%v", p.name, x, y, secs)
 	}
 	x0, y0 := p.getXY()
 	from := mathf.NewVec2(x0, y0)
@@ -291,7 +291,7 @@ func (p *SpriteImpl) ChangeYpos(dy float64) {
 
 func (p *SpriteImpl) SetRotationStyle(style RotationStyle) {
 	if debugInstr {
-		log.Println("SetRotationStyle", p.name, style)
+		spxlog.Debug("SetRotationStyle: sprite=%s, style=%v", p.name, style)
 	}
 	p.rotationStyle = style
 }
@@ -378,7 +378,7 @@ func (p *SpriteImpl) doTurn(val Direction, speed float64, animation SpriteAnimat
 	}
 	p.setDirection(delta, true)
 	if debugInstr {
-		log.Println("Turn", p.name, val)
+		spxlog.Debug("Turn: sprite=%s, val=%v", p.name, val)
 	}
 }
 
@@ -418,7 +418,7 @@ func (p *SpriteImpl) doTurnTo(obj any, speed float64, animation SpriteAnimationN
 		return
 	}
 	if p.setDirection(angle, false) && debugInstr {
-		log.Println("TurnTo", p.name, obj)
+		spxlog.Debug("TurnTo: sprite=%s, obj=%v", p.name, obj)
 	}
 }
 
@@ -454,7 +454,7 @@ func (p *SpriteImpl) Size() float64 {
 
 func (p *SpriteImpl) SetSize(size float64) {
 	if debugInstr {
-		log.Println("SetSize", p.name, size)
+		spxlog.Debug("SetSize: sprite=%s, size=%v", p.name, size)
 	}
 	p.scale = size
 	p.updateTransform()
@@ -464,7 +464,7 @@ func (p *SpriteImpl) SetSize(size float64) {
 
 func (p *SpriteImpl) ChangeSize(delta float64) {
 	if debugInstr {
-		log.Println("ChangeSize", p.name, delta)
+		spxlog.Debug("ChangeSize: sprite=%s, delta=%v", p.name, delta)
 	}
 	p.SetSize(p.scale + delta)
 }

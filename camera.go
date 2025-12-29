@@ -17,9 +17,8 @@
 package spx
 
 import (
-	"log"
-
 	"github.com/goplus/spbase/mathf"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 )
 
 type side int
@@ -140,23 +139,23 @@ func (c *cameraImpl) on(obj any) {
 	case SpriteName:
 		sp := c.g.findSprite(v)
 		if sp == nil {
-			log.Println("Camera.Follow: sprite not found -", v)
+			spxlog.Warn("Camera.Follow: sprite not found - %s", v)
 			return
 		}
 		obj = sp
 		if c.g.debug {
-			log.Println("Camera.Follow: sprite found -", sp.name)
+			spxlog.Debug("Camera.Follow: sprite found - %s", sp.name)
 		}
 	case *SpriteImpl:
 	case nil:
 	case Sprite:
 		obj = spriteOf(v)
 		if c.g.debug {
-			log.Println("Camera.Follow: obj -", obj.(*SpriteImpl).name)
+			spxlog.Debug("Camera.Follow: obj - %s", obj.(*SpriteImpl).name)
 		}
 	case specialObj:
 		if v != Mouse {
-			log.Println("Camera.Follow: not support -", v)
+			spxlog.Warn("Camera.Follow: not support - %v", v)
 			return
 		}
 	default:

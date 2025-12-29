@@ -18,9 +18,9 @@ package spx
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/goplus/spx/v2/internal/engine"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 	"github.com/goplus/spx/v2/internal/ui"
 )
 
@@ -34,7 +34,7 @@ func (p *Game) Ask(msg any) {
 		msgStr = fmt.Sprint(msg)
 	}
 	if msgStr == "" {
-		println("ask: msg should not be empty")
+		spxlog.Warn("ask: msg should not be empty")
 		return
 	}
 	p.ask(false, msgStr, func(answer string) {})
@@ -113,7 +113,7 @@ func (p *Game) ClearGraphicEffects() {
 
 func (p *Game) doBroadcast(msg string, data any, wait bool) {
 	if debugInstr {
-		log.Println("Broadcast", msg, wait)
+		spxlog.Debug("Broadcast: msg=%s, wait=%v", msg, wait)
 	}
 	p.sinkMgr.doWhenIReceive(msg, data, wait)
 }

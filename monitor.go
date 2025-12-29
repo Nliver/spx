@@ -18,7 +18,9 @@ package spx
 
 import (
 	"fmt"
-	"log"
+
+	spxlog "github.com/goplus/spx/v2/internal/log"
+
 	"reflect"
 	"strings"
 	"syscall"
@@ -135,7 +137,7 @@ func buildMonitorEval(g reflect.Value, t, val string) func() string {
 	case strings.HasPrefix(val, getVarPrefix):
 		name := val[len(getVarPrefix):]
 		if name == "" {
-			log.Println("Bind monitor error: name is empty")
+			spxlog.Debug("Bind monitor error: name is empty")
 			return nil
 		}
 		// check field
@@ -166,9 +168,9 @@ func buildMonitorEval(g reflect.Value, t, val string) func() string {
 				}
 			}
 		}
-		log.Println("Bind monitor error: cannot find property or method (getter):", name)
+		spxlog.Debug("Bind monitor error: cannot find property or method (getter): %s", name)
 	default:
-		log.Println("Bind monitor error: unknown command:", val)
+		spxlog.Debug("Bind monitor error: unknown command: %s", val)
 	}
 	return nil
 }

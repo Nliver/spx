@@ -34,6 +34,7 @@ import (
 	"github.com/goplus/spx/v2/internal/debug"
 	"github.com/goplus/spx/v2/internal/engine"
 	"github.com/goplus/spx/v2/internal/engine/platform"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 	"github.com/goplus/spx/v2/internal/timer"
 	"github.com/goplus/spx/v2/internal/ui"
 
@@ -333,7 +334,7 @@ func Sched() int {
 	} else {
 		if me := gco.Current(); me != nil {
 			if me.IsSchedTimeout(schedTimeoutMs) {
-				log.Println("For loop execution timed out. Please check if there is an infinite loop in the code.\n", debug.GetStackTrace())
+				spxlog.Warn("For loop execution timed out. Please check if there is an infinite loop in the code.\n%s", debug.GetStackTrace())
 				engine.WaitNextFrame()
 			}
 		}
@@ -458,8 +459,8 @@ func setupGameConfig(conf *Config, proj *projConfig) {
 // setupGameSystems initializes game subsystems
 func setupGameSystems(g *Game, proj *projConfig) {
 	if debugLoad {
-		log.Println("==> isCollisionByPixel", !proj.CollisionByShape && !proj.Physics)
-		log.Println("==> isAutoSetCollisionLayer", proj.AutoSetCollisionLayer == nil || *proj.AutoSetCollisionLayer)
+		spxlog.Debug("==> isCollisionByPixel: %v", !proj.CollisionByShape && !proj.Physics)
+		spxlog.Debug("==> isAutoSetCollisionLayer: %v", proj.AutoSetCollisionLayer == nil || *proj.AutoSetCollisionLayer)
 	}
 
 	g.isCollisionByPixel = !proj.CollisionByShape && !proj.Physics
@@ -487,7 +488,7 @@ func setupGameSystems(g *Game, proj *projConfig) {
 // loadGameSprites loads all sprites
 func loadGameSprites(g *Game, v reflect.Value, fs spxfs.Dir, proj *projConfig) {
 	if debugLoad {
-		log.Println("==> StartLoad")
+		spxlog.Debug("==> StartLoad")
 	}
 
 	g.startLoad(fs, &Config{Width: g.windowWidth_, Height: g.windowHeight_})
@@ -590,7 +591,7 @@ func (p *Game) canBindSprite(name string) bool {
 
 func (p *Game) loadSprite(sprite Sprite, name string, gamer reflect.Value) error {
 	if debugLoad {
-		log.Println("==> LoadSprite", name)
+		spxlog.Debug("==> LoadSprite: %s", name)
 	}
 	var baseDir = "sprites/" + name + "/"
 	var conf spriteConfig
@@ -665,14 +666,14 @@ func (p *Game) setupWorldAndWindow(proj *projConfig) {
 	}
 
 	if debugLoad {
-		log.Println("==> SetWorldSize", p.worldWidth_, p.worldHeight_)
+		spxlog.Debug("==> SetWorldSize: %d, %d", p.worldWidth_, p.worldHeight_)
 	}
 	p.mapMode = toMapMode(proj.Map.Mode)
 	p.doWindowSize()
 
 	engine.SetDebugMode(p.debug)
 	if debugLoad {
-		log.Println("==> SetWindowSize", p.windowWidth_, p.windowHeight_)
+		spxlog.Debug("==> SetWindowSize: %d, %d", p.windowWidth_, p.windowHeight_)
 	}
 	if p.windowWidth_ > p.worldWidth_ {
 		p.windowWidth_ = p.worldWidth_
@@ -777,7 +778,7 @@ func (p *Game) setupCollisionLayers(inits []Sprite) {
 		modIdx := int(math.Mod(float64(info.Id), maxCollisionLayerIdx))
 		info.Mask = maskMap[modIdx]
 		if debugLoad {
-			log.Println("init sprite collision info", spr.name, info.Layer, info.Mask)
+			spxlog.Debug("init sprite collision info: name=%s, layer=%d, mask=%d", spr.name, info.Layer, info.Mask)
 		}
 	}
 
@@ -801,7 +802,7 @@ func (p *Game) loadAudioAndTilemap(proj *projConfig) {
 
 func (p *Game) endLoad(g reflect.Value, proj *projConfig) (err error) {
 	if debugLoad {
-		log.Println("==> EndLoad")
+		spxlog.Debug("==> EndLoad")
 	}
 	return p.loadIndex(g, proj)
 }
@@ -906,7 +907,7 @@ var (
 
 func (p *Game) runLoop(cfg *Config) (err error) {
 	if debugLoad {
-		log.Println("==> RunLoop")
+		spxlog.Debug("==> RunLoop")
 	}
 	if !cfg.DontRunOnUnfocused {
 		platformMgr.SetRunnableOnUnfocused(true)

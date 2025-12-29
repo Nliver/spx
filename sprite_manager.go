@@ -17,7 +17,8 @@
 package spx
 
 import (
-	"log"
+	spxlog "github.com/goplus/spx/v2/internal/log"
+
 
 	"github.com/goplus/spx/v2/internal/engine"
 	gtime "github.com/goplus/spx/v2/internal/time"
@@ -81,7 +82,7 @@ func (sm *spriteManager) addShape(child Shape) {
 func (sm *spriteManager) addClonedShape(src, clone Shape) {
 	idx := sm.findShapeIndex(src)
 	if idx < 0 {
-		log.Println("addClonedShape: clone a deleted sprite")
+		spxlog.Debug("addClonedShape: clone a deleted sprite")
 		gco.Abort()
 		return
 	}
@@ -124,7 +125,7 @@ func (sm *spriteManager) activateShape(child Shape) {
 // Creates a new slice to maintain immutability for concurrent access safety.
 func (sm *spriteManager) goBackLayers(spr *SpriteImpl, n int) {
 	if engine.HasLayerSortMethod() {
-		log.Println("Cannot manually set sprite layer when a layer sort mode is active.")
+		spxlog.Debug("Cannot manually set sprite layer when a layer sort mode is active.")
 		return
 	}
 

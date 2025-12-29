@@ -25,6 +25,7 @@ import (
 	"github.com/goplus/spbase/mathf"
 	spxfs "github.com/goplus/spx/v2/fs"
 	"github.com/goplus/spx/v2/internal/engine"
+	"github.com/goplus/spx/v2/internal/log"
 )
 
 func resourceDir(resource any) (fs spxfs.Dir, err error) {
@@ -47,7 +48,7 @@ func loadJson(ret any, fs spxfs.Dir, file string) (err error) {
 
 	f, err := fs.Open(file)
 	if err != nil {
-		println("Error: failed to open file", file, err)
+		log.Error("failed to open file %s: %v", file, err)
 		return
 	}
 	defer f.Close()
