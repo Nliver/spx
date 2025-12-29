@@ -26,25 +26,25 @@ const invalidSoundId = 0
 
 type soundMgr struct {
 	g        *Game
-	audios   map[string]sound
+	sounds   map[string]sound
 	path2ids map[string][]int64
 }
 
 func (p *soundMgr) init(g *Game) {
-	p.audios = make(map[string]sound)
+	p.sounds = make(map[string]sound)
 	p.path2ids = make(map[string][]int64)
 	p.g = g
 }
 
-func (p *soundMgr) allocAudio() engine.Object {
+func (p *soundMgr) allocSound() engine.Object {
 	return audioMgr.CreateAudio()
 }
 
-func (p *soundMgr) releaseAudio(audioId engine.Object) {
-	if audioId == 0 {
+func (p *soundMgr) releaseSound(soundObj engine.Object) {
+	if soundObj == 0 {
 		return
 	}
-	audioMgr.DestroyAudio(audioId)
+	audioMgr.DestroyAudio(soundObj)
 }
 
 func (p *soundMgr) pause(media sound) {
@@ -66,17 +66,17 @@ func (p *soundMgr) stop(media sound) {
 	delete(p.path2ids, media.Path)
 }
 
-func (p *soundMgr) stopInstance(audioId soundId) {
-	audioMgr.Stop(audioId)
+func (p *soundMgr) stopInstance(soundId soundId) {
+	audioMgr.Stop(soundId)
 }
 
-func (p *soundMgr) play(audioId engine.Object, media sound, isLoop, isWait bool, owner engine.Object, attenuation, maxDistance float64) soundId {
+func (p *soundMgr) play(soundObj engine.Object, media sound, isLoop, isWait bool, owner engine.Object, attenuation, maxDistance float64) soundId {
 	var curId soundId = 0
-	// Avoid attaching the audio directly to the sprite if it is not using a sound attenuation mode
+	// Avoid attaching the sound directly to the sprite if it is not using a sound attenuation mode
 	if attenuation == 0 {
 		owner = 0
 	}
-	curId = audioMgr.PlayWithAttenuation(audioId, engine.ToAssetPath(media.Path), owner, attenuation, maxDistance)
+	curId = audioMgr.PlayWithAttenuation(soundObj, engine.ToAssetPath(media.Path), owner, attenuation, maxDistance)
 	p.path2ids[media.Path] = append(p.path2ids[media.Path], curId)
 	if isLoop {
 		for _, id := range p.path2ids[media.Path] {
@@ -100,49 +100,49 @@ func (p *soundMgr) stopAll() {
 	audioMgr.StopAll()
 }
 
-func (p *soundMgr) getEffect(audioId engine.Object, kind SoundEffectKind) float64 {
+func (p *soundMgr) getEffect(soundObj engine.Object, kind SoundEffectKind) float64 {
 	switch kind {
 	case SoundPanEffect:
-		return audioMgr.GetPan(audioId) * 100
+		return audioMgr.GetPan(soundObj) * 100
 	case SoundPitchEffect:
-		return audioMgr.GetPitch(audioId) * 100
+		return audioMgr.GetPitch(soundObj) * 100
 	default:
 		panic("GetSoundEffect: invalid kind")
 	}
 }
 
-func (p *soundMgr) setEffect(audioId engine.Object, kind SoundEffectKind, value float64) {
+func (p *soundMgr) setEffect(soundObj engine.Object, kind SoundEffectKind, value float64) {
 	val := value / 100
 	switch kind {
 	case SoundPanEffect:
-		audioMgr.SetPan(audioId, val)
+		audioMgr.SetPan(soundObj, val)
 	case SoundPitchEffect:
-		audioMgr.SetPitch(audioId, val)
+		audioMgr.SetPitch(soundObj, val)
 	default:
 		panic("SetSoundEffect: invalid kind")
 	}
 }
 
-func (p *soundMgr) changeEffect(audioId engine.Object, kind SoundEffectKind, delta float64) {
-	val := (p.getEffect(audioId, kind) + delta)
-	p.setEffect(audioId, kind, val)
+func (p *soundMgr) changeEffect(soundObj engine.Object, kind SoundEffectKind, delta float64) {
+	val := (p.getEffect(soundObj, kind) + delta)
+	p.setEffect(soundObj, kind, val)
 }
 
-func (p *soundMgr) getVolume(audioId engine.Object) float64 {
-	return audioMgr.GetVolume(audioId) * 100
+func (p *soundMgr) getVolume(soundObj engine.Object) float64 {
+	return audioMgr.GetVolume(soundObj) * 100
 }
 
-func (p *soundMgr) setVolume(audioId engine.Object, value float64) {
+func (p *soundMgr) setVolume(soundObj engine.Object, value float64) {
 	val := value / 100
 	if val <= 0 {
 		val = 0.01
 	}
-	audioMgr.SetVolume(audioId, val)
+	audioMgr.SetVolume(soundObj, val)
 }
 
-func (p *soundMgr) changeVolume(audioId engine.Object, delta float64) {
-	value := p.getVolume(audioId) + delta
-	p.setVolume(audioId, value)
+func (p *soundMgr) changeVolume(soundObj engine.Object, delta float64) {
+	value := p.getVolume(soundObj) + delta
+	p.setVolume(soundObj, value)
 }
 
 // -------------------------------------------------------------------------------------

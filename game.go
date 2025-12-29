@@ -141,7 +141,7 @@ type Game struct {
 
 	windowScale float64
 	stretchMode bool
-	audioId     engine.Object
+	soundObj    engine.Object
 
 	askPanel  *ui.UiAsk
 	answerVal string
@@ -794,7 +794,7 @@ func (p *Game) setupCollisionLayers(inits []Sprite) {
 // loadAudioAndTilemap loads tilemap and background music
 func (p *Game) loadAudioAndTilemap(proj *projConfig) {
 	p.tilemapMgr.parseTilemap()
-	p.audioId = p.sounds.allocAudio()
+	p.soundObj = p.sounds.allocSound()
 	if proj.Bgm != "" {
 		p.Play__0(proj.Bgm, true)
 	}

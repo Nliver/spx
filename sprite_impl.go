@@ -89,8 +89,8 @@ type SpriteImpl struct {
 	collisionInfo physicConfig
 
 	// Engine objects
-	penObj  *engine.Object
-	audioId engine.Object
+	penObj   *engine.Object
+	soundObj engine.Object
 
 	// Runtime data
 	collisionTargets map[string]bool
@@ -548,9 +548,9 @@ func (p *SpriteImpl) Destroy() { // destroy sprite, whether prototype or cloned
 	}
 	p.HasDestroyed = true
 
-	if p.audioId != 0 {
-		p.g.sounds.releaseAudio(p.audioId)
-		p.audioId = 0
+	if p.soundObj != 0 {
+		p.g.sounds.releaseSound(p.soundObj)
+		p.soundObj = 0
 	}
 }
 
