@@ -14,17 +14,17 @@ var (
 func updateTimers(delta float64) {
 	tempDelaySpriteCalls = tempDelaySpriteCalls[:0]
 	count := len(delaySpriteCalls)
-	for i := 0; i < count; i++ {
+	for i := range count {
 		tempDelaySpriteCalls = append(tempDelaySpriteCalls, delaySpriteCalls[i])
 	}
 	delaySpriteCalls = delaySpriteCalls[:0]
-	for i := 0; i < count; i++ {
+	for i := range count {
 		tempDelaySpriteCalls[i].timer -= delta
 		if tempDelaySpriteCalls[i].timer > 0 {
 			delaySpriteCalls = append(delaySpriteCalls, tempDelaySpriteCalls[i])
 		}
 	}
-	for i := 0; i < count; i++ {
+	for i := range count {
 		if tempDelaySpriteCalls[i].timer <= 0 {
 			id := tempDelaySpriteCalls[i].objectId
 			if id == 0 {

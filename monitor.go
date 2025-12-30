@@ -19,13 +19,12 @@ package spx
 import (
 	"fmt"
 
-	spxlog "github.com/goplus/spx/v2/internal/log"
-
 	"reflect"
 	"strings"
 	"syscall"
 
 	"github.com/goplus/spbase/mathf"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 	"github.com/goplus/spx/v2/internal/tools"
 	"github.com/goplus/spx/v2/internal/ui"
 )

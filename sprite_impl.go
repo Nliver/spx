@@ -23,6 +23,7 @@ import (
 	"maps"
 	"math"
 	"reflect"
+	"slices"
 
 	"github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/engine"
@@ -457,7 +458,7 @@ func (p *SpriteImpl) _onTouchStart(onTouchStart func(Sprite)) {
 
 func (p *SpriteImpl) onTouchStart__0(onTouchStart func(Sprite)) {
 	// collision with other sprites by default
-	for name, _ := range p.g.sprs {
+	for name := range p.g.sprs {
 		p.collisionTargets[name] = true
 	}
 	p._onTouchStart(onTouchStart)
@@ -465,7 +466,7 @@ func (p *SpriteImpl) onTouchStart__0(onTouchStart func(Sprite)) {
 
 func (p *SpriteImpl) onTouchStart__1(onTouchStart func()) {
 	// collision with all other sprites by default
-	for name, _ := range p.g.sprs {
+	for name := range p.g.sprs {
 		p.collisionTargets[name] = true
 	}
 	p._onTouchStart(func(Sprite) {
@@ -496,13 +497,8 @@ func (p *SpriteImpl) OnTouchStart__2(sprites []SpriteName, onTouchStart func(Spr
 	}
 	p._onTouchStart(func(s Sprite) {
 		impl := spriteOf(s)
-		if impl != nil {
-			for _, sprite := range sprites {
-				if impl.name == sprite {
-					onTouchStart(s)
-					return
-				}
-			}
+		if impl != nil && slices.Contains(sprites, impl.name) {
+			onTouchStart(s)
 		}
 	})
 }

@@ -51,6 +51,7 @@ func init() {
 			"path":          "path",
 			"path/filepath": "filepath",
 			"reflect":       "reflect",
+			"slices":        "slices",
 			"sort":          "sort",
 			"strconv":       "strconv",
 			"strings":       "strings",

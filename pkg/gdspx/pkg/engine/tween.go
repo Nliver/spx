@@ -63,11 +63,11 @@ var (
 func updateTweens(delta float64) {
 	tempTweenInfos = tempTweenInfos[:0]
 	count := len(tweenInfos)
-	for i := 0; i < count; i++ {
+	for i := range count {
 		tempTweenInfos = append(tempTweenInfos, tweenInfos[i])
 	}
 	tweenInfos = tweenInfos[:0]
-	for i := 0; i < count; i++ {
+	for i := range count {
 		curTween := tempTweenInfos[i]
 		curTween.timer += delta
 		for curTween.timer >= curTween.infos[curTween.curIndex].getEndTime() {
@@ -82,7 +82,7 @@ func updateTweens(delta float64) {
 			tweenInfos = append(tweenInfos, curTween)
 		}
 	}
-	for i := 0; i < count; i++ {
+	for i := range count {
 		if tempTweenInfos[i].isDone() {
 			id := tempTweenInfos[i].id
 			if isNodeExist(id) {
