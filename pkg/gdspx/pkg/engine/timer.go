@@ -14,9 +14,7 @@ var (
 func updateTimers(delta float64) {
 	tempDelaySpriteCalls = tempDelaySpriteCalls[:0]
 	count := len(delaySpriteCalls)
-	for i := range count {
-		tempDelaySpriteCalls = append(tempDelaySpriteCalls, delaySpriteCalls[i])
-	}
+	tempDelaySpriteCalls = append(tempDelaySpriteCalls, delaySpriteCalls...)
 	delaySpriteCalls = delaySpriteCalls[:0]
 	for i := range count {
 		tempDelaySpriteCalls[i].timer -= delta

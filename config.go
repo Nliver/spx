@@ -115,18 +115,12 @@ func toMapMode(mode string) int {
 type projConfig struct {
 	Zorder        []any             `json:"zorder"`
 	Backdrops     []*backdropConfig `json:"backdrops"`
-	BackdropIndex *int              `json:"backdropIndex"`
+	BackdropIndex int               `json:"backdropIndex"`
 	Map           mapConfig         `json:"map"`
 	Camera        *cameraConfig     `json:"camera"`
 	Run           *Config           `json:"run"`
 	Debug         bool              `json:"debug"`
 	Bgm           string            `json:"bgm"`
-
-	// deprecated properties
-	Scenes              []*backdropConfig `json:"scenes"`              //this property is deprecated, use Backdrops instead
-	Costumes            []*backdropConfig `json:"costumes"`            //this property is deprecated, use Backdrops instead
-	CurrentCostumeIndex *int              `json:"currentCostumeIndex"` //this property is deprecated, use BackdropIndex instead
-	SceneIndex          int               `json:"sceneIndex"`          //this property is deprecated, use BackdropIndex instead
 
 	StretchMode *bool   `json:"stretchMode"` // whether to use stretch mode, default true
 	WindowScale float64 `json:"windowScale"`
@@ -142,6 +136,7 @@ type projConfig struct {
 
 	PathCellSizeX *int `json:"pathCellSizeX"` // Path finding cell width, default 16
 	PathCellSizeY *int `json:"pathCellSizeY"` // Path finding cell height, default 16
+
 	// audio volume scale = Math::pow(1.0f - dist / audioMaxDistance, audioAttenuation);
 	AudioMaxDistance *float64 `json:"audioMaxDistance"` // default 2000
 	AudioAttenuation *float64 `json:"audioAttenuation"` // default 0 indicates no attenuation will occur
@@ -151,23 +146,11 @@ type projConfig struct {
 }
 
 func (p *projConfig) getBackdrops() []*backdropConfig {
-	if p.Backdrops != nil {
-		return p.Backdrops
-	}
-	if p.Scenes != nil {
-		return p.Scenes
-	}
-	return p.Costumes
+	return p.Backdrops
 }
 
 func (p *projConfig) getBackdropIndex() int {
-	if p.BackdropIndex != nil {
-		return *p.BackdropIndex
-	}
-	if p.CurrentCostumeIndex != nil {
-		return *p.CurrentCostumeIndex
-	}
-	return p.SceneIndex
+	return p.BackdropIndex
 }
 
 // -------------------------------------------------------------------------------------
@@ -293,24 +276,23 @@ type animPayload struct {
 // -------------------------------------------------------------------------------------
 
 type spriteConfig struct {
-	Heading             float64               `json:"heading"`
-	X                   float64               `json:"x"`
-	Y                   float64               `json:"y"`
-	Size                float64               `json:"size"`
-	RotationStyle       string                `json:"rotationStyle"`
-	Costumes            []*costumeConfig      `json:"costumes"`
-	CostumeSet          *costumeSet           `json:"costumeSet"`
-	CostumeMPSet        *costumeMPSet         `json:"costumeMPSet"`
-	CurrentCostumeIndex *int                  `json:"currentCostumeIndex"`
-	CostumeIndex        int                   `json:"costumeIndex"`
-	FAnimations         map[string]*aniConfig `json:"fAnimations"`
-	MAnimations         map[string]*aniConfig `json:"mAnimations"`
-	TAnimations         map[string]*aniConfig `json:"tAnimations"`
-	Visible             bool                  `json:"visible"`
-	IsDraggable         bool                  `json:"isDraggable"`
-	Pivot               mathf.Vec2            `json:"pivot"`
-	DefaultAnimation    string                `json:"defaultAnimation"`
-	AnimBindings        map[string]string     `json:"animBindings"`
+	Heading          float64               `json:"heading"`
+	X                float64               `json:"x"`
+	Y                float64               `json:"y"`
+	Size             float64               `json:"size"`
+	RotationStyle    string                `json:"rotationStyle"`
+	Costumes         []*costumeConfig      `json:"costumes"`
+	CostumeSet       *costumeSet           `json:"costumeSet"`
+	CostumeMPSet     *costumeMPSet         `json:"costumeMPSet"`
+	CostumeIndex     int                   `json:"costumeIndex"`
+	FAnimations      map[string]*aniConfig `json:"fAnimations"`
+	MAnimations      map[string]*aniConfig `json:"mAnimations"`
+	TAnimations      map[string]*aniConfig `json:"tAnimations"`
+	Visible          bool                  `json:"visible"`
+	IsDraggable      bool                  `json:"isDraggable"`
+	Pivot            mathf.Vec2            `json:"pivot"`
+	DefaultAnimation string                `json:"defaultAnimation"`
+	AnimBindings     map[string]string     `json:"animBindings"`
 	// ColliderShapeParams defines the shape parameters based on ColliderShapeType:
 	// - "Rect": [width, height] - Rectangle with specified width and height
 	// - "Circle": [radius] - Circle with specified radius
@@ -342,9 +324,6 @@ type spriteConfig struct {
 }
 
 func (p *spriteConfig) getCostumeIndex() int {
-	if p.CurrentCostumeIndex != nil { // for backward compatibility
-		return *p.CurrentCostumeIndex
-	}
 	return p.CostumeIndex
 }
 

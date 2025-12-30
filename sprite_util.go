@@ -283,8 +283,8 @@ func parseLayerMaskValue(pval *int64) int64 {
 	return parseDefaultValue(pval, 1)
 }
 
-// paserColliderShapeType parses collider shape type from string
-func paserColliderShapeType(typeName string, defaultValue int64) int64 {
+// parseColliderShapeType parses collider shape type from string
+func parseColliderShapeType(typeName string, defaultValue int64) int64 {
 	switch typeName {
 	case "none":
 		return physicsColliderNone

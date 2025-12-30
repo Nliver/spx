@@ -63,9 +63,7 @@ var (
 func updateTweens(delta float64) {
 	tempTweenInfos = tempTweenInfos[:0]
 	count := len(tweenInfos)
-	for i := range count {
-		tempTweenInfos = append(tempTweenInfos, tweenInfos[i])
-	}
+	tempTweenInfos = append(tempTweenInfos, tweenInfos...)
 	tweenInfos = tweenInfos[:0]
 	for i := range count {
 		curTween := tempTweenInfos[i]
