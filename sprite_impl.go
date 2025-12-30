@@ -183,7 +183,7 @@ func (p *SpriteImpl) initCollisionConfig(spriteCfg *spriteConfig) {
 		defaultCollisionType = physicsColliderAuto
 	}
 
-	p.collisionInfo.Type = paserColliderShapeType(spriteCfg.CollisionShapeType, defaultCollisionType)
+	p.collisionInfo.Type = parseColliderShapeType(spriteCfg.CollisionShapeType, defaultCollisionType)
 	p.collisionInfo.Pivot = spriteCfg.CollisionPivot
 	p.collisionInfo.Params = spriteCfg.CollisionShapeParams
 
@@ -199,7 +199,7 @@ func (p *SpriteImpl) initCollisionConfig(spriteCfg *spriteConfig) {
 func (p *SpriteImpl) initTriggerConfig(spriteCfg *spriteConfig) {
 	p.triggerInfo.Mask = parseLayerMaskValue(spriteCfg.TriggerMask)
 	p.triggerInfo.Layer = parseLayerMaskValue(spriteCfg.TriggerLayer)
-	p.triggerInfo.Type = paserColliderShapeType(spriteCfg.TriggerShapeType, physicsColliderAuto)
+	p.triggerInfo.Type = parseColliderShapeType(spriteCfg.TriggerShapeType, physicsColliderAuto)
 	p.triggerInfo.Pivot = spriteCfg.TriggerPivot
 	p.triggerInfo.Params = spriteCfg.TriggerShapeParams
 
@@ -428,10 +428,6 @@ func applySpriteProps(dest *SpriteImpl, v specsp) {
 	}
 	if style, ok := v["rotationStyle"]; ok {
 		dest.rotationStyle = toRotationStyle(style.(string))
-	}
-	if _, ok := v["currentCostumeIndex"]; ok {
-		// TODO(xsw): to be removed
-		panic("please change `currentCostumeIndex` => `costumeIndex` in index.json")
 	}
 	if idx, ok := v["costumeIndex"]; ok {
 		dest.setCustumeIndex(int(idx.(float64)))
