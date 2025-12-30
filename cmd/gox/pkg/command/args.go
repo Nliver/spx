@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 )
 
@@ -28,6 +29,7 @@ type ExtraArgs struct {
 	Movie           *bool
 	GoEnv           *string // Portable Go environment directory
 	IxgoGen         *bool   // Use xgobuild library for code generation (new method)
+	Verbose         *bool   // Verbose mode - print verbose information
 }
 
 func (e *ExtraArgs) String() []string {
@@ -56,6 +58,9 @@ func (e *ExtraArgs) String() []string {
 	if *e.FullScreen {
 		args = append(args, "--fullscreen")
 	}
+	if *e.Verbose {
+		args = append(args, "-v")
+	}
 	return args
 }
 
@@ -72,12 +77,7 @@ func (pself *CmdTool) CheckCmd(ext ...string) bool {
 	cmds = append(cmds, ext...)
 
 	cmdName := pself.Args.CmdName
-	for _, b := range cmds {
-		if b == cmdName {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(cmds, cmdName)
 }
 func (pself *CmdTool) CheckCmdWithError(ext ...string) (err error) {
 	if len(os.Args) <= 1 {
@@ -124,6 +124,7 @@ func (cmd *CmdTool) initializeFlags() *bool {
 	cmd.Args.Movie = f.Bool("movie", false, "record movie mode")
 	cmd.Args.GoEnv = f.String("goenv", "", "portable Go environment directory (e.g., ./cmd/portable-go)")
 	cmd.Args.IxgoGen = f.Bool("ixgogen", false, "use xgobuild library for code generation (default: use xgo CLI)")
+	cmd.Args.Verbose = f.Bool("v", false, "print verbose information")
 	return help
 }
 
