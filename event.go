@@ -17,13 +17,12 @@
 package spx
 
 import (
-	spxlog "github.com/goplus/spx/v2/internal/log"
-
 	"sync"
 
 	"github.com/goplus/spbase/mathf"
 	"github.com/goplus/spx/v2/internal/coroutine"
 	"github.com/goplus/spx/v2/internal/engine"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 	"github.com/goplus/spx/v2/internal/timer"
 )
 

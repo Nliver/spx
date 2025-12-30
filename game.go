@@ -34,13 +34,13 @@ import (
 	"github.com/goplus/spx/v2/internal/debug"
 	"github.com/goplus/spx/v2/internal/engine"
 	"github.com/goplus/spx/v2/internal/engine/platform"
-	spxlog "github.com/goplus/spx/v2/internal/log"
 	"github.com/goplus/spx/v2/internal/timer"
 	"github.com/goplus/spx/v2/internal/ui"
 
 	spxfs "github.com/goplus/spx/v2/fs"
 	_ "github.com/goplus/spx/v2/fs/asset"
 	_ "github.com/goplus/spx/v2/fs/zip"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 )
 
 const (

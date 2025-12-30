@@ -147,7 +147,7 @@ func convertJSFilesToMap(input js.Value) (map[string][]byte, error) {
 	filesMap := make(map[string][]byte, n)
 	uint8ArrayType := js.Global().Get("Uint8Array")
 	arrayBufferType := js.Global().Get("ArrayBuffer")
-	for i := 0; i < n; i++ {
+	for i := range n {
 		name := keys.Index(i).String()
 		val := input.Get(name)
 		var u8 js.Value

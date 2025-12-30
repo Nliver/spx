@@ -17,10 +17,8 @@
 package spx
 
 import (
-	spxlog "github.com/goplus/spx/v2/internal/log"
-
-
 	"github.com/goplus/spx/v2/internal/engine"
+	spxlog "github.com/goplus/spx/v2/internal/log"
 	gtime "github.com/goplus/spx/v2/internal/time"
 )
 

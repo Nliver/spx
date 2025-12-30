@@ -64,7 +64,7 @@ func (e *Event0) Trigger() {
 		e.tempActions[i] = e.actions[id]
 	}
 	e.mutex.Unlock()
-	for i := 0; i < count; i++ {
+	for i := range count {
 		e.tempActions[i]()
 	}
 	e.tempIds = e.tempIds[:0]
@@ -130,7 +130,7 @@ func (e *Event1[T]) Trigger(data T) {
 		e.tempActions[i] = e.actions[id]
 	}
 	e.mutex.Unlock()
-	for i := 0; i < count; i++ {
+	for i := range count {
 		e.tempActions[i](data)
 	}
 	e.tempIds = e.tempIds[:0]
@@ -195,7 +195,7 @@ func (e *Event2[T1, T2]) Trigger(data1 T1, data2 T2) {
 		e.tempActions[i] = e.actions[id]
 	}
 	e.mutex.Unlock()
-	for i := 0; i < count; i++ {
+	for i := range count {
 		e.tempActions[i](data1, data2)
 	}
 	e.tempIds = e.tempIds[:0]

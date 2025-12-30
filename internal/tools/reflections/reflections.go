@@ -145,7 +145,7 @@ func fields(obj any, deep bool) ([]string, error) {
 	fieldsCount := objType.NumField()
 
 	var allFields []string
-	for i := 0; i < fieldsCount; i++ {
+	for i := range fieldsCount {
 		field := objType.Field(i)
 		if isExportableField(field) {
 			if deep && field.Anonymous {
@@ -187,7 +187,7 @@ func items(obj any, deep bool) (map[string]any, error) {
 
 	allItems := make(map[string]any)
 
-	for i := 0; i < fieldsCount; i++ {
+	for i := range fieldsCount {
 		field := objType.Field(i)
 		fieldValue := objValue.Field(i)
 		if isExportableField(field) {
@@ -231,7 +231,7 @@ func tags(obj any, key string, deep bool) (map[string]string, error) {
 
 	allTags := make(map[string]string)
 
-	for i := 0; i < fieldsCount; i++ {
+	for i := range fieldsCount {
 		structField := objType.Field(i)
 		if isExportableField(structField) {
 			if deep && structField.Anonymous {
