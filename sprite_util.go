@@ -35,7 +35,7 @@ import (
 // spriteOf extracts the SpriteImpl from a Sprite interface
 func spriteOf(sprite Sprite) *SpriteImpl {
 	vSpr := reflect.ValueOf(sprite)
-	if vSpr.Kind() == reflect.Ptr {
+	if vSpr.Kind() == reflect.Pointer {
 		vSpr = vSpr.Elem()
 	}
 	if vSpr.Kind() != reflect.Struct {
