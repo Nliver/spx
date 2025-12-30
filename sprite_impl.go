@@ -132,6 +132,16 @@ func (p *SpriteImpl) getAllShapes() []Shape {
 
 func (p *SpriteImpl) init(
 	base string, g *Game, name string, spriteCfg *spriteConfig, gamer reflect.Value, sprite Sprite) {
+	p.initBaseObjects(base, spriteCfg, g)
+	p.initBasicProperties(g, name, sprite, gamer, spriteCfg)
+	p.initPhysicsConfig(spriteCfg)
+	p.initPhysicsProperties(spriteCfg)
+	p.initAnimations(spriteCfg)
+	p.initEngineObjects()
+}
+
+// initBaseObjects initializes the base object and event sinks
+func (p *SpriteImpl) initBaseObjects(base string, spriteCfg *spriteConfig, g *Game) {
 	if spriteCfg.Costumes != nil {
 		p.baseObj.init(base, spriteCfg.Costumes, spriteCfg.getCostumeIndex())
 	} else {
@@ -139,7 +149,10 @@ func (p *SpriteImpl) init(
 	}
 	p.defaultCostumeIndex = p.baseObj.costumeIndex_
 	p.eventSinks.init(&g.sinkMgr, p)
+}
 
+// initBasicProperties initializes basic sprite properties like position, direction, visibility
+func (p *SpriteImpl) initBasicProperties(g *Game, name string, sprite Sprite, gamer reflect.Value, spriteCfg *spriteConfig) {
 	p.gamer = gamer
 	p.g, p.name, p.sprite = g, name, sprite
 	p.x, p.y = spriteCfg.X, spriteCfg.Y
@@ -150,55 +163,77 @@ func (p *SpriteImpl) init(
 	p.pivot = spriteCfg.Pivot
 	p.animBindings = make(map[string]string)
 	maps.Copy(p.animBindings, spriteCfg.AnimBindings)
-
 	p.collisionTargets = make(map[string]bool)
+}
 
-	// bind physic config
+// initPhysicsConfig initializes collision and trigger configurations
+func (p *SpriteImpl) initPhysicsConfig(spriteCfg *spriteConfig) {
+	p.initCollisionConfig(spriteCfg)
+	p.initTriggerConfig(spriteCfg)
+}
+
+// initCollisionConfig initializes collision configuration
+func (p *SpriteImpl) initCollisionConfig(spriteCfg *spriteConfig) {
 	p.collisionInfo.Mask = parseLayerMaskValue(spriteCfg.CollisionMask)
 	p.collisionInfo.Layer = parseLayerMaskValue(spriteCfg.CollisionLayer)
+
 	// collider is disable by default
 	var defaultCollisionType int64 = physicsColliderNone
 	if enabledPhysics {
 		defaultCollisionType = physicsColliderAuto
 	}
+
 	p.collisionInfo.Type = paserColliderShapeType(spriteCfg.CollisionShapeType, defaultCollisionType)
 	p.collisionInfo.Pivot = spriteCfg.CollisionPivot
 	p.collisionInfo.Params = spriteCfg.CollisionShapeParams
+
 	// Validate colliderShapeType and colliderShape length matching
 	if !p.collisionInfo.validateShape() {
 		spxlog.Warn("Invalid collider configuration for sprite %s, using default values", p.name)
 		p.collisionInfo.Type = physicsColliderNone
 		p.collisionInfo.Params = nil
 	}
+}
 
+// initTriggerConfig initializes trigger configuration
+func (p *SpriteImpl) initTriggerConfig(spriteCfg *spriteConfig) {
 	p.triggerInfo.Mask = parseLayerMaskValue(spriteCfg.TriggerMask)
 	p.triggerInfo.Layer = parseLayerMaskValue(spriteCfg.TriggerLayer)
 	p.triggerInfo.Type = paserColliderShapeType(spriteCfg.TriggerShapeType, physicsColliderAuto)
 	p.triggerInfo.Pivot = spriteCfg.TriggerPivot
 	p.triggerInfo.Params = spriteCfg.TriggerShapeParams
+
 	// Validate triggerType and triggerShape length matching
 	if !p.triggerInfo.validateShape() {
 		spxlog.Warn("Invalid trigger configuration for sprite %s, using default values", p.name)
 		p.triggerInfo.Type = physicsColliderAuto
 		p.triggerInfo.Params = nil
 	}
+}
 
+// initPhysicsProperties initializes physics properties like mass, friction, gravity
+func (p *SpriteImpl) initPhysicsProperties(spriteCfg *spriteConfig) {
 	p.physicsMode = toPhysicsMode(spriteCfg.PhysicsMode)
 	p.airDrag = parseDefaultFloatValue(spriteCfg.AirDrag, 1)
 	p.gravity = parseDefaultFloatValue(spriteCfg.Gravity, 1)
 	p.friction = parseDefaultFloatValue(spriteCfg.Friction, 1)
 	p.mass = parseDefaultFloatValue(spriteCfg.Mass, 1)
+}
 
-	// setup animations
+// initAnimations initializes sprite animations and animation wrappers
+func (p *SpriteImpl) initAnimations(spriteCfg *spriteConfig) {
 	p.defaultAnimation = spriteCfg.DefaultAnimation
 	p.animations = make(map[string]*aniConfig)
 	anims := spriteCfg.FAnimations
+
 	for key, val := range anims {
 		var ani = val
 		_, ok := p.animations[key]
 		if ok {
 			log.Panicf("animation key [%s] is exist", key)
 		}
+
+		// Set default values
 		if ani.FrameFps == 0 {
 			ani.FrameFps = 25
 		}
@@ -208,6 +243,8 @@ func (p *SpriteImpl) init(
 		if ani.StepDuration == 0 {
 			ani.StepDuration = 0.01
 		}
+
+		// Calculate frame ranges and duration
 		from, to := p.getFromAnToForAniFrames(ani.FrameFrom, ani.FrameTo)
 		ani.IFrameFrom, ani.IFrameTo = int(from), int(to)
 		ani.Speed = 1
@@ -215,14 +252,16 @@ func (p *SpriteImpl) init(
 		p.animations[key] = ani
 	}
 
-	// lazy register animations to engine
+	// Lazy register animations to engine
 	p.animationWrappers = make(map[SpriteAnimationName]*animationWrapper)
 	for animName, ani := range p.animations {
 		p.animationWrappers[animName] = &animationWrapper{spr: p, ani: ani}
 	}
+}
 
+// initEngineObjects initializes engine-related objects
+func (p *SpriteImpl) initEngineObjects() {
 	p.pendingAudios = make([]string, 0)
-	// create engine object
 	p.syncSprite = nil
 	engine.WaitMainThread(func() {
 		p.syncCheckInitProxy()
