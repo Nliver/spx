@@ -9,7 +9,7 @@ import (
 // GetField returns the value of the provided obj field. obj can whether
 // be a structure or pointer to structure.
 func GetField(obj any, name string) (any, error) {
-	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Ptr}) {
+	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Pointer}) {
 		return nil, errors.New("Cannot use GetField on a non-struct interface")
 	}
 
@@ -25,7 +25,7 @@ func GetField(obj any, name string) (any, error) {
 // GetFieldKind returns the kind of the provided obj field. obj can whether
 // be a structure or pointer to structure.
 func GetFieldKind(obj any, name string) (reflect.Kind, error) {
-	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Ptr}) {
+	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Pointer}) {
 		return reflect.Invalid, errors.New("Cannot use GetField on a non-struct interface")
 	}
 
@@ -42,7 +42,7 @@ func GetFieldKind(obj any, name string) (reflect.Kind, error) {
 // GetFieldType returns the kind of the provided obj field. obj can whether
 // be a structure or pointer to structure.
 func GetFieldType(obj any, name string) (string, error) {
-	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Ptr}) {
+	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Pointer}) {
 		return "", errors.New("Cannot use GetField on a non-struct interface")
 	}
 
@@ -59,7 +59,7 @@ func GetFieldType(obj any, name string) (string, error) {
 // GetFieldTag returns the provided obj field tag value. obj can whether
 // be a structure or pointer to structure.
 func GetFieldTag(obj any, fieldName, tagKey string) (string, error) {
-	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Ptr}) {
+	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Pointer}) {
 		return "", errors.New("Cannot use GetField on a non-struct interface")
 	}
 
@@ -109,7 +109,7 @@ func SetField(obj any, name string, value any) error {
 // HasField checks if the provided field name is part of a struct. obj can whether
 // be a structure or pointer to structure.
 func HasField(obj any, name string) (bool, error) {
-	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Ptr}) {
+	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Pointer}) {
 		return false, errors.New("Cannot use GetField on a non-struct interface")
 	}
 
@@ -136,7 +136,7 @@ func FieldsDeep(obj any) ([]string, error) {
 }
 
 func fields(obj any, deep bool) ([]string, error) {
-	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Ptr}) {
+	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Pointer}) {
 		return nil, errors.New("Cannot use GetField on a non-struct interface")
 	}
 
@@ -177,7 +177,7 @@ func ItemsDeep(obj any) (map[string]any, error) {
 }
 
 func items(obj any, deep bool) (map[string]any, error) {
-	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Ptr}) {
+	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Pointer}) {
 		return nil, errors.New("Cannot use GetField on a non-struct interface")
 	}
 
@@ -221,7 +221,7 @@ func TagsDeep(obj any, key string) (map[string]string, error) {
 }
 
 func tags(obj any, key string, deep bool) (map[string]string, error) {
-	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Ptr}) {
+	if !hasValidType(obj, []reflect.Kind{reflect.Struct, reflect.Pointer}) {
 		return nil, errors.New("Cannot use GetField on a non-struct interface")
 	}
 
@@ -255,7 +255,7 @@ func tags(obj any, key string, deep bool) (map[string]string, error) {
 func reflectValue(obj any) reflect.Value {
 	var val reflect.Value
 
-	if reflect.TypeOf(obj).Kind() == reflect.Ptr {
+	if reflect.TypeOf(obj).Kind() == reflect.Pointer {
 		val = reflect.ValueOf(obj).Elem()
 	} else {
 		val = reflect.ValueOf(obj)
@@ -284,5 +284,5 @@ func isStruct(obj any) bool {
 }
 
 func isPointer(obj any) bool {
-	return reflect.TypeOf(obj).Kind() == reflect.Ptr
+	return reflect.TypeOf(obj).Kind() == reflect.Pointer
 }

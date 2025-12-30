@@ -226,7 +226,7 @@ func (p *Coroutines) CreateAndStart(start bool, tobj ThreadObj, fn func(me Threa
 
 	if tobj != nil {
 		t := reflect.TypeOf(tobj)
-		if t.Kind() == reflect.Ptr && t.Elem().Name() != "" {
+		if t.Kind() == reflect.Pointer && t.Elem().Name() != "" {
 			name = "*" + t.Elem().Name()
 			v := reflect.ValueOf(tobj)
 			nameMethod := v.MethodByName("Name")
