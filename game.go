@@ -425,7 +425,9 @@ func parseCommandLineFlags(conf *Config) {
 		flag.PrintDefaults()
 		os.Exit(0)
 	}
+
 	if *verbose {
+		spxlog.SetLevel(spxlog.LevelDebug)
 		SetDebug(DbgFlagAll)
 	}
 	conf.FullScreen = conf.FullScreen || *fullscreen2 || *fullscreen
