@@ -64,6 +64,18 @@ linux.release.x86_64 = "gdspx-linux-amd64.so"
 `
 )
 
+// RuntimeOptions holds runtime configuration options
+type RuntimeOptions struct {
+	Fullscreen  bool   // Run in fullscreen mode
+	Windowed    bool   // Run in windowed mode (opposite of fullscreen)
+	Width       int    // Window width
+	Height      int    // Window height
+	Position    string // Window position (e.g., "100,100")
+	Maximized   bool   // Start maximized
+	AlwaysOnTop bool   // Keep window always on top
+	Debug       bool   // Enable debug mode
+}
+
 // Runner handles the SPX project running process
 type Runner struct {
 	// Project paths
@@ -145,6 +157,11 @@ func New(projectPath string, version ...string) (*Runner, error) {
 
 // Run executes the complete SPX project running process
 func (r *Runner) Run() error {
+	return r.RunWithOptions(nil)
+}
+
+// RunWithOptions executes the SPX project running process with custom runtime options
+func (r *Runner) RunWithOptions(opts *RuntimeOptions) error {
 	fmt.Println("=== SPX Runner ===")
 	fmt.Printf("Project: %s\n", r.ProjectDir)
 
@@ -159,7 +176,7 @@ func (r *Runner) Run() error {
 	}
 
 	// Step 3: Run with Godot runtime
-	if err := r.runWithRuntime(); err != nil {
+	if err := r.runWithRuntimeOptions(opts); err != nil {
 		return fmt.Errorf("failed to run: %w", err)
 	}
 
@@ -383,8 +400,8 @@ func (r *Runner) buildLibrary() error {
 	return nil
 }
 
-// runWithRuntime runs the project using Godot runtime
-func (r *Runner) runWithRuntime() error {
+// runWithRuntimeOptions runs the project using Godot runtime with custom options
+func (r *Runner) runWithRuntimeOptions(opts *RuntimeOptions) error {
 	fmt.Println("Running project...")
 
 	// Ensure temp directory exists
@@ -416,10 +433,44 @@ func (r *Runner) runWithRuntime() error {
 		}
 	}
 
-	// Run Godot runtime
+	// Build Godot runtime arguments
 	args := []string{
 		"--path", r.TempDir,
 		"--gdextpath", extensionDst,
+	}
+
+	// Apply runtime options if provided
+	if opts != nil {
+		// Window mode options
+		if opts.Fullscreen {
+			args = append(args, "--fullscreen")
+		} else if opts.Windowed {
+			args = append(args, "--windowed")
+		}
+
+		// Window size
+		if opts.Width > 0 && opts.Height > 0 {
+			args = append(args, fmt.Sprintf("--resolution=%dx%d", opts.Width, opts.Height))
+		}
+
+		// Window position
+		if opts.Position != "" {
+			args = append(args, fmt.Sprintf("--position=%s", opts.Position))
+		}
+
+		// Window state
+		if opts.Maximized {
+			args = append(args, "--maximized")
+		}
+
+		if opts.AlwaysOnTop {
+			args = append(args, "--always-on-top")
+		}
+
+		// Debug options
+		if opts.Debug {
+			args = append(args, "--debug")
+		}
 	}
 
 	fmt.Printf("Running: %s %s\n", r.RuntimeCmdPath, strings.Join(args, " "))
