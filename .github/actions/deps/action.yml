@@ -18,8 +18,34 @@ runs:
         go-version: ${{ inputs.go-version }}
         xgo-version: ${{ inputs.xgo-version }}
 
-    - name: Prepare engine
+    - name: Get GOPATH
+      id: gopath
+      run: echo "GOPATH=$(go env GOPATH)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache Godot engine files
+      id: cache-godot
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ steps.gopath.outputs.GOPATH }}/bin/gdspx*
+          ${{ steps.gopath.outputs.GOPATH }}/bin/gdspxrt*
+          ${{ steps.gopath.outputs.GOPATH }}/bin/runtime.gdextension
+          ~/.local/share/godot/export_templates
+          ~/Library/Application Support/Godot/export_templates
+          ~/AppData/Roaming/Godot/export_templates
+        key: spx-godot-${{ runner.os }}-${{ hashFiles('cmd/gox/template/version', 'cmd/gox/**/*.go', 'cmd/gox/go.mod', 'cmd/gox/go.sum') }}
+        restore-keys: |
+          spx-godot-${{ runner.os }}-
+
+    - name: Setup engine (cache miss)
+      if: steps.cache-godot.outputs.cache-hit != 'true'
       run: |
         make setup-web-full
       shell: bash
-
+      
+    - name: Setup web engine (cache hit)
+      if: steps.cache-godot.outputs.cache-hit == 'true'
+      run: |
+        make setup-web MODE=normal
+      shell: bash
