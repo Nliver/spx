@@ -55,7 +55,7 @@ func main() {
 
 	// Check if the first argument exists and is not a flag (doesn't start with '-').
 	// If so, treat it as the project path and remove it from os.Args before flag.Parse().
-if len(os.Args) > 1 && (len(os.Args[1]) == 0 || os.Args[1][0] != '-') {
+	if len(os.Args) > 1 && (len(os.Args[1]) == 0 || os.Args[1][0] != '-') {
 		projectPath = os.Args[1]
 		// Reconstruct os.Args without the project path so flag.Parse() only sees flags.
 		// We must preserve os.Args[0] (the program name) as flag.Parse() expects it.
