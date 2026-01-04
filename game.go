@@ -754,42 +754,63 @@ func (p *Game) runSpriteCallbacks(inits []Sprite, proj *projConfig, g reflect.Va
 	}
 }
 
+// getCollisionLayerIndex returns the collision layer index for a sprite
+func getCollisionLayerIndex(info *spriteCollisionInfo) int {
+	return int(math.Mod(float64(info.Id), maxCollisionLayerIdx))
+}
+
+// spriteCollisionData caches sprite collision information
+type spriteCollisionData struct {
+	sprite *SpriteImpl
+	info   *spriteCollisionInfo
+	modIdx int
+}
+
+// buildSpriteCollisionData builds a cache of sprite collision data to avoid repeated lookups
+func (p *Game) buildSpriteCollisionData(inits []Sprite) []*spriteCollisionData {
+	spriteData := make([]*spriteCollisionData, 0, len(inits))
+	for _, ini := range inits {
+		spr := spriteOf(ini)
+		info := p.getSpriteCollisionInfo(spr.name)
+		spriteData = append(spriteData, &spriteCollisionData{
+			sprite: spr,
+			info:   info,
+			modIdx: getCollisionLayerIndex(info),
+		})
+	}
+	return spriteData
+}
+
 // setupCollisionLayers configures collision detection layers
 func (p *Game) setupCollisionLayers(inits []Sprite) {
 	if !p.isAutoSetCollisionLayer {
 		return
 	}
 
+	spriteData := p.buildSpriteCollisionData(inits)
 	maskMap := make([]int64, maxCollisionLayerIdx)
 
 	// Gather collision masks
-	for _, ini := range inits {
-		spr := spriteOf(ini)
-		info := p.getSpriteCollisionInfo(spr.name)
-		info.Mask = 0
-		modIdx := int(math.Mod(float64(info.Id), maxCollisionLayerIdx))
-		for target := range spr.collisionTargets {
-			targetLayer := p.getSpriteCollisionInfo(target)
-			maskMap[modIdx] |= targetLayer.Layer
+	for _, data := range spriteData {
+		data.info.Mask = 0
+		for target := range data.sprite.collisionTargets {
+			targetInfo := p.getSpriteCollisionInfo(target)
+			maskMap[data.modIdx] |= targetInfo.Layer
 		}
 	}
 
 	// Apply collision masks
-	for _, ini := range inits {
-		spr := spriteOf(ini)
-		info := p.getSpriteCollisionInfo(spr.name)
-		modIdx := int(math.Mod(float64(info.Id), maxCollisionLayerIdx))
-		info.Mask = maskMap[modIdx]
+	for _, data := range spriteData {
+		data.info.Mask = maskMap[data.modIdx]
 		if debugLoad {
-			spxlog.Debug("init sprite collision info: name=%s, layer=%d, mask=%d", spr.name, info.Layer, info.Mask)
+			spxlog.Debug("init sprite collision info: name=%s, layer=%d, mask=%d", data.sprite.name, data.info.Layer, data.info.Mask)
 		}
 	}
 
 	// Recalculate physics info
 	engine.WaitMainThread(func() {
-		for _, ini := range inits {
-			spr := spriteOf(ini)
-			syncInitSpritePhysicInfo(spr, spr.syncSprite)
+		for _, data := range spriteData {
+			syncInitSpritePhysicInfo(data.sprite, data.sprite.syncSprite)
 		}
 	})
 }
