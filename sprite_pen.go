@@ -178,7 +178,6 @@ func (p *SpriteImpl) movePen(x, y float64) {
 	if p.penObj == nil {
 		return
 	}
-	applyRenderOffset(p, &x, &y)
 	penMgr.MovePenTo(*p.penObj, mathf.NewVec2(x, -y))
 }
 
