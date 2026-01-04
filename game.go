@@ -182,7 +182,8 @@ func (p *Game) getSpriteCollisionInfo(name string) *spriteCollisionInfo {
 	if info, ok := p.sprCollisionInfos[name]; ok {
 		return info
 	}
-	panic("Unknown sprite " + name)
+	engine.Panic("Unknown sprite " + name)
+	return &spriteCollisionInfo{}
 }
 
 func (p *Game) newSpriteAndLoad(name string, tySpr reflect.Type, g reflect.Value) Sprite {
@@ -277,7 +278,7 @@ func Gopt_Game_Main(game Gamer, sprites ...Sprite) {
 func Gopt_Game_Run(game Gamer, resource any, gameConf ...*Config) {
 	builder := newGameBuilder(game, resource, gameConf...)
 	if err := builder.buildAndRun(); err != nil {
-		panic(err)
+		engine.Panic(err)
 	}
 }
 
@@ -295,7 +296,7 @@ func Gopt_Game_Reload(game Gamer, index any) (err error) {
 		name, val := getFieldPtrOrAlloc(g, v, i)
 		if fld, ok := val.(Sprite); ok {
 			if err := g.loadSprite(fld, name, v); err != nil {
-				panic(err)
+				engine.Panic(err)
 			}
 		}
 	}
@@ -316,7 +317,7 @@ func Gopt_Game_Reload(game Gamer, index any) (err error) {
 func SchedNow() int {
 	if isSchedInMain {
 		if time.Since(mainSchedTime) >= time.Second*mainExecTimeoutSec {
-			panic("Main execution timed out. Please check if there is an infinite loop in the code.")
+			engine.Panic("Main execution timed out. Please check if there is an infinite loop in the code.")
 		}
 	}
 	if me := gco.Current(); me != nil {
@@ -329,7 +330,7 @@ func SchedNow() int {
 func Sched() int {
 	if isSchedInMain {
 		if time.Since(mainSchedTime) >= time.Second*mainExecTimeoutSec {
-			panic("Main execution timed out. Please check if there is an infinite loop in the code.")
+			engine.Panic("Main execution timed out. Please check if there is an infinite loop in the code.")
 		}
 	} else {
 		if me := gco.Current(); me != nil {
@@ -453,7 +454,7 @@ func setupGameConfig(conf *Config, proj *projConfig) {
 	}
 	if key != "" {
 		if err := os.Setenv("SPX_SCREENSHOT_KEY", key); err != nil {
-			panic(err)
+			engine.Panic(err)
 		}
 	}
 }
@@ -499,7 +500,7 @@ func loadGameSprites(g *Game, v reflect.Value, fs spxfs.Dir, proj *projConfig) {
 		if fld, ok := val.(Sprite); ok {
 			if g.canBindSprite(name) {
 				if err := g.loadSprite(fld, name, v); err != nil {
-					panic(err)
+					engine.Panic(err)
 				}
 			}
 		}
@@ -510,7 +511,7 @@ func loadGameSprites(g *Game, v reflect.Value, fs spxfs.Dir, proj *projConfig) {
 func instance(gamer reflect.Value) *Game {
 	fld := gamer.FieldByName("Game")
 	if !fld.IsValid() {
-		log.Panicf("type %v doesn't has field spx.Game", gamer.Type())
+		panic("type doesn't have field spx.Game")
 	}
 	return fld.Addr().Interface().(*Game)
 }
@@ -828,7 +829,7 @@ func (p *Game) addSpecialShape(g reflect.Value, v specsp, inits []Sprite) []Spri
 	case "sprite":
 		return p.addStageSprite(g, v, inits)
 	default:
-		panic("addSpecialShape: unknown shape - " + typ)
+		engine.Panic("addSpecialShape: unknown shape - " + typ)
 	}
 	return inits
 }
@@ -844,7 +845,8 @@ func (p *Game) addStageSprite(g reflect.Value, v specsp, inits []Sprite) []Sprit
 			return inits
 		}
 	}
-	panic("addStageSprite: unexpected - " + target)
+	engine.Panic("addStageSprite: unexpected - " + target)
+	return inits
 }
 
 /*
@@ -897,7 +899,8 @@ func (p *Game) addStageSprites(g reflect.Value, v specsp, inits []Sprite) []Spri
 			}
 		}
 	}
-	panic("addStageSprites: unexpected - " + target)
+	engine.Panic("addStageSprites: unexpected - " + target)
+	return inits
 }
 
 var (

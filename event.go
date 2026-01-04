@@ -256,7 +256,8 @@ func nameOf(this any) string {
 	if _, ok := this.(*Game); ok {
 		return "Game"
 	}
-	panic("eventSinks: unexpected this object")
+	engine.Panic("eventSinks: unexpected this object")
+	return ""
 }
 
 func (p *eventSinks) init(mgr *eventSinkMgr, this threadObj) {
