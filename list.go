@@ -51,7 +51,76 @@ func fromObj(v obj) any {
 	return v
 }
 
+func toIntAny(v any) (int, bool) {
+	if v == nil {
+		return 0, true
+	}
+
+	const maxInt = int(^uint(0) >> 1)
+	const minInt = -maxInt - 1
+
+	switch x := v.(type) {
+	case int:
+		return x, true
+	case int8:
+		return int(x), true
+	case int16:
+		return int(x), true
+	case int32:
+		return int(x), true
+	case int64:
+		if x > int64(maxInt) || x < int64(minInt) {
+			return 0, false
+		}
+		return int(x), true
+	case uint:
+		if x > uint(maxInt) {
+			return 0, false
+		}
+		return int(x), true
+	case uint8:
+		return int(x), true
+	case uint16:
+		return int(x), true
+	case uint32:
+		if uint64(x) > uint64(maxInt) {
+			return 0, false
+		}
+		return int(x), true
+	case uint64:
+		if x > uint64(maxInt) {
+			return 0, false
+		}
+		return int(x), true
+	case float32:
+		if x > float32(maxInt) || x < float32(minInt) {
+			return 0, false
+		}
+		return int(x), true
+	case float64:
+		if x > float64(maxInt) || x < float64(minInt) {
+			return 0, false
+		}
+		return int(x), true
+	case string:
+		if i, err := strconv.Atoi(x); err == nil {
+			return i, true
+		}
+		if f, err := strconv.ParseFloat(x, 64); err == nil {
+			if f > float64(maxInt) || f < float64(minInt) {
+				return 0, false
+			}
+			return int(f), true
+		}
+	}
+	return 0, false
+}
+
 func toFloat64Any(v any) (float64, bool) {
+	if v == nil {
+		return 0, true
+	}
+
 	switch x := v.(type) {
 	case float64:
 		return x, true
@@ -100,15 +169,11 @@ func (p Value) String() string {
 }
 
 func (p Value) Int() int {
-	switch v := p.data.(type) {
-	case int:
-		return v
-	case nil:
-		return 0
-	default:
-		doPanic("todo: spx.Value.Int()", reflect.TypeOf(v))
-		return 0
+	i, ok := toIntAny(p.data)
+	if !ok {
+		doPanic("spx.Value.Int() conversion failed for type:", reflect.TypeOf(p.data))
 	}
+	return i
 }
 
 func (p Value) Float() float64 {
