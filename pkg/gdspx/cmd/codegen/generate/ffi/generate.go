@@ -582,6 +582,10 @@ func getManagerImpl(function *clang.TypedefFunction, clsName string) string {
 	lowcaseMgr := GetManagerName(function.Name)
 	mgrName := string(unicode.ToUpper(rune(lowcaseMgr[0]))) + lowcaseMgr[1:]
 	funcName := function.Name[len(prefix)+len(mgrName):]
+
+	// Check if the first argument is "obj" to determine if this is an instance method
+	hasObjArg := len(function.Arguments) > 0 && function.Arguments[0].Name == "obj"
+
 	sb.WriteString("func (pself *" + clsName + ") " + funcName + "(")
 	count := len(function.Arguments)
 	for i, arg := range function.Arguments {
@@ -608,8 +612,12 @@ func getManagerImpl(function *clang.TypedefFunction, clsName string) string {
 		sb.WriteString("return ")
 	}
 	sb.WriteString(mgrName + "Mgr." + funcName + "(")
-	if !strings.HasSuffix(function.Name, "CreateSprite") && !strings.HasSuffix(function.Name, "CreateBackdrop") {
-		sb.WriteString("pself.Id, ")
+	// Only add pself.Id if the first argument is "obj" (instance method)
+	if hasObjArg {
+		sb.WriteString("pself.Id")
+		if count > 1 {
+			sb.WriteString(", ")
+		}
 	}
 	for i, arg := range function.Arguments {
 		if i == 0 && arg.Name == "obj" {
