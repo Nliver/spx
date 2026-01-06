@@ -184,6 +184,13 @@ func (p Value) Float() float64 {
 	return f
 }
 
+func (p *Value) Set(v obj) {
+	if p == nil {
+		return
+	}
+	p.data = fromObj(v)
+}
+
 // -------------------------------------------------------------------------------------
 
 type List struct {
